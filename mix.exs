@@ -20,7 +20,7 @@ defmodule SalesReg.Mixfile do
   def application do
     [
       mod: {SalesReg.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :comeonin, :guardian]
     ]
   end
 
@@ -38,7 +38,10 @@ defmodule SalesReg.Mixfile do
       {:phoenix_ecto, "~> 3.2"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
-      {:cowboy, "~> 1.0"}
+      {:cowboy, "~> 1.0"},
+      {:comeonin, "~> 4.0"},
+      {:guardian, "~> 1.0"},
+      {:bcrypt_elixir, "~> 1.0"}
     ]
   end
 
