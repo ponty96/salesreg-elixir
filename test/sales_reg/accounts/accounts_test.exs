@@ -13,7 +13,7 @@ defmodule SalesReg.AccountsTest do
       gender: "some gender",
       last_name: "some last_name",
       password: "some password",
-      profile_pciture: "some profile_pciture"
+      profile_pciture: "some profile_picture"
     }
     @update_attrs %{
       date_of_birth: "some updated date_of_birth",
@@ -22,7 +22,7 @@ defmodule SalesReg.AccountsTest do
       gender: "some updated gender",
       last_name: "some updated last_name",
       password: "some updated password",
-      profile_pciture: "some updated profile_pciture"
+      profile_pciture: "some updated profile_picture"
     }
     @invalid_attrs %{
       date_of_birth: nil,
@@ -31,7 +31,7 @@ defmodule SalesReg.AccountsTest do
       gender: nil,
       last_name: nil,
       password: nil,
-      profile_pciture: nil
+      profile_picture: nil
     }
 
     def user_fixture(attrs \\ %{}) do
@@ -61,7 +61,7 @@ defmodule SalesReg.AccountsTest do
       assert user.gender == "some gender"
       assert user.last_name == "some last_name"
       assert user.password == "some password"
-      assert user.profile_pciture == "some profile_pciture"
+      assert user.profile_picture == "some profile_picture"
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -78,7 +78,7 @@ defmodule SalesReg.AccountsTest do
       assert user.gender == "some updated gender"
       assert user.last_name == "some updated last_name"
       assert user.password == "some updated password"
-      assert user.profile_pciture == "some updated profile_pciture"
+      assert user.profile_picture == "some updated profile_picture"
     end
 
     test "update_user/2 with invalid data returns error changeset" do
