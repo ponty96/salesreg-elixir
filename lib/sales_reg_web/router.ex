@@ -5,7 +5,14 @@ defmodule SalesRegWeb.Router do
     plug(:accepts, ["json"])
   end
 
+  pipeline :graphql do
+    plug SalesReg.AuthPipeline
+    plug SalesReg.Context
+  end
+
   scope "/api", SalesRegWeb do
     pipe_through(:api)
   end
+
+  #graphiql endpoint
 end

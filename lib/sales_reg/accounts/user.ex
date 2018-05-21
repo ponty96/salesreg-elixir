@@ -55,6 +55,11 @@ defmodule SalesReg.Accounts.User do
   end
 
   defp hash_password(changeset) do
-    changeset
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{password: password}} ->
+        put_change(changeset, :encrypted_password, Comeonin.Bcrypt.hashpwsalt(password))
+      _ ->
+        changeset
+    end
   end
 end
