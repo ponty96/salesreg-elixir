@@ -1,4 +1,4 @@
-defmodule SalesReg.Guardian do
+defmodule SalesRegWeb.Guardian do
   alias SalesReg.Accounts
 
   use Guardian, otp_app: :sales_reg
@@ -10,7 +10,7 @@ defmodule SalesReg.Guardian do
 
   def resource_from_claims(claims) do
     id = claims["sub"]
-    resource = Accounts.get_user!(id)
+    resource = Accounts.get_user(id)
     {:ok, resource}
   end
 end

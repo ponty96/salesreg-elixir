@@ -1,4 +1,4 @@
-defmodule SalesReg.AuthErrorHandler do
+defmodule SalesRegWeb.AuthErrorHandler do
   import Plug.Conn
 
   def auth_error(conn, {type, _reason}, _opts) do
