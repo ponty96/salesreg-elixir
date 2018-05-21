@@ -3,10 +3,8 @@ defmodule SalesRegWeb.Schemas.User do
     GraphQL Schemas for User
   """
   use Absinthe.Schema.Notation
-  alias SalesRegWeb.Helpers.MutationResolver
-  alias SalesReg.Authentication
-  alias SalesReg.Accounts
-  alias SalesRegWeb.Helpers.Authorization
+  alias SalesRegWeb.Resolvers.UserResolver
+  alias SalesRegWeb.Absinthe.Middleware
 
   @desc """
   query a user
@@ -15,11 +13,9 @@ defmodule SalesRegWeb.Schemas.User do
     field :single_user, :user do
       arg(:id, non_null(:id))
 
-      resolve(
-        Authorization.access(:authenticated, fn _, %{id: id}, _ ->
-          {:ok, Accounts.get_user!(id)}
-        end)
-      )
+      middleware(Middleware)
+
+      resolve(&UserResolver.get_user/2)
     end
   end
 
@@ -30,11 +26,7 @@ defmodule SalesRegWeb.Schemas.User do
     field :register_user, :mutation_response do
       arg(:user, non_null(:user_input))
 
-      resolve(
-        MutationResolver.handle_mutation(:public, fn _source, %{user: user_params}, _resolution ->
-          Authentication.register(user_params)
-        end)
-      )
+      resolve(&UserResolver.register_user/2)
     end
   end
 
@@ -43,16 +35,7 @@ defmodule SalesRegWeb.Schemas.User do
       arg(:email, non_null(:string))
       arg(:password, non_null(:string))
 
-      resolve(
-        MutationResolver.handle_mutation(:public, fn _,
-                                                     params = %{
-                                                       email: _email,
-                                                       password: _password
-                                                     },
-                                                     _resolution ->
-          Authentication.login(params)
-        end)
-      )
+      resolve(&UserResolver.login_user/2)
     end
   end
 end

@@ -1,4 +1,4 @@
-defmodule SalesReg.Context do
+defmodule SalesRegWeb.Context do
   @behaviour Plug
 
   import Plug.Conn

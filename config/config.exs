@@ -22,7 +22,7 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]
 
-config :sales_reg, SalesReg.Guardian,
+config :sales_reg, SalesRegWeb.Guardian,
   issuer: "sales_reg",
   secret_key: "Q/pRXuJQoZblGk4AIOHhMX0AkzuUpBS91hQVlO06PqrtRd/iAobc3CdBkMPDVYgc"
 

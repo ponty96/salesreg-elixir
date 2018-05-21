@@ -1,8 +1,8 @@
-defmodule SalesReg.AuthPipeline do
+defmodule SalesRegWeb.AuthPipeline do
   use Guardian.Plug.Pipeline,
     otp_app: :sales_reg,
-    module: SalesReg.Guardian,
-    error_handler: SalesReg.AuthErrorHandler
+    module: SalesRegWeb.Guardian,
+    error_handler: SalesRegWeb.AuthErrorHandler
 
   # If there is an authorization header, validate it
   plug(Guardian.Plug.VerifyHeader, claims: %{"typ" => "access"})
