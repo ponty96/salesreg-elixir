@@ -1,6 +1,6 @@
-defmodule SalesRegWeb.Resolvers.UserResolver do
+defmodule SalesRegWeb.GraphQL.Resolvers.UserResolver do
   alias SalesReg.Accounts
-  alias SalesRegWeb.Helpers.MutationResponse
+  alias SalesRegWeb.GraphQL.Helpers.MutationResponse
   alias SalesReg.Accounts.User
   alias SalesRegWeb.Authentication
 
@@ -24,11 +24,9 @@ defmodule SalesRegWeb.Resolvers.UserResolver do
 
   def register_user(%{user: params}, _resolution) do
     Authentication.register(params)
-    |> MutationResponse.build_response()
   end
 
   def login_user(params, _resolution) do
     Authentication.login(params)
-    |> MutationResponse.build_response()
   end
 end

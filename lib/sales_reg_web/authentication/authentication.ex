@@ -8,10 +8,12 @@ defmodule SalesRegWeb.Authentication do
   alias SalesReg.Accounts.User
 
   def register(user_params) do
-    {:ok, user} = Accounts.create_user(user_params)
-    {:ok, jwt, _claims} = Guardian.encode_and_sign(user)
-
-    {:ok, %{user: user, jwt: jwt}}
+    with {:ok, user} <- Accounts.create_user(user_params),
+         {:ok, jwt, _claims} <- Guardian.encode_and_sign(user) do
+      {:ok, %{user: user, jwt: jwt}}
+    else
+      {:error, changeset} -> {:error, changeset}
+    end
   end
 
   def login(user_params) do
