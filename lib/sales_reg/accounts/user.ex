@@ -16,13 +16,13 @@ defmodule SalesReg.Accounts.User do
     field(:password, :string, virtual: true)
     field(:password_confirmation, :string, virtual: true)
 
-    field(:profile_pciture, :string)
+    field(:profile_picture, :string)
 
     timestamps()
   end
 
   @required_fields [:first_name, :last_name, :date_of_birth, :email]
-  @registration_fields [:hashed_password, :password, :password_confirmation]
+  @registration_fields [:password, :password_confirmation]
 
   @fields [:profile_picture]
 
@@ -37,6 +37,8 @@ defmodule SalesReg.Accounts.User do
     user
     |> cast(attrs, @required_fields ++ @registration_fields)
     |> validate_required(@required_fields ++ @registration_fields)
+    |> validate_format(:email, ~r/@/)
+    |> unique_constraint(:email)
     |> validate_password
     |> set_password
   end
@@ -55,6 +57,12 @@ defmodule SalesReg.Accounts.User do
   end
 
   defp hash_password(changeset) do
-    changeset
+    case changeset do
+      %Ecto.Changeset{valid?: true, changes: %{password: password}} ->
+        put_change(changeset, :hashed_password, Comeonin.Bcrypt.hashpwsalt(password))
+
+      _ ->
+        changeset
+    end
   end
 end
