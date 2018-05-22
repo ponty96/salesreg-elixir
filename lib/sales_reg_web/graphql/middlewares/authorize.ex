@@ -1,4 +1,4 @@
-defmodule SalesRegWeb.Absinthe.Middleware do
+defmodule SalesRegWeb.GraphQL.MiddleWares.Authorize do
   @behaviour Absinthe.Middleware
 
   def call(resolution, _config) do

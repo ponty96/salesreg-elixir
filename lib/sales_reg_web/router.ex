@@ -21,12 +21,12 @@ defmodule SalesRegWeb.Router do
   scope "/api" do
     pipe_through(:graphql)
 
-    forward("/", Absinthe.Plug, schema: SalesRegWeb.Schemas)
+    forward("/", Absinthe.Plug, schema: SalesRegWeb.GraphQL.Schemas)
   end
 
   if Mix.env() == :dev do
     pipe_through([:api, :graphql])
-    forward("/graphiql", Absinthe.Plug.GraphiQL, schema: SalesRegWeb.Schemas)
+    forward("/graphiql", Absinthe.Plug.GraphiQL, schema: SalesRegWeb.GraphQL.Schemas)
   end
 
   # graphiql endpoint
