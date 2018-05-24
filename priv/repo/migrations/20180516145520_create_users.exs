@@ -7,12 +7,13 @@ defmodule SalesReg.Repo.Migrations.CreateUsers do
       add(:first_name, :string)
       add(:last_name, :string)
       add(:gender, :string)
-      add(:profile_pciture, :string)
+      add(:profile_picture, :string)
       add(:date_of_birth, :string)
       add(:email, :string)
       add(:hashed_password, :string)
 
       timestamps()
     end
+    create unique_index(:users, :email)
   end
 end
