@@ -25,6 +25,7 @@ defmodule SalesReg.Accounts.User do
     field(:profile_picture, :string)
 
     has_one(:company, Company, foreign_key: :owner_id)
+    many_to_many(:companies, Company, join_through: Employee)
 
     timestamps()
   end

@@ -188,4 +188,100 @@ defmodule SalesReg.BusinessTest do
       assert %Ecto.Changeset{} = Business.change_employee(employee)
     end
   end
+
+  describe "locations" do
+    alias SalesReg.Business.Location
+
+    @valid_attrs %{
+      city: "some city",
+      country: "some country",
+      lat: "some lat",
+      long: "some long",
+      state: "some state",
+      street1: "some street1",
+      street2: "some street2"
+    }
+    @update_attrs %{
+      city: "some updated city",
+      country: "some updated country",
+      lat: "some updated lat",
+      long: "some updated long",
+      state: "some updated state",
+      street1: "some updated street1",
+      street2: "some updated street2"
+    }
+    @invalid_attrs %{
+      city: nil,
+      country: nil,
+      lat: nil,
+      long: nil,
+      state: nil,
+      street1: nil,
+      street2: nil
+    }
+
+    def location_fixture(attrs \\ %{}) do
+      {:ok, location} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Business.create_location()
+
+      location
+    end
+
+    test "list_locations/0 returns all locations" do
+      location = location_fixture()
+      assert Business.list_locations() == [location]
+    end
+
+    test "get_location!/1 returns the location with given id" do
+      location = location_fixture()
+      assert Business.get_location!(location.id) == location
+    end
+
+    test "create_location/1 with valid data creates a location" do
+      assert {:ok, %Location{} = location} = Business.create_location(@valid_attrs)
+      assert location.city == "some city"
+      assert location.country == "some country"
+      assert location.lat == "some lat"
+      assert location.long == "some long"
+      assert location.state == "some state"
+      assert location.street1 == "some street1"
+      assert location.street2 == "some street2"
+    end
+
+    test "create_location/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Business.create_location(@invalid_attrs)
+    end
+
+    test "update_location/2 with valid data updates the location" do
+      location = location_fixture()
+      assert {:ok, location} = Business.update_location(location, @update_attrs)
+      assert %Location{} = location
+      assert location.city == "some updated city"
+      assert location.country == "some updated country"
+      assert location.lat == "some updated lat"
+      assert location.long == "some updated long"
+      assert location.state == "some updated state"
+      assert location.street1 == "some updated street1"
+      assert location.street2 == "some updated street2"
+    end
+
+    test "update_location/2 with invalid data returns error changeset" do
+      location = location_fixture()
+      assert {:error, %Ecto.Changeset{}} = Business.update_location(location, @invalid_attrs)
+      assert location == Business.get_location!(location.id)
+    end
+
+    test "delete_location/1 deletes the location" do
+      location = location_fixture()
+      assert {:ok, %Location{}} = Business.delete_location(location)
+      assert_raise Ecto.NoResultsError, fn -> Business.get_location!(location.id) end
+    end
+
+    test "change_location/1 returns a location changeset" do
+      location = location_fixture()
+      assert %Ecto.Changeset{} = Business.change_location(location)
+    end
+  end
 end
