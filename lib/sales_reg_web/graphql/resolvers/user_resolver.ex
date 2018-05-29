@@ -22,10 +22,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.UserResolver do
     end
   end
 
-  def register_user(%{user: params}, _resolution) do
-    Authentication.register(params)
-  end
-
   def login_user(params, _resolution) do
     Authentication.login(params)
   end

@@ -17,7 +17,7 @@ defmodule SalesReg.Business.Company do
     belongs_to(:owner, SalesReg.Accounts.User)
     has_many(:branches, Branch)
 
-    many_to_many(:users, SalesReg.Accounts.User, join_through: Employee)
+    has_many(:employees, Employee)
     timestamps()
   end
 
