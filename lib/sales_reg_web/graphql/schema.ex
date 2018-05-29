@@ -2,22 +2,24 @@ defmodule SalesRegWeb.GraphQL.Schemas do
   @moduledoc false
   use Absinthe.Schema
 
-  alias Absinthe.Type.Field
-
   alias SalesRegWeb.GraphQL.MiddleWares.{
     ChangesetErrors,
     MutationResponse
   }
 
+  alias Absinthe.Middleware.Dataloader, as: AbsintheDataloader
+  alias Absinthe.Plugin, as: AbsinthePluginDefault
+
   import_types(__MODULE__.DataTypes)
   import_types(__MODULE__.UserSchema)
+  import_types(__MODULE__.CompanySchema)
 
   query do
     import_fields(:single_user)
   end
 
   mutation do
-    import_fields(:register_user)
+    import_fields(:register_company)
     import_fields(:login_user)
   end
 
@@ -37,5 +39,19 @@ defmodule SalesRegWeb.GraphQL.Schemas do
 
   defp apply(middleware, _, _, _) do
     middleware
+  end
+
+  def plugins do
+    [AbsintheDataloader] ++ AbsinthePluginDefault.defaults()
+  end
+
+  def dataloader do
+    Dataloader.new()
+    |> Dataloader.add_source(SalesReg.Business, SalesReg.Business.data())
+    |> Dataloader.add_source(SalesReg.Accounts, SalesReg.Accounts.data())
+  end
+
+  def context(ctx) do
+    Map.put(ctx, :loader, dataloader())
   end
 end

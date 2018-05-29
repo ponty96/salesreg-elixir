@@ -19,17 +19,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.UserSchema do
     end
   end
 
-  @desc """
-  mutation to start | register user
-  """
-  object :register_user do
-    field :register_user, :mutation_response do
-      arg(:user, non_null(:user_input))
-
-      resolve(&UserResolver.register_user/2)
-    end
-  end
-
   object :login_user do
     field :login_user, :mutation_response do
       arg(:email, non_null(:string))

@@ -7,15 +7,6 @@ defmodule SalesRegWeb.Authentication do
   alias SalesRegWeb.Guardian
   alias SalesReg.Accounts.User
 
-  def register(user_params) do
-    with {:ok, user} <- Accounts.create_user(user_params),
-         {:ok, jwt, _claims} <- Guardian.encode_and_sign(user) do
-      {:ok, %{user: user, jwt: jwt}}
-    else
-      {:error, changeset} -> {:error, changeset}
-    end
-  end
-
   def login(user_params) do
     user = Accounts.get_user_by_email(String.downcase(user_params.email))
     password = user_params.password

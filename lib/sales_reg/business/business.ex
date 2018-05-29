@@ -2,13 +2,8 @@ defmodule SalesReg.Business do
   @moduledoc """
   The Business context.
   """
-
-  import Ecto.Query, warn: false
-  alias SalesReg.Repo
-
-  alias SalesReg.Business.Company
-  alias SalesReg.Business.Employee
-  alias SalesReg.Business.Branch
+  use SalesRegWeb, :context
+  alias Dataloader.Ecto, as: DataloaderEcto
 
   def create_company(user_id, company_params) do
     company_params = Map.put(company_params, :owner_id, user_id)
@@ -109,5 +104,17 @@ defmodule SalesReg.Business do
 
   def get_company_employee(employee_id) do
     {:ok, Repo.get(Employee, employee_id)}
+  end
+
+  def data do
+    DataloaderEcto.new(Repo, query: &query/2)
+  end
+
+  def query(queryable, _) do
+    queryable
+  end
+
+  def send_registration_email(user, company) do
+    {:ok, "sent"}
   end
 end
