@@ -8,6 +8,16 @@ defmodule SalesReg.Business do
   def create_company(user_id, company_params) do
     company_params = Map.put(company_params, :owner_id, user_id)
 
+    with {:ok, company} <- create_company(company_params),
+         branch_params <- %{type: "head_office", location: Map.get(company_params, :head_office)},
+         {:ok, _branch} <- add_company_branch(company.id, branch_params) do
+      {:ok, company}
+    else
+      {:error, changeset} -> {:error, changeset}
+    end
+  end
+
+  defp create_company(company_params) do
     %Company{}
     |> Company.changeset(company_params)
     |> Repo.insert()
@@ -114,7 +124,7 @@ defmodule SalesReg.Business do
     queryable
   end
 
-  def send_registration_email(user, company) do
+  def send_registration_email(_user, _company) do
     {:ok, "sent"}
   end
 end

@@ -79,7 +79,8 @@ defmodule SalesRegWeb do
         Business,
         Business.Company,
         Business.Employee,
-        Business.Branch
+        Business.Branch,
+        Business.Location
       }
     end
   end
