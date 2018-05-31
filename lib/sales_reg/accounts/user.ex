@@ -4,6 +4,12 @@ defmodule SalesReg.Accounts.User do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+
+  alias SalesReg.Business.{
+    Company,
+    Employee
+  }
+
   schema "users" do
     field(:date_of_birth, :string)
     field(:email, :string)
@@ -17,6 +23,9 @@ defmodule SalesReg.Accounts.User do
     field(:password_confirmation, :string, virtual: true)
 
     field(:profile_picture, :string)
+
+    has_one(:company, Company, foreign_key: :owner_id)
+    many_to_many(:companies, Company, join_through: Employee)
 
     timestamps()
   end
@@ -41,6 +50,7 @@ defmodule SalesReg.Accounts.User do
     |> unique_constraint(:email)
     |> validate_password
     |> set_password
+    |> cast_assoc(:company)
   end
 
   defp validate_password(changeset) do

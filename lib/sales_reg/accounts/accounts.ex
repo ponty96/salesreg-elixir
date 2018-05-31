@@ -2,10 +2,8 @@ defmodule SalesReg.Accounts do
   @moduledoc """
   The Accounts context.
   """
-
-  import Ecto.Query, warn: false
-  alias SalesReg.Repo
-  alias SalesReg.Accounts.User
+  use SalesRegWeb, :context
+  alias Dataloader.Ecto, as: DataloaderEcto
 
   def get_user(id), do: Repo.get(User, id)
 
@@ -25,5 +23,13 @@ defmodule SalesReg.Accounts do
 
   def change_user(%User{} = user) do
     User.changeset(user, %{})
+  end
+
+  def data do
+    DataloaderEcto.new(Repo, query: &query/2)
+  end
+
+  def query(queryable, _) do
+    queryable
   end
 end
