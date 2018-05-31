@@ -53,7 +53,10 @@ defmodule SalesRegWeb.GraphQL.MiddleWares.ChangesetErrors do
     value
     |> Map.to_list()
     |> Enum.map(fn {assoc_key, value} ->
-      %{key: key, message: "#{Atom.to_string(assoc_key)} #{value}"}
+      %{
+        key: "#{key}_#{Atom.to_string(assoc_key)}",
+        message: "#{value}"
+      }
     end)
   end
 
