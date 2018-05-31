@@ -12,7 +12,7 @@ defmodule SalesReg.Business.Location do
     field(:state, :string)
     field(:street1, :string)
     field(:street2, :string)
-    belongs_to(:branch, Branch)
+    belongs_to(:branch, SalesReg.Business.Branch)
 
     timestamps()
   end
