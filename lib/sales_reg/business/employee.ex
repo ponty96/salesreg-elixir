@@ -18,5 +18,8 @@ defmodule SalesReg.Business.Employee do
     employee
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
+    |> assoc_constraint(:employer)
+    |> assoc_constraint(:person)
+    |> assoc_constraint(:branch)
   end
 end
