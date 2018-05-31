@@ -24,5 +24,6 @@ defmodule SalesReg.Business.Location do
     location
     |> cast(attrs, @required_fields ++ @fields)
     |> validate_required(@required_fields)
+    |> assoc_constraint(:branch)
   end
 end

@@ -37,5 +37,7 @@ defmodule SalesReg.Store.Product do
     product
     |> cast(attrs, @fields ++ @required_fields)
     |> validate_required(@required_fields)
+    |> assoc_constraint(:company)
+    |> assoc_constraint(:user)
   end
 end
