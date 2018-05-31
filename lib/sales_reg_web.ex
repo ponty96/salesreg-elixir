@@ -56,6 +56,35 @@ defmodule SalesRegWeb do
     end
   end
 
+  def context do
+    quote do
+      import Ecto.{Query, Changeset}
+
+      alias Ecto.Multi
+      alias SalesReg.Repo
+      alias SalesReg.Search
+
+      alias Ecto.Queryable
+      SalesRegWeb.shared_aliases()
+    end
+  end
+
+  defmacro shared_aliases do
+    quote do
+      alias Ecto.Queryable
+
+      alias SalesReg.{
+        Accounts,
+        Accounts.User,
+        Business,
+        Business.Company,
+        Business.Employee,
+        Business.Branch,
+        Business.Location
+      }
+    end
+  end
+
   @doc """
   When used, dispatch to the appropriate controller/view/etc.
   """
