@@ -9,6 +9,7 @@ defmodule SalesReg.Business.Branch do
 
     belongs_to(:company, SalesReg.Business.Company)
     has_many(:employees, SalesReg.Business.Employee)
+    has_one(:location, SalesReg.Business.Location)
 
     timestamps()
   end
@@ -16,7 +17,8 @@ defmodule SalesReg.Business.Branch do
   @doc false
   def changeset(branch, attrs) do
     branch
-    |> cast(attrs, [:type])
-    |> validate_required([:type])
+    |> cast(attrs, [:type, :company_id])
+    |> validate_required([:type, :company_id])
+    |> cast_assoc(:location)
   end
 end

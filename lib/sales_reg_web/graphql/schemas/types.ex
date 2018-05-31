@@ -14,7 +14,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   import_types(Absinthe.Type.Custom)
 
-
   @desc """
     User field type
   """
@@ -54,6 +53,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:employees, list_of(:employee), resolve: dataloader(SalesReg.Business, :employees))
+    field(:location, :location, resolve: dataloader(SalesReg.Business, :location))
   end
 
   @desc """
@@ -63,6 +63,19 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:person, :user, resolve: dataloader(SalesReg.Accounts, :person))
 
     field(:employer, :company, resolve: dataloader(SalesReg.Business, :employer))
+  end
+
+  @desc """
+    Location field type
+  """
+  object :location do
+    field(:city, :string)
+    field(:country, :string)
+    field(:lat, :string)
+    field(:long, :string)
+    field(:state, :string)
+    field(:street1, :string)
+    field(:street2, :string)
   end
 
   @desc """
@@ -144,10 +157,22 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:title, non_null(:string))
     field(:about, non_null(:string))
     field(:contact_email, non_null(:string))
+    field(:head_office, non_null(:location_input))
   end
 
   input_object :branch_input do
     field(:type, :string)
     field(:company_id, non_null(:uuid))
+    field(:location, non_null(:location_input))
+  end
+
+  input_object :location_input do
+    field(:city, non_null(:string))
+    field(:country, non_null(:string))
+    field(:lat, :string)
+    field(:long, :string)
+    field(:state, non_null(:string))
+    field(:street1, non_null(:string))
+    field(:street2, :string)
   end
 end
