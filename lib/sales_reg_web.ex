@@ -82,7 +82,8 @@ defmodule SalesRegWeb do
         Business.Branch,
         Business.Location,
         Store,
-        Store.Product
+        Store.Product,
+        Store.Service
       }
     end
   end
