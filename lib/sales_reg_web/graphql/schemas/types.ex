@@ -10,12 +10,11 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   alias SalesReg.Accounts.User
   alias Ecto.UUID
-  alias Absinthe.Type.Field
 
   import_types(Absinthe.Type.Custom)
 
   @desc """
-    User field type
+    User object type
   """
 
   object :user do
@@ -29,12 +28,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
 
   @desc """
-    Company field type
+    Company object type
   """
   object :company do
+    field(:id, :uuid)
     field(:about, :string)
     field(:contact_email, :string)
     field(:title, :string)
@@ -46,9 +47,10 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
-    Branch field type
+    Branch object type
   """
   object :branch do
+    field(:id, :uuid)
     field(:type, :string)
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
@@ -57,18 +59,20 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
-    Employee field type
+    Employee object type
   """
   object :employee do
+    field(:id, :uuid)
     field(:person, :user, resolve: dataloader(SalesReg.Accounts, :person))
 
     field(:employer, :company, resolve: dataloader(SalesReg.Business, :employer))
   end
 
   @desc """
-    Location field type
+    Location object type
   """
   object :location do
+    field(:id, :uuid)
     field(:city, :string)
     field(:country, :string)
     field(:lat, :string)
@@ -76,6 +80,23 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:state, :string)
     field(:street1, :string)
     field(:street2, :string)
+  end
+
+  @desc """
+    Product object type
+  """
+  object :product do
+    field(:id, :uuid)
+    field(:description, :string)
+    field(:featured_image, :string)
+    field(:name, :string)
+    field(:pack_quantity, :string)
+    field(:price_per_pack, :string)
+    field(:selling_price, :string)
+    field(:unit_quantity, :string)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
   end
 
   @desc """
@@ -90,13 +111,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   union :mutated_data do
     description("A mutated data")
 
-    types([:user, :authorization, :company, :employee, :branch])
+    types([:user, :authorization, :company, :employee, :branch, :product])
 
     resolve_type(fn
       %User{}, _ -> :user
       %Company{}, _ -> :company
       %Employee{}, _ -> :employee
       %Branch{}, _ -> :branch
+      %Product{}, _ -> :product
       %{user: %User{}}, _ -> :authorization
     end)
   end
@@ -174,5 +196,18 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:state, non_null(:string))
     field(:street1, non_null(:string))
     field(:street2, :string)
+  end
+
+  input_object :product_input do
+    field(:description, :string)
+    field(:featured_image, :string)
+    field(:name, non_null(:string))
+    field(:pack_quantity, :string)
+    field(:price_per_pack, :string)
+    field(:selling_price, non_null(:string))
+    field(:unit_quantity, :string)
+
+    field(:company_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
   end
 end

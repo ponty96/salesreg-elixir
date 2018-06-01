@@ -1,6 +1,6 @@
 defmodule SalesRegWeb.GraphQL.Schemas.CompanySchema do
   @moduledoc """
-    GraphQL Schemas for User
+    GraphQL Schemas for Company
   """
   use Absinthe.Schema.Notation
   alias SalesRegWeb.GraphQL.Resolvers.CompanyResolver
