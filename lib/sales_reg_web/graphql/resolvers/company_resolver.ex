@@ -1,5 +1,4 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.CompanyResolver do
-  alias SalesRegWeb.GraphQL.Helpers.MutationResponse
   use SalesRegWeb, :context
 
   def register_company(%{user: user_params, company: company_params}, _resolution) do

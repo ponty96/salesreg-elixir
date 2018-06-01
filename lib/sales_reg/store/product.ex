@@ -15,7 +15,6 @@ defmodule SalesReg.Store.Product do
 
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
-    belongs_to(:employee, SalesReg.Business.Employee)
 
     timestamps()
   end
@@ -27,11 +26,10 @@ defmodule SalesReg.Store.Product do
     :unit_quantity,
     :description,
     :company_id,
-    :employee_id,
     :user_id
   ]
 
-  @required_fields [:name, :selling_price]
+  @required_fields [:name, :selling_price, :company_id, :user_id]
   @doc false
   def changeset(product, attrs) do
     product
