@@ -100,6 +100,19 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Service object type
+  """
+  object :service do
+    field(:id, :uuid)
+    field(:description, :string)
+    field(:name, :string)
+    field(:price, :string)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -111,7 +124,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   union :mutated_data do
     description("A mutated data")
 
-    types([:user, :authorization, :company, :employee, :branch, :product])
+    types([:user, :authorization, :company, :employee, :branch, :product, :service])
 
     resolve_type(fn
       %User{}, _ -> :user
@@ -119,6 +132,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Employee{}, _ -> :employee
       %Branch{}, _ -> :branch
       %Product{}, _ -> :product
+      %Service{}, _ -> :service
       %{user: %User{}}, _ -> :authorization
     end)
   end
@@ -206,6 +220,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:price_per_pack, :string)
     field(:selling_price, non_null(:string))
     field(:unit_quantity, :string)
+
+    field(:company_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
+  end
+
+  input_object :service_input do
+    field(:description, :string)
+    field(:name, non_null(:string))
+    field(:price, :string)
 
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
