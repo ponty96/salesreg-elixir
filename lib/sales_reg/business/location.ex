@@ -12,7 +12,7 @@ defmodule SalesReg.Business.Location do
     field(:state, :string)
     field(:street1, :string)
     field(:street2, :string)
-    belongs_to(:branch, Branch)
+    belongs_to(:branch, SalesReg.Business.Branch)
 
     timestamps()
   end
@@ -24,5 +24,6 @@ defmodule SalesReg.Business.Location do
     location
     |> cast(attrs, @required_fields ++ @fields)
     |> validate_required(@required_fields)
+    |> assoc_constraint(:branch)
   end
 end
