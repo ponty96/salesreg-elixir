@@ -13,6 +13,7 @@ defmodule SalesReg.Business.Company do
     field(:about, :string)
     field(:contact_email, :string)
     field(:title, :string)
+    field(:category, :string)
 
     belongs_to(:owner, SalesReg.Accounts.User)
     has_many(:branches, Branch)
@@ -21,12 +22,22 @@ defmodule SalesReg.Business.Company do
     timestamps()
   end
 
-  @required_fields [:title, :contact_email, :owner_id]
+  @required_fields [:title, :contact_email, :owner_id, :category]
   @doc false
   def changeset(company, attrs) do
     company
     |> cast(attrs, @required_fields ++ [:about])
     |> validate_required(@required_fields)
     |> cast_assoc(:branches)
+    |> validate_category()
+  end
+
+  def validate_category(changeset) do
+    case get_field(changeset, :category) do
+      "product base" -> changeset
+      "service" -> changeset
+      "both" -> changeset
+      _ -> add_error(changeset, :category, "Invalid category")
+    end
   end
 end
