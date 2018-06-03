@@ -39,6 +39,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:about, :string)
     field(:contact_email, :string)
     field(:title, :string)
+    field(:category, :string)
 
     field(:employees, list_of(:employee), resolve: dataloader(SalesReg.Business, :employees))
     field(:branches, list_of(:branch), resolve: dataloader(SalesReg.Business, :branches))
@@ -153,6 +154,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     value(:female)
   end
 
+  @desc "The selected company category"
+  enum :category do
+    value :product_base, as: "product base", description: "Product bases"
+    value :service, as: "service", description: "Service"
+    value :both, as: "both", description: "Both"
+  end
+
   @desc "UUID is a scalar macro that checks if id is a valid uuid"
   scalar :uuid do
     parse(fn input ->
@@ -194,6 +202,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:about, non_null(:string))
     field(:contact_email, non_null(:string))
     field(:head_office, non_null(:location_input))
+    field(:category, non_null(:category))
   end
 
   input_object :branch_input do
