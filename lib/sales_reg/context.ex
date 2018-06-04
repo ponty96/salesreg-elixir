@@ -26,7 +26,7 @@ defmodule SalesReg.Context do
 
           case res do
             nil -> {:error, String.to_atom("#{unquote(schema)}_not_found")}
-            resource -> {:ok, resource}
+            resource -> resource
           end
         end
 
