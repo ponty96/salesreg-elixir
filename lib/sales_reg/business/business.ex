@@ -5,6 +5,10 @@ defmodule SalesReg.Business do
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
 
+  use SalesReg.Context, [
+    Contact
+  ]
+
   def create_company(user_id, company_params) do
     company_params = Map.put(company_params, :owner_id, user_id)
 

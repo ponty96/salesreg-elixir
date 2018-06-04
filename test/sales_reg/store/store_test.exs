@@ -6,9 +6,33 @@ defmodule SalesReg.StoreTest do
   describe "products" do
     alias SalesReg.Store.Product
 
-    @valid_attrs %{description: "some description", image: "some image", name: "some name", pack_quantity: "some pack_quantity", price_per_pack: "some price_per_pack", selling_price: "some selling_price", unit_quantity: "some unit_quantity"}
-    @update_attrs %{description: "some updated description", image: "some updated image", name: "some updated name", pack_quantity: "some updated pack_quantity", price_per_pack: "some updated price_per_pack", selling_price: "some updated selling_price", unit_quantity: "some updated unit_quantity"}
-    @invalid_attrs %{description: nil, image: nil, name: nil, pack_quantity: nil, price_per_pack: nil, selling_price: nil, unit_quantity: nil}
+    @valid_attrs %{
+      description: "some description",
+      image: "some image",
+      name: "some name",
+      pack_quantity: "some pack_quantity",
+      price_per_pack: "some price_per_pack",
+      selling_price: "some selling_price",
+      unit_quantity: "some unit_quantity"
+    }
+    @update_attrs %{
+      description: "some updated description",
+      image: "some updated image",
+      name: "some updated name",
+      pack_quantity: "some updated pack_quantity",
+      price_per_pack: "some updated price_per_pack",
+      selling_price: "some updated selling_price",
+      unit_quantity: "some updated unit_quantity"
+    }
+    @invalid_attrs %{
+      description: nil,
+      image: nil,
+      name: nil,
+      pack_quantity: nil,
+      price_per_pack: nil,
+      selling_price: nil,
+      unit_quantity: nil
+    }
 
     def product_fixture(attrs \\ %{}) do
       {:ok, product} =
@@ -79,7 +103,11 @@ defmodule SalesReg.StoreTest do
     alias SalesReg.Store.Service
 
     @valid_attrs %{description: "some description", name: "some name", price: "some price"}
-    @update_attrs %{description: "some updated description", name: "some updated name", price: "some updated price"}
+    @update_attrs %{
+      description: "some updated description",
+      name: "some updated name",
+      price: "some updated price"
+    }
     @invalid_attrs %{description: nil, name: nil, price: nil}
 
     def service_fixture(attrs \\ %{}) do
