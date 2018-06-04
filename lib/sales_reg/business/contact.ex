@@ -43,5 +43,6 @@ defmodule SalesReg.Business.Contact do
     |> validate_required(@required_fields)
     |> validate_format(:email, ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/)
     |> assoc_constraint(:company)
+    |> assoc_constraint(:user)
   end
 end
