@@ -113,6 +113,27 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Contact object type
+  """
+  object :contact do
+    field(:id, :uuid)
+    field(:image, :string)
+    field(:customer_name, :string)
+    field(:phone1, :string)
+    field(:phone2, :string)
+    field(:residential_add, :string)
+    field(:office_add, :string)
+    field(:email, :string)
+    field(:fax, :string)
+    field(:city, :string)
+    field(:state, :string)
+    field(:country, :string)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -124,7 +145,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   union :mutated_data do
     description("A mutated data")
 
-    types([:user, :authorization, :company, :employee, :branch, :product, :service])
+    types([:user, :authorization, :company, :employee, :branch, :product, :service, :contact])
 
     resolve_type(fn
       %User{}, _ -> :user
@@ -133,6 +154,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Branch{}, _ -> :branch
       %Product{}, _ -> :product
       %Service{}, _ -> :service
+      %Contact{}, _ -> :contact
       %{user: %User{}}, _ -> :authorization
     end)
   end
@@ -229,6 +251,23 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:description, :string)
     field(:name, non_null(:string))
     field(:price, :string)
+
+    field(:company_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
+  end
+
+  input_object :contact_input do
+    field(:image, :string)
+    field(:customer_name, non_null(:string))
+    field(:phone1, :string)
+    field(:phone2, :string)
+    field(:residential_add, non_null(:string))
+    field(:office_add, non_null(:string))
+    field(:email, non_null(:string))
+    field(:fax, :string)
+    field(:city, :string)
+    field(:state, :string)
+    field(:country, :string)
 
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))

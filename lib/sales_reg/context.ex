@@ -68,7 +68,6 @@ defmodule SalesReg.Context do
         def unquote(String.to_atom("delete_#{schema}"))(%mod{} = resource) do
           if mod == unquote(module) do
             resource
-            |> mod.delete_changeset
             |> Repo.delete()
           else
             raise "expected #{unquote(module)}"
