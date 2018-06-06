@@ -42,7 +42,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:employees, list_of(:employee), resolve: dataloader(SalesReg.Business, :employees))
     field(:branches, list_of(:branch), resolve: dataloader(SalesReg.Business, :branches))
-
+    field(:vendors, list_of(:vendor), resolve: dataloader(SalesReg.Business, :vendor))
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
   end
 
@@ -80,6 +80,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:state, :string)
     field(:street1, :string)
     field(:street2, :string)
+    field(:type, :string)
   end
 
   @desc """
@@ -125,6 +126,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:currency, :string)
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:location, list_of(:location), resolve: dataloader(SalesReg.Business, :location))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
   end
 
@@ -227,7 +229,22 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:state, non_null(:string))
     field(:street1, non_null(:string))
     field(:street2, :string)
+    field(:type, non_null(:string))
   end
+
+  input_object :update_location_input do
+    field(:id, non_null(:string))
+    field(:city, non_null(:string))
+    field(:country, non_null(:string))
+    field(:lat, :string)
+    field(:long, :string)
+    field(:state, non_null(:string))
+    field(:street1, non_null(:string))
+    field(:street2, :string)
+    field(:type, non_null(:string))
+  end
+
+
 
   input_object :product_input do
     field(:description, :string)
@@ -258,6 +275,20 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:state, non_null(:string))
     field(:country, non_null(:string))
     field(:currency, non_null(:string))
+    field(:locations, non_null(list_of(:location_input)))
+
+    field(:company_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
+  end
+
+  input_object :update_vendor_input do
+    field(:email, non_null(:string))
+    field(:fax, non_null(:string))
+    field(:city, non_null(:string))
+    field(:state, non_null(:string))
+    field(:country, non_null(:string))
+    field(:currency, non_null(:string))
+    field(:locations, non_null(list_of(:update_location_input)))
 
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
