@@ -26,7 +26,7 @@ defmodule SalesReg.Context do
 
           case res do
             nil -> {:error, String.to_atom("#{unquote(schema)}_not_found")}
-            resource -> {:ok, resource}
+            resource -> resource
           end
         end
 
@@ -68,7 +68,6 @@ defmodule SalesReg.Context do
         def unquote(String.to_atom("delete_#{schema}"))(%mod{} = resource) do
           if mod == unquote(module) do
             resource
-            |> mod.delete_changeset
             |> Repo.delete()
           else
             raise "expected #{unquote(module)}"

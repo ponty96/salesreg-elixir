@@ -81,6 +81,7 @@ defmodule SalesRegWeb do
         Business.Employee,
         Business.Branch,
         Business.Location,
+        Business.Vendor,
         Store,
         Store.Product,
         Store.Service
