@@ -34,9 +34,9 @@ defmodule SalesReg.Business.Company do
 
   def validate_category(changeset) do
     case get_field(changeset, :category) do
-      "product base" -> changeset
+      "product" -> changeset
       "service" -> changeset
-      "both" -> changeset
+      "product_service" -> changeset
       _ -> add_error(changeset, :category, "Invalid category")
     end
   end
