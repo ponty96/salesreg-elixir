@@ -5,7 +5,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.VendorSchema do
   use Absinthe.Schema.Notation
   alias SalesRegWeb.GraphQL.Resolvers.VendorResolver
 
-	# Mutations
+  # Mutations
   object :vendor_mutations do
     @desc """
         add vendor
@@ -21,13 +21,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.VendorSchema do
     """
     field :update_vendor, :mutation_response do
       arg(:vendor, non_null(:update_vendor_input))
-			arg(:vendor_id, non_null(:uuid))
+      arg(:vendor_id, non_null(:uuid))
 
       resolve(&VendorResolver.update_vendor/2)
     end
   end
 
-	# Queries
+  # Queries
   object :vendor_queries do
     @desc """
       query for all vendors of a company

@@ -13,7 +13,7 @@ defmodule SalesReg.Business.Vendor do
     field(:state, :string)
     field(:country, :string)
     field(:currency, :string)
-    
+
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:company, SalesReg.Business.Company)
     has_many(:locations, SalesReg.Business.Location, on_replace: :delete)
@@ -22,7 +22,7 @@ defmodule SalesReg.Business.Vendor do
 
   @required_fields [:email, :fax, :currency, :city, :state, :country, :user_id, :company_id]
   @optional_fields []
-  
+
   @doc false
   def changeset(vendor, attrs) do
     vendor
