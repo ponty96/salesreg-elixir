@@ -156,9 +156,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   @desc "The selected company category"
   enum :category do
-    value :product_base, as: "product base", description: "Product bases"
+    value :product, as: "product", description: "Product"
     value :service, as: "service", description: "Service"
-    value :both, as: "both", description: "Both"
+    value :product_service, as: "product_service", description: "Product and Service"
   end
 
   @desc "UUID is a scalar macro that checks if id is a valid uuid"
