@@ -244,8 +244,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:type, non_null(:string))
   end
 
-
-
   input_object :product_input do
     field(:description, :string)
     field(:featured_image, :string)

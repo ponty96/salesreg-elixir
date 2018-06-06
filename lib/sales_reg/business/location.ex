@@ -22,7 +22,7 @@ defmodule SalesReg.Business.Location do
 
   @required_fields [:street1, :city, :state, :country, :type]
   @fields [:street2, :lat, :long]
-  
+
   @doc false
   def changeset(location, attrs) do
     location
