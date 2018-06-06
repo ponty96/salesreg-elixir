@@ -113,6 +113,22 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Vendor object type
+  """
+  object :vendor do
+    field(:id, :uuid)
+    field(:email, :string)
+    field(:fax, :string)
+    field(:city, :string)
+    field(:state, :string)
+    field(:country, :string)
+    field(:currency, :string)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -124,7 +140,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   union :mutated_data do
     description("A mutated data")
 
-    types([:user, :authorization, :company, :employee, :branch, :product, :service])
+    types([:user, :authorization, :company, :employee, :branch, :product, :service, :vendor])
 
     resolve_type(fn
       %User{}, _ -> :user
@@ -133,6 +149,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Branch{}, _ -> :branch
       %Product{}, _ -> :product
       %Service{}, _ -> :service
+      %Vendor{}, _ -> :vendor
       %{user: %User{}}, _ -> :authorization
     end)
   end
@@ -229,6 +246,18 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:description, :string)
     field(:name, non_null(:string))
     field(:price, :string)
+
+    field(:company_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
+  end
+
+  input_object :vendor_input do
+    field(:email, non_null(:string))
+    field(:fax, non_null(:string))
+    field(:city, non_null(:string))
+    field(:state, non_null(:string))
+    field(:country, non_null(:string))
+    field(:currency, non_null(:string))
 
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
