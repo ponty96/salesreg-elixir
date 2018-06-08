@@ -5,14 +5,11 @@ defmodule SalesReg.Business.Contact do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   alias SalesReg.Business.Company
+  alias SalesReg.Repo
 
   schema "contacts" do
     field(:image, :string)
     field(:customer_name, :string)
-    field(:phone1, :string)
-    field(:phone2, :string)
-    field(:residential_add, :string)
-    field(:office_add, :string)
     field(:email, :string)
     field(:fax, :string)
     field(:city, :string)
@@ -21,25 +18,33 @@ defmodule SalesReg.Business.Contact do
 
     belongs_to(:company, Company)
     belongs_to(:user, SalesReg.Accounts.User)
+    has_one(:residential_add, SalesReg.Business.Location, foreign_key: :residential_add_id, on_replace: :delete)
+    has_one(:office_add, SalesReg.Business.Location, foreign_key: :office_add_id, on_replace: :delete)
+    has_many(:phones, SalesReg.Business.Phone, on_replace: :delete)
 
     timestamps()
   end
 
   @required_fields [
     :customer_name,
-    :office_add,
     :email,
-    :residential_add,
     :fax,
+    :city,
+    :state,
+    :country,
     :company_id,
     :user_id
   ]
-  @optional_fields [:image, :phone1, :phone2, :city, :state, :country]
+  @optional_fields [:image]
 
   @doc false
-  def changeset(company, attrs) do
-    company
+  def changeset(contact, attrs) do
+    contact
+    |> Repo.preload([:residential_add, :office_add, :phones])
     |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast_assoc(:residential_add)
+    |> cast_assoc(:office_add)
+    |> cast_assoc(:phones)
     |> validate_required(@required_fields)
     |> validate_format(:email, ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/)
     |> assoc_constraint(:company)

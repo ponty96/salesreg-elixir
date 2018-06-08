@@ -119,18 +119,26 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:id, :uuid)
     field(:image, :string)
     field(:customer_name, :string)
-    field(:phone1, :string)
-    field(:phone2, :string)
-    field(:residential_add, :string)
-    field(:office_add, :string)
     field(:email, :string)
     field(:fax, :string)
     field(:city, :string)
     field(:state, :string)
     field(:country, :string)
 
+    field(:residential_add, :location, resolve: dataloader(SalesReg.Business, :residential_add))
+    field(:office_add, :location, resolve: dataloader(SalesReg.Business, :office_add))
+    field(:phones, list_of(:phone), resolve: dataloader(SalesReg.Business, :phones))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
+  end
+
+  @desc """
+    Phone object type
+  """
+  object :phone do
+    field(:id, :uuid)
+    field(:number, :string)
+    field(:type, :string)
   end
 
   @desc """
@@ -145,7 +153,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   union :mutated_data do
     description("A mutated data")
 
-    types([:user, :authorization, :company, :employee, :branch, :product, :service, :contact])
+    types([:user, :authorization, :company, :employee, :branch, :product, :service, :contact, :phone, :location])
 
     resolve_type(fn
       %User{}, _ -> :user
@@ -155,6 +163,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Product{}, _ -> :product
       %Service{}, _ -> :service
       %Contact{}, _ -> :contact
+      %Phone{}, _ -> :phone
+      %Location{}, _ -> :location
       %{user: %User{}}, _ -> :authorization
     end)
   end
@@ -234,6 +244,10 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:street2, :string)
   end
 
+  input_object :phone_input do
+    field(:number, non_null(:string))
+  end
+
   input_object :product_input do
     field(:description, :string)
     field(:featured_image, :string)
@@ -259,10 +273,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :contact_input do
     field(:image, :string)
     field(:customer_name, non_null(:string))
-    field(:phone1, :string)
-    field(:phone2, :string)
-    field(:residential_add, non_null(:string))
-    field(:office_add, non_null(:string))
+    field(:phones, non_null(list_of(:phone_input)))
+    field(:residential_add, non_null(:location_input))
+    field(:office_add, non_null(:location_input))
     field(:email, non_null(:string))
     field(:fax, :string)
     field(:city, :string)
@@ -271,5 +284,41 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
+  end
+
+  #########################################################
+  # These are used only at the point of updating the
+  # ID has to be supplied except for parent input objects
+  #########################################################
+  input_object :update_contact_input do
+    field(:image, :string)
+    field(:customer_name, non_null(:string))
+    field(:phones, non_null(list_of(:update_phone_input)))
+    field(:residential_add, non_null(:update_location_input))
+    field(:office_add, non_null(:update_location_input))
+    field(:email, non_null(:string))
+    field(:fax, :string)
+    field(:city, :string)
+    field(:state, :string)
+    field(:country, :string)
+
+    field(:company_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
+  end
+
+  input_object :update_location_input do
+    field(:id, non_null(:uuid))
+    field(:city, non_null(:string))
+    field(:country, non_null(:string))
+    field(:lat, :string)
+    field(:long, :string)
+    field(:state, non_null(:string))
+    field(:street1, non_null(:string))
+    field(:street2, :string)
+  end
+
+  input_object :update_phone_input do
+    field(:id, non_null(:uuid))
+    field(:number, non_null(:string))
   end
 end

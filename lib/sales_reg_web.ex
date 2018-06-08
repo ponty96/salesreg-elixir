@@ -80,8 +80,9 @@ defmodule SalesRegWeb do
         Business.Company,
         Business.Employee,
         Business.Branch,
-        Business.Location,
         Business.Contact,
+        Business.Location,
+        Business.Phone,
         Store,
         Store.Product,
         Store.Service
