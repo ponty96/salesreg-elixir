@@ -18,8 +18,21 @@ defmodule SalesReg.Business.Contact do
 
     belongs_to(:company, Company)
     belongs_to(:user, SalesReg.Accounts.User)
-    has_one(:residential_add, SalesReg.Business.Location, foreign_key: :residential_add_id, on_replace: :delete)
-    has_one(:office_add, SalesReg.Business.Location, foreign_key: :office_add_id, on_replace: :delete)
+
+    has_one(
+      :residential_add,
+      SalesReg.Business.Location,
+      foreign_key: :residential_add_id,
+      on_replace: :delete
+    )
+
+    has_one(
+      :office_add,
+      SalesReg.Business.Location,
+      foreign_key: :office_add_id,
+      on_replace: :delete
+    )
+
     has_many(:phones, SalesReg.Business.Phone, on_replace: :delete)
 
     timestamps()

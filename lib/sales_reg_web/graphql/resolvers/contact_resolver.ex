@@ -2,7 +2,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ContactResolver do
   use SalesRegWeb, :context
 
   @phone_types ["home", "work", "mobile"]
-  
+
   def add_contact(%{contact: %{phones: phones} = params}, _res) do
     params
     |> add_phones_type(phones)
@@ -10,9 +10,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ContactResolver do
   end
 
   def update_contact(%{contact: %{phones: phones} = params, contact_id: contact_id}, _res) do
-    update_params = params
-      |> add_phones_type(phones) 
-    
+    update_params =
+      params
+      |> add_phones_type(phones)
+
     Business.get_contact(contact_id)
     |> Business.update_contact(update_params)
   end
@@ -27,10 +28,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ContactResolver do
   end
 
   defp add_phones_type(params, phones) do
-    phones = phones
-      |> Enum.map(fn(map) -> 
-            randomize_type(map) 
-          end)
+    phones =
+      phones
+      |> Enum.map(fn map ->
+        randomize_type(map)
+      end)
 
     %{params | phones: phones}
   end
@@ -40,4 +42,4 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ContactResolver do
 
     add_type
   end
- end
+end

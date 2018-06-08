@@ -153,7 +153,18 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   union :mutated_data do
     description("A mutated data")
 
-    types([:user, :authorization, :company, :employee, :branch, :product, :service, :contact, :phone, :location])
+    types([
+      :user,
+      :authorization,
+      :company,
+      :employee,
+      :branch,
+      :product,
+      :service,
+      :contact,
+      :phone,
+      :location
+    ])
 
     resolve_type(fn
       %User{}, _ -> :user
