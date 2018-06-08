@@ -13,6 +13,8 @@ defmodule SalesReg.Business.Location do
     field(:street1, :string)
     field(:street2, :string)
     belongs_to(:branch, SalesReg.Business.Branch)
+    belongs_to(:residential, SalesReg.Business.Contact, foreign_key: :residential_add_id)
+    belongs_to(:office, SalesReg.Business.Contact, foreign_key: :office_add_id)
 
     timestamps()
   end
@@ -25,5 +27,7 @@ defmodule SalesReg.Business.Location do
     |> cast(attrs, @required_fields ++ @fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:branch)
+    |> assoc_constraint(:residential)
+    |> assoc_constraint(:office)
   end
 end

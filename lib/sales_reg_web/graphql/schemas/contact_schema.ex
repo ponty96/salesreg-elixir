@@ -19,7 +19,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.ContactSchema do
       mutation to update contact
     """
     field :update_contact, :mutation_response do
-      arg(:contact, non_null(:contact_input))
+      arg(:contact, non_null(:update_contact_input))
       arg(:contact_id, non_null(:uuid))
 
       resolve(&ContactResolver.update_contact/2)
