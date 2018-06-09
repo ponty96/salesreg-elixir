@@ -2,12 +2,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.VendorResolver do
   use SalesRegWeb, :context
 
   def add_vendor(%{vendor: params}, _res) do
-    with {:ok, vendor} <- Business.add_vendor(params) do
-      {:ok, vendor}
-    else
-      {:error, changeset} ->
-        {:error, changeset}
-    end
+    Business.add_vendor(params)
   end
 
   def update_vendor(%{vendor: params, vendor_id: vendor_id}, _res) do
