@@ -83,6 +83,7 @@ defmodule SalesRegWeb do
         Business.Contact,
         Business.Location,
         Business.Phone,
+        Business.Vendor,
         Store,
         Store.Product,
         Store.Service
