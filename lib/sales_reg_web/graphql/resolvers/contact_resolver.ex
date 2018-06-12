@@ -19,7 +19,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ContactResolver do
   end
 
   def list_company_contacts(%{company_id: company_id}, _res) do
-    another = Business.list_company_contacts(company_id)
+    Business.list_company_contacts(company_id)
   end
 
   def delete_contact(%{contact_id: contact_id}, _res) do
