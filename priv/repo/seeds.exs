@@ -9,14 +9,28 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
-
-alias SalesReg.Seed
+use SalesRegWeb, :context
 
 {:ok, user} = Seed.create_user()
 {:ok, company} = Seed.create_company(user.id)
 
+Enum.map(1..20, fn(_index) -> 
+	Seed.add_product(user.id, company.id)
+end)
+
+Enum.map(1..20, fn(_index) ->
+	Seed.add_service(user.id, company.id)
+end)
+
+Enum.map(1..30, fn(index) ->
+	Seed.add_contact(index, user.id, company.id)
+end)
+
+branch = Repo.all(Branch)
+		 |> Enum.random()
+
 Enum.map(1..30, fn(_index) ->
-	Seed.add_contact(user.id, company.id)
+	Seed.add_company_employee(branch.id, user.id, company.id)
 end)
 
 Enum.map(1..30, fn(_index) ->
@@ -26,11 +40,5 @@ end)
 
 
 
-# Enum.map(1..50, fn(_index) -> 
-# 	Seed.add_product(user.id, company.id)
-# end)
 
-# Enum.map(1..50, fn(_index) ->
-# 	Seed.add_service(user.id, company.id)
-# end)
 
