@@ -6,8 +6,8 @@ defmodule SalesReg.Business do
   alias Dataloader.Ecto, as: DataloaderEcto
 
   use SalesReg.Context, [
-    Vendor, 
-    Location, 
+    Vendor,
+    Location,
     Contact
   ]
 
