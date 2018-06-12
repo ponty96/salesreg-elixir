@@ -84,7 +84,7 @@ defmodule SalesReg.Business do
   # COMPANY EMPLOYEE
   #
   def add_company_employee(company_id, employee_params) do
-    employee_params = Map.put(employee_params, :company_id, company_id)
+    employee_params = Map.put(employee_params, :employer_id, company_id)
 
     %Employee{}
     |> Employee.changeset(employee_params)

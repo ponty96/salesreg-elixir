@@ -40,11 +40,21 @@ defmodule SalesReg.Seed do
 		Business.create_company(user_id, company_params)
 	end
 
+	def add_company_employee(branch_id, user_id, company_id) do
+		employee_params = %{
+			"person_id": "#{user_id}",
+			"branch_id": "#{branch_id}"
+		}
+
+		Business.add_company_employee(company_id, employee_params)
+	end
+
+
 	def add_product(user_id, company_id) do
 		product_params = %{
 			"description" => "Our product is #{CommerceEn.product_name()}",
-			"featured_image" => Avatar.image_url(),
-			"name" => CommerceEn.product_name(),
+			"featured_image" => "#{Avatar.image_url()}",
+			"name" => "#{CommerceEn.product_name()}",
 			"pack_quantity" => "#{Enum.random(5..100)}",
 			"price_per_pack" => "##{Enum.random(3000..100_000)}",
 			"selling_price" => "##{Commerce.price()}",
@@ -68,18 +78,20 @@ defmodule SalesReg.Seed do
 		Store.add_service(service_params)
 	end
 
-	def add_contact(user_id, company_id) do
+	def add_contact(index, user_id, company_id) do
 		contact_params = %{
-			"image" => Avatar.image_url(),
-			"customer_name" => NameEn.name(),
-			"phones" => gen_phone_list(),
+			"image" => "#{Avatar.image_url()}",
+			"customer_name" => "#{NameEn.name()}",
+			"phones" => Enum.map(1..2, fn(_index) ->
+										gen_phone_params(index)
+									end),
 			"residential_add" => gen_location_params(),
 			"office_add" => gen_location_params(),
-			"email" => Internet.free_email(),
+			"email" => "#{Internet.free_email()}",
 			"fax" => "+234",
-			"city" => Address.city(),
-			"state" => Address.state(),
-			"country" => Address.country(),
+			"city" => "#{Address.city()}",
+			"state" => "#{Address.state()}",
+			"country" => "#{Address.country()}",
 			"user_id" => "#{user_id}",
 			"company_id" => "#{company_id}"
 		}
@@ -89,12 +101,12 @@ defmodule SalesReg.Seed do
 
 	def add_vendor(user_id, company_id) do
 		vendor_params = %{
-			"email" => Internet.free_email(),
+			"email" => "#{Internet.free_email()}",
 			"fax" => "+234",
-			"city" => Address.city(),
-			"state" => Address.state(),
-			"country" => Address.country(),
-			"currency" => Enum.random(@currency),
+			"city" => "#{Address.city()}",
+			"state" => "#{Address.state()}",
+			"country" => "#{Address.country()}",
+			"currency" => "#{Enum.random(@currency)}",
 			"locations" => Enum.map(1..5, fn(_index) ->
 												gen_location_params()
 										 end),
@@ -107,40 +119,25 @@ defmodule SalesReg.Seed do
 	
 	defp gen_location_params() do
 		%{
-			"city" => Address.city(),
-			"country" => Address.country(),
-			"state" => Address.state(),
-			"lat" => Address.latitude(),
-			"long" => Address.longitude(),
-			"street1" => Address.street_address(),
-			"street2" => Address.street_address(),
+			"city" => "#{Address.city()}",
+			"country" => "#{Address.country()}",
+			"state" => "#{Address.state()}",
+			"lat" => "#{Address.latitude()}",
+			"long" => "#{Address.longitude()}",
+			"street1" => "#{Address.street_address()}",
+			"street2" => "#{Address.street_address()}",
+			"type" => Enum.random(@location_types)
 		}
 	end
 
-	defp gen_phone_list() do
-		entry = %{
-			"number" => EnGb.mobile_number(),
+	defp gen_phone_params(index) do
+		%{
+			"number" => "#{EnGb.mobile_number()}#{index}",
 			"type" => Enum.random(@phone_types)
 		}
-
-		Enum.map(1..2, fn(_index) ->
-			entry
-		end)
 	end
 
 	defp dob() do
 		"#{Enum.random(1..31)}-#{Enum.random(1..12)}-#{Enum.random(1960..2000)}"
-	end
-
-	defp gender() do
-		Enum.random(["male", "female", "other"])
-	end
-
-	defp img_ext() do
-		File.file_extension(:image)
-	end
-
-	defp prod_name() do
-		CommerceEn.product_name()
 	end
 end
