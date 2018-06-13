@@ -5,7 +5,11 @@ defmodule SalesReg.Business do
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
 
-  use SalesReg.Context, [Vendor, Location]
+  use SalesReg.Context, [
+    Vendor,
+    Location,
+    Contact
+  ]
 
   def create_company(user_id, company_params) do
     company_params = Map.put(company_params, :owner_id, user_id)
@@ -80,7 +84,7 @@ defmodule SalesReg.Business do
   # COMPANY EMPLOYEE
   #
   def add_company_employee(company_id, employee_params) do
-    employee_params = Map.put(employee_params, :company_id, company_id)
+    employee_params = Map.put(employee_params, :employer_id, company_id)
 
     %Employee{}
     |> Employee.changeset(employee_params)
