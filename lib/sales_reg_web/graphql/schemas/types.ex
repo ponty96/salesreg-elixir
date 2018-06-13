@@ -126,13 +126,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:city, :string)
     field(:state, :string)
     field(:country, :string)
-    
+
     field(:residential_add, :location, resolve: dataloader(SalesReg.Business, :residential_add))
     field(:office_add, :location, resolve: dataloader(SalesReg.Business, :office_add))
     field(:phones, list_of(:phone), resolve: dataloader(SalesReg.Business, :phones))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
-   end
+  end
 
   @desc """
     Vendor object type
@@ -171,7 +171,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   union :mutated_data do
     description("A mutated data")
-
 
     types([
       :user,
@@ -220,9 +219,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   @desc "The selected company category"
   enum :category do
-    value :product, as: "product", description: "Product"
-    value :service, as: "service", description: "Service"
-    value :product_service, as: "product_service", description: "Product and Service"
+    value(:product, as: "product", description: "Product")
+    value(:service, as: "service", description: "Service")
+    value(:product_service, as: "product_service", description: "Product and Service")
   end
 
   @desc "UUID is a scalar macro that checks if id is a valid uuid"
@@ -323,7 +322,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:city, :string)
     field(:state, :string)
     field(:country, :string)
-    
+
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
   end
