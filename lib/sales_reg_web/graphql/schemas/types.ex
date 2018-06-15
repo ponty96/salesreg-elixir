@@ -161,6 +161,34 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Purchase Order object type
+  """
+  object :purchase do
+    field(:id, :uuid)
+    field(:date, :string)
+    field(:payment_method, :string)
+    field(:purchasing_agent, :string)
+    field(:status, :string)
+    field(:amount, :string)
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
+
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+    field(:vendor, :vendor, resolve: dataloader(SalesReg.Business, :vendor))
+    field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :item))
+  end
+
+  @desc """
+    Item object type
+  """
+  object :item do
+    field(:id, :uuid)
+    field(:name, :string)
+    field(:quantity, :string)
+    field(:unit_price, :string)
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -183,7 +211,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :vendor,
       :contact,
       :phone,
-      :location
+      :location,
+      :purchase,
+      :item
     ])
 
     resolve_type(fn
@@ -197,6 +227,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Phone{}, _ -> :phone
       %Location{}, _ -> :location
       %Vendor{}, _ -> :vendor
+      %Purchase{}, _ -> :purchase
+      %Item{}, _ -> :item
       %{user: %User{}}, _ -> :authorization
     end)
   end
@@ -338,6 +370,23 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
+  end
+
+  input_object :purchase_input do
+    field(:date, non_null(:string))
+    field(:payment_method, non_null(:string))
+    field(:purchasing_agent, non_null(:string))
+    field(:status, non_null(:string))
+    field(:items, non_null(list_of(:item_input)))
+    
+    field(:user_id, non_null(:uuid))
+    field(:vendor_id, non_null(:uuid))
+  end
+
+  input_object :item_input do
+    field(:name, non_null(:string))
+    field(:quantity, non_null(:float))
+    field(:unit_price, non_null(:float))
   end
 
   #########################################################

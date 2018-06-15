@@ -87,7 +87,10 @@ defmodule SalesRegWeb do
         Business.Vendor,
         Store,
         Store.Product,
-        Store.Service
+        Store.Service,
+        Order,
+        Order.Purchase,
+        Order.Item,
       }
     end
   end
