@@ -6,8 +6,18 @@ defmodule SalesReg.OrderTest do
   describe "purchases" do
     alias SalesReg.Order.Purchase
 
-    @valid_attrs %{data: "some data", payment_method: "some payment_method", purchasing_agent: "some purchasing_agent", status: "some status"}
-    @update_attrs %{data: "some updated data", payment_method: "some updated payment_method", purchasing_agent: "some updated purchasing_agent", status: "some updated status"}
+    @valid_attrs %{
+      data: "some data",
+      payment_method: "some payment_method",
+      purchasing_agent: "some purchasing_agent",
+      status: "some status"
+    }
+    @update_attrs %{
+      data: "some updated data",
+      payment_method: "some updated payment_method",
+      purchasing_agent: "some updated purchasing_agent",
+      status: "some updated status"
+    }
     @invalid_attrs %{data: nil, payment_method: nil, purchasing_agent: nil, status: nil}
 
     def purchase_fixture(attrs \\ %{}) do
