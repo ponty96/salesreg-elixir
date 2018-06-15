@@ -378,7 +378,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:purchasing_agent, non_null(:string))
     field(:status, non_null(:string))
     field(:items, non_null(list_of(:item_input)))
-    
+
     field(:user_id, non_null(:uuid))
     field(:vendor_id, non_null(:uuid))
   end

@@ -90,7 +90,7 @@ defmodule SalesRegWeb do
         Store.Service,
         Order,
         Order.Purchase,
-        Order.Item,
+        Order.Item
       }
     end
   end

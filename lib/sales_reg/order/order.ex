@@ -17,7 +17,7 @@ defmodule SalesReg.Order do
   end
 
   def list_vendor_purchases(vendor_id) do
-    Repo.all(from p in Purchase, where: p.vendor_id == ^vendor_id)
+    Repo.all(from(p in Purchase, where: p.vendor_id == ^vendor_id))
   end
 
   def create_purchase(attrs \\ %{}) do
