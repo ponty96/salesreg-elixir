@@ -21,7 +21,14 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
 	def list_vendor_purchases(%{vendor_id: vendor_id}, _res) do
 		purchases = Order.list_vendor_purchases(vendor_id)
 		{:ok, purchases}
-  end
+	end
+	
+	def cancel_purchase_order(%{purchase_id: id}, _res) do
+		purchase = Order.get_purchase(id)
+		attrs = %{status: "cancelled"}
+
+		Order.update_purchase(purchase, attrs)
+	end
 
 	defp calc_purchase_cost(%{items: items}) do
     total_cost = items

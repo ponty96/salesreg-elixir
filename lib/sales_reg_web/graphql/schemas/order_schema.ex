@@ -25,6 +25,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
       resolve(&OrderResolver.update_purchase/2)
     end
+
+    @desc """
+    cancel a particular purchase order
+    """
+    field :cancel_purchase_order, :mutation_response do
+      arg(:purchase_id, non_null(:uuid))
+
+      resolve(&OrderResolver.cancel_purchase_order/2)
+    end
   end
 
   ### QUERIES
