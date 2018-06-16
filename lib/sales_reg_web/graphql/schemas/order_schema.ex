@@ -46,5 +46,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
       resolve(&OrderResolver.list_vendor_purchases/2)
     end
+
+    @desc """
+      query for all purchases of a company
+    """
+    field :list_company_purchases, list_of(:purchase) do
+      arg(:company_id, non_null(:uuid))
+
+      resolve(&OrderResolver.list_company_purchases/2)
+    end
   end
 end

@@ -21,6 +21,7 @@ defmodule SalesReg.Business.Company do
     has_many(:branches, Branch)
     has_many(:contacts, Contact)
     has_many(:vendors, Vendor)
+    has_many(:purchases, SalesReg.Order.Purchase)
 
     many_to_many(:users, SalesReg.Accounts.User, join_through: Employee)
     timestamps()

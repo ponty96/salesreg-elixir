@@ -15,6 +15,7 @@ defmodule SalesReg.Order.Purchase do
     has_many(:items, SalesReg.Order.Item, on_replace: :delete)
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:vendor, SalesReg.Business.Vendor)
+    belongs_to(:company, SalesReg.Business.Company)
 
     timestamps()
   end
@@ -26,7 +27,8 @@ defmodule SalesReg.Order.Purchase do
     :status,
     :amount,
     :user_id,
-    :vendor_id
+    :vendor_id,
+    :company_id
   ]
 
   @optional_fields []
@@ -38,5 +40,17 @@ defmodule SalesReg.Order.Purchase do
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> cast_assoc(:items)
+    |> assoc_constraint(:company)
+    |> validate_payment_method()
+  end
+
+  defp validate_payment_method(changeset) do
+    case get_field(changeset, :payment_method) do
+      "POS" -> changeset
+      "cheque" -> changeset
+      "direct transfer" -> changeset
+      "cash" -> changeset
+      _ -> add_error(changeset, :payment_method, "Invalid payment method")
+    end
   end
 end

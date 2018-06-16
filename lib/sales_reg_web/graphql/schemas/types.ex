@@ -176,6 +176,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
     field(:vendor, :vendor, resolve: dataloader(SalesReg.Business, :vendor))
     field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :item))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
 
   @desc """
@@ -254,6 +255,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     value(:product, as: "product", description: "Product")
     value(:service, as: "service", description: "Service")
     value(:product_service, as: "product_service", description: "Product and Service")
+  end
+
+  @desc "Payment method types" 
+  enum :payment_method do
+    value(:pos, as: "POS")
+    value(:cheque, as: "cheque")
+    value(:direct_transfer, as: "direct transfer")
+    value(:cash, as: "cash")
   end
 
   @desc "UUID is a scalar macro that checks if id is a valid uuid"
@@ -374,13 +383,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   input_object :purchase_input do
     field(:date, non_null(:string))
-    field(:payment_method, non_null(:string))
+    field(:payment_method, non_null(:payment_method))
     field(:purchasing_agent, non_null(:string))
     field(:status, non_null(:string))
     field(:items, non_null(list_of(:item_input)))
 
     field(:user_id, non_null(:uuid))
     field(:vendor_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
   end
 
   input_object :item_input do
