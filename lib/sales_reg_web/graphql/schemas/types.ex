@@ -257,7 +257,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     value(:product_service, as: "product_service", description: "Product and Service")
   end
 
-  @desc "Payment method types" 
+  @desc "Payment method types"
   enum :payment_method do
     value(:pos, as: "POS")
     value(:cheque, as: "cheque")
