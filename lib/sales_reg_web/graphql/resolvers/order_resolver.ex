@@ -34,6 +34,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     Order.update_purchase(purchase, attrs)
   end
 
+  def list_company_purchases(%{company_id: company_id}, _res) do
+    Order.list_company_purchases(company_id)
+  end
+
   defp calc_purchase_cost(%{items: items}) do
     total_cost =
       items
@@ -44,7 +48,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
         x + acc
       end)
 
-    Float.to_string(total_cost)
+    Float.to_string(total_cost, decimals: 2)
   end
 
   defp stringify_keys(%{items: items} = params) do
