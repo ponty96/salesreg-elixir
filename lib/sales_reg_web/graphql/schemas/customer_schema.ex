@@ -12,7 +12,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.CustomerSchema do
     field :add_customer, :mutation_response do
       arg(:customer, non_null(:customer_input))
 
-      resolve(&customerResolver.add_customer/2)
+      resolve(&CustomerResolver.add_customer/2)
     end
 
     @desc """
