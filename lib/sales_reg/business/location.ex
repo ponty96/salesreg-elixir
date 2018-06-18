@@ -15,8 +15,8 @@ defmodule SalesReg.Business.Location do
     field(:type, :string)
 
     belongs_to(:branch, SalesReg.Business.Branch)
-    belongs_to(:residential, SalesReg.Business.Contact, foreign_key: :residential_add_id)
-    belongs_to(:office, SalesReg.Business.Contact, foreign_key: :office_add_id)
+    belongs_to(:residential, SalesReg.Business.Customer, foreign_key: :residential_add_id)
+    belongs_to(:office, SalesReg.Business.Customer, foreign_key: :office_add_id)
     belongs_to(:vendor, SalesReg.Business.Vendor)
 
     timestamps()
