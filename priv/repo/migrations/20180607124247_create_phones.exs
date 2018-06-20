@@ -7,10 +7,10 @@ defmodule SalesReg.Repo.Migrations.CreatePhones do
       add :type, :string
       add :number, :string
 
-      add :contact_id, references(:contacts, on_delete: :nothing, type: :binary_id)
+      add :customer_id, references(:customers, on_delete: :nothing, type: :binary_id)
 
       timestamps()
     end
-    create index(:phones, [:contact_id])
+    create index(:phones, [:customer_id])
   end
 end

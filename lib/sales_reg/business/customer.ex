@@ -1,4 +1,4 @@
-defmodule SalesReg.Business.Contact do
+defmodule SalesReg.Business.Customer do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -7,7 +7,7 @@ defmodule SalesReg.Business.Contact do
   alias SalesReg.Business.Company
   alias SalesReg.Repo
 
-  schema "contacts" do
+  schema "customers" do
     field(:image, :string)
     field(:customer_name, :string)
     field(:email, :string)
@@ -51,8 +51,8 @@ defmodule SalesReg.Business.Contact do
   @optional_fields [:image]
 
   @doc false
-  def changeset(contact, attrs) do
-    contact
+  def changeset(customer, attrs) do
+    customer
     |> Repo.preload([:residential_add, :office_add, :phones])
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> cast_assoc(:residential_add)

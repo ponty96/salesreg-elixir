@@ -115,9 +115,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
-    Contact object type
+    Customer object type
   """
-  object :contact do
+  object :customer do
     field(:id, :uuid)
     field(:image, :string)
     field(:customer_name, :string)
@@ -181,7 +181,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :product,
       :service,
       :vendor,
-      :contact,
+      :customer,
       :phone,
       :location
     ])
@@ -193,7 +193,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Branch{}, _ -> :branch
       %Product{}, _ -> :product
       %Service{}, _ -> :service
-      %Contact{}, _ -> :contact
+      %Customer{}, _ -> :customer
       %Phone{}, _ -> :phone
       %Location{}, _ -> :location
       %Vendor{}, _ -> :vendor
@@ -311,7 +311,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:user_id, non_null(:uuid))
   end
 
-  input_object :contact_input do
+  input_object :customer_input do
     field(:image, :string)
     field(:customer_name, non_null(:string))
     field(:phones, non_null(list_of(:phone_input)))
@@ -344,7 +344,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   # These are used only at the point of updating the
   # ID has to be supplied except for parent input objects
   #########################################################
-  input_object :update_contact_input do
+  input_object :update_customer_input do
     field(:image, :string)
     field(:customer_name, non_null(:string))
     field(:phones, non_null(list_of(:update_phone_input)))

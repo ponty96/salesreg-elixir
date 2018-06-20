@@ -80,8 +80,8 @@ defmodule SalesReg.Seed do
     Store.add_service(service_params)
   end
 
-  def add_contact(index, user_id, company_id) do
-    contact_params = %{
+  def add_customer(index, user_id, company_id) do
+    customer_params = %{
       "image" => "#{Avatar.image_url()}",
       "customer_name" => "#{NameEn.name()}",
       "phones" =>
@@ -99,7 +99,7 @@ defmodule SalesReg.Seed do
       "company_id" => "#{company_id}"
     }
 
-    Business.add_contact(contact_params)
+    Business.add_customer(customer_params)
   end
 
   def add_vendor(user_id, company_id) do
