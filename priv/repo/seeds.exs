@@ -23,7 +23,7 @@ Enum.map(1..20, fn(_index) ->
 end)
 
 Enum.map(1..30, fn(index) ->
-	Seed.add_contact(index, user.id, company.id)
+	Seed.add_customer(index, user.id, company.id)
 end)
 
 branch = Repo.all(Branch)

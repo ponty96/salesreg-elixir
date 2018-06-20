@@ -1,8 +1,8 @@
-defmodule SalesReg.Repo.Migrations.CreateContact do
+defmodule SalesReg.Repo.Migrations.CreateCustomer do
   use Ecto.Migration
 
   def change do
-    create table(:contacts, primary_key: false) do
+    create table(:customers, primary_key: false) do
       add :id, :binary_id, primary_key: true
       add :image, :string
       add :customer_name, :string
@@ -22,8 +22,8 @@ defmodule SalesReg.Repo.Migrations.CreateContact do
       timestamps()
     end
 
-    create index(:contacts, [:user_id])
-    create index(:contacts, [:company_id])
+    create index(:customers, [:user_id])
+    create index(:customers, [:company_id])
   end
 
   
