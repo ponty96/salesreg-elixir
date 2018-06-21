@@ -175,7 +175,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
     field(:vendor, :vendor, resolve: dataloader(SalesReg.Business, :vendor))
-    field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :item))
+    field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :items))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
 
@@ -187,6 +187,25 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:name, :string)
     field(:quantity, :string)
     field(:unit_price, :string)
+  end
+
+  @desc """
+    Sale object type
+  """
+  object :sale do
+    field(:id, :uuid)
+    field(:status, :string)
+    field(:payment_method, :string)
+    field(:tax, :string)
+    field(:amount, :string)
+    field(:type, :string)
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
+
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+    field(:customer, :customer, resolve: dataloader(SalesReg.Business, :customer))
+    field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :items))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
 
   @desc """
@@ -214,7 +233,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :phone,
       :location,
       :purchase,
-      :item
+      :item,
+      :sale
     ])
 
     resolve_type(fn
@@ -230,6 +250,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Vendor{}, _ -> :vendor
       %Purchase{}, _ -> :purchase
       %Item{}, _ -> :item
+      %Sale{}, _ -> :sale
       %{user: %User{}}, _ -> :authorization
     end)
   end
@@ -263,6 +284,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     value(:cheque, as: "cheque")
     value(:direct_transfer, as: "direct transfer")
     value(:cash, as: "cash")
+  end
+
+  @desc "Sale order types"
+  enum :sale_order_type do
+    value(:product, as: "product")
+    value(:service, as: "service")
   end
 
   @desc "UUID is a scalar macro that checks if id is a valid uuid"
@@ -385,7 +412,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:date, non_null(:string))
     field(:payment_method, non_null(:payment_method))
     field(:purchasing_agent, non_null(:string))
-    field(:status, non_null(:string))
     field(:items, non_null(list_of(:item_input)))
 
     field(:user_id, non_null(:uuid))
@@ -397,6 +423,17 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:name, non_null(:string))
     field(:quantity, non_null(:float))
     field(:unit_price, non_null(:float))
+  end
+
+  input_object :sale_input do
+    field(:type, non_null(:sale_order_type))
+    field(:items, non_null(list_of(:item_input)))
+    field(:payment_method, non_null(:payment_method))
+    field(:tax, :string)
+
+    field(:user_id, non_null(:uuid))
+    field(:customer_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
   end
 
   #########################################################
