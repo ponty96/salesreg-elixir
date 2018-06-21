@@ -5,11 +5,11 @@ defmodule SalesReg.Order do
 
   import Ecto.Query, warn: false
   alias SalesReg.Repo
-
-  alias SalesReg.Order.Purchase
+  use SalesRegWeb, :context
 
   use SalesReg.Context, [
-    Purchase
+    Purchase,
+    Sale
   ]
 
   def list_purchases do
@@ -18,6 +18,10 @@ defmodule SalesReg.Order do
 
   def list_vendor_purchases(vendor_id) do
     Repo.all(from(p in Purchase, where: p.vendor_id == ^vendor_id))
+  end
+
+  def list_customer_sales(customer_id) do
+    Repo.all(from(s in Sale, where: s.customer_id == ^customer_id))
   end
 
   def create_purchase(attrs \\ %{}) do

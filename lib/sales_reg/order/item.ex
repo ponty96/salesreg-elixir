@@ -10,6 +10,7 @@ defmodule SalesReg.Order.Item do
     field(:unit_price, :string)
 
     belongs_to(:purchase, SalesReg.Order.Purchase)
+    belongs_to(:sale, SalesReg.Order.Sale)
 
     timestamps()
   end
@@ -22,6 +23,5 @@ defmodule SalesReg.Order.Item do
     item
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
-    |> assoc_constraint(:purchase)
   end
 end
