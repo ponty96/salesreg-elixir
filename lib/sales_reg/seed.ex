@@ -25,8 +25,8 @@ defmodule SalesReg.Seed do
       "first_name" => "Opeyemi",
       "gender" => "male",
       "last_name" => "Badmos",
-      "password" => "asdf",
-      "password_confirmation" => "asdf"
+      "password" => "asdfasdf",
+      "password_confirmation" => "asdfasdf"
     }
 
     Accounts.create_user(user_params)
