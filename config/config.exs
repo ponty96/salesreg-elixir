@@ -28,8 +28,10 @@ config :sales_reg, SalesRegWeb.TokenImpl,
 
 config :guardian, Guardian.DB,
   repo: SalesReg.Repo,
-  schema_name: "guardian_tokens", # default
-  sweep_interval: 60, # default: 60 minutes
+  # default
+  schema_name: "guardian_tokens",
+  # default: 60 minutes
+  sweep_interval: 60,
   ttl: {15, :days}
 
 # Import environment specific config. This must remain at the bottom

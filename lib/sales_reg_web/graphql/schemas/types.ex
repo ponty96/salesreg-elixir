@@ -183,7 +183,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :vendor,
       :contact,
       :phone,
-      :location,
+      :location
     ])
 
     resolve_type(fn
