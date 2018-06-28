@@ -15,9 +15,10 @@ defmodule SalesRegWeb.Authentication do
       %User{} ->
         if check_password(user, password) == true do
           {:ok, token, _} = TokenImpl.encode_and_sign(user, %{}, token_type: "access")
-          {:ok, {old_token, _old_claim}, {new_token, _new_claim}} = 
+
+          {:ok, {old_token, _old_claim}, {new_token, _new_claim}} =
             TokenImpl.exchange(token, "access", "refresh", ttl: {30, :days})
-          
+
           {:ok, %{user: user, access_token: old_token, refresh_token: new_token}}
         else
           {:error, [%{key: "email", message: "Email | Password Incorrect"}]}
@@ -37,6 +38,7 @@ defmodule SalesRegWeb.Authentication do
       {access_claims, refresh_claims} ->
         current_time = Guardian.timestamp()
         user = load_resource(access_claims)
+
         cond do
           current_time > access_claims["exp"] and current_time > refresh_claims["exp"] ->
             TokenImpl.revoke(access_token)
@@ -44,20 +46,22 @@ defmodule SalesRegWeb.Authentication do
             {:ok, %{user: user, message: "Logged out"}}
 
           current_time >= access_claims["exp"] and current_time < refresh_claims["exp"] ->
-            {:ok, token, _claim} = 
-              TokenImpl.encode_and_sign(user, %{}, token_type: "access")
-            {:ok, {old_token, _old_claim}, {new_token, _new_claim}} = 
+            {:ok, token, _claim} = TokenImpl.encode_and_sign(user, %{}, token_type: "access")
+
+            {:ok, {old_token, _old_claim}, {new_token, _new_claim}} =
               TokenImpl.exchange(token, "access", "refresh", ttl: {30, :days})
 
             {:ok, %{user: user, access_token: old_token, refresh_token: new_token}}
 
           current_time < access_claims["exp"] ->
             {:ok, %{user: user, access_token: access_token, refresh_token: refresh_token}}
-      
-          true -> 
+
+          true ->
             {:ok, %{user: user, message: "You're logged out"}}
         end
-      :not_found -> {:error, "Token does not exist"}
+
+      :not_found ->
+        {:error, "Token does not exist"}
     end
   end
 
@@ -66,19 +70,23 @@ defmodule SalesRegWeb.Authentication do
   # is deleted from the database - user is logged out. 
   def refresh_token(%{refresh_token: token}) do
     case decode_and_verify(token, "refresh") do
-      {:ok, claims} -> 
+      {:ok, claims} ->
         user = load_resource(claims)
         current_time = Guardian.timestamp()
+
         if current_time < claims["exp"] do
           {:ok, {old_token, _old_claims}, {new_token, _new_claims}} =
             TokenImpl.refresh(token, ttl: {30, :days})
-            TokenImpl.revoke(old_token)
+
+          TokenImpl.revoke(old_token)
           {:ok, %{user: user, refresh_token: new_token}}
         else
           TokenImpl.revoke(token)
           {:ok, %{user: user, message: "You're logged out"}}
         end
-      _ -> {:error, "Token does not exist"}
+
+      _ ->
+        {:error, "Token does not exist"}
     end
   end
 
@@ -88,8 +96,10 @@ defmodule SalesRegWeb.Authentication do
         case decode_and_verify(refresh_token, "refresh") do
           {:ok, refresh_claims} -> {access_claims, refresh_claims}
           _ -> :not_found
-        end 
-      _ -> :not_found
+        end
+
+      _ ->
+        :not_found
     end
   end
 
