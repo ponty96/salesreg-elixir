@@ -8,7 +8,7 @@ defmodule SalesReg.Business do
   use SalesReg.Context, [
     Vendor,
     Location,
-    Contact
+    Customer
   ]
 
   def create_company(user_id, company_params) do

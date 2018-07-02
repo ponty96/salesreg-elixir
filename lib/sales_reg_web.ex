@@ -81,13 +81,17 @@ defmodule SalesRegWeb do
         Business.Company,
         Business.Employee,
         Business.Branch,
-        Business.Contact,
+        Business.Customer,
         Business.Location,
         Business.Phone,
         Business.Vendor,
         Store,
         Store.Product,
-        Store.Service
+        Store.Service,
+        Order,
+        Order.Purchase,
+        Order.Item,
+        Order.Sale
       }
     end
   end

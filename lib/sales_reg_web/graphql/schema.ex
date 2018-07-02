@@ -14,15 +14,17 @@ defmodule SalesRegWeb.GraphQL.Schemas do
   import_types(__MODULE__.UserSchema)
   import_types(__MODULE__.CompanySchema)
   import_types(__MODULE__.StoreSchema)
-  import_types(__MODULE__.ContactSchema)
+  import_types(__MODULE__.CustomerSchema)
   import_types(__MODULE__.VendorSchema)
+  import_types(__MODULE__.OrderSchema)
 
   query do
     import_fields(:single_user)
     import_fields(:product_queries)
     import_fields(:service_queries)
-    import_fields(:contact_queries)
+    import_fields(:customer_queries)
     import_fields(:vendor_queries)
+    import_fields(:order_queries)
   end
 
   mutation do
@@ -30,8 +32,9 @@ defmodule SalesRegWeb.GraphQL.Schemas do
     import_fields(:authentication_mutations)
     import_fields(:product_mutations)
     import_fields(:service_mutations)
-    import_fields(:contact_mutations)
+    import_fields(:customer_mutations)
     import_fields(:vendor_mutations)
+    import_fields(:order_mutations)
   end
 
   def middleware(middleware, field, object) do
