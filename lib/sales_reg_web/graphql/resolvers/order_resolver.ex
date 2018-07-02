@@ -2,22 +2,12 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   use SalesRegWeb, :context
 
   def add_purchase(%{purchase: params}, _res) do
-    cost = calc_purchase_cost(params)
-
-    new_params =
-      Map.put_new(params, :amount, cost)
-      |> stringify_keys()
-
+    new_params = add_order_amount(params)
     Order.add_purchase(new_params)
   end
 
   def update_purchase(%{purchase: params, purchase_id: id}, _res) do
-    cost = calc_purchase_cost(params)
-
-    new_params =
-      Map.put_new(params, :amount, cost)
-      |> stringify_keys()
-
+    new_params = add_order_amount(params)
     Order.get_purchase(id)
     |> Order.update_purchase(new_params)
   end
@@ -38,7 +28,42 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     Order.list_company_purchases(company_id)
   end
 
-  defp calc_purchase_cost(%{items: items}) do
+  def add_sale(%{sale: params}, _res) do
+    new_params = add_order_amount(params)
+    Order.add_sale(new_params)
+  end
+
+  def update_sale(%{sale: params, sale_id: id}, _res) do
+    new_params = add_order_amount(params)
+    Order.get_sale(id)
+    |> Order.update_sale(new_params)
+  end
+
+  def list_customer_sales(%{customer_id: customer_id}, _res) do
+    sales = Order.list_customer_sales(customer_id)
+    {:ok, sales}
+  end
+
+  def list_company_sales(%{company_id: company_id}, _res) do
+    Order.list_company_sales(company_id)
+  end
+
+  def cancel_sale_order(%{sale_id: id}, _res) do
+    sale = Order.get_sale(id)
+    attrs = %{status: "cancelled"}
+
+    Order.update_sale(sale, attrs)
+  end
+
+  # Private functions
+  defp add_order_amount(params) do
+    cost = calc_order_cost(params)
+
+    Map.put_new(params, :amount, cost)
+    |> stringify_keys()
+  end
+
+  defp calc_order_cost(%{items: items}) do
     total_cost =
       items
       |> Enum.map(fn map ->

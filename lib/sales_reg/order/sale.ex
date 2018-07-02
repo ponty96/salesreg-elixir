@@ -1,48 +1,57 @@
-defmodule SalesReg.Order.Purchase do
+defmodule SalesReg.Order.Sale do
   use Ecto.Schema
   import Ecto.Changeset
   alias SalesReg.Repo
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "purchases" do
-    field(:date, :string)
-    field(:payment_method, :string)
-    field(:purchasing_agent, :string)
+  schema "sales" do
     field(:status, :string, default: "pending")
     field(:amount, :string)
+    field(:type, :string)
+    field(:payment_method, :string)
+    field(:tax, :string)
 
     has_many(:items, SalesReg.Order.Item, on_replace: :delete)
     belongs_to(:user, SalesReg.Accounts.User)
-    belongs_to(:vendor, SalesReg.Business.Vendor)
+    belongs_to(:customer, SalesReg.Business.Customer)
     belongs_to(:company, SalesReg.Business.Company)
 
     timestamps()
   end
 
   @required_fields [
-    :date,
-    :payment_method,
-    :purchasing_agent,
     :amount,
+    :type,
+    :payment_method,
+    :tax,
     :user_id,
-    :vendor_id,
+    :customer_id,
     :company_id
   ]
 
   @optional_fields [:status]
 
   @doc false
-  def changeset(purchase, attrs) do
-    purchase
+  def changeset(sale, attrs) do
+    sale
     |> Repo.preload([:items])
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> cast_assoc(:items)
     |> assoc_constraint(:company)
-    |> assoc_constraint(:vendor)
     |> assoc_constraint(:user)
+    |> assoc_constraint(:customer)
+    |> validate_type()
     |> validate_payment_method()
+  end
+
+  defp validate_type(changeset) do
+    case get_field(changeset, :type) do
+      "product" -> changeset
+      "service" -> changeset
+      _ -> add_error(changeset, :type, "Invalid sales order type")
+    end
   end
 
   defp validate_payment_method(changeset) do
