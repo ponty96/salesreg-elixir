@@ -115,9 +115,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
-    Contact object type
+    Customer object type
   """
-  object :contact do
+  object :customer do
     field(:id, :uuid)
     field(:image, :string)
     field(:customer_name, :string)
@@ -161,6 +161,54 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Purchase Order object type
+  """
+  object :purchase do
+    field(:id, :uuid)
+    field(:date, :string)
+    field(:payment_method, :string)
+    field(:purchasing_agent, :string)
+    field(:status, :string)
+    field(:amount, :string)
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
+
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+    field(:vendor, :vendor, resolve: dataloader(SalesReg.Business, :vendor))
+    field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :items))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+  end
+
+  @desc """
+    Item object type
+  """
+  object :item do
+    field(:id, :uuid)
+    field(:name, :string)
+    field(:quantity, :string)
+    field(:unit_price, :string)
+  end
+
+  @desc """
+    Sale object type
+  """
+  object :sale do
+    field(:id, :uuid)
+    field(:status, :string)
+    field(:payment_method, :string)
+    field(:tax, :string)
+    field(:amount, :string)
+    field(:type, :string)
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
+
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+    field(:customer, :customer, resolve: dataloader(SalesReg.Business, :customer))
+    field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :items))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -181,9 +229,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :product,
       :service,
       :vendor,
-      :contact,
+      :customer,
       :phone,
-      :location
+      :location,
+      :purchase,
+      :item,
+      :sale
     ])
 
     resolve_type(fn
@@ -193,10 +244,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Branch{}, _ -> :branch
       %Product{}, _ -> :product
       %Service{}, _ -> :service
-      %Contact{}, _ -> :contact
+      %Customer{}, _ -> :customer
       %Phone{}, _ -> :phone
       %Location{}, _ -> :location
       %Vendor{}, _ -> :vendor
+      %Purchase{}, _ -> :purchase
+      %Item{}, _ -> :item
+      %Sale{}, _ -> :sale
       %{user: %User{}}, _ -> :authorization
     end)
   end
@@ -224,6 +278,20 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     value(:product, as: "product", description: "Product")
     value(:service, as: "service", description: "Service")
     value(:product_service, as: "product_service", description: "Product and Service")
+  end
+
+  @desc "Payment method types"
+  enum :payment_method do
+    value(:pos, as: "POS")
+    value(:cheque, as: "cheque")
+    value(:direct_transfer, as: "direct transfer")
+    value(:cash, as: "cash")
+  end
+
+  @desc "Sale order types"
+  enum :sale_order_type do
+    value(:product, as: "product")
+    value(:service, as: "service")
   end
 
   @desc "UUID is a scalar macro that checks if id is a valid uuid"
@@ -313,7 +381,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:user_id, non_null(:uuid))
   end
 
-  input_object :contact_input do
+  input_object :customer_input do
     field(:image, :string)
     field(:customer_name, non_null(:string))
     field(:phones, non_null(list_of(:phone_input)))
@@ -342,11 +410,39 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:user_id, non_null(:uuid))
   end
 
+  input_object :purchase_input do
+    field(:date, non_null(:string))
+    field(:payment_method, non_null(:payment_method))
+    field(:purchasing_agent, non_null(:string))
+    field(:items, non_null(list_of(:item_input)))
+
+    field(:user_id, non_null(:uuid))
+    field(:vendor_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
+  end
+
+  input_object :item_input do
+    field(:name, non_null(:string))
+    field(:quantity, non_null(:float))
+    field(:unit_price, non_null(:float))
+  end
+
+  input_object :sale_input do
+    field(:type, non_null(:sale_order_type))
+    field(:items, non_null(list_of(:item_input)))
+    field(:payment_method, non_null(:payment_method))
+    field(:tax, :string)
+
+    field(:user_id, non_null(:uuid))
+    field(:customer_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
+  end
+
   #########################################################
   # These are used only at the point of updating the
   # ID has to be supplied except for parent input objects
   #########################################################
-  input_object :update_contact_input do
+  input_object :update_customer_input do
     field(:image, :string)
     field(:customer_name, non_null(:string))
     field(:phones, non_null(list_of(:update_phone_input)))

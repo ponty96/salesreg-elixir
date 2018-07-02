@@ -7,7 +7,7 @@ defmodule SalesReg.Business.Company do
   alias SalesReg.Business.{
     Branch,
     Employee,
-    Contact,
+    Customer,
     Vendor
   }
 
@@ -19,8 +19,9 @@ defmodule SalesReg.Business.Company do
 
     belongs_to(:owner, SalesReg.Accounts.User)
     has_many(:branches, Branch)
-    has_many(:contacts, Contact)
+    has_many(:customers, Customer)
     has_many(:vendors, Vendor)
+    has_many(:purchases, SalesReg.Order.Purchase)
 
     many_to_many(:users, SalesReg.Accounts.User, join_through: Employee)
     timestamps()
