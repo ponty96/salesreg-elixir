@@ -22,9 +22,17 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]
 
-config :sales_reg, SalesRegWeb.Guardian,
+config :sales_reg, SalesRegWeb.TokenImpl,
   issuer: "sales_reg",
   secret_key: "Q/pRXuJQoZblGk4AIOHhMX0AkzuUpBS91hQVlO06PqrtRd/iAobc3CdBkMPDVYgc"
+
+config :guardian, Guardian.DB,
+  repo: SalesReg.Repo,
+  # default
+  schema_name: "guardian_tokens",
+  # default: 60 minutes
+  sweep_interval: 60,
+  ttl: {15, :days}
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
