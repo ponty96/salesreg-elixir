@@ -261,7 +261,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   object :authorization do
-    field(:jwt, non_null(:string))
+    field(:access_token, :string)
+    field(:refresh_token, :string)
+    field(:message, :string)
     field(:user, non_null(:user))
   end
 

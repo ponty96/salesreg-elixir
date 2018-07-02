@@ -25,4 +25,12 @@ defmodule SalesRegWeb.GraphQL.Resolvers.UserResolver do
   def login_user(params, _resolution) do
     Authentication.login(params)
   end
+
+  def verify_tokens(params, _resolution) do
+    Authentication.verify_tokens(params)
+  end
+
+  def refresh_token(params, _resolution) do
+    Authentication.refresh_token(params)
+  end
 end

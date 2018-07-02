@@ -29,7 +29,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
 
   mutation do
     import_fields(:register_company)
-    import_fields(:login_user)
+    import_fields(:authentication_mutations)
     import_fields(:product_mutations)
     import_fields(:service_mutations)
     import_fields(:customer_mutations)

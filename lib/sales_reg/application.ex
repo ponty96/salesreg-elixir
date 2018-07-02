@@ -11,9 +11,10 @@ defmodule SalesReg.Application do
       # Start the Ecto repository
       supervisor(SalesReg.Repo, []),
       # Start the endpoint when the application starts
-      supervisor(SalesRegWeb.Endpoint, [])
+      supervisor(SalesRegWeb.Endpoint, []),
       # Start your own worker by calling: SalesReg.Worker.start_link(arg1, arg2, arg3)
       # worker(SalesReg.Worker, [arg1, arg2, arg3]),
+      worker(Guardian.DB.Token.SweeperServer, [])
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
