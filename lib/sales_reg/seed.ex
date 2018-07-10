@@ -104,35 +104,6 @@ defmodule SalesReg.Seed do
     Business.add_contact(contact_params)
   end
 
-  def add_vendor(index, user_id, company_id) do
-    contact_params = %{
-      "image" => Avatar.image_url(),
-      "contact_name" => "vendor name #{index}",
-      "phone" => gen_phone_params(1),
-      "email" => "someemail#{index}@gmail.com",
-      "address" => gen_location_params(index),
-      "user_id" => "#{user_id}",
-      "company_id" => "#{company_id}",
-      "currency" => "#{Enum.random(@currency)}#{index}",
-      "birthday" => "#{dob()}",
-      "marital_status" => "#{Enum.random(@marital_status)}",
-      "marriage_anniversary" => "marriage anniversary #{index}",
-      "likes" => [
-        "honesty #{index}",
-        "integrity #{index}",
-        "principle #{index}"
-      ],
-      "dislikes" => [
-        "lies #{index}",
-        "pride #{index}"
-      ],
-      "bank" => gen_bank_details(index),
-      "type" => "vendor"
-    }
-
-    Business.add_contact(contact_params)
-  end
-
   defp gen_location_params(index) do
     increament_index = index + 1
 
