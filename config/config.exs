@@ -32,7 +32,7 @@ config :guardian, Guardian.DB,
   schema_name: "guardian_tokens",
   # default: 60 minutes
   sweep_interval: 60,
-  ttl: {15, :days}
+  ttl: {30, :days}
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
