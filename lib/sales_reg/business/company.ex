@@ -14,6 +14,7 @@ defmodule SalesReg.Business.Company do
   schema "companies" do
     field(:about, :string)
     field(:contact_email, :string)
+    field(:currency, :string)
     field(:title, :string)
     field(:category, :string)
 
@@ -27,11 +28,11 @@ defmodule SalesReg.Business.Company do
     timestamps()
   end
 
-  @required_fields [:title, :contact_email, :owner_id, :category]
+  @required_fields [:title, :contact_email, :owner_id, :category,]
   @doc false
   def changeset(company, attrs) do
     company
-    |> cast(attrs, @required_fields ++ [:about])
+    |> cast(attrs, @required_fields ++ [:about, :currency])
     |> validate_required(@required_fields)
     |> cast_assoc(:branches)
     |> validate_category()

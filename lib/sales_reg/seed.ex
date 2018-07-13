@@ -37,7 +37,9 @@ defmodule SalesReg.Seed do
       about: "Building software products",
       contact_email: "someemail@gmail.com",
       title: "Stacknbit Private Limited Company",
-      category: Enum.random(@company_categories)
+      category: Enum.random(@company_categories),
+      head_office: gen_location_params(),
+      currency: "naira"
     }
 
     Business.create_company(user_id, company_params)
