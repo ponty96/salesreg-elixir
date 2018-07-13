@@ -14,7 +14,7 @@ use SalesRegWeb, :context
 {:ok, user} = Seed.create_user()
 {:ok, company} = Seed.create_company(user.id)
 
-Enum.map(1..20, fn(_index) -> 
+Enum.map(1..20, fn(_index) ->
 	Seed.add_product(user.id, company.id)
 end)
 
