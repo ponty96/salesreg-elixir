@@ -21,12 +21,12 @@ defmodule SalesReg.Accounts.User do
     # required for registration
     field(:password, :string, virtual: true)
     field(:password_confirmation, :string, virtual: true)
-
     field(:profile_picture, :string)
 
     has_one(:company, Company, foreign_key: :owner_id)
     has_many(:customers, SalesReg.Business.Customer)
     many_to_many(:companies, Company, join_through: Employee)
+    has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
 
     timestamps()
   end
@@ -52,6 +52,7 @@ defmodule SalesReg.Accounts.User do
     |> validate_password
     |> set_password
     |> cast_assoc(:company)
+    |> cast_assoc(:phone)
   end
 
   defp validate_password(changeset) do

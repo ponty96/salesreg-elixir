@@ -1,17 +1,7 @@
 defmodule SalesReg.Seed do
   use SalesRegWeb, :context
 
-  alias Faker.{
-    Internet,
-    Commerce,
-    Avatar,
-    Address,
-    Phone.EnGb
-  }
-
-  alias Faker.Company.En, as: CompanyEn
-  alias Faker.Name.En, as: NameEn
-  alias Faker.Commerce.En, as: CommerceEn
+  alias Faker.{Phone.EnGb}
 
   @company_categories ["product", "service", "product_service"]
   @location_types ["office", "home"]
@@ -26,7 +16,8 @@ defmodule SalesReg.Seed do
       "gender" => "male",
       "last_name" => "Badmos",
       "password" => "asdfasdf",
-      "password_confirmation" => "asdfasdf"
+      "password_confirmation" => "asdfasdf",
+      "phone" => gen_phone_params()
     }
 
     Accounts.create_user(user_params)
@@ -38,7 +29,7 @@ defmodule SalesReg.Seed do
       contact_email: "someemail@gmail.com",
       title: "Stacknbit Private Limited Company",
       category: Enum.random(@company_categories),
-      head_office: gen_location_params(),
+      head_office: gen_location_params(1),
       currency: "naira"
     }
 
@@ -123,7 +114,8 @@ defmodule SalesReg.Seed do
     Business.add_vendor(vendor_params)
   end
 
-  defp gen_location_params(index) do
+  defp gen_location_params(index \\ "") do
+    increament_index = index + 1
     %{
       "city" => "city #{index}",
       "country" => "country #{index}",
@@ -131,12 +123,12 @@ defmodule SalesReg.Seed do
       "lat" => "#{index}",
       "long" => "#{index}",
       "street1" => "#{index}",
-      "street2" => "#{index + 1}",
+      "street2" => "#{increament_index}",
       "type" => Enum.random(@location_types)
     }
   end
 
-  defp gen_phone_params(index) do
+  defp gen_phone_params(index \\ "") do
     %{
       "number" => "#{EnGb.mobile_number()}#{index}",
       "type" => Enum.random(@phone_types)
