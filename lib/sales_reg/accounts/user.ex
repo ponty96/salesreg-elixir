@@ -31,10 +31,10 @@ defmodule SalesReg.Accounts.User do
     timestamps()
   end
 
-  @required_fields [:first_name, :last_name, :date_of_birth, :email]
-  @registration_fields [:password, :password_confirmation]
+  @required_fields [:first_name, :last_name, :email]
+  @registration_fields [:password, :password_confirmation,]
 
-  @fields [:profile_picture]
+  @fields [:profile_picture, :date_of_birth]
 
   @doc false
   def changeset(user, attrs) do
