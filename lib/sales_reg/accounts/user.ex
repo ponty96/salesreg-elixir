@@ -32,7 +32,7 @@ defmodule SalesReg.Accounts.User do
   end
 
   @required_fields [:first_name, :last_name, :email, :gender]
-  @registration_fields [:password, :password_confirmation,]
+  @registration_fields [:password, :password_confirmation]
 
   @fields [:profile_picture, :date_of_birth]
 

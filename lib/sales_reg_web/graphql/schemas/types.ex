@@ -270,8 +270,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   @desc "sorts the order from either ASC or DESC"
   enum :gender do
-    value(:male)
-    value(:female)
+    value(:male, as: "MALE")
+    value(:female, as: "FEMALE")
   end
 
   @desc "The selected company category"
