@@ -31,7 +31,7 @@ defmodule SalesReg.Accounts.User do
     timestamps()
   end
 
-  @required_fields [:first_name, :last_name, :email]
+  @required_fields [:first_name, :last_name, :email, :gender]
   @registration_fields [:password, :password_confirmation,]
 
   @fields [:profile_picture, :date_of_birth]
