@@ -5,17 +5,17 @@
 # is restricted to this project.
 use Mix.Config
 
-# General application configuration
-config :sales_reg,
-  ecto_repos: [SalesReg.Repo],
-  generators: [binary_id: true]
-
 # Configures the endpoint
 config :sales_reg, SalesRegWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "VQaqMBckFxan8bqvUksPqhTZvKJDSgCVvQ9nblU+4zDlW7LcnnmI8JloECqXM8sW",
   render_errors: [view: SalesRegWeb.ErrorView, accepts: ~w(json)],
   pubsub: [name: SalesReg.PubSub, adapter: Phoenix.PubSub.PG2]
+
+# General application configuration
+config :sales_reg,
+  ecto_repos: [SalesReg.Repo],
+  generators: [binary_id: true]
 
 # Configures Elixir's Logger
 config :logger, :console,

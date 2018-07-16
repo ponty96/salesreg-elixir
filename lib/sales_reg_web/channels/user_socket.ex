@@ -5,7 +5,7 @@ defmodule SalesRegWeb.UserSocket do
   # channel "room:*", SalesRegWeb.RoomChannel
 
   ## Transports
-  transport(:websocket, Phoenix.Transports.WebSocket)
+  transport(:websocket, Phoenix.Transports.WebSocket, timeout: 45_000)
   # transport :longpoll, Phoenix.Transports.LongPoll
 
   # Socket params are passed from the client and can
