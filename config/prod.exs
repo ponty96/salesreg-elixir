@@ -19,6 +19,7 @@ config :logger, level: :info
 
 # Configures the endpoint
 config :sales_reg, SalesRegWeb.Endpoint,
+  http: [port: {:system, "PORT"}],
   url: [scheme: "https", host: "salesreg.herokuapp.com", port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE"),
