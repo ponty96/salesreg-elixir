@@ -8,6 +8,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
 
   def update_purchase(%{purchase: params, purchase_id: id}, _res) do
     new_params = add_order_amount(params)
+
     Order.get_purchase(id)
     |> Order.update_purchase(new_params)
   end
@@ -35,6 +36,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
 
   def update_sale(%{sale: params, sale_id: id}, _res) do
     new_params = add_order_amount(params)
+
     Order.get_sale(id)
     |> Order.update_sale(new_params)
   end
