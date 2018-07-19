@@ -22,8 +22,8 @@ defmodule SalesReg.Business.Location do
     timestamps()
   end
 
-  @required_fields [:street1, :city, :state, :country, :type]
-  @fields [:street2, :lat, :long]
+  @required_fields [:street1, :city, :state, :country]
+  @fields [:street2, :lat, :long, :type]
 
   @doc false
   def changeset(location, attrs) do

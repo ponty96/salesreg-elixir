@@ -271,8 +271,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   @desc "sorts the order from either ASC or DESC"
   enum :gender do
-    value(:male)
-    value(:female)
+    value(:male, as: "MALE")
+    value(:female, as: "FEMALE")
   end
 
   @desc "The selected company category"
@@ -334,7 +334,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   input_object :company_input do
     field(:title, non_null(:string))
-    field(:about, non_null(:string))
+    field(:about, :string)
     field(:contact_email, non_null(:string))
     field(:head_office, non_null(:location_input))
     field(:category, non_null(:category))
@@ -355,7 +355,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:state, non_null(:string))
     field(:street1, non_null(:string))
     field(:street2, :string)
-    field(:type, non_null(:string))
+    field(:type, :string)
   end
 
   input_object :phone_input do
