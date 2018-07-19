@@ -38,7 +38,7 @@ defmodule SalesReg.Seed do
       contact_email: "opeyemi.badmos@gmail.com",
       title: "Stacknbit Private Limited Company",
       category: Enum.random(@company_categories),
-      head_office: gen_location_params(),
+      head_office: gen_location_params(0),
       currency: "Naira(₦)"
     }
 
@@ -123,7 +123,8 @@ defmodule SalesReg.Seed do
     Business.add_vendor(vendor_params)
   end
 
-  defp gen_location_params() do
+  defp gen_location_params(index) do
+    increament_index = index + 1
     %{
       "city" => "#{Address.city()}",
       "country" => "#{Address.country()}",
