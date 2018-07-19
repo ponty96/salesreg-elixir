@@ -10,4 +10,12 @@ defmodule SalesRegWeb.GraphQL.Resolvers.CompanyResolver do
       {:error, changeset} -> {:error, changeset}
     end
   end
+
+  def update_company(%{id: company_id, company: company_params}, _res) do
+    {_status, result} = Business.update_company(company_id, company_params)
+    case result do
+      %Company{} -> {:ok, result}
+      %Ecto.Changeset{} -> {:error, result}
+    end
+  end
 end
