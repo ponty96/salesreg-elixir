@@ -3,8 +3,9 @@ defmodule SalesReg.Repo.Migrations.AddFieldToItem do
 
   def change do
     alter table(:items) do
-      add :sale_id, references(:sales, on_delete: :nothing, type: :binary_id)
+      add(:sale_id, references(:sales, on_delete: :nothing, type: :binary_id))
     end
-    create index(:items, [:sale_id])
+
+    create(index(:items, [:sale_id]))
   end
 end
