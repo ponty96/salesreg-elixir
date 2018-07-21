@@ -3,10 +3,10 @@ defmodule SalesReg.Repo.Migrations.RemoveFieldsFromCustomer do
 
   def change do
     alter table(:customers) do
-      remove :phone1
-      remove :phone2
-      remove :residential_add
-      remove :office_add
+      remove(:phone1)
+      remove(:phone2)
+      remove(:residential_add)
+      remove(:office_add)
     end
   end
 end
