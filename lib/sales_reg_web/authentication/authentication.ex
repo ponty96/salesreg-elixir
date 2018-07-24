@@ -10,6 +10,7 @@ defmodule SalesRegWeb.Authentication do
   def login(user_params) do
     user = Accounts.get_user_by_email(String.downcase(user_params.email))
     password = user_params.password
+
     case user do
       %User{} ->
         if check_password(user, password) == true do
