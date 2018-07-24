@@ -60,5 +60,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.UserSchema do
 
       resolve(&UserResolver.refresh_token/2)
     end
+
+    @desc """
+    logout a user
+    """
+    field :logout, :mutation_response do
+      arg(:access_token, non_null(:string))
+
+      resolve(&UserResolver.logout/2)
+    end
   end
 end

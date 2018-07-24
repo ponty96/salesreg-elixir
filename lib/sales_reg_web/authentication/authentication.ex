@@ -10,6 +10,7 @@ defmodule SalesRegWeb.Authentication do
   def login(user_params) do
     user = Accounts.get_user_by_email(String.downcase(user_params.email))
     password = user_params.password
+
     case user do
       %User{} ->
         if check_password(user, password) == true do
@@ -86,6 +87,19 @@ defmodule SalesRegWeb.Authentication do
 
       _ ->
         {:error, "Token does not exist"}
+    end
+  end
+
+  def logout(%{access_token: token}) do
+    resource_from_token = TokenImpl.resource_from_token(token, %{"typ" => "access"})
+
+    case resource_from_token do
+      {:ok, resource, _claims} ->
+        TokenImpl.revoke(token)
+        {:ok, %{user: resource, message: "You're logged out"}}
+
+      {:error, _any} ->
+        {:error, "Invalid token"}
     end
   end
 
