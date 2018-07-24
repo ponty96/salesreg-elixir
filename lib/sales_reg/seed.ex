@@ -125,6 +125,7 @@ defmodule SalesReg.Seed do
 
   defp gen_location_params(index) do
     increament_index = index + 1
+
     %{
       "city" => "#{Address.city()}",
       "country" => "#{Address.country()}",

@@ -20,7 +20,16 @@ defmodule SalesReg.Mixfile do
   def application do
     [
       mod: {SalesReg.Application, []},
-      extra_applications: [:logger, :runtime_tools, :comeonin, :guardian, :ex_aws, :ex_aws_s3, :uuid, :hackney]
+      extra_applications: [
+        :logger,
+        :runtime_tools,
+        :comeonin,
+        :guardian,
+        :ex_aws,
+        :ex_aws_s3,
+        :uuid,
+        :hackney
+      ]
     ]
   end
 
@@ -53,8 +62,7 @@ defmodule SalesReg.Mixfile do
       {:ex_aws_s3, "~> 2.0"},
       {:uuid, "~> 1.1"},
       {:hackney, "~> 1.9"},
-      {:sweet_xml, "~> 0.6"},
-
+      {:sweet_xml, "~> 0.6"}
     ]
   end
 
