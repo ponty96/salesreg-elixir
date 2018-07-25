@@ -42,53 +42,62 @@ defmodule SalesRegWeb.GraphQL.Resolvers.UserResolver do
 
     case user do
       %User{} ->
-        case user_params do
-          %{profile_picture: nil} ->
+        # case user_params do
+        #   %{profile_picture: nil} ->
             Accounts.update_user(user, user_params)
 
-          %{profile_picture: image_base64} ->
-            image_url = upload_image(image_base64)
+          # %{profile_picture: image_base64} ->
+          #   image_url = upload_image(image_base64)
 
-            new_user_params = %{
-              user_params
-              | profile_picture: image_url
-            }
+            # new_user_params = %{
+            #   user_params
+            #   | profile_picture: image_url
+            # }
 
-            Accounts.update_user(user, new_user_params)
-        end
+            # Accounts.update_user(user, new_user_params)
+        # end
 
       _ ->
         {:error, "User does not exist"}
     end
   end
 
-  def upload_image(image_base64) do
-    image_bucket = System.get_env("BUCKET_NAME")
+  #####################################################################
+  ### Uncomment this part when the image upload functionlity is needed
+  ### also the helper functions
+  #####################################################################
 
-    # Decode the image
-    {:ok, image_binary} = Base.decode64(image_base64)
+  # def upload_image(image_base64) do
+  #   image_bucket = System.get_env("BUCKET_NAME")
 
-    # Generate a unique filename
-    filename =
-      image_binary
-      |> image_extension()
-      |> unique_filename()
+  #   # Decode the image
+  #   {:ok, image_binary} = Base.decode64(image_base64)
 
-    # Upload to S3
-    {:ok, _response} =
-      ExAws.S3.put_object(image_bucket, filename, image_binary)
-      |> ExAws.request()
+  #   # Generate a unique filename
+  #   filename =
+  #     image_binary
+  #     |> image_extension()
+  #     |> unique_filename()
 
-    # Generate the full URL to the newly uploaded image
-    "https://#{image_bucket}.s3.amazonaws.com/#{filename}"
-  end
+  #   # Upload to S3
+  #   {:ok, _response} =
+  #     ExAws.S3.put_object(image_bucket, filename, image_binary)
+  #     |> ExAws.request()
 
-  # Generates a unique filename with a given extension
-  defp unique_filename(extension) do
-    UUID.uuid4(:hex) <> extension
-  end
+  #   # Generate the full URL to the newly uploaded image
+  #   "https://#{image_bucket}.s3.amazonaws.com/#{filename}"
+  # end
 
-  # Helper functions to read the binary to determine the image extension
-  defp image_extension(<<0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, _::binary>>), do: ".png"
-  defp image_extension(<<0xFF, 0xD8, _::binary>>), do: ".jpg"
+  ################################################################
+  ### Helper functions for image upload 
+  ################################################################
+
+  # # Generates a unique filename with a given extension
+  # defp unique_filename(extension) do
+  #   UUID.uuid4(:hex) <> extension
+  # end
+
+  # # Helper functions to read the binary to determine the image extension
+  # defp image_extension(<<0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, _::binary>>), do: ".png"
+  # defp image_extension(<<0xFF, 0xD8, _::binary>>), do: ".jpg"
 end

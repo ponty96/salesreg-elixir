@@ -35,7 +35,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
     import_fields(:customer_mutations)
     import_fields(:vendor_mutations)
     import_fields(:order_mutations)
-    import_field(:user_mutations)
+    import_fields(:user_mutations)
   end
 
   def middleware(middleware, field, object) do
