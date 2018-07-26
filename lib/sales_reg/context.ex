@@ -40,14 +40,6 @@ defmodule SalesReg.Context do
         end
 
         def unquote(String.to_atom("add_#{schema}"))(%{} = params) do
-          # if mod == unquote(module) do
-          #   unquote(module).__struct__
-          #   |> mod.changeset(params)
-          #   |> Repo.insert()
-          # else
-          #   raise "expected #{unquote(module)}"
-          # end
-
           mod = unquote(module)
 
           mod.__struct__
