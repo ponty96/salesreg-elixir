@@ -59,9 +59,9 @@ defmodule SalesReg.Seed do
       "description" => "Our product is #{CommerceEn.product_name()}",
       "featured_image" => "#{Avatar.image_url()}",
       "name" => "#{CommerceEn.product_name()}",
-      "cost_price" => "#{Enum.random(5..100)}",
-      "minimum_stock_quantity" => "##{Enum.random(3000..100_000)}",
-      "selling_price" => "##{Commerce.price()}",
+      "cost_price" => "#{Enum.random(3000..100_000)}",
+      "minimum_stock_quantity" => "#{Enum.random(5..100)}",
+      "selling_price" => "#{Commerce.price()}",
       "stock_quantity" => "#{Enum.random([3, 6, 12, 24])}",
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}"
