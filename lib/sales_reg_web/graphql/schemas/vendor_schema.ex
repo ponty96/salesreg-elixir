@@ -8,22 +8,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.VendorSchema do
   # Mutations
   object :vendor_mutations do
     @desc """
-        add vendor
+      upsert a vendor
     """
-    field :add_vendor, :mutation_response do
+    field :upsert_vendor, :mutation_response do
       arg(:vendor, non_null(:vendor_input))
+      arg(:vendor_id, :uuid)
 
-      resolve(&VendorResolver.add_vendor/2)
-    end
-
-    @desc """
-      update a vendor
-    """
-    field :update_vendor, :mutation_response do
-      arg(:vendor, non_null(:update_vendor_input))
-      arg(:vendor_id, non_null(:uuid))
-
-      resolve(&VendorResolver.update_vendor/2)
+      resolve(&VendorResolver.upsert_vendor/2)
     end
   end
 
