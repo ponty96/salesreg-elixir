@@ -5,24 +5,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.CustomerSchema do
   use Absinthe.Schema.Notation
   alias SalesRegWeb.GraphQL.Resolvers.CustomerResolver
 
+  ### MUTATIONS
   object :customer_mutations do
     @desc """
-      mutation to create customer
+      upsert a customer
     """
-    field :add_customer, :mutation_response do
+    field :upsert_customer, :mutation_response do
       arg(:customer, non_null(:customer_input))
+      arg(:customer_id, :uuid)
 
-      resolve(&CustomerResolver.add_customer/2)
-    end
-
-    @desc """
-      mutation to update customer
-    """
-    field :update_customer, :mutation_response do
-      arg(:customer, non_null(:update_customer_input))
-      arg(:customer_id, non_null(:uuid))
-
-      resolve(&CustomerResolver.update_customer/2)
+      resolve(&CustomerResolver.upsert_customer/2)
     end
 
     @desc """
@@ -35,6 +27,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.CustomerSchema do
     end
   end
 
+  ### QUERIES
   object :customer_queries do
     @desc """
       query all customers of a company

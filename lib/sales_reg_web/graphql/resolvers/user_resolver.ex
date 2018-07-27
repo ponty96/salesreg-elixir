@@ -44,18 +44,18 @@ defmodule SalesRegWeb.GraphQL.Resolvers.UserResolver do
       %User{} ->
         # case user_params do
         #   %{profile_picture: nil} ->
-            Accounts.update_user(user, user_params)
+        Accounts.update_user(user, user_params)
 
-          # %{profile_picture: image_base64} ->
-          #   image_url = upload_image(image_base64)
+      # %{profile_picture: image_base64} ->
+      #   image_url = upload_image(image_base64)
 
-            # new_user_params = %{
-            #   user_params
-            #   | profile_picture: image_url
-            # }
+      # new_user_params = %{
+      #   user_params
+      #   | profile_picture: image_url
+      # }
 
-            # Accounts.update_user(user, new_user_params)
-        # end
+      # Accounts.update_user(user, new_user_params)
+      # end
 
       _ ->
         {:error, "User does not exist"}
