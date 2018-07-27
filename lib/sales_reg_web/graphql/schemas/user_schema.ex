@@ -14,7 +14,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.UserSchema do
       arg(:id, non_null(:uuid))
 
       middleware(Authorize)
-
       resolve(&UserResolver.get_user/2)
     end
   end
