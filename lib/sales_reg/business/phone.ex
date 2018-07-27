@@ -8,6 +8,7 @@ defmodule SalesReg.Business.Phone do
     field(:type, :string)
     field(:number, :string)
     belongs_to(:customer, SalesReg.Business.Customer)
+    belongs_to(:user, SalesReg.Accounts.User)
 
     timestamps()
   end
