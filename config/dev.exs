@@ -42,6 +42,5 @@ config :sales_reg, SalesReg.Repo,
   username: "postgres",
   password: "postgres",
   database: "sales_reg_dev",
-  hostname: "db",
-  pool_size: 10,
-  port: 5432
+  hostname: "localhost",
+  pool_size: 10
