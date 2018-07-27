@@ -90,19 +90,6 @@ defmodule SalesRegWeb.Authentication do
     end
   end
 
-  def logout(%{access_token: token}) do
-    resource_from_token = TokenImpl.resource_from_token(token, %{"typ" => "access"})
-
-    case resource_from_token do
-      {:ok, resource, _claims} ->
-        TokenImpl.revoke(token)
-        {:ok, %{user: resource, message: "You're logged out"}}
-
-      {:error, _any} ->
-        {:error, "Invalid token"}
-    end
-  end
-
   defp tokens_exist?(access_token, refresh_token) do
     case decode_and_verify(access_token, "access") do
       {:ok, access_claims} ->

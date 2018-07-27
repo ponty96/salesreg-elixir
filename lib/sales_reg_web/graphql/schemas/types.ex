@@ -207,7 +207,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:customer, :customer, resolve: dataloader(SalesReg.Business, :customer))
     field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :items))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-    field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
   end
 
   @desc """
