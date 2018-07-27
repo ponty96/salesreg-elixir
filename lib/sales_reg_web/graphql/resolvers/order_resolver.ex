@@ -1,16 +1,16 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   use SalesRegWeb, :context
 
-  def add_purchase(%{purchase: params}, _res) do
-    new_params = add_order_amount(params)
-    Order.add_purchase(new_params)
-  end
-
-  def update_purchase(%{purchase: params, purchase_id: id}, _res) do
+  def upsert_purchase(%{purchase: params, purchase_id: id}, _res) do
     new_params = add_order_amount(params)
 
     Order.get_purchase(id)
     |> Order.update_purchase(new_params)
+  end
+
+  def upsert_purchase(%{purchase: params}, _res) do
+    new_params = add_order_amount(params)
+    Order.add_purchase(new_params)
   end
 
   def list_vendor_purchases(%{vendor_id: vendor_id}, _res) do
@@ -29,16 +29,16 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     Order.list_company_purchases(company_id)
   end
 
-  def add_sale(%{sale: params}, _res) do
-    new_params = add_order_amount(params)
-    Order.add_sale(new_params)
-  end
-
-  def update_sale(%{sale: params, sale_id: id}, _res) do
+  def upsert_sale(%{sale: params, sale_id: id}, _res) do
     new_params = add_order_amount(params)
 
     Order.get_sale(id)
     |> Order.update_sale(new_params)
+  end
+
+  def upsert_sale(%{sale: params}, _res) do
+    new_params = add_order_amount(params)
+    Order.add_sale(new_params)
   end
 
   def list_customer_sales(%{customer_id: customer_id}, _res) do
