@@ -22,23 +22,18 @@ Enum.map(1..20, fn(index) ->
 	Seed.add_service(index, user.id, company.id)
 end)
 
-Enum.map(1..30, fn(index) ->
-	Seed.add_customer(index, user.id, company.id)
+Enum.map(1..30, fn index ->
+  Seed.add_customer(index, user.id, company.id)
 end)
 
-branch = Repo.all(Branch)
-		 |> Enum.random()
+branch =
+  Repo.all(Branch)
+  |> Enum.random()
 
-Enum.map(1..30, fn(_index) ->
-	Seed.add_company_employee(branch.id, user.id, company.id)
+Enum.map(1..30, fn _index ->
+  Seed.add_company_employee(branch.id, user.id, company.id)
 end)
 
 Enum.map(1..30, fn(index) ->
 	Seed.add_vendor(index, user.id, company.id)
 end)
-
-
-
-
-
-

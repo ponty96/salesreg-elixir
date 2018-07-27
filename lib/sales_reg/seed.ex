@@ -47,13 +47,13 @@ defmodule SalesReg.Seed do
 
   def add_product(index, user_id, company_id) do
     product_params = %{
-      "description" => "Our product is product#{index}",
-      "featured_image" => "featured image #{index}",
-      "name" => "name #{index}",
-      "pack_quantity" => "#{index}",
-      "price_per_pack" => "#{index}0",
-      "selling_price" => "#{index}",
-      "unit_quantity" => "#{index}",
+      "description" => "Our product is #{index}",
+      "featured_image" => "image #{index}",
+      "name" => "product name #{index}",
+      "cost_price" => "#{Enum.random(3000..100_000)}",
+      "minimum_stock_quantity" => "#{Enum.random(5..100)}",
+      "selling_price" => "#{index}0",
+      "stock_quantity" => "#{Enum.random([3, 6, 12, 24])}",
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}"
     }
@@ -63,8 +63,8 @@ defmodule SalesReg.Seed do
 
   def add_service(index, user_id, company_id) do
     service_params = %{
-      "description" => "The description of the service is service #{index}",
-      "name" => "The name of the service is service #{index}",
+      "description" => "The description of the service is description #{index}",
+      "name" => "The name of the service is name #{index}",
       "price" => "#{Enum.random([10_000, 50_000, 150_000])}#{index}",
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}"
