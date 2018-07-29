@@ -20,7 +20,16 @@ defmodule SalesReg.Mixfile do
   def application do
     [
       mod: {SalesReg.Application, []},
-      extra_applications: [:logger, :runtime_tools, :comeonin, :guardian]
+      extra_applications: [
+        :logger,
+        :runtime_tools,
+        :comeonin,
+        :guardian,
+        :ex_aws,
+        :ex_aws_s3,
+        :uuid,
+        :hackney
+      ]
     ]
   end
 
@@ -48,7 +57,12 @@ defmodule SalesReg.Mixfile do
       {:absinthe_relay, "~> 1.4.0-rc or ~> 1.4"},
       {:dataloader, "~> 1.0.0"},
       {:faker, "~> 0.10"},
-      {:guardian_db, github: "ueberauth/guardian_db"}
+      {:guardian_db, github: "ueberauth/guardian_db"},
+      {:ex_aws, "~> 2.0"},
+      {:ex_aws_s3, "~> 2.0"},
+      {:uuid, "~> 1.1"},
+      {:hackney, "~> 1.9"},
+      {:sweet_xml, "~> 0.6"}
     ]
   end
 

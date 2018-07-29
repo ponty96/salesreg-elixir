@@ -18,6 +18,18 @@ defmodule SalesRegWeb.GraphQL.Schemas.UserSchema do
     end
   end
 
+  object :user_mutations do
+    @desc """
+    Update a user
+    """
+    field :update_user, :mutation_response do
+      arg(:id, non_null(:uuid))
+      arg(:user, non_null(:user_input))
+
+      resolve(&UserResolver.update_user/2)
+    end
+  end
+
   object :authentication_mutations do
     @desc """
     login a user
@@ -47,6 +59,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.UserSchema do
       arg(:refresh_token, non_null(:string))
 
       resolve(&UserResolver.refresh_token/2)
+    end
+
+    @desc """
+    logout a user
+    """
+    field :logout, :mutation_response do
+      arg(:access_token, non_null(:string))
+
+      resolve(&UserResolver.logout/2)
     end
   end
 end

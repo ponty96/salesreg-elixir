@@ -8,10 +8,10 @@ defmodule SalesReg.Store.Product do
     field(:description, :string)
     field(:featured_image, :string)
     field(:name, :string)
-    field(:pack_quantity, :string)
-    field(:price_per_pack, :string)
+    field(:stock_quantity, :string)
+    field(:minimum_stock_quantity, :string)
+    field(:cost_price, :string)
     field(:selling_price, :string)
-    field(:unit_quantity, :string)
 
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
@@ -21,15 +21,18 @@ defmodule SalesReg.Store.Product do
 
   @fields [
     :featured_image,
-    :pack_quantity,
-    :price_per_pack,
-    :unit_quantity,
-    :description,
-    :company_id,
-    :user_id
+    :description
   ]
 
-  @required_fields [:name, :selling_price, :company_id, :user_id]
+  @required_fields [
+    :name,
+    :selling_price,
+    :company_id,
+    :user_id,
+    :stock_quantity,
+    :minimum_stock_quantity,
+    :cost_price
+  ]
   @doc false
   def changeset(product, attrs) do
     product

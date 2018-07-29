@@ -3,19 +3,19 @@ defmodule SalesRegWeb.GraphQL.Resolvers.CustomerResolver do
 
   @phone_types ["home", "work", "mobile"]
 
-  def add_customer(%{customer: %{phones: phones} = params}, _res) do
-    params
-    |> add_phones_type(phones)
-    |> Business.add_customer()
-  end
-
-  def update_customer(%{customer: %{phones: phones} = params, customer_id: customer_id}, _res) do
+  def upsert_customer(%{customer: %{phones: phones} = params, customer_id: id}, _res) do
     update_params =
       params
       |> add_phones_type(phones)
 
-    Business.get_customer(customer_id)
+    Business.get_customer(id)
     |> Business.update_customer(update_params)
+  end
+
+  def upsert_customer(%{customer: %{phones: phones} = params}, _res) do
+    params
+    |> add_phones_type(phones)
+    |> Business.add_customer()
   end
 
   def list_company_customers(%{company_id: company_id}, _res) do

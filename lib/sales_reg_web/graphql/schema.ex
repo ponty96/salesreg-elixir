@@ -28,13 +28,14 @@ defmodule SalesRegWeb.GraphQL.Schemas do
   end
 
   mutation do
-    import_fields(:register_company)
+    import_fields(:company_mutations)
     import_fields(:authentication_mutations)
     import_fields(:product_mutations)
     import_fields(:service_mutations)
     import_fields(:customer_mutations)
     import_fields(:vendor_mutations)
     import_fields(:order_mutations)
+    import_fields(:user_mutations)
   end
 
   def middleware(middleware, field, object) do
