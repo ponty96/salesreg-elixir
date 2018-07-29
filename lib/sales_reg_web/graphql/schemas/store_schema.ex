@@ -8,43 +8,25 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
   ### MUTATIONS
   object :product_mutations do
     @desc """
-    add a product in a company's store
+    upsert a product in a company's store
     """
-    field :add_product, :mutation_response do
+    field :upsert_product, :mutation_response do
       arg(:product, non_null(:product_input))
+      arg(:product_id, :uuid)
 
-      resolve(&StoreResolver.add_product/2)
-    end
-
-    @desc """
-    update a product in a company's store
-    """
-    field :update_product, :mutation_response do
-      arg(:product, non_null(:product_input))
-      arg(:product_id, non_null(:uuid))
-
-      resolve(&StoreResolver.update_product/2)
+      resolve(&StoreResolver.upsert_product/2)
     end
   end
 
   object :service_mutations do
     @desc """
-    add a service in a company's store
+    upsert a product in a company's store
     """
-    field :add_service, :mutation_response do
+    field :upsert_service, :mutation_response do
       arg(:service, non_null(:service_input))
+      arg(:service_id, :uuid)
 
-      resolve(&StoreResolver.add_service/2)
-    end
-
-    @desc """
-    update a service in a company's store
-    """
-    field :update_service, :mutation_response do
-      arg(:service, non_null(:service_input))
-      arg(:service_id, non_null(:uuid))
-
-      resolve(&StoreResolver.update_service/2)
+      resolve(&StoreResolver.upsert_service/2)
     end
   end
 

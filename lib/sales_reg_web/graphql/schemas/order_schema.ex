@@ -9,22 +9,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
   object :order_mutations do
     ### Purchase order mutations
     @desc """
-    add a purchase order
+    upsert purchase order
     """
-    field :add_purchase_order, :mutation_response do
+    field :upsert_purchase_order, :mutation_response do
       arg(:purchase, non_null(:purchase_input))
+      arg(:purchase_id, :uuid)
 
-      resolve(&OrderResolver.add_purchase/2)
-    end
-
-    @desc """
-    update a purchase order
-    """
-    field :update_purchase, :mutation_response do
-      arg(:purchase, non_null(:purchase_input))
-      arg(:purchase_id, non_null(:uuid))
-
-      resolve(&OrderResolver.update_purchase/2)
+      resolve(&OrderResolver.upsert_purchase/2)
     end
 
     @desc """
@@ -38,22 +29,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
     ### Sale order mutations
     @desc """
-    add a sale order
+    upsert a sale order
     """
-    field :add_sale_order, :mutation_response do
+    field :upsert_sale_order, :mutation_response do
       arg(:sale, non_null(:sale_input))
+      arg(:sale_id, :uuid)
 
-      resolve(&OrderResolver.add_sale/2)
-    end
-
-    @desc """
-    update a sale order
-    """
-    field :update_sale, :mutation_response do
-      arg(:sale, non_null(:sale_input))
-      arg(:sale_id, non_null(:uuid))
-
-      resolve(&OrderResolver.update_sale/2)
+      resolve(&OrderResolver.upsert_sale/2)
     end
 
     @desc """
