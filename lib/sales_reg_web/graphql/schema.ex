@@ -17,6 +17,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
   import_types(__MODULE__.CustomerSchema)
   import_types(__MODULE__.VendorSchema)
   import_types(__MODULE__.OrderSchema)
+  import_types(__MODULE__.ExpenseSchema)
 
   query do
     import_fields(:single_user)
@@ -25,6 +26,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
     import_fields(:customer_queries)
     import_fields(:vendor_queries)
     import_fields(:order_queries)
+    import_fields(:expense_queries)
   end
 
   mutation do
@@ -36,6 +38,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
     import_fields(:vendor_mutations)
     import_fields(:order_mutations)
     import_fields(:user_mutations)
+    import_fields(:expense_mutations)
   end
 
   def middleware(middleware, field, object) do

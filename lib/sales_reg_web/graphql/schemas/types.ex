@@ -211,6 +211,33 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Expense object type
+  """
+  object :expense do
+    field(:id, :uuid)
+    field(:title, :string)
+    field(:total_amount, :string)
+    field(:payment_method, :string)
+
+    field(:paid_by, :user, resolve: dataloader(SalesReg.Accounts, :paid_by))
+    field(:paid_to, :user, resolve: dataloader(SalesReg.Accounts, :paid_to))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:expense_items, list_of(:expense_item), resolve: dataloader(SalesReg.Business, :expense_items))
+  end
+
+  @desc """
+    Expense Item object type
+  """
+  object :expense_item do
+    field(:item_name, :string)
+    field(:amount, :string)
+
+    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
+    field(:service, :service, resolve: dataloader(SalesReg.Store, :service))
+    field(:expense, :expense, resolve: dataloader(SalesReg.Business, :expense))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -439,6 +466,24 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:user_id, non_null(:uuid))
     field(:customer_id, non_null(:uuid))
     field(:company_id, non_null(:uuid))
+  end
+
+  input_object :expense_input do
+    field(:title, non_null(:string))
+    field(:total_amount, non_null(:string))
+    field(:payment_method, :payment_method)
+    field(:expense_items, non_null(list_of(:expense_item_input)))
+    field(:paid_by_id, non_null(:uuid))
+    field(:paid_to_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
+  end
+
+  input_object :expense_item_input do
+    field(:item_name, :string)
+    field(:amount, :string)
+    field(:product_id, :uuid)
+    field(:service_id, :uuid)
+    field(:expense_id, non_null(:uuid))
   end
 
   #########################################################
