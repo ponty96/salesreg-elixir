@@ -9,7 +9,8 @@ defmodule SalesReg.Business do
     Location,
     Contact,
     Company,
-    Branch
+    Branch,
+    Expense
   ]
 
   def create_company(user_id, company_params) do
