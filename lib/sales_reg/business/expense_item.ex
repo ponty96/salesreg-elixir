@@ -4,21 +4,19 @@ defmodule SalesReg.Business.ExpenseItem do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  alias SalesReg.Business.Company
-  alias SalesReg.Repo
 
   schema "expense_items" do
     field(:item_name, :string)
     field(:amount, :string)
     
     belongs_to(:product, SalesReg.Store.Product)
-    belongs_to(:service, SalesReg.Store.Service)
-    belongs_to(:expenses, SalesReg.Business.Expense)
+    belongs_to(:service, SalidesReg.Store.Service)
+    belongs_to(:expense, SalesReg.Business.Expense, foreign_key: :expense_id)
     
     timestamps()
   end
 
-  @required_fields [:item_name, :amount]
+  @required_fields [:item_name, :amount, :expense_id]
   @optional_fields [:product_id, :service_id]
 
   @doc false
