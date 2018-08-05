@@ -10,7 +10,7 @@ defmodule SalesReg.Business.ExpenseItem do
     field(:amount, :string)
     
     belongs_to(:product, SalesReg.Store.Product)
-    belongs_to(:service, SalidesReg.Store.Service)
+    belongs_to(:service, SalesReg.Store.Service)
     belongs_to(:expense, SalesReg.Business.Expense, foreign_key: :expense_id)
     
     timestamps()
