@@ -12,7 +12,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.CompanyResolver do
   end
 
   def update_company(%{id: company_id, company: company_params}, _res) do
-    {_status, result} = Business.update_company(company_id, company_params)
+    {_status, result} = Business.update_company_details(company_id, company_params)
 
     case result do
       %Company{} -> {:ok, result}
