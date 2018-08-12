@@ -37,29 +37,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.UserResolver do
     Authentication.logout(params)
   end
 
-  def update_user(%{id: user_id, user: user_params}, _res) do
-    user = Accounts.get_user(user_id)
-
-    case user do
-      %User{} ->
-        # case user_params do
-        #   %{profile_picture: nil} ->
-        Accounts.update_user(user, user_params)
-
-      # %{profile_picture: image_base64} ->
-      #   image_url = upload_image(image_base64)
-
-      # new_user_params = %{
-      #   user_params
-      #   | profile_picture: image_url
-      # }
-
-      # Accounts.update_user(user, new_user_params)
-      # end
-
-      _ ->
-        {:error, "User does not exist"}
-    end
+  def update_user(%{user: user_params}, %{context: %{current_user: user}}) do
+    Accounts.update_user(user, user_params)
   end
 
   #####################################################################
@@ -89,7 +68,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.UserResolver do
   # end
 
   ################################################################
-  ### Helper functions for image upload 
+  ### Helper functions for image upload
   ################################################################
 
   # # Generates a unique filename with a given extension

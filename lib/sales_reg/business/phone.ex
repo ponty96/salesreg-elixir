@@ -5,7 +5,7 @@ defmodule SalesReg.Business.Phone do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "phones" do
-    field(:type, :string)
+    field(:type, :string, default: "mobile")
     field(:number, :string)
     belongs_to(:customer, SalesReg.Business.Customer)
     belongs_to(:user, SalesReg.Accounts.User)

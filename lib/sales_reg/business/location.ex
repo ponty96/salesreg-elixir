@@ -18,6 +18,7 @@ defmodule SalesReg.Business.Location do
     belongs_to(:residential, SalesReg.Business.Customer, foreign_key: :residential_add_id)
     belongs_to(:office, SalesReg.Business.Customer, foreign_key: :office_add_id)
     belongs_to(:vendor, SalesReg.Business.Vendor)
+    belongs_to(:user, SalesReg.Accounts.User)
 
     timestamps()
   end
@@ -33,5 +34,6 @@ defmodule SalesReg.Business.Location do
     |> assoc_constraint(:branch)
     |> assoc_constraint(:residential)
     |> assoc_constraint(:office)
+    |> assoc_constraint(:user)
   end
 end

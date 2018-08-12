@@ -27,26 +27,30 @@ defmodule SalesReg.Accounts.User do
     has_many(:customers, SalesReg.Business.Customer)
     many_to_many(:companies, Company, join_through: Employee)
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
+    has_one(:location, SalesReg.Business.Location, on_replace: :delete)
 
     timestamps()
   end
 
-  @required_fields [:first_name, :last_name, :email, :gender]
+  @required_fields [:email]
   @registration_fields [:password, :password_confirmation]
 
   @fields [:profile_picture, :date_of_birth]
+  @update_fields [:first_name, :last_name, :gender]
 
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, @required_fields ++ @fields)
-    |> validate_required(@required_fields)
+    |> cast(attrs, @update_fields ++ @fields)
+    |> validate_required(@update_fields ++ [:date_of_birth])
+    |> cast_assoc(:phone)
+    |> cast_assoc(:location)
   end
 
   def registration_changeset(user, attrs) do
     user
-    |> cast(attrs, @required_fields ++ @registration_fields)
-    |> validate_required(@required_fields ++ @registration_fields)
+    |> cast(attrs, @required_fields ++ @registration_fields ++ @update_fields)
+    |> validate_required(@required_fields ++ @registration_fields ++ @update_fields)
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
     |> validate_password
