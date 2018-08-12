@@ -23,9 +23,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.UserSchema do
     Update a user
     """
     field :update_user, :mutation_response do
-      arg(:id, non_null(:uuid))
-      arg(:user, non_null(:user_input))
+      arg(:user, non_null(:update_user_input))
 
+      middleware(Authorize)
       resolve(&UserResolver.update_user/2)
     end
   end
@@ -42,7 +42,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.UserSchema do
     end
 
     @desc """
-    verify access and refresh tokens based on 
+    verify access and refresh tokens based on
     expiration time
     """
     field :verify_tokens, :mutation_response do

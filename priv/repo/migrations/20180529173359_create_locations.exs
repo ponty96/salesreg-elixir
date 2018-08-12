@@ -12,10 +12,11 @@ defmodule SalesReg.Repo.Migrations.CreateLocations do
       add(:state, :string)
       add(:country, :string)
       add(:branch_id, references(:branches, on_delete: :nothing, type: :binary_id))
+      add(:user_id, references(:users, on_delete: :nothing, type: :binary_id))
 
       timestamps()
     end
 
-    create(index(:locations, [:branch_id]))
+    create(index(:locations, [:user_id]))
   end
 end
