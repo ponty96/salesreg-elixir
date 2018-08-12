@@ -1,6 +1,7 @@
 defmodule SalesReg.Business.Branch do
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Repo
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -9,7 +10,7 @@ defmodule SalesReg.Business.Branch do
 
     belongs_to(:company, SalesReg.Business.Company)
     has_many(:employees, SalesReg.Business.Employee)
-    has_one(:location, SalesReg.Business.Location)
+    has_one(:location, SalesReg.Business.Location, on_replace: :delete)
 
     timestamps()
   end
@@ -17,6 +18,7 @@ defmodule SalesReg.Business.Branch do
   @doc false
   def changeset(branch, attrs) do
     branch
+    |> Repo.preload([:location])
     |> cast(attrs, [:type, :company_id])
     |> validate_required([:type, :company_id])
     |> cast_assoc(:location)

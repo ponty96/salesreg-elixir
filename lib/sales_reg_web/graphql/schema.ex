@@ -12,7 +12,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
 
   import_types(__MODULE__.DataTypes)
   import_types(__MODULE__.UserSchema)
-  import_types(__MODULE__.CompanySchema)
+  import_types(__MODULE__.BusinessSchema)
   import_types(__MODULE__.StoreSchema)
   import_types(__MODULE__.CustomerSchema)
   import_types(__MODULE__.VendorSchema)
