@@ -34,7 +34,7 @@ defmodule SalesReg.Business.Company do
     company
     |> cast(attrs, @required_fields ++ [:about, :currency])
     |> validate_required(@required_fields)
-    |> cast_assoc(:branches)
+    # |> cast_assoc(:branches)
     |> validate_category()
   end
 
