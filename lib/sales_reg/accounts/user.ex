@@ -4,6 +4,7 @@ defmodule SalesReg.Accounts.User do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+  alias SalesReg.Repo
 
   alias SalesReg.Business.{
     Company,
@@ -41,6 +42,7 @@ defmodule SalesReg.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
+    |> Repo.preload([:phone, :location])
     |> cast(attrs, @update_fields ++ @fields)
     |> validate_required(@update_fields ++ [:date_of_birth])
     |> cast_assoc(:phone)
