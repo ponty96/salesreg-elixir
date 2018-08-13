@@ -19,6 +19,6 @@ defmodule SalesReg.Business.Phone do
     |> cast(attrs, [:type, :number])
     |> validate_required([:type, :number])
     |> assoc_constraint(:customer)
-    |> unique_constraint(:number)
+    |> assoc_constraint(:user)
   end
 end

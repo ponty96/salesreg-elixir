@@ -15,7 +15,7 @@ defmodule SalesRegWeb.Router do
 
   pipeline :graphql do
     plug(SalesRegWeb.AuthPipeline)
-    plug(SalesRegWeb.Context)
+    plug(SalesRegWeb.AbsintheContext)
   end
 
   scope "/api" do
