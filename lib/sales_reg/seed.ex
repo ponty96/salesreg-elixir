@@ -1,7 +1,7 @@
 defmodule SalesReg.Seed do
   use SalesRegWeb, :context
 
-  alias Faker.{Phone.EnGb}
+  alias Faker.{Phone.EnGb, Avatar}
 
   @company_categories ["product", "service", "product_service"]
   @location_types ["office", "home"]
@@ -48,7 +48,7 @@ defmodule SalesReg.Seed do
   def add_product(index, user_id, company_id) do
     product_params = %{
       "description" => "Our product is #{index}",
-      "featured_image" => "image #{index}",
+      "featured_image" => Avatar.image_url(),
       "name" => "product name #{index}",
       "cost_price" => "#{Enum.random(3000..100_000)}",
       "minimum_stock_quantity" => "#{Enum.random(5..100)}",
@@ -75,12 +75,9 @@ defmodule SalesReg.Seed do
 
   def add_customer(index, user_id, company_id) do
     customer_params = %{
-      "image" => "image #{index}",
+      "image" => Avatar.image_url(),
       "customer_name" => "customer name #{index}",
-      "phones" =>
-        Enum.map(1..2, fn _index ->
-          gen_phone_params(index)
-        end),
+      "phone" => gen_phone_params(1),
       "residential_add" => gen_location_params(index),
       "office_add" => gen_location_params(index),
       "email" => "someemail#{index}@gmail.com",

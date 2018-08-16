@@ -126,13 +126,10 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:customer_name, :string)
     field(:email, :string)
     field(:fax, :string)
-    field(:city, :string)
-    field(:state, :string)
-    field(:country, :string)
 
     field(:residential_add, :location, resolve: dataloader(SalesReg.Business, :residential_add))
     field(:office_add, :location, resolve: dataloader(SalesReg.Business, :office_add))
-    field(:phones, list_of(:phone), resolve: dataloader(SalesReg.Business, :phones))
+    field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
   end
@@ -400,14 +397,11 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :customer_input do
     field(:image, :string)
     field(:customer_name, non_null(:string))
-    field(:phones, non_null(list_of(:phone_input)))
+    field(:phone, non_null(:phone_input))
     field(:residential_add, non_null(:location_input))
-    field(:office_add, non_null(:location_input))
+    field(:office_add, :location_input)
     field(:email, non_null(:string))
     field(:fax, :string)
-    field(:city, :string)
-    field(:state, :string)
-    field(:country, :string)
 
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
@@ -461,7 +455,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :update_customer_input do
     field(:image, :string)
     field(:customer_name, non_null(:string))
-    field(:phones, non_null(list_of(:update_phone_input)))
+    field(:phone, non_null(:update_phone_input))
     field(:residential_add, non_null(:update_location_input))
     field(:office_add, non_null(:update_location_input))
     field(:email, non_null(:string))

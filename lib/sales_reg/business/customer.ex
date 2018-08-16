@@ -12,9 +12,6 @@ defmodule SalesReg.Business.Customer do
     field(:customer_name, :string)
     field(:email, :string)
     field(:fax, :string)
-    field(:city, :string)
-    field(:state, :string)
-    field(:country, :string)
 
     belongs_to(:company, Company)
     belongs_to(:user, SalesReg.Accounts.User)
@@ -32,8 +29,7 @@ defmodule SalesReg.Business.Customer do
       foreign_key: :office_add_id,
       on_replace: :delete
     )
-
-    has_many(:phones, SalesReg.Business.Phone, on_replace: :delete)
+    has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
 
     timestamps()
   end
@@ -42,9 +38,6 @@ defmodule SalesReg.Business.Customer do
     :customer_name,
     :email,
     :fax,
-    :city,
-    :state,
-    :country,
     :company_id,
     :user_id
   ]
@@ -53,11 +46,11 @@ defmodule SalesReg.Business.Customer do
   @doc false
   def changeset(customer, attrs) do
     customer
-    |> Repo.preload([:residential_add, :office_add, :phones])
+    |> Repo.preload([:residential_add, :office_add, :phone])
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> cast_assoc(:residential_add)
     |> cast_assoc(:office_add)
-    |> cast_assoc(:phones)
+    |> cast_assoc(:phone)
     |> validate_required(@required_fields)
     |> validate_format(:email, ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/)
     |> assoc_constraint(:company)
