@@ -12,6 +12,12 @@ defmodule SalesReg.Business.Customer do
     field(:customer_name, :string)
     field(:email, :string)
     field(:fax, :string)
+    field(:currency, :string)
+    field(:birthday, :string)
+    field(:marital_status, :string)
+    field(:marriage_anniversary, :string)
+    field(:likes, {:array, :string})
+    field(:dislikes, {:array, :string})
 
     belongs_to(:company, Company)
     belongs_to(:user, SalesReg.Accounts.User)
@@ -29,7 +35,9 @@ defmodule SalesReg.Business.Customer do
       foreign_key: :office_add_id,
       on_replace: :delete
     )
+
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
+    has_one(:bank, SalesReg.Business.Bank, on_replace: :delete)
 
     timestamps()
   end
@@ -39,7 +47,13 @@ defmodule SalesReg.Business.Customer do
     :email,
     :fax,
     :company_id,
-    :user_id
+    :user_id,
+    :currency,
+    :birthday,
+    :marital_status,
+    :marriage_anniversary,
+    :likes,
+    :dislikes
   ]
   @optional_fields [:image]
 
@@ -51,6 +65,7 @@ defmodule SalesReg.Business.Customer do
     |> cast_assoc(:residential_add)
     |> cast_assoc(:office_add)
     |> cast_assoc(:phone)
+    |> cast_assoc(:bank)
     |> validate_required(@required_fields)
     |> validate_format(:email, ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/)
     |> assoc_constraint(:company)

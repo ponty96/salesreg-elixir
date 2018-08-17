@@ -85,6 +85,7 @@ defmodule SalesRegWeb do
         Business.Location,
         Business.Phone,
         Business.Vendor,
+        Business.Bank,
         Store,
         Store.Product,
         Store.Service,

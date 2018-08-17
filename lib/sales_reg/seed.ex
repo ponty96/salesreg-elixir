@@ -7,6 +7,8 @@ defmodule SalesReg.Seed do
   @location_types ["office", "home"]
   @phone_types ["home", "mobile", "work"]
   @currency ["Dollars", "Naira", "Euro", "Pounds"]
+  @marital_status ["Single", "Married", "Widowed"]
+  @banks ["GTB", "FBN", "Sterling Bank", "Zenith Bank"]
 
   def create_user() do
     user_params = %{
@@ -86,7 +88,21 @@ defmodule SalesReg.Seed do
       "state" => "state #{index}",
       "country" => "country #{index}",
       "user_id" => "#{user_id}",
-      "company_id" => "#{company_id}"
+      "company_id" => "#{company_id}",
+      "currency" => "#{Enum.random(@currency)}#{index}",
+      "birthday" => "#{dob()}",
+      "marital_status" => "#{Enum.random(@marital_status)}",
+      "marriage_anniversary" => "marriage anniversary #{index}",
+      "likes" => [
+        "honesty #{index}",
+        "integrity #{index}",
+        "principle #{index}"
+      ],
+      "dislikes" => [
+        "lies #{index}",
+        "pride #{index}"
+      ],
+      "bank" => gen_bank_details(index)
     }
 
     Business.add_customer(customer_params)
@@ -135,5 +151,13 @@ defmodule SalesReg.Seed do
 
   defp dob() do
     "#{Enum.random(1..31)}-#{Enum.random(1..12)}-#{Enum.random(1960..2000)}"
+  end
+
+  def gen_bank_details(index) do
+    %{
+      "account_name" => "customer name #{index}",
+      "account_number" => "000000000#{index}",
+      "account_bank" => "#{Enum.random(@banks)}#{index}"
+    }
   end
 end

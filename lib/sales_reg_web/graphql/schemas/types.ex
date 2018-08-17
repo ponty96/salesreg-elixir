@@ -126,12 +126,18 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:customer_name, :string)
     field(:email, :string)
     field(:fax, :string)
+    field(:currency, :string)
+    field(:birthday, :string)
+    field(:marital_status, :string)
+    field(:likes, list_of(:string))
+    field(:dislikes, list_of(:string))
 
     field(:residential_add, :location, resolve: dataloader(SalesReg.Business, :residential_add))
     field(:office_add, :location, resolve: dataloader(SalesReg.Business, :office_add))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
+    field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
   end
 
   @desc """
@@ -207,6 +213,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :items))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
+  end
+
+  object :bank do
+    field(:id, :uuid)
+    field(:account_name, :string)
+    field(:account_number, :string)
+    field(:account_bank, :string)
+
+    field(:customer, :customer, resolve: dataloader(SalesReg.Business, :customer))
   end
 
   @desc """
@@ -402,6 +417,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:office_add, :location_input)
     field(:email, non_null(:string))
     field(:fax, :string)
+    field(:currency, :string)
+    field(:birthday, :string)
+    field(:marital_status, :string)
+    field(:marriage_anniversary, :string)
+    field(:likes, list_of(:string))
+    field(:dislikes, list_of(:string))
+    field(:bank, non_null(:bank_input))
 
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
@@ -446,6 +468,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:user_id, non_null(:uuid))
     field(:customer_id, non_null(:uuid))
     field(:company_id, non_null(:uuid))
+  end
+
+  input_object :bank_input do
+    field(:account_name, non_null(:string))
+    field(:account_number, non_null(:string))
+    field(:account_bank, non_null(:string))
   end
 
   #########################################################

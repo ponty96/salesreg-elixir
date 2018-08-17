@@ -3,18 +3,18 @@ defmodule SalesRegWeb.GraphQL.Resolvers.CustomerResolver do
 
   @phone_types ["home", "work", "mobile"]
 
-  def upsert_customer(%{customer: %{phones: phones} = params, customer_id: id}, _res) do
+  def upsert_customer(%{customer: %{phone: phone} = params, customer_id: id}, _res) do
     update_params =
       params
-      |> add_phones_type(phones)
+      |> add_phone_type(phone)
 
     Business.get_customer(id)
     |> Business.update_customer(update_params)
   end
 
-  def upsert_customer(%{customer: %{phones: phones} = params}, _res) do
+  def upsert_customer(%{customer: %{phone: phone} = params}, _res) do
     params
-    |> add_phones_type(phones)
+    |> add_phone_type(phone)
     |> Business.add_customer()
   end
 
@@ -27,14 +27,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.CustomerResolver do
     |> Business.delete_customer()
   end
 
-  defp add_phones_type(params, phones) do
-    phones =
-      phones
-      |> Enum.map(fn map ->
-        randomize_type(map)
-      end)
-
-    %{params | phones: phones}
+  defp add_phone_type(params, phone) do
+    %{params | phone: randomize_type(phone)}
   end
 
   defp randomize_type(map) do
