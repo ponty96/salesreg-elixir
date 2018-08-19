@@ -211,6 +211,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   object :expense do
     field(:id, :uuid)
     field(:title, :string)
+    field(:date, :string)
     field(:total_amount, :string)
     field(:payment_method, :string)
 
@@ -257,7 +258,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :location,
       :purchase,
       :item,
-      :sale
+      :sale,
+      :expense
     ])
 
     resolve_type(fn
@@ -274,6 +276,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Item{}, _ -> :item
       %Sale{}, _ -> :sale
       %{user: %User{}}, _ -> :authorization
+      %Expense{}, _ -> :expense
     end)
   end
 
@@ -471,8 +474,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   
   input_object :expense_input do
     field(:title, non_null(:string))
-    field(:total_amount, non_null(:string))
-    field(:payment_method, :payment_method)
+    field(:date, non_null(:string))
+    field(:payment_method, non_null(:payment_method))
     field(:expense_items, non_null(list_of(:expense_item_input)))
     field(:paid_by_id, non_null(:uuid))
     field(:paid_to_id, non_null(:uuid))
@@ -480,11 +483,10 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   input_object :expense_item_input do
-    field(:item_name, :string)
-    field(:amount, :string)
+    field(:item_name, non_null(:string))
+    field(:amount, non_null(:float))
     field(:product_id, :uuid)
     field(:service_id, :uuid)
-    field(:expense_id, non_null(:uuid))
   end
 
   #########################################################

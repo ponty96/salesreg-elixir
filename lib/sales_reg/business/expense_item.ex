@@ -16,7 +16,7 @@ defmodule SalesReg.Business.ExpenseItem do
     timestamps()
   end
 
-  @required_fields [:item_name, :amount, :expense_id]
+  @required_fields [:item_name, :amount]
   @optional_fields [:product_id, :service_id]
 
   @doc false
@@ -39,8 +39,8 @@ defmodule SalesReg.Business.ExpenseItem do
         assoc_constraint(changeset, :service)
       
       true -> 
-        add_error(changeset, [:product_id], "product_id or service_id must not be empty")
-        add_error(changeset, [:service_id], "product_id or service_id must not be empty")
+        add_error(changeset, :product_id, "must have exactly one of product id or service id")
+        add_error(changeset, :service_id, "must have exactly one of product id or service id")
     end
   end
 end
