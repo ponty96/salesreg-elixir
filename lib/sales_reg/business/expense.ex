@@ -42,5 +42,18 @@ defmodule SalesReg.Business.Expense do
     |> assoc_constraint(:company)
     |> assoc_constraint(:paid_by)
     |> assoc_constraint(:paid_to)
+    |> ensure_seperate_user()
+  end
+
+  defp ensure_seperate_user(changeset) do
+    paid_by_id = get_field(changeset, :paid_by_id)
+    paid_to_id = get_field(changeset, :paid_to_id)
+
+    if paid_by_id == paid_to_id do
+      add_error(changeset, :paid_by_id, "payer and receipient cannot be the same user")
+      add_error(changeset, :paid_to_id, "payer and receipient cannot be the same user")
+    else
+      changeset
+    end
   end
 end

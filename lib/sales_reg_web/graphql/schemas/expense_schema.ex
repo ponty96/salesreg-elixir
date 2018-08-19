@@ -4,7 +4,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.ExpenseSchema do
   """
   use Absinthe.Schema.Notation
   alias SalesRegWeb.GraphQL.Resolvers.ExpenseResolver
-
+  alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  
   ### MUTATIONS
   object :expense_mutations do
     @desc """
@@ -14,6 +15,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.ExpenseSchema do
       arg(:expense, non_null(:expense_input))
       arg(:expense_id, :uuid)
 
+      middleware(Authorize)
       resolve(&ExpenseResolver.upsert_expense/2)
     end
   end
@@ -26,6 +28,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.ExpenseSchema do
     field :company_expenses, list_of(:expense) do
       arg(:company_id, non_null(:uuid))
 
+      middleware(Authorize)
       resolve(&ExpenseResolver.list_company_expenses/2)
     end
   end
