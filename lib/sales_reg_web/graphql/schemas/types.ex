@@ -219,7 +219,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:id, :uuid)
     field(:account_name, :string)
     field(:account_number, :string)
-    field(:account_bank, :string)
+    field(:bank_name, :string)
 
     field(:customer, :customer, resolve: dataloader(SalesReg.Business, :customer))
   end
@@ -473,7 +473,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :bank_input do
     field(:account_name, non_null(:string))
     field(:account_number, non_null(:string))
-    field(:account_bank, non_null(:string))
+    field(:bank_name, non_null(:string))
   end
 
   #########################################################
