@@ -417,15 +417,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:office_add, :location_input)
     field(:email, non_null(:string))
     field(:fax, :string)
-    field(:currency, non_null(:string))
-    field(:birthday, non_null(:string))
-    field(:marital_status, non_null(:string))
-    field(:marriage_anniversary, non_null(:string))
-    field(:likes, non_null(list_of(:string)))
-    field(:dislikes, non_null(list_of(:string)))
-    field(:bank, non_null(:bank_input))
+    field(:currency, :string)
+    field(:birthday, :string)
+    field(:marital_status, :string)
+    field(:marriage_anniversary, :string)
+    field(:likes, list_of(:string))
+    field(:dislikes, list_of(:string))
+    field(:bank, :bank_input)
 
-    field(:company_id, non_null(:uuid))
+    field(:company_id, :uuid)
     field(:user_id, non_null(:uuid))
   end
 

@@ -45,30 +45,32 @@ defmodule SalesReg.Business.Customer do
   @required_fields [
     :customer_name,
     :email,
-    :fax,
-    :company_id,
     :user_id,
-    :currency,
+    :currency
+  ]
+  @optional_fields [
+    :image,
+    :fax,
     :birthday,
     :marital_status,
     :marriage_anniversary,
+    :company_id,
     :likes,
     :dislikes
   ]
-  @optional_fields [:image]
 
   @doc false
   def changeset(customer, attrs) do
     customer
     |> Repo.preload([:residential_add, :office_add, :phone])
     |> cast(attrs, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
+    |> validate_format(:email, ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/)
+    |> validate_required(:phone, message: "Customer Phone contact can't be blank")
     |> cast_assoc(:residential_add)
     |> cast_assoc(:office_add)
     |> cast_assoc(:phone)
     |> cast_assoc(:bank)
-    |> validate_required(@required_fields)
-    |> validate_format(:email, ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/)
-    |> assoc_constraint(:company)
     |> assoc_constraint(:user)
   end
 end
