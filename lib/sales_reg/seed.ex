@@ -152,7 +152,7 @@ defmodule SalesReg.Seed do
     %{
       "account_name" => "customer name #{index}",
       "account_number" => "000000000#{index}",
-      "account_bank" => "#{Enum.random(@banks)}#{index}"
+      "bank_name" => "#{Enum.random(@banks)}#{index}"
     }
   end
 end

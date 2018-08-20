@@ -6,7 +6,7 @@ defmodule SalesReg.Repo.Migrations.CreateBank do
       add(:id, :binary_id, primary_key: true)
       add(:account_name, :string)
       add(:account_number, :string)
-      add(:account_bank, :string)
+      add(:bank_name, :string)
 
       add(:customer_id, references(:customers, on_delete: :nothing, type: :binary_id))
 

@@ -10,14 +10,14 @@ defmodule SalesReg.Business.Bank do
   schema "banks" do
     field(:account_name, :string)
     field(:account_number, :string)
-    field(:account_bank, :string)
+    field(:bank_name, :string)
 
     belongs_to(:customer, SalesReg.Business.Customer)
 
     timestamps()
   end
 
-  @required_fields [:account_name, :account_number, :account_bank]
+  @required_fields [:account_name, :account_number, :bank_name]
   @optional_fields []
 
   @doc false
