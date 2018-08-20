@@ -11,7 +11,6 @@ defmodule SalesReg.Business.Customer do
     field(:image, :string)
     field(:customer_name, :string)
     field(:email, :string)
-    field(:fax, :string)
     field(:currency, :string)
     field(:birthday, :string)
     field(:marital_status, :string)
@@ -22,20 +21,7 @@ defmodule SalesReg.Business.Customer do
     belongs_to(:company, Company)
     belongs_to(:user, SalesReg.Accounts.User)
 
-    has_one(
-      :residential_add,
-      SalesReg.Business.Location,
-      foreign_key: :residential_add_id,
-      on_replace: :delete
-    )
-
-    has_one(
-      :office_add,
-      SalesReg.Business.Location,
-      foreign_key: :office_add_id,
-      on_replace: :delete
-    )
-
+    has_one(:address, SalesReg.Business.Location, on_replace: :delete)
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
     has_one(:bank, SalesReg.Business.Bank, on_replace: :delete)
 
@@ -45,7 +31,6 @@ defmodule SalesReg.Business.Customer do
   @required_fields [
     :customer_name,
     :email,
-    :fax,
     :company_id,
     :user_id,
     :currency,
@@ -60,10 +45,9 @@ defmodule SalesReg.Business.Customer do
   @doc false
   def changeset(customer, attrs) do
     customer
-    |> Repo.preload([:residential_add, :office_add, :phone])
+    |> Repo.preload([:address, :phone, :bank])
     |> cast(attrs, @required_fields ++ @optional_fields)
-    |> cast_assoc(:residential_add)
-    |> cast_assoc(:office_add)
+    |> cast_assoc(:address)
     |> cast_assoc(:phone)
     |> cast_assoc(:bank)
     |> validate_required(@required_fields)
