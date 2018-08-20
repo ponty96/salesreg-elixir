@@ -37,7 +37,6 @@ defmodule SalesReg.Business.Customer do
   ]
   @optional_fields [
     :image,
-    :fax,
     :birthday,
     :marital_status,
     :marriage_anniversary,

@@ -483,7 +483,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:residential_add, non_null(:update_location_input))
     field(:office_add, non_null(:update_location_input))
     field(:email, non_null(:string))
-    field(:fax, :string)
     field(:city, :string)
     field(:state, :string)
     field(:country, :string)

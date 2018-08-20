@@ -4,8 +4,6 @@ defmodule SalesReg.Business.Bank do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  alias SalesReg.Business.Customer
-  alias SalesReg.Repo
 
   schema "banks" do
     field(:account_name, :string)
