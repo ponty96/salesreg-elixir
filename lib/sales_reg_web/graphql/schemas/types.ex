@@ -125,16 +125,17 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:image, :string)
     field(:customer_name, :string)
     field(:email, :string)
-    field(:fax, :string)
-    field(:city, :string)
-    field(:state, :string)
-    field(:country, :string)
+    field(:currency, :string)
+    field(:birthday, :string)
+    field(:marital_status, :string)
+    field(:likes, list_of(:string))
+    field(:dislikes, list_of(:string))
 
-    field(:residential_add, :location, resolve: dataloader(SalesReg.Business, :residential_add))
-    field(:office_add, :location, resolve: dataloader(SalesReg.Business, :office_add))
-    field(:phones, list_of(:phone), resolve: dataloader(SalesReg.Business, :phones))
+    field(:address, :location, resolve: dataloader(SalesReg.Business, :address))
+    field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
+    field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
   end
 
   @desc """
@@ -210,6 +211,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :items))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
+  end
+
+  object :bank do
+    field(:id, :uuid)
+    field(:account_name, :string)
+    field(:account_number, :string)
+    field(:bank_name, :string)
+
+    field(:customer, :customer, resolve: dataloader(SalesReg.Business, :customer))
   end
 
   @desc """
@@ -400,16 +410,18 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :customer_input do
     field(:image, :string)
     field(:customer_name, non_null(:string))
-    field(:phones, non_null(list_of(:phone_input)))
-    field(:residential_add, non_null(:location_input))
-    field(:office_add, non_null(:location_input))
+    field(:phone, non_null(:phone_input))
+    field(:address, non_null(:location_input))
     field(:email, non_null(:string))
-    field(:fax, :string)
-    field(:city, :string)
-    field(:state, :string)
-    field(:country, :string)
+    field(:currency, non_null(:string))
+    field(:birthday, non_null(:string))
+    field(:marital_status, non_null(:string))
+    field(:marriage_anniversary, non_null(:string))
+    field(:likes, non_null(list_of(:string)))
+    field(:dislikes, non_null(list_of(:string)))
+    field(:bank, non_null(:bank_input))
 
-    field(:company_id, non_null(:uuid))
+    field(:company_id, :uuid)
     field(:user_id, non_null(:uuid))
   end
 
@@ -454,6 +466,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company_id, non_null(:uuid))
   end
 
+  input_object :bank_input do
+    field(:account_name, non_null(:string))
+    field(:account_number, non_null(:string))
+    field(:bank_name, non_null(:string))
+  end
+
   #########################################################
   # These are used only at the point of updating the
   # ID has to be supplied except for parent input objects
@@ -461,11 +479,10 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :update_customer_input do
     field(:image, :string)
     field(:customer_name, non_null(:string))
-    field(:phones, non_null(list_of(:update_phone_input)))
+    field(:phone, non_null(:update_phone_input))
     field(:residential_add, non_null(:update_location_input))
     field(:office_add, non_null(:update_location_input))
     field(:email, non_null(:string))
-    field(:fax, :string)
     field(:city, :string)
     field(:state, :string)
     field(:country, :string)

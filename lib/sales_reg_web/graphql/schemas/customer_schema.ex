@@ -4,6 +4,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.CustomerSchema do
   """
   use Absinthe.Schema.Notation
   alias SalesRegWeb.GraphQL.Resolvers.CustomerResolver
+  alias SalesRegWeb.GraphQL.MiddleWares.Authorize
 
   ### MUTATIONS
   object :customer_mutations do
@@ -14,6 +15,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.CustomerSchema do
       arg(:customer, non_null(:customer_input))
       arg(:customer_id, :uuid)
 
+      middleware(Authorize)
       resolve(&CustomerResolver.upsert_customer/2)
     end
 
@@ -23,6 +25,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.CustomerSchema do
     field :delete_customer, :mutation_response do
       arg(:customer_id, non_null(:uuid))
 
+      middleware(Authorize)
       resolve(&CustomerResolver.delete_customer/2)
     end
   end
@@ -35,6 +38,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.CustomerSchema do
     field :company_customers, list_of(:customer) do
       arg(:company_id, non_null(:uuid))
 
+      middleware(Authorize)
       resolve(&CustomerResolver.list_company_customers/2)
     end
   end
