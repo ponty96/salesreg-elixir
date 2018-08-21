@@ -10,7 +10,7 @@ defmodule SalesReg.Business.Bank do
     field(:account_number, :string)
     field(:bank_name, :string)
 
-    belongs_to(:customer, SalesReg.Business.Customer)
+    belongs_to(:contact, SalesReg.Business.Contact)
 
     timestamps()
   end
@@ -23,6 +23,6 @@ defmodule SalesReg.Business.Bank do
     bank
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
-    |> assoc_constraint(:customer)
+    |> assoc_constraint(:contact)
   end
 end

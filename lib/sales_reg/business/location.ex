@@ -15,8 +15,7 @@ defmodule SalesReg.Business.Location do
     field(:type, :string)
 
     belongs_to(:branch, SalesReg.Business.Branch)
-    belongs_to(:customer, SalesReg.Business.Customer, foreign_key: :customer_id)
-    belongs_to(:vendor, SalesReg.Business.Vendor)
+    belongs_to(:contact, SalesReg.Business.Contact, foreign_key: :contact_id)
     belongs_to(:user, SalesReg.Accounts.User)
 
     timestamps()
@@ -31,7 +30,7 @@ defmodule SalesReg.Business.Location do
     |> cast(attrs, @required_fields ++ @fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:branch)
-    |> assoc_constraint(:customer)
+    |> assoc_constraint(:contact)
     |> assoc_constraint(:user)
   end
 end

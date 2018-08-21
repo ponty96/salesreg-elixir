@@ -6,9 +6,8 @@ defmodule SalesReg.Business do
   alias Dataloader.Ecto, as: DataloaderEcto
 
   use SalesReg.Context, [
-    Vendor,
     Location,
-    Customer,
+    Contact,
     Company,
     Branch
   ]
@@ -46,6 +45,17 @@ defmodule SalesReg.Business do
   def update_company_head_office(company_id, branch_params) do
     branch = Repo.get_by(Branch, type: "head_office", company_id: company_id)
     update_branch(branch, branch_params)
+  end
+
+  ## CONTACTS
+  def list_company_contacts(company_id, type) do
+    {:ok,
+     Repo.all(
+       from(ct in Contact,
+         where: ct.company_id == ^company_id and ct.type == ^type,
+         order_by: [desc: ct.updated_at]
+       )
+     )}
   end
 
   #

@@ -7,7 +7,7 @@ defmodule SalesReg.Business.Phone do
   schema "phones" do
     field(:type, :string, default: "Mobile")
     field(:number, :string)
-    belongs_to(:customer, SalesReg.Business.Customer)
+    belongs_to(:contact, SalesReg.Business.Contact)
     belongs_to(:user, SalesReg.Accounts.User)
 
     timestamps()
@@ -18,7 +18,7 @@ defmodule SalesReg.Business.Phone do
     phone
     |> cast(attrs, [:type, :number])
     |> validate_required([:type, :number])
-    |> assoc_constraint(:customer)
+    |> assoc_constraint(:contact)
     |> assoc_constraint(:user)
   end
 end

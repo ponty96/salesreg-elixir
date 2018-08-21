@@ -14,7 +14,7 @@ defmodule SalesReg.Order.Purchase do
 
     has_many(:items, SalesReg.Order.Item, on_replace: :delete)
     belongs_to(:user, SalesReg.Accounts.User)
-    belongs_to(:vendor, SalesReg.Business.Vendor)
+    belongs_to(:contact, SalesReg.Business.Contact)
     belongs_to(:company, SalesReg.Business.Company)
 
     timestamps()
@@ -26,7 +26,7 @@ defmodule SalesReg.Order.Purchase do
     :purchasing_agent,
     :amount,
     :user_id,
-    :vendor_id,
+    :contact_id,
     :company_id
   ]
 
@@ -40,7 +40,7 @@ defmodule SalesReg.Order.Purchase do
     |> validate_required(@required_fields)
     |> cast_assoc(:items)
     |> assoc_constraint(:company)
-    |> assoc_constraint(:vendor)
+    |> assoc_constraint(:contact)
     |> assoc_constraint(:user)
     |> validate_payment_method()
   end

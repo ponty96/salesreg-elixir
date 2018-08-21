@@ -14,7 +14,7 @@ defmodule SalesReg.Order.Sale do
 
     has_many(:items, SalesReg.Order.Item, on_replace: :delete)
     belongs_to(:user, SalesReg.Accounts.User)
-    belongs_to(:customer, SalesReg.Business.Customer)
+    belongs_to(:contact, SalesReg.Business.Contact)
     belongs_to(:company, SalesReg.Business.Company)
 
     timestamps()
@@ -26,7 +26,7 @@ defmodule SalesReg.Order.Sale do
     :payment_method,
     :tax,
     :user_id,
-    :customer_id,
+    :contact_id,
     :company_id
   ]
 
@@ -41,7 +41,7 @@ defmodule SalesReg.Order.Sale do
     |> cast_assoc(:items)
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
-    |> assoc_constraint(:customer)
+    |> assoc_constraint(:contact)
     |> validate_type()
     |> validate_payment_method()
   end

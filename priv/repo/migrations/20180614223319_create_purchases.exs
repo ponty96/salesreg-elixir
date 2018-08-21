@@ -11,12 +11,12 @@ defmodule SalesReg.Repo.Migrations.CreatePurchase do
       add(:amount, :string)
 
       add(:user_id, references(:users, on_delete: :nothing, type: :binary_id))
-      add(:vendor_id, references(:vendors, on_delete: :nothing, type: :binary_id))
+      add(:contact_id, references(:contacts, on_delete: :nothing, type: :binary_id))
       add(:company_id, references(:companies, on_delete: :nothing, type: :binary_id))
 
       timestamps()
     end
 
-    create(index(:purchases, [:user_id, :vendor_id, :company_id]))
+    create(index(:purchases, [:user_id, :contact_id, :company_id]))
   end
 end
