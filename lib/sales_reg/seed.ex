@@ -1,12 +1,14 @@
 defmodule SalesReg.Seed do
   use SalesRegWeb, :context
 
-  alias Faker.{Phone.EnGb}
+  alias Faker.{Phone.EnGb, Avatar}
 
   @company_categories ["product", "service", "product_service"]
   @location_types ["office", "home"]
   @phone_types ["home", "mobile", "work"]
   @currency ["Dollars", "Naira", "Euro", "Pounds"]
+  @marital_status ["Single", "Married", "Widowed"]
+  @banks ["GTB", "FBN", "Sterling Bank", "Zenith Bank"]
 
   def create_user() do
     user_params = %{
@@ -48,7 +50,7 @@ defmodule SalesReg.Seed do
   def add_product(index, user_id, company_id) do
     product_params = %{
       "description" => "Our product is #{index}",
-      "featured_image" => "image #{index}",
+      "featured_image" => Avatar.image_url(),
       "name" => "product name #{index}",
       "cost_price" => "#{Enum.random(3000..100_000)}",
       "minimum_stock_quantity" => "#{Enum.random(5..100)}",
@@ -75,21 +77,27 @@ defmodule SalesReg.Seed do
 
   def add_customer(index, user_id, company_id) do
     customer_params = %{
-      "image" => "image #{index}",
+      "image" => Avatar.image_url(),
       "customer_name" => "customer name #{index}",
-      "phones" =>
-        Enum.map(1..2, fn _index ->
-          gen_phone_params(index)
-        end),
-      "residential_add" => gen_location_params(index),
-      "office_add" => gen_location_params(index),
+      "phone" => gen_phone_params(1),
       "email" => "someemail#{index}@gmail.com",
-      "fax" => "+234",
-      "city" => "city #{index}",
-      "state" => "state #{index}",
-      "country" => "country #{index}",
+      "address" => gen_location_params(index),
       "user_id" => "#{user_id}",
-      "company_id" => "#{company_id}"
+      "company_id" => "#{company_id}",
+      "currency" => "#{Enum.random(@currency)}#{index}",
+      "birthday" => "#{dob()}",
+      "marital_status" => "#{Enum.random(@marital_status)}",
+      "marriage_anniversary" => "marriage anniversary #{index}",
+      "likes" => [
+        "honesty #{index}",
+        "integrity #{index}",
+        "principle #{index}"
+      ],
+      "dislikes" => [
+        "lies #{index}",
+        "pride #{index}"
+      ],
+      "bank" => gen_bank_details(index)
     }
 
     Business.add_customer(customer_params)
@@ -138,5 +146,13 @@ defmodule SalesReg.Seed do
 
   defp dob() do
     "#{Enum.random(1..31)}-#{Enum.random(1..12)}-#{Enum.random(1960..2000)}"
+  end
+
+  def gen_bank_details(index) do
+    %{
+      "account_name" => "customer name #{index}",
+      "account_number" => "000000000#{index}",
+      "bank_name" => "#{Enum.random(@banks)}#{index}"
+    }
   end
 end

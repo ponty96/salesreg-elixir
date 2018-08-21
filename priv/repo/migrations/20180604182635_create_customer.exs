@@ -12,9 +12,6 @@ defmodule SalesReg.Repo.Migrations.CreateCustomer do
       add(:office_add, :string)
       add(:email, :string)
       add(:fax, :string)
-      add(:city, :string)
-      add(:state, :string)
-      add(:country, :string)
 
       add(:company_id, references(:companies, on_delete: :nothing, type: :binary_id))
       add(:user_id, references(:users, on_delete: :nothing, type: :binary_id))
