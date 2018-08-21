@@ -40,7 +40,6 @@ defmodule SalesReg.Business.Customer do
     :birthday,
     :marital_status,
     :marriage_anniversary,
-    :company_id,
     :likes,
     :dislikes
   ]
@@ -50,9 +49,12 @@ defmodule SalesReg.Business.Customer do
     customer
     |> Repo.preload([:address, :phone, :bank])
     |> cast(attrs, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
+    |> validate_format(:email, ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/)
+    |> assoc_constraint(:company)
+    |> assoc_constraint(:user)
     |> cast_assoc(:address)
     |> cast_assoc(:phone)
     |> cast_assoc(:bank)
-    |> assoc_constraint(:user)
   end
 end
