@@ -281,6 +281,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:user, non_null(:user))
   end
 
+  @desc """
+    Product or Service search response
+  """
+  object :search_response do
+    field(:id, non_null(:uuid))
+    field(:name, non_null(:string))
+  end
+
   @desc "sorts the order from either ASC or DESC"
   enum :gender do
     value(:male, as: "MALE")
