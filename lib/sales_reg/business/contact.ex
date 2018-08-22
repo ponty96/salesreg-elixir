@@ -1,4 +1,4 @@
-defmodule SalesReg.Business.Customer do
+defmodule SalesReg.Business.Contact do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -7,9 +7,9 @@ defmodule SalesReg.Business.Customer do
   alias SalesReg.Business.Company
   alias SalesReg.Repo
 
-  schema "customers" do
+  schema "contacts" do
     field(:image, :string)
-    field(:customer_name, :string)
+    field(:contact_name, :string)
     field(:email, :string)
     field(:currency, :string)
     field(:birthday, :string)
@@ -17,6 +17,7 @@ defmodule SalesReg.Business.Customer do
     field(:marriage_anniversary, :string)
     field(:likes, {:array, :string})
     field(:dislikes, {:array, :string})
+    field(:type, :string)
 
     belongs_to(:company, Company)
     belongs_to(:user, SalesReg.Accounts.User)
@@ -29,11 +30,12 @@ defmodule SalesReg.Business.Customer do
   end
 
   @required_fields [
-    :customer_name,
+    :contact_name,
     :email,
     :company_id,
     :user_id,
-    :currency
+    :currency,
+    :type
   ]
   @optional_fields [
     :image,
@@ -45,16 +47,25 @@ defmodule SalesReg.Business.Customer do
   ]
 
   @doc false
-  def changeset(customer, attrs) do
-    customer
+  def changeset(contact, attrs) do
+    contact
     |> Repo.preload([:address, :phone, :bank])
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_format(:email, ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/)
+    |> validate_contact_type()
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
     |> cast_assoc(:address)
     |> cast_assoc(:phone)
     |> cast_assoc(:bank)
+  end
+
+  defp validate_contact_type(changeset) do
+    case get_field(changeset, :type) do
+      "customer" -> changeset
+      "vendor" -> changeset
+      _ -> add_error(changeset, :type, "Invalid contact type")
+    end
   end
 end

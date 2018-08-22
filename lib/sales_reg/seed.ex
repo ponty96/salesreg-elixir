@@ -76,9 +76,9 @@ defmodule SalesReg.Seed do
   end
 
   def add_customer(index, user_id, company_id) do
-    customer_params = %{
+    contact_params = %{
       "image" => Avatar.image_url(),
-      "customer_name" => "customer name #{index}",
+      "contact_name" => "customer name #{index}",
       "phone" => gen_phone_params(1),
       "email" => "someemail#{index}@gmail.com",
       "address" => gen_location_params(index),
@@ -97,29 +97,40 @@ defmodule SalesReg.Seed do
         "lies #{index}",
         "pride #{index}"
       ],
-      "bank" => gen_bank_details(index)
+      "bank" => gen_bank_details(index),
+      "type" => "customer"
     }
 
-    Business.add_customer(customer_params)
+    Business.add_contact(contact_params)
   end
 
   def add_vendor(index, user_id, company_id) do
-    vendor_params = %{
-      "email" => "email#{index}@gmail.com",
-      "fax" => "+234",
-      "city" => "city#{index}",
-      "state" => "state#{index}",
-      "country" => "country#{index}",
-      "currency" => "#{Enum.random(@currency)}#{index}",
-      "locations" =>
-        Enum.map(1..5, fn _index ->
-          gen_location_params(index)
-        end),
+    contact_params = %{
+      "image" => Avatar.image_url(),
+      "contact_name" => "vendor name #{index}",
+      "phone" => gen_phone_params(1),
+      "email" => "someemail#{index}@gmail.com",
+      "address" => gen_location_params(index),
       "user_id" => "#{user_id}",
-      "company_id" => "#{company_id}"
+      "company_id" => "#{company_id}",
+      "currency" => "#{Enum.random(@currency)}#{index}",
+      "birthday" => "#{dob()}",
+      "marital_status" => "#{Enum.random(@marital_status)}",
+      "marriage_anniversary" => "marriage anniversary #{index}",
+      "likes" => [
+        "honesty #{index}",
+        "integrity #{index}",
+        "principle #{index}"
+      ],
+      "dislikes" => [
+        "lies #{index}",
+        "pride #{index}"
+      ],
+      "bank" => gen_bank_details(index),
+      "type" => "vendor"
     }
 
-    Business.add_vendor(vendor_params)
+    Business.add_contact(contact_params)
   end
 
   defp gen_location_params(index) do
@@ -150,7 +161,7 @@ defmodule SalesReg.Seed do
 
   def gen_bank_details(index) do
     %{
-      "account_name" => "customer name #{index}",
+      "account_name" => "contact name #{index}",
       "account_number" => "000000000#{index}",
       "bank_name" => "#{Enum.random(@banks)}#{index}"
     }

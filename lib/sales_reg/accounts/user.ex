@@ -25,7 +25,7 @@ defmodule SalesReg.Accounts.User do
     field(:profile_picture, :string)
 
     has_one(:company, Company, foreign_key: :owner_id)
-    has_many(:customers, SalesReg.Business.Customer)
+    has_many(:contacts, SalesReg.Business.Contact)
     many_to_many(:companies, Company, join_through: Employee)
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
     has_one(:location, SalesReg.Business.Location, on_replace: :delete)

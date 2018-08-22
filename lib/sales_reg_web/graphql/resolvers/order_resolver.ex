@@ -13,11 +13,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     Order.add_purchase(new_params)
   end
 
-  def list_vendor_purchases(%{vendor_id: vendor_id}, _res) do
-    purchases = Order.list_vendor_purchases(vendor_id)
-    {:ok, purchases}
-  end
-
   def cancel_purchase_order(%{purchase_id: id}, _res) do
     purchase = Order.get_purchase(id)
     attrs = %{status: "cancelled"}
@@ -39,11 +34,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   def upsert_sale(%{sale: params}, _res) do
     new_params = add_order_amount(params)
     Order.add_sale(new_params)
-  end
-
-  def list_customer_sales(%{customer_id: customer_id}, _res) do
-    sales = Order.list_customer_sales(customer_id)
-    {:ok, sales}
   end
 
   def list_company_sales(%{company_id: company_id}, _res) do

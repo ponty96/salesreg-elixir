@@ -11,12 +11,12 @@ defmodule SalesReg.Repo.Migrations.CreateSale do
       add(:tax, :string)
 
       add(:user_id, references(:users, on_delete: :nothing, type: :binary_id))
-      add(:customer_id, references(:customers, on_delete: :nothing, type: :binary_id))
+      add(:contact_id, references(:contacts, on_delete: :nothing, type: :binary_id))
       add(:company_id, references(:companies, on_delete: :nothing, type: :binary_id))
 
       timestamps()
     end
 
-    create(index(:sales, [:user_id, :customer_id, :company_id]))
+    create(index(:sales, [:user_id, :contact_id, :company_id]))
   end
 end

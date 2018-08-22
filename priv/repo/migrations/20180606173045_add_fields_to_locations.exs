@@ -4,9 +4,9 @@ defmodule SalesReg.Repo.Migrations.AddFieldsToLocations do
   def change do
     alter table(:locations) do
       add(:type, :string)
-      add(:vendor_id, references(:vendors, on_delete: :nothing, type: :binary_id))
+      add(:contact_id, references(:contacts, on_delete: :nothing, type: :binary_id))
     end
 
-    create(index(:locations, [:vendor_id]))
+    create(index(:locations, [:contact_id]))
   end
 end
