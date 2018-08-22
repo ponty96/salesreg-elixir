@@ -1,8 +1,8 @@
-defmodule SalesReg.Repo.Migrations.RemoveFieldsFromCustomer do
+defmodule SalesReg.Repo.Migrations.RemoveFieldsFromContact do
   use Ecto.Migration
 
   def change do
-    alter table(:customers) do
+    alter table(:contacts) do
       remove(:phone1)
       remove(:phone2)
       remove(:residential_add)
