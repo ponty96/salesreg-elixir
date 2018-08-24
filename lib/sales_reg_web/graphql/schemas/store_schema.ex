@@ -65,7 +65,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     field :search_services_by_name, list_of(:search_response) do
       arg(:query, non_null(:string))
 
-      # middleware(Authorize)
+      middleware(Authorize)
       resolve(&StoreResolver.search_services_by_name/2)
     end
   end
