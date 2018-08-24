@@ -1,6 +1,6 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   use SalesRegWeb, :context
-  require SalesReg.Store
+  require SalesReg.Context
 
   def upsert_service(%{service: params, service_id: id}, _res) do
     Store.get_service(id)
@@ -16,7 +16,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   end
 
   def search_services_by_name(%{query: query}, _res) do
-    services = Store.search_schema_by_field(Service, query, :name)
+    services = SalesReg.Context.search_schema_by_field(Service, query, :name)
     {:ok, services}
   end
 

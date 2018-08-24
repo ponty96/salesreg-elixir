@@ -34,6 +34,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
   end
 
   ### QUERIES
+  ## Product queries
   object :product_queries do
     @desc """
       query for all products in a company's store
@@ -46,6 +47,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     end
   end
 
+  ## Service queries
   object :service_queries do
     @desc """
       query for all services in a company's store
@@ -63,7 +65,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     field :search_services_by_name, list_of(:search_response) do
       arg(:query, non_null(:string))
 
-      middleware(Authorize)
+      # middleware(Authorize)
       resolve(&StoreResolver.search_services_by_name/2)
     end
   end

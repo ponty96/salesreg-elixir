@@ -1,5 +1,6 @@
 defmodule SalesReg.Context do
   @moduledoc false
+  alias SalesReg.Repo
 
   defmacro __using__(modules) do
     quote bind_quoted: [modules: modules] do
@@ -74,6 +75,26 @@ defmodule SalesReg.Context do
           {String.to_atom("delete_#{schema}"), 1}
         ])
       end
+    end
+  end
+
+  defmacro search_schema_by_field(schema, query, field) do
+    quote do
+      unquote(schema)
+      |> select([s], map(s, [unquote(field), :id]))
+      |> where(
+        [s],
+        fragment("text(?) @@ plainto_tsquery(?)", field(s, ^unquote(field)), ^unquote(query))
+      )
+      |> order_by(
+        [s],
+        fragment(
+          "ts_rank(to_tsvector(?), plainto_tsquery(?)) DESC",
+          field(s, ^unquote(field)),
+          ^unquote(query)
+        )
+      )
+      |> Repo.all()
     end
   end
 end
