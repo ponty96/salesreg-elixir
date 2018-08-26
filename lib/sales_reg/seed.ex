@@ -75,7 +75,7 @@ defmodule SalesReg.Seed do
     Store.add_service(service_params)
   end
 
-  def add_customer(index, user_id, company_id) do
+  def add_contact(index, user_id, company_id) do
     contact_params = %{
       "image" => Avatar.image_url(),
       "contact_name" => "customer name #{index}",
@@ -105,7 +105,7 @@ defmodule SalesReg.Seed do
   end
 
   defp gen_location_params(index) do
-    increament_index = index + 1
+    increment_index = index + 1
 
     %{
       "city" => "city #{index}",
@@ -114,7 +114,7 @@ defmodule SalesReg.Seed do
       "lat" => "#{index}",
       "long" => "#{index}",
       "street1" => "#{index}",
-      "street2" => "#{increament_index}",
+      "street2" => "#{increment_index}",
       "type" => Enum.random(@location_types)
     }
   end
