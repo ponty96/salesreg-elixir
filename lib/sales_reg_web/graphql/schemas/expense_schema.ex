@@ -5,7 +5,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.ExpenseSchema do
   use Absinthe.Schema.Notation
   alias SalesRegWeb.GraphQL.Resolvers.ExpenseResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
-  
+
   ### MUTATIONS
   object :expense_mutations do
     @desc """

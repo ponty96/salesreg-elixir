@@ -3,7 +3,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ExpenseResolver do
 
   def upsert_expense(%{expense: params, expense_id: id}, _res) do
     new_params = new_expense_params(params)
-    
+
     Business.get_expense(id)
     |> Business.update_expense(new_params)
   end
@@ -27,12 +27,13 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ExpenseResolver do
   end
 
   defp calc_expense_amount([], acc), do: Float.to_string(acc)
+
   defp calc_expense_amount([h | t], acc) do
     calc_expense_amount(t, acc + h.amount)
   end
-  
+
   defp stringify_keys(items) do
-    Enum.map(items, fn(item) ->
+    Enum.map(items, fn item ->
       value = Float.to_string(item.amount)
       %{item | amount: value}
     end)

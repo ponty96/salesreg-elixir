@@ -8,11 +8,11 @@ defmodule SalesReg.Business.ExpenseItem do
   schema "expense_items" do
     field(:item_name, :string)
     field(:amount, :string)
-    
+
     belongs_to(:product, SalesReg.Store.Product)
     belongs_to(:service, SalesReg.Store.Service)
     belongs_to(:expense, SalesReg.Business.Expense, foreign_key: :expense_id)
-    
+
     timestamps()
   end
 
@@ -32,13 +32,13 @@ defmodule SalesReg.Business.ExpenseItem do
     service_id = get_field(changeset, :service_id)
 
     cond do
-      product_id != nil and service_id == nil -> 
+      product_id != nil and service_id == nil ->
         assoc_constraint(changeset, :product)
-      
+
       service_id != nil and product_id == nil ->
         assoc_constraint(changeset, :service)
-      
-      true -> 
+
+      true ->
         add_error(changeset, :product_id, "must have exactly one of product id or service id")
         add_error(changeset, :service_id, "must have exactly one of product id or service id")
     end

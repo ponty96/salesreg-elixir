@@ -12,7 +12,7 @@ defmodule SalesReg.Business.Expense do
     field(:date, :string)
     field(:total_amount, :string)
     field(:payment_method, :string)
-    
+
     belongs_to(:paid_by, SalesReg.Accounts.User, foreign_key: :paid_by_id)
     belongs_to(:paid_to, SalesReg.Accounts.User, foreign_key: :paid_to_id)
     belongs_to(:company, Company)
