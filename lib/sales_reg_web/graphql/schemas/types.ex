@@ -230,6 +230,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     Expense Item object type
   """
   object :expense_item do
+    field(:id, :uuid)
     field(:item_name, :string)
     field(:amount, :string)
 

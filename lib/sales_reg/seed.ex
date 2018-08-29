@@ -115,20 +115,20 @@ defmodule SalesReg.Seed do
       "paid_to" => "#{Name.En.name()}",
       "company_id" => company_id,
       "payment_method" => "Cash",
-      "expenses_item" => expenses_items
+      "expense_items" => expenses_items
     }
     Business.add_expense(expense_params)
   end
 
   defp total_expense_cost(expense_items) do
-    Enum.sum(Enum.map(expense_items, fn expense_item -> expense_item["amount"] end))
+    Enum.sum(Enum.map(expense_items, fn expense_item -> String.to_integer(expense_item["amount"]) end))
   end
 
   defp expenses_items() do
     Enum.map(1..5, fn index ->
       %{
         "item_name" => "Expense Item #{index}",
-        "amount" => Enum.random([10_000, 50_000, 150_000])
+        "amount" => Integer.to_string(Enum.random([10_000, 50_000, 150_000]))
       }
     end)
   end
