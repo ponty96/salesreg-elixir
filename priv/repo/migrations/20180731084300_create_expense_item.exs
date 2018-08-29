@@ -6,13 +6,11 @@ defmodule SalesReg.Repo.Migrations.CreateExpenseItem do
       add(:id, :binary_id, primary_key: true)
       add(:item_name, :string)
       add(:amount, :string)
-      
-      add(:product_id, references(:products, on_delete: :nothing, type: :binary_id))
-      add(:service_id, references(:services, on_delete: :nothing, type: :binary_id))
+
       add(:expense_id, references(:expenses, on_delete: :nothing, type: :binary_id))
       timestamps()
     end
-    
-    create(index(:expense_items, [:product_id, :service_id, :expense_id]))
+
+    create(index(:expense_items, [:expense_id]))
   end
 end

@@ -12,9 +12,9 @@ defmodule SalesReg.Business.Expense do
     field(:date, :string)
     field(:total_amount, :string)
     field(:payment_method, :string)
+    field(:paid_to, :string)
 
     belongs_to(:paid_by, SalesReg.Accounts.User, foreign_key: :paid_by_id)
-    belongs_to(:paid_to, SalesReg.Accounts.User, foreign_key: :paid_to_id)
     belongs_to(:company, Company)
     has_many(:expense_items, SalesReg.Business.ExpenseItem, on_replace: :delete)
 
@@ -27,7 +27,7 @@ defmodule SalesReg.Business.Expense do
     :total_amount,
     :payment_method,
     :paid_by_id,
-    :paid_to_id,
+    :paid_to,
     :company_id
   ]
   @optional_fields []
@@ -41,19 +41,5 @@ defmodule SalesReg.Business.Expense do
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
     |> assoc_constraint(:paid_by)
-    |> assoc_constraint(:paid_to)
-    |> ensure_seperate_user()
-  end
-
-  defp ensure_seperate_user(changeset) do
-    paid_by_id = get_field(changeset, :paid_by_id)
-    paid_to_id = get_field(changeset, :paid_to_id)
-
-    if paid_by_id == paid_to_id do
-      add_error(changeset, :paid_by_id, "payer and receipient cannot be the same user")
-      add_error(changeset, :paid_to_id, "payer and receipient cannot be the same user")
-    else
-      changeset
-    end
   end
 end
