@@ -1,7 +1,7 @@
 defmodule SalesReg.Seed do
   use SalesRegWeb, :context
 
-  alias Faker.{Phone.EnGb, Avatar}
+  alias Faker.{Phone.EnGb, Avatar, Industry, Date, Name}
 
   @company_categories ["product", "service", "product_service"]
   @location_types ["office", "home"]
@@ -75,10 +75,10 @@ defmodule SalesReg.Seed do
     Store.add_service(service_params)
   end
 
-  def add_contact(index, user_id, company_id) do
+  def add_contact(index, user_id, company_id, type) do
     contact_params = %{
       "image" => Avatar.image_url(),
-      "contact_name" => "customer name #{index}",
+      "contact_name" => "#{Name.En.name()} #{index}",
       "phone" => gen_phone_params(1),
       "email" => "someemail#{index}@gmail.com",
       "address" => gen_location_params(index),
@@ -98,10 +98,39 @@ defmodule SalesReg.Seed do
         "pride #{index}"
       ],
       "bank" => gen_bank_details(index),
-      "type" => "customer"
+      "type" => type
     }
 
     Business.add_contact(contact_params)
+  end
+
+  def add_expense(index, user_id, company_id) do
+    expenses_items = expenses_items()
+
+    expense_params = %{
+      "title" => "#{Industry.industry()} expense",
+      "date" => "#{Date.between(~D[2018-08-15], ~D[2018-08-29])}",
+      "total_amount" => "#{total_expense_cost(expenses_items)}",
+      "paid_by_id" => user_id,
+      "paid_to" => "#{Name.En.name()}",
+      "company_id" => company_id,
+      "payment_method" => "Cash",
+      "expenses_item" => expenses_items
+    }
+    Business.add_expense(expense_params)
+  end
+
+  defp total_expense_cost(expense_items) do
+    Enum.sum(Enum.map(expense_items, fn expense_item -> expense_item["amount"] end))
+  end
+
+  defp expenses_items() do
+    Enum.map(1..5, fn index ->
+      %{
+        "item_name" => "Expense Item #{index}",
+        "amount" => Enum.random([10_000, 50_000, 150_000])
+      }
+    end)
   end
 
   defp gen_location_params(index) do

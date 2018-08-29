@@ -14,16 +14,20 @@ use SalesRegWeb, :context
 {:ok, user} = Seed.create_user()
 {:ok, company} = Seed.create_company(user.id)
 
-Enum.map(1..20, fn(index) -> 
-	Seed.add_product(index, user.id, company.id)
+Enum.map(1..20, fn index ->
+  Seed.add_product(index, user.id, company.id)
 end)
 
-Enum.map(1..20, fn(index) ->
-	Seed.add_service(index, user.id, company.id)
+Enum.map(1..20, fn index ->
+  Seed.add_service(index, user.id, company.id)
 end)
 
-Enum.map(1..30, fn index ->
-  Seed.add_contact(index, user.id, company.id)
+Enum.map(1..50, fn index ->
+  Seed.add_contact(index, user.id, company.id, Enum.random(["customer", "vendor"]))
+end)
+
+Enum.map(1..20, fn index ->
+  Seed.add_expense(index, user.id, company.id)
 end)
 
 branch =
