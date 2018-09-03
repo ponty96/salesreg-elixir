@@ -1,7 +1,7 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   use SalesRegWeb, :context
   require SalesReg.Context
-  
+
   def upsert_service(%{service: params, service_id: id}, _res) do
     Store.get_service(id)
     |> Store.update_service(params)

@@ -80,12 +80,11 @@ defmodule SalesReg.Context do
 
   defmacro search_schema_by_field(schema, query, field) do
     quote do
+      query_regex = "%" <> unquote(query) <> "%"
+
       unquote(schema)
       |> select([s], map(s, [unquote(field), :id]))
-      |> where(
-        [s],
-        fragment("text(?) @@ plainto_tsquery(?)", field(s, ^unquote(field)), ^unquote(query))
-      )
+      |> where([s], ilike(field(s, ^unquote(field)), ^query_regex))
       |> order_by(
         [s],
         fragment(
