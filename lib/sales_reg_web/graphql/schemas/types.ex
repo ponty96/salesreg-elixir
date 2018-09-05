@@ -206,6 +206,38 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Expense object type
+  """
+  object :expense do
+    field(:id, :uuid)
+    field(:title, :string)
+    field(:date, :string)
+    field(:total_amount, :string)
+    field(:payment_method, :string)
+    field(:paid_to, :string)
+
+    field(:paid_by, :user, resolve: dataloader(SalesReg.Accounts, :paid_by))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+
+    field(
+      :expense_items,
+      list_of(:expense_item),
+      resolve: dataloader(SalesReg.Business, :expense_items)
+    )
+  end
+
+  @desc """
+    Expense Item object type
+  """
+  object :expense_item do
+    field(:id, :uuid)
+    field(:item_name, :string)
+    field(:amount, :string)
+
+    field(:expense, :expense, resolve: dataloader(SalesReg.Business, :expense))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -230,7 +262,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :location,
       :purchase,
       :item,
-      :sale
+      :sale,
+      :expense
     ])
 
     resolve_type(fn
@@ -247,6 +280,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Item{}, _ -> :item
       %Sale{}, _ -> :sale
       %{user: %User{}}, _ -> :authorization
+      %Expense{}, _ -> :expense
     end)
   end
 
@@ -440,6 +474,21 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:account_name, non_null(:string))
     field(:account_number, non_null(:string))
     field(:bank_name, non_null(:string))
+  end
+
+  input_object :expense_input do
+    field(:title, non_null(:string))
+    field(:date, non_null(:string))
+    field(:payment_method, non_null(:payment_method))
+    field(:expense_items, non_null(list_of(:expense_item_input)))
+    field(:paid_by_id, non_null(:uuid))
+    field(:paid_to, non_null(:string))
+    field(:company_id, non_null(:uuid))
+  end
+
+  input_object :expense_item_input do
+    field(:item_name, non_null(:string))
+    field(:amount, non_null(:float))
   end
 
   #########################################################

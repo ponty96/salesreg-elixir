@@ -9,7 +9,8 @@ defmodule SalesReg.Business do
     Location,
     Contact,
     Company,
-    Branch
+    Branch,
+    Expense
   ]
 
   def create_company(user_id, company_params) do
@@ -51,7 +52,8 @@ defmodule SalesReg.Business do
   def list_company_contacts(company_id, type) do
     {:ok,
      Repo.all(
-       from(ct in Contact,
+       from(
+         ct in Contact,
          where: ct.company_id == ^company_id and ct.type == ^type,
          order_by: [desc: ct.updated_at]
        )

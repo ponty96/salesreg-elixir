@@ -1,7 +1,7 @@
 defmodule SalesReg.Seed do
   use SalesRegWeb, :context
 
-  alias Faker.{Phone.EnGb, Avatar}
+  alias Faker.{Phone.EnGb, Avatar, Industry, Date, Name}
 
   @company_categories ["product", "service", "product_service"]
   @location_types ["office", "home"]
@@ -75,10 +75,10 @@ defmodule SalesReg.Seed do
     Store.add_service(service_params)
   end
 
-  def add_customer(index, user_id, company_id) do
+  def add_contact(index, user_id, company_id, type) do
     contact_params = %{
       "image" => Avatar.image_url(),
-      "contact_name" => "customer name #{index}",
+      "contact_name" => "#{Name.En.name()} #{index}",
       "phone" => gen_phone_params(1),
       "email" => "someemail#{index}@gmail.com",
       "address" => gen_location_params(index),
@@ -98,43 +98,43 @@ defmodule SalesReg.Seed do
         "pride #{index}"
       ],
       "bank" => gen_bank_details(index),
-      "type" => "customer"
+      "type" => type
     }
 
     Business.add_contact(contact_params)
   end
 
-  def add_vendor(index, user_id, company_id) do
-    contact_params = %{
-      "image" => Avatar.image_url(),
-      "contact_name" => "vendor name #{index}",
-      "phone" => gen_phone_params(1),
-      "email" => "someemail#{index}@gmail.com",
-      "address" => gen_location_params(index),
-      "user_id" => "#{user_id}",
-      "company_id" => "#{company_id}",
-      "currency" => "#{Enum.random(@currency)}#{index}",
-      "birthday" => "#{dob()}",
-      "marital_status" => "#{Enum.random(@marital_status)}",
-      "marriage_anniversary" => "marriage anniversary #{index}",
-      "likes" => [
-        "honesty #{index}",
-        "integrity #{index}",
-        "principle #{index}"
-      ],
-      "dislikes" => [
-        "lies #{index}",
-        "pride #{index}"
-      ],
-      "bank" => gen_bank_details(index),
-      "type" => "vendor"
-    }
+  def add_expense(index, user_id, company_id) do
+    expenses_items = expenses_items()
 
-    Business.add_contact(contact_params)
+    expense_params = %{
+      "title" => "#{Industry.industry()} expense",
+      "date" => "#{Date.between(~D[2018-08-15], ~D[2018-08-29])}",
+      "total_amount" => "#{total_expense_cost(expenses_items)}",
+      "paid_by_id" => user_id,
+      "paid_to" => "#{Name.En.name()}",
+      "company_id" => company_id,
+      "payment_method" => "Cash",
+      "expense_items" => expenses_items
+    }
+    Business.add_expense(expense_params)
+  end
+
+  defp total_expense_cost(expense_items) do
+    Enum.sum(Enum.map(expense_items, fn expense_item -> String.to_integer(expense_item["amount"]) end))
+  end
+
+  defp expenses_items() do
+    Enum.map(1..5, fn index ->
+      %{
+        "item_name" => "Expense Item #{index}",
+        "amount" => Integer.to_string(Enum.random([10_000, 50_000, 150_000]))
+      }
+    end)
   end
 
   defp gen_location_params(index) do
-    increament_index = index + 1
+    increment_index = index + 1
 
     %{
       "city" => "city #{index}",
@@ -143,7 +143,7 @@ defmodule SalesReg.Seed do
       "lat" => "#{index}",
       "long" => "#{index}",
       "street1" => "#{index}",
-      "street2" => "#{increament_index}",
+      "street2" => "#{increment_index}",
       "type" => Enum.random(@location_types)
     }
   end
