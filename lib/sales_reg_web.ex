@@ -64,6 +64,7 @@ defmodule SalesRegWeb do
       alias SalesReg.Repo
       alias SalesReg.Search
       alias SalesReg.Seed
+      alias SalesReg.Context
 
       alias Ecto.Queryable
       SalesRegWeb.shared_aliases()

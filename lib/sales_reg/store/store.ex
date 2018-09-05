@@ -4,7 +4,6 @@ defmodule SalesReg.Store do
   """
 
   import Ecto.Query, warn: false
-  alias SalesReg.Repo
   use SalesRegWeb, :context
 
   use SalesReg.Context, [
