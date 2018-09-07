@@ -60,48 +60,6 @@ defmodule SalesReg.Business do
      )}
   end
 
-  #
-  # COMPANY EMPLOYEE
-  #
-  def add_company_employee(company_id, employee_params) do
-    employee_params = Map.put(employee_params, :employer_id, company_id)
-
-    %Employee{}
-    |> Employee.changeset(employee_params)
-    |> Repo.insert()
-  end
-
-  def update_company_employee(employee_id, employee_params) do
-    employee = Repo.get(Employee, employee_id)
-
-    employee
-    |> Employee.changeset(employee_params)
-    |> Repo.update()
-  end
-
-  def delete_company_employee(employee_id) do
-    employee_id
-    |> Repo.get(Employee)
-    |> Repo.delete()
-  end
-
-  def delete_all_company_employeees(company_id) do
-    from(br in Employee, where: br.company_id == ^company_id)
-    |> Repo.delete_all()
-  end
-
-  def all_company_employeees(company_id) do
-    employeees =
-      from(br in Employee, where: br.company_id == ^company_id)
-      |> Repo.all()
-
-    {:ok, employeees}
-  end
-
-  def get_company_employee(employee_id) do
-    {:ok, Repo.get(Employee, employee_id)}
-  end
-
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
   end
