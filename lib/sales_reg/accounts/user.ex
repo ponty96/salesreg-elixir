@@ -6,10 +6,7 @@ defmodule SalesReg.Accounts.User do
   @foreign_key_type :binary_id
   alias SalesReg.Repo
 
-  alias SalesReg.Business.{
-    Company,
-    Employee
-  }
+  alias SalesReg.Business.{Company}
 
   schema "users" do
     field(:date_of_birth, :string)
@@ -26,7 +23,6 @@ defmodule SalesReg.Accounts.User do
 
     has_one(:company, Company, foreign_key: :owner_id)
     has_many(:contacts, SalesReg.Business.Contact)
-    many_to_many(:companies, Company, join_through: Employee)
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
     has_one(:location, SalesReg.Business.Location, on_replace: :delete)
 
