@@ -4,6 +4,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.CompanySchema do
   """
   use Absinthe.Schema.Notation
   alias SalesRegWeb.GraphQL.Resolvers.CompanyResolver
+  alias SalesRegWeb.GraphQL.MiddleWares.Authorize
 
   object :company_mutations do
     @desc """
@@ -23,6 +24,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.CompanySchema do
       arg(:id, non_null(:uuid))
       arg(:company, non_null(:company_input))
 
+      middleware(Authorize)
       resolve(&CompanyResolver.update_company/2)
     end
   end

@@ -38,15 +38,6 @@ defmodule SalesReg.Seed do
     Business.create_company(user_id, company_params)
   end
 
-  def add_company_employee(branch_id, user_id, company_id) do
-    employee_params = %{
-      person_id: "#{user_id}",
-      branch_id: "#{branch_id}"
-    }
-
-    Business.add_company_employee(company_id, employee_params)
-  end
-
   def add_product(index, user_id, company_id) do
     product_params = %{
       "description" => "Our product is #{index}",
@@ -104,7 +95,7 @@ defmodule SalesReg.Seed do
     Business.add_contact(contact_params)
   end
 
-  def add_expense(index, user_id, company_id) do
+  def add_expense(_index, user_id, company_id) do
     expenses_items = expenses_items()
 
     expense_params = %{

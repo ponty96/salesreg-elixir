@@ -9,7 +9,6 @@ defmodule SalesReg.Business.Branch do
     field(:type, :string, default_value: "Other Branch")
 
     belongs_to(:company, SalesReg.Business.Company)
-    has_many(:employees, SalesReg.Business.Employee)
     has_one(:location, SalesReg.Business.Location, on_replace: :delete)
 
     timestamps()
