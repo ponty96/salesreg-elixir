@@ -11,6 +11,7 @@ defmodule SalesReg.Business.Expense do
     field(:title, :string)
     field(:date, :string)
     field(:total_amount, :string)
+    field(:items_amount, :float, virtual: true)
     field(:payment_method, :string)
     field(:paid_to, :string)
 
@@ -30,7 +31,7 @@ defmodule SalesReg.Business.Expense do
     :paid_to,
     :company_id
   ]
-  @optional_fields []
+  @optional_fields [:items_amount]
 
   @doc false
   def changeset(expense, attrs) do
@@ -41,5 +42,39 @@ defmodule SalesReg.Business.Expense do
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
     |> assoc_constraint(:paid_by)
+    |> validate_total_amount(expense)
+
+  end
+
+  defp validate_total_amount(changeset, expense) do
+    total_amount = total_amount(expense, changeset)
+    items_amount = changeset.changes.items_amount
+  
+    cond do
+      items_amount < total_amount ->
+        add_error(changeset, 
+          :total_amount,
+          "Expense items amount is lesser than Expense total amount"
+        )
+      
+      items_amount > total_amount ->
+        add_error(changeset,
+          :total_amount, 
+          "Expense items amount is greater than Expense total amount"
+        )
+      
+      true -> 
+        changeset 
+    end
+  end
+
+  defp total_amount(expense, changeset) do
+    case changeset do
+      %{changes: %{total_amount: total_amount}} ->
+        String.to_float(total_amount)
+      
+      _ ->
+        String.to_float(expense.total_amount)
+    end
   end
 end
