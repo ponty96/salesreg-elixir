@@ -132,7 +132,7 @@ defmodule SalesReg.Seed do
     Enum.map(1..5, fn index ->
       %{
         "item_name" => "Expense Item #{index}",
-        "amount" => Enum.random([10_000.0875823775882774882747840, 50_000.8857839857837758857736500, 150_000.885783787578377588377588377585800])
+        "amount" => Enum.random([10_000.00, 50_000.00, 150_000.00])
       }
     end)
   end
