@@ -7,7 +7,7 @@ defmodule SalesReg.Business.ExpenseItem do
 
   schema "expense_items" do
     field(:item_name, :string)
-    field(:amount, :string)
+    field(:amount, :decimal)
 
     belongs_to(:expense, SalesReg.Business.Expense, foreign_key: :expense_id)
 

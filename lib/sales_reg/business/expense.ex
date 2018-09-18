@@ -10,8 +10,8 @@ defmodule SalesReg.Business.Expense do
   schema "expenses" do
     field(:title, :string)
     field(:date, :string)
-    field(:total_amount, :string)
-    field(:items_amount, :float, virtual: true)
+    field(:total_amount, :decimal)
+    field(:items_amount, :decimal, virtual: true)
     field(:payment_method, :string)
     field(:paid_to, :string)
 
@@ -47,9 +47,16 @@ defmodule SalesReg.Business.Expense do
   end
 
   defp validate_total_amount(changeset, expense) do
-    total_amount = total_amount(expense, changeset)
-    items_amount = changeset.changes.items_amount
   
+    total_amount = 
+      total_amount(expense, changeset)
+      |> Decimal.to_float()
+      |> Float.round(10)
+    
+    items_amount = 
+      changeset.changes.items_amount
+      |> Decimal.to_float()  
+
     cond do
       items_amount < total_amount ->
         add_error(changeset, 
@@ -71,10 +78,11 @@ defmodule SalesReg.Business.Expense do
   defp total_amount(expense, changeset) do
     case changeset do
       %{changes: %{total_amount: total_amount}} ->
-        String.to_float(total_amount)
+        total_amount
       
       _ ->
-        String.to_float(expense.total_amount)
+        expense.total_amount
+        |> Float.round(10)
     end
   end
 end

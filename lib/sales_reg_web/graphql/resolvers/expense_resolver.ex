@@ -24,9 +24,9 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ExpenseResolver do
     Map.put_new(params, :items_amount, total_amount)
   end
 
-  defp calc_expense_amount([], acc), do: acc
+  defp calc_expense_amount([], acc), do: Float.round(acc, 10)
   
   defp calc_expense_amount([h | t], acc) do
-    calc_expense_amount(t, acc + String.to_float(h.amount))
+    calc_expense_amount(t, acc + h.amount)
   end
 end

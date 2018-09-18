@@ -110,7 +110,7 @@ defmodule SalesReg.Seed do
     expense_params = %{
       "title" => "#{Industry.industry()} expense",
       "date" => "#{Date.between(~D[2018-08-15], ~D[2018-08-29])}",
-      "total_amount" => "#{total_expense_cost(expenses_items)}",
+      "total_amount" => total_expense_cost(expenses_items),
       "paid_by_id" => user_id,
       "paid_to" => "#{Name.En.name()}",
       "company_id" => company_id,
@@ -124,7 +124,7 @@ defmodule SalesReg.Seed do
 
   defp total_expense_cost(expense_items) do
     Enum.sum(
-      Enum.map(expense_items, fn expense_item -> String.to_float(expense_item["amount"]) end)
+      Enum.map(expense_items, fn expense_item -> expense_item["amount"] end)
     )
   end
 
@@ -132,7 +132,7 @@ defmodule SalesReg.Seed do
     Enum.map(1..5, fn index ->
       %{
         "item_name" => "Expense Item #{index}",
-        "amount" => Float.to_string(Enum.random([10_000.00, 50_000.00, 150_000.00]))
+        "amount" => Enum.random([10_000.0875823775882774882747840, 50_000.8857839857837758857736500, 150_000.885783787578377588377588377585800])
       }
     end)
   end
