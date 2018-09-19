@@ -6,7 +6,7 @@ defmodule SalesReg.Repo.Migrations.CreateExpense do
       add(:id, :binary_id, primary_key: true)
       add(:title, :string)
       add(:date, :string)
-      add(:total_amount, :string)
+      add(:total_amount, :decimal, precision: 10, scale: 2)
       add(:payment_method, :string)
 
       add(:paid_by_id, references(:users, on_delete: :nothing, type: :binary_id))
