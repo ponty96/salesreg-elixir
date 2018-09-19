@@ -24,8 +24,7 @@ defmodule SalesReg.Seed do
       "gender" => "male",
       "last_name" => "Badmos",
       "password" => "asdfasdf",
-      "password_confirmation" => "asdfasdf",
-      "phone" => gen_phone_params()
+      "password_confirmation" => "asdfasdf"
     }
 
     Accounts.create_user(user_params)

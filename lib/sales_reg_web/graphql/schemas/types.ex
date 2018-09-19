@@ -29,8 +29,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-    field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
-    field(:location, :location, resolve: dataloader(SalesReg.Business, :location))
   end
 
   @desc """
@@ -373,8 +371,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:gender, non_null(:gender))
     field(:last_name, non_null(:string))
     field(:profile_picture, :string)
-    field(:phone, :phone_input)
-    field(:location, :location_input)
   end
 
   input_object :company_input do

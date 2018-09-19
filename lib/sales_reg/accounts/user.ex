@@ -27,8 +27,6 @@ defmodule SalesReg.Accounts.User do
     has_one(:company, Company, foreign_key: :owner_id)
     has_many(:contacts, SalesReg.Business.Contact)
     many_to_many(:companies, Company, join_through: Employee)
-    has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
-    has_one(:location, SalesReg.Business.Location, on_replace: :delete)
 
     timestamps()
   end
@@ -42,11 +40,8 @@ defmodule SalesReg.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> Repo.preload([:phone, :location])
     |> cast(attrs, @update_fields ++ @fields)
     |> validate_required(@update_fields ++ [:date_of_birth])
-    |> cast_assoc(:phone)
-    |> cast_assoc(:location)
   end
 
   def registration_changeset(user, attrs) do
@@ -58,7 +53,6 @@ defmodule SalesReg.Accounts.User do
     |> validate_password
     |> set_password
     |> cast_assoc(:company)
-    |> cast_assoc(:phone)
   end
 
   defp validate_password(changeset) do
