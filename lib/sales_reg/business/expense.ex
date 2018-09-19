@@ -10,7 +10,8 @@ defmodule SalesReg.Business.Expense do
   schema "expenses" do
     field(:title, :string)
     field(:date, :string)
-    field(:total_amount, :string)
+    field(:total_amount, :decimal)
+    field(:items_amount, :decimal, virtual: true)
     field(:payment_method, :string)
     field(:paid_to, :string)
 
@@ -30,7 +31,7 @@ defmodule SalesReg.Business.Expense do
     :paid_to,
     :company_id
   ]
-  @optional_fields []
+  @optional_fields [:items_amount]
 
   @doc false
   def changeset(expense, attrs) do
@@ -41,5 +42,47 @@ defmodule SalesReg.Business.Expense do
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
     |> assoc_constraint(:paid_by)
+    |> validate_total_amount(expense)
+
+  end
+
+  defp validate_total_amount(changeset, expense) do
+  
+    total_amount = 
+      total_amount(expense, changeset)
+      |> Decimal.to_float()
+      |> Float.round(10)
+    
+    items_amount = 
+      changeset.changes.items_amount
+      |> Decimal.to_float()  
+
+    cond do
+      items_amount < total_amount ->
+        add_error(changeset, 
+          :total_amount,
+          "Expense items amount is lesser than Expense total amount"
+        )
+      
+      items_amount > total_amount ->
+        add_error(changeset,
+          :total_amount, 
+          "Expense items amount is greater than Expense total amount"
+        )
+      
+      true -> 
+        changeset 
+    end
+  end
+
+  defp total_amount(expense, changeset) do
+    case changeset do
+      %{changes: %{total_amount: total_amount}} ->
+        total_amount
+      
+      _ ->
+        expense.total_amount
+        |> Float.round(10)
+    end
   end
 end

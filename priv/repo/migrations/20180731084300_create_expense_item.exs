@@ -5,7 +5,7 @@ defmodule SalesReg.Repo.Migrations.CreateExpenseItem do
     create table(:expense_items, primary_key: false) do
       add(:id, :binary_id, primary_key: true)
       add(:item_name, :string)
-      add(:amount, :string)
+      add(:amount, :decimal, precision: 10, scale: 2)
 
       add(:expense_id, references(:expenses, on_delete: :nothing, type: :binary_id))
       timestamps()
