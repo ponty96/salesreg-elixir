@@ -37,7 +37,9 @@ defmodule SalesReg.Seed do
       title: "Stacknbit Private Limited Company",
       category: Enum.random(@company_categories),
       head_office: gen_location_params(),
-      currency: "Naira(₦)"
+      currency: "Naira(₦)",
+      description: CompanyEn.bs(),
+      logo: Avatar.image_url()
     }
 
     Business.create_company(user_id, company_params)

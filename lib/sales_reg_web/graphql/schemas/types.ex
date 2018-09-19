@@ -41,10 +41,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:title, :string)
     field(:category, :string)
     field(:currency, :string)
+    field(:description, :string)
+    field(:logo, :string)
 
     field(:employees, list_of(:employee), resolve: dataloader(SalesReg.Business, :employees))
     field(:branches, list_of(:branch), resolve: dataloader(SalesReg.Business, :branches))
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
+    field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
   end
 
   @desc """
@@ -380,6 +383,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:head_office, non_null(:location_input))
     field(:category, non_null(:category))
     field(:currency, :string)
+    field(:description, :string)
+    field(:phone, :phone_input)
+    field(:logo, :string)
   end
 
   input_object :branch_input do
