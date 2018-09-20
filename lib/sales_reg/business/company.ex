@@ -21,8 +21,6 @@ defmodule SalesReg.Business.Company do
     has_many(:contacts, Contact)
     has_many(:purchases, SalesReg.Order.Purchase)
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
-
-    many_to_many(:users, SalesReg.Accounts.User, join_through: Employee)
     timestamps()
   end
 
@@ -33,6 +31,7 @@ defmodule SalesReg.Business.Company do
     company
     |> Repo.preload([:phone])
     |> cast(attrs, @required_fields ++ @optional_fields)
+    |> unique_constraint(:owner_id, message: "Sorry, but you already have a business with us")
     |> cast_assoc(:phone)
     |> validate_required(@required_fields)
     # |> cast_assoc(:branches)
