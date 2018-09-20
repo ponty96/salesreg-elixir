@@ -68,7 +68,7 @@ defmodule SalesReg.Business do
     queryable
   end
 
-  def send_registration_email(_user, _company) do
+  def send_registration_email(_user_id, _company) do
     {:ok, "sent"}
   end
 end

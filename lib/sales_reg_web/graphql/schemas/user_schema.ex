@@ -32,6 +32,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.UserSchema do
 
   object :authentication_mutations do
     @desc """
+    register a new user
+    """
+    field :register_user, :mutation_response do
+      arg(:user, non_null(:user_input))
+
+      resolve(&UserResolver.register_user/2)
+    end
+    @desc """
     login a user
     """
     field :login_user, :mutation_response do

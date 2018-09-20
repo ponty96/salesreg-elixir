@@ -22,7 +22,6 @@ defmodule SalesReg.Accounts.User do
 
     has_one(:company, Company, foreign_key: :owner_id)
     has_many(:contacts, SalesReg.Business.Contact)
-    many_to_many(:companies, Company, join_through: Employee)
 
     timestamps()
   end
