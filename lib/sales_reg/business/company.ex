@@ -21,8 +21,6 @@ defmodule SalesReg.Business.Company do
     has_many(:contacts, Contact)
     has_many(:purchases, SalesReg.Order.Purchase)
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
-
-    many_to_many(:users, SalesReg.Accounts.User, join_through: Employee)
     timestamps()
   end
 
