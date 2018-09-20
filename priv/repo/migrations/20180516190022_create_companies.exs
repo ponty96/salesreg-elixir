@@ -9,6 +9,8 @@ defmodule SalesReg.Repo.Migrations.CreateCompanies do
       add(:about, :string)
       add(:owner_id, references(:users, on_delete: :nothing, type: :binary_id))
       add(:currency, :string)
+      add(:description, :string)
+      add(:logo, :string)
 
       timestamps()
     end

@@ -24,8 +24,7 @@ defmodule SalesReg.Seed do
       "gender" => "male",
       "last_name" => "Badmos",
       "password" => "asdfasdf",
-      "password_confirmation" => "asdfasdf",
-      "phone" => gen_phone_params()
+      "password_confirmation" => "asdfasdf"
     }
 
     Accounts.create_user(user_params)
@@ -38,7 +37,9 @@ defmodule SalesReg.Seed do
       title: "Stacknbit Private Limited Company",
       category: Enum.random(@company_categories),
       head_office: gen_location_params(),
-      currency: "Naira(₦)"
+      currency: "Naira(₦)",
+      description: CompanyEn.bs(),
+      logo: Avatar.image_url()
     }
 
     Business.create_company(user_id, company_params)

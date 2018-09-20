@@ -8,10 +8,11 @@ defmodule SalesReg.Repo.Migrations.CreatePhones do
       add(:number, :string)
 
       add(:contact_id, references(:contacts, on_delete: :nothing, type: :binary_id))
-      add(:user_id, references(:users, on_delete: :nothing, null: false, type: :binary_id))
+      add(:company_id, references(:companies, on_delete: :nothing, type: :binary_id))
+      
       timestamps()
     end
 
-    create(index(:phones, [:contact_id, :user_id]))
+    create(index(:phones, [:contact_id, :company_id]))
   end
 end
