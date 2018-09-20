@@ -15,6 +15,6 @@ defmodule SalesReg.Repo.Migrations.CreateCompanies do
       timestamps()
     end
 
-    create(index(:companies, [:owner_id]))
+    create(unique_index(:companies, [:owner_id]))
   end
 end
