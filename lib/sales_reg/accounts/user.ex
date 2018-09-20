@@ -5,10 +5,7 @@ defmodule SalesReg.Accounts.User do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
-  alias SalesReg.Business.{
-    Company,
-    Employee
-  }
+  alias SalesReg.Business.{Company}
 
   schema "users" do
     field(:date_of_birth, :string)

@@ -45,15 +45,6 @@ defmodule SalesReg.Seed do
     Business.create_company(user_id, company_params)
   end
 
-  def add_company_employee(branch_id, user_id, company_id) do
-    employee_params = %{
-      person_id: "#{user_id}",
-      branch_id: "#{branch_id}"
-    }
-
-    Business.add_company_employee(company_id, employee_params)
-  end
-
   def add_product(user_id, company_id) do
     product_params = %{
       "description" => "Our product is #{CommerceEn.product_name()}",
@@ -98,7 +89,7 @@ defmodule SalesReg.Seed do
       "likes" => [
         Enum.random(@likes)
       ],
-      
+
       "dislikes" => [
         Enum.random(@dislikes)
       ],
@@ -175,7 +166,7 @@ defmodule SalesReg.Seed do
       :dob ->
         FakerDate.date_of_birth(16..99)
         |> Date.to_string()
-      
+
       :marr_anni ->
         ~D[1980-01-01]
         |> FakerDate.between(Date.utc_today())
@@ -186,6 +177,6 @@ defmodule SalesReg.Seed do
         |> FakerDate.backward()
         |> Date.to_string
     end
-    
+
   end
 end

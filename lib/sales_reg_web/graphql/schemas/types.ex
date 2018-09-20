@@ -44,7 +44,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:description, :string)
     field(:logo, :string)
 
-    field(:employees, list_of(:employee), resolve: dataloader(SalesReg.Business, :employees))
     field(:branches, list_of(:branch), resolve: dataloader(SalesReg.Business, :branches))
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
@@ -58,18 +57,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:type, :string)
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-    field(:employees, list_of(:employee), resolve: dataloader(SalesReg.Business, :employees))
     field(:location, :location, resolve: dataloader(SalesReg.Business, :location))
-  end
-
-  @desc """
-    Employee object type
-  """
-  object :employee do
-    field(:id, :uuid)
-    field(:person, :user, resolve: dataloader(SalesReg.Accounts, :person))
-
-    field(:employer, :company, resolve: dataloader(SalesReg.Business, :employer))
   end
 
   @desc """
@@ -254,7 +242,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :user,
       :authorization,
       :company,
-      :employee,
       :branch,
       :product,
       :service,
@@ -270,7 +257,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     resolve_type(fn
       %User{}, _ -> :user
       %Company{}, _ -> :company
-      %Employee{}, _ -> :employee
       %Branch{}, _ -> :branch
       %Product{}, _ -> :product
       %Service{}, _ -> :service

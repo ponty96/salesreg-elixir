@@ -33,7 +33,3 @@ end)
 branch =
   Repo.all(Branch)
   |> Enum.random()
-
-Enum.map(1..30, fn _index ->
-  Seed.add_company_employee(branch.id, user.id, company.id)
-end)
