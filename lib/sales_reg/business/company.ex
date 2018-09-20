@@ -1,6 +1,7 @@
 defmodule SalesReg.Business.Company do
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Repo
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -12,20 +13,27 @@ defmodule SalesReg.Business.Company do
     field(:currency, :string)
     field(:title, :string)
     field(:category, :string)
+    field(:description, :string)
+    field(:logo, :string)
 
     belongs_to(:owner, SalesReg.Accounts.User)
     has_many(:branches, Branch)
     has_many(:contacts, Contact)
     has_many(:purchases, SalesReg.Order.Purchase)
-    
+    has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
+
+    many_to_many(:users, SalesReg.Accounts.User, join_through: Employee)
     timestamps()
   end
 
   @required_fields [:title, :contact_email, :owner_id, :category]
+  @optional_fields [:about, :currency, :description, :logo]
   @doc false
   def changeset(company, attrs) do
     company
-    |> cast(attrs, @required_fields ++ [:about, :currency])
+    |> Repo.preload([:phone])
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast_assoc(:phone)
     |> validate_required(@required_fields)
     # |> cast_assoc(:branches)
     |> validate_category()

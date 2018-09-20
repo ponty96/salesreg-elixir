@@ -1,7 +1,11 @@
 defmodule SalesReg.Seed do
   use SalesRegWeb, :context
 
-  alias Faker.{Phone.EnGb, Avatar, Industry, Date, Name}
+  alias Faker.{Phone.EnGb, Internet, Commerce, Avatar, Industry, Name, Address}
+  alias Faker.Company.En, as: CompanyEn
+  alias Faker.Name.En, as: NameEn
+  alias Faker.Commerce.En, as: CommerceEn
+  alias Faker.Date, as: FakerDate
 
   @company_categories ["product", "service", "product_service"]
   @location_types ["office", "home"]
@@ -9,17 +13,18 @@ defmodule SalesReg.Seed do
   @currency ["Dollars", "Naira", "Euro", "Pounds"]
   @marital_status ["Single", "Married", "Widowed"]
   @banks ["GTB", "FBN", "Sterling Bank", "Zenith Bank"]
+  @likes ["honesty", "integrity", "principled"]
+  @dislikes ["lies", "pride", "laziness"]
 
   def create_user() do
     user_params = %{
-      "date_of_birth" => "#{dob()}",
+      "date_of_birth" => past_date(:dob),
       "email" => "someemail@gmail.com",
       "first_name" => "Opeyemi",
       "gender" => "male",
       "last_name" => "Badmos",
       "password" => "asdfasdf",
-      "password_confirmation" => "asdfasdf",
-      "phone" => gen_phone_params()
+      "password_confirmation" => "asdfasdf"
     }
 
     Accounts.create_user(user_params)
@@ -31,21 +36,23 @@ defmodule SalesReg.Seed do
       contact_email: "someemail@gmail.com",
       title: "Stacknbit Private Limited Company",
       category: Enum.random(@company_categories),
-      head_office: gen_location_params(0),
-      currency: "Naira(₦)"
+      head_office: gen_location_params(),
+      currency: "Naira(₦)",
+      description: CompanyEn.bs(),
+      logo: Avatar.image_url()
     }
 
     Business.create_company(user_id, company_params)
   end
 
-  def add_product(index, user_id, company_id) do
+  def add_product(user_id, company_id) do
     product_params = %{
-      "description" => "Our product is #{index}",
+      "description" => "Our product is #{CommerceEn.product_name()}",
       "featured_image" => Avatar.image_url(),
-      "name" => "product name #{index}",
+      "name" => CommerceEn.product_name(),
       "cost_price" => "#{Enum.random(3000..100_000)}",
       "minimum_stock_quantity" => "#{Enum.random(5..100)}",
-      "selling_price" => "#{index}0",
+      "selling_price" => "#{Commerce.price()}",
       "stock_quantity" => "#{Enum.random([3, 6, 12, 24])}",
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}"
@@ -54,11 +61,11 @@ defmodule SalesReg.Seed do
     Store.add_product(product_params)
   end
 
-  def add_service(index, user_id, company_id) do
+  def add_service(user_id, company_id) do
     service_params = %{
-      "description" => "The description of the service is description #{index}",
-      "name" => "The name of the service is name #{index}",
-      "price" => "#{Enum.random([10_000, 50_000, 150_000])}#{index}",
+      "description" => "Our service is #{CompanyEn.bs()}",
+      "name" => "#{CompanyEn.bs()} Service",
+      "price" => "#{Enum.random([10_000, 50_000, 150_000])}",
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}"
     }
@@ -66,41 +73,39 @@ defmodule SalesReg.Seed do
     Store.add_service(service_params)
   end
 
-  def add_contact(index, user_id, company_id, type) do
+  def add_contact(user_id, company_id, type) do
     contact_params = %{
       "image" => Avatar.image_url(),
-      "contact_name" => "#{Name.En.name()} #{index}",
-      "phone" => gen_phone_params(1),
-      "email" => "someemail#{index}@gmail.com",
-      "address" => gen_location_params(index),
+      "contact_name" => Name.En.name(),
+      "phone" => gen_phone_params(),
+      "email" => Internet.free_email(),
+      "address" => gen_location_params(),
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}",
-      "currency" => "#{Enum.random(@currency)}#{index}",
-      "birthday" => "#{dob()}",
+      "currency" => "#{Enum.random(@currency)}",
+      "birthday" => past_date(:dob),
       "marital_status" => "#{Enum.random(@marital_status)}",
-      "marriage_anniversary" => "marriage anniversary #{index}",
+      "marriage_anniversary" => past_date(:marr_anni),
       "likes" => [
-        "honesty #{index}",
-        "integrity #{index}",
-        "principle #{index}"
+        Enum.random(@likes)
       ],
+
       "dislikes" => [
-        "lies #{index}",
-        "pride #{index}"
+        Enum.random(@dislikes)
       ],
-      "bank" => gen_bank_details(index),
+      "bank" => gen_bank_details(),
       "type" => type
     }
 
     Business.add_contact(contact_params)
   end
 
-  def add_expense(_index, user_id, company_id) do
+  def add_expense(user_id, company_id) do
     expenses_items = expenses_items()
 
     expense_params = %{
       "title" => "#{Industry.industry()} expense",
-      "date" => "#{Date.between(~D[2018-08-15], ~D[2018-08-29])}",
+      "date" => past_date(:recent),
       "total_amount" => total_expense_cost(expenses_items),
       "paid_by_id" => user_id,
       "paid_to" => "#{Name.En.name()}",
@@ -120,45 +125,58 @@ defmodule SalesReg.Seed do
   end
 
   defp expenses_items() do
-    Enum.map(1..5, fn index ->
+    Enum.map(1..5, fn _index ->
       %{
-        "item_name" => "Expense Item #{index}",
+        "item_name" => CommerceEn.product_name_product(),
         "amount" => Enum.random([10_000.00, 50_000.00, 150_000.00])
       }
     end)
   end
 
-  defp gen_location_params(index) do
-    increment_index = index + 1
-
+  defp gen_location_params() do
     %{
-      "city" => "city #{index}",
-      "country" => "country #{index}",
-      "state" => "state #{index}",
-      "lat" => "#{index}",
-      "long" => "#{index}",
-      "street1" => "#{index}",
-      "street2" => "#{increment_index}",
+      "city" => Address.city(),
+      "country" => Address.country(),
+      "state" => Address.state(),
+      "lat" => "#{Address.latitude}",
+      "long" => "#{Address.longitude}",
+      "street1" => Address.street_address(),
+      "street2" => Address.street_address(),
       "type" => Enum.random(@location_types)
     }
   end
 
-  defp gen_phone_params(index \\ "") do
+  defp gen_phone_params() do
     %{
-      "number" => "#{EnGb.mobile_number()}#{index}",
+      "number" => "#{EnGb.mobile_number()}",
       "type" => Enum.random(@phone_types)
     }
   end
 
-  defp dob() do
-    "#{Enum.random(1..31)}-#{Enum.random(1..12)}-#{Enum.random(1960..2000)}"
+  def gen_bank_details() do
+    %{
+      "account_name" => NameEn.name(),
+      "account_number" => Enum.random(0152637490..0163759275),
+      "bank_name" => "#{Enum.random(@banks)}"
+    }
   end
 
-  def gen_bank_details(index) do
-    %{
-      "account_name" => "contact name #{index}",
-      "account_number" => "000000000#{index}",
-      "bank_name" => "#{Enum.random(@banks)}#{index}"
-    }
+  defp past_date(type) do
+    case type do
+      :dob ->
+        FakerDate.date_of_birth(16..99)
+        |> Date.to_string()
+
+      :marr_anni ->
+        ~D[1980-01-01]
+        |> FakerDate.between(Date.utc_today())
+        |> Date.to_string()
+
+      :recent ->
+        100
+        |> FakerDate.backward()
+        |> Date.to_string
+    end
+
   end
 end
