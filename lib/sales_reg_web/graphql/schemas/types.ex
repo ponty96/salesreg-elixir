@@ -203,7 +203,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:date, :string)
     field(:total_amount, :float)
     field(:payment_method, :string)
-    field(:paid_to, :string)
 
     field(:paid_by, :user, resolve: dataloader(SalesReg.Accounts, :paid_by))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
@@ -478,7 +477,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:payment_method, non_null(:payment_method))
     field(:expense_items, non_null(list_of(:expense_item_input)))
     field(:paid_by_id, non_null(:uuid))
-    field(:paid_to, non_null(:string))
     field(:company_id, non_null(:uuid))
     field(:total_amount, non_null(:float))
   end

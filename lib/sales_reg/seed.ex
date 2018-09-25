@@ -108,7 +108,6 @@ defmodule SalesReg.Seed do
       "date" => past_date(:recent),
       "total_amount" => total_expense_cost(expenses_items),
       "paid_by_id" => user_id,
-      "paid_to" => "#{Name.En.name()}",
       "company_id" => company_id,
       "payment_method" => "Cash",
       "expense_items" => expenses_items,
