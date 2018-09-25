@@ -10,7 +10,6 @@ defmodule SalesReg.Repo.Migrations.CreateExpense do
       add(:payment_method, :string)
 
       add(:paid_by_id, references(:users, on_delete: :nothing, type: :binary_id))
-      add(:paid_to, :string)
       add(:company_id, references(:companies, on_delete: :nothing, type: :binary_id))
 
       timestamps()

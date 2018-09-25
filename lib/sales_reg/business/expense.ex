@@ -13,7 +13,6 @@ defmodule SalesReg.Business.Expense do
     field(:total_amount, :decimal)
     field(:items_amount, :decimal, virtual: true)
     field(:payment_method, :string)
-    field(:paid_to, :string)
 
     belongs_to(:paid_by, SalesReg.Accounts.User, foreign_key: :paid_by_id)
     belongs_to(:company, Company)
@@ -28,7 +27,6 @@ defmodule SalesReg.Business.Expense do
     :total_amount,
     :payment_method,
     :paid_by_id,
-    :paid_to,
     :company_id
   ]
   @optional_fields [:items_amount]
@@ -47,31 +45,31 @@ defmodule SalesReg.Business.Expense do
   end
 
   defp validate_total_amount(changeset, expense) do
-  
-    total_amount = 
+
+    total_amount =
       total_amount(expense, changeset)
       |> Decimal.to_float()
       |> Float.round(10)
-    
-    items_amount = 
+
+    items_amount =
       changeset.changes.items_amount
-      |> Decimal.to_float()  
+      |> Decimal.to_float()
 
     cond do
       items_amount < total_amount ->
-        add_error(changeset, 
+        add_error(changeset,
           :total_amount,
           "Expense items amount is lesser than Expense total amount"
         )
-      
+
       items_amount > total_amount ->
         add_error(changeset,
-          :total_amount, 
+          :total_amount,
           "Expense items amount is greater than Expense total amount"
         )
-      
-      true -> 
-        changeset 
+
+      true ->
+        changeset
     end
   end
 
@@ -79,7 +77,7 @@ defmodule SalesReg.Business.Expense do
     case changeset do
       %{changes: %{total_amount: total_amount}} ->
         total_amount
-      
+
       _ ->
         expense.total_amount
         |> Float.round(10)
