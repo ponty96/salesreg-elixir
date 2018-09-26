@@ -160,9 +160,11 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   """
   object :item do
     field(:id, :uuid)
-    field(:name, :string)
     field(:quantity, :string)
     field(:unit_price, :string)
+
+    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
+    field(:service, list_of(:service), resolve: dataloader(SalesReg.Store, :service))
   end
 
   @desc """
@@ -446,12 +448,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:user_id, non_null(:uuid))
     field(:contact_id, non_null(:uuid))
     field(:company_id, non_null(:uuid))
+    field(:amount, non_null(:string))
   end
 
   input_object :item_input do
-    field(:name, non_null(:string))
-    field(:quantity, non_null(:float))
-    field(:unit_price, non_null(:float))
+    field(:product_id, :uuid)
+    field(:service_id, :uuid)
+    field(:quantity, non_null(:string))
+    field(:unit_price, non_null(:string))
   end
 
   input_object :sale_input do
@@ -459,6 +463,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:items, non_null(list_of(:item_input)))
     field(:payment_method, non_null(:payment_method))
     field(:tax, :string)
+
+    field(:amount, non_null(:string))
 
     field(:user_id, non_null(:uuid))
     field(:contact_id, non_null(:uuid))

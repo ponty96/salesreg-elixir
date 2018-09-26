@@ -89,7 +89,6 @@ defmodule SalesReg.Seed do
       "likes" => [
         Enum.random(@likes)
       ],
-
       "dislikes" => [
         Enum.random(@dislikes)
       ],
@@ -118,9 +117,7 @@ defmodule SalesReg.Seed do
   end
 
   defp total_expense_cost(expense_items) do
-    Enum.sum(
-      Enum.map(expense_items, fn expense_item -> expense_item["amount"] end)
-    )
+    Enum.sum(Enum.map(expense_items, fn expense_item -> expense_item["amount"] end))
   end
 
   defp expenses_items() do
@@ -137,8 +134,8 @@ defmodule SalesReg.Seed do
       "city" => Address.city(),
       "country" => Address.country(),
       "state" => Address.state(),
-      "lat" => "#{Address.latitude}",
-      "long" => "#{Address.longitude}",
+      "lat" => "#{Address.latitude()}",
+      "long" => "#{Address.longitude()}",
       "street1" => Address.street_address(),
       "street2" => Address.street_address(),
       "type" => Enum.random(@location_types)
@@ -155,7 +152,7 @@ defmodule SalesReg.Seed do
   def gen_bank_details() do
     %{
       "account_name" => NameEn.name(),
-      "account_number" => Enum.random(0152637490..0163759275),
+      "account_number" => Enum.random(0_152_637_490..0_163_759_275),
       "bank_name" => "#{Enum.random(@banks)}"
     }
   end
@@ -174,8 +171,7 @@ defmodule SalesReg.Seed do
       :recent ->
         100
         |> FakerDate.backward()
-        |> Date.to_string
+        |> Date.to_string()
     end
-
   end
 end

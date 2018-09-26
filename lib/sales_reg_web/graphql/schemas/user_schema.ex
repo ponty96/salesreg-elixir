@@ -39,6 +39,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.UserSchema do
 
       resolve(&UserResolver.register_user/2)
     end
+
     @desc """
     login a user
     """

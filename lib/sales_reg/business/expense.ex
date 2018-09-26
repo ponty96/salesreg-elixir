@@ -41,11 +41,9 @@ defmodule SalesReg.Business.Expense do
     |> assoc_constraint(:company)
     |> assoc_constraint(:paid_by)
     |> validate_total_amount(expense)
-
   end
 
   defp validate_total_amount(changeset, expense) do
-
     total_amount =
       total_amount(expense, changeset)
       |> Decimal.to_float()
@@ -58,14 +56,17 @@ defmodule SalesReg.Business.Expense do
     cond do
       items_amount == 0 ->
         changeset
+
       items_amount < total_amount ->
-        add_error(changeset,
+        add_error(
+          changeset,
           :total_amount,
           "Expense items amount is lesser than Expense total amount"
         )
 
       items_amount > total_amount ->
-        add_error(changeset,
+        add_error(
+          changeset,
           :total_amount,
           "Expense items amount is greater than Expense total amount"
         )
