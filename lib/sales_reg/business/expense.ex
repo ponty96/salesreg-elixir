@@ -49,13 +49,15 @@ defmodule SalesReg.Business.Expense do
     total_amount =
       total_amount(expense, changeset)
       |> Decimal.to_float()
-      |> Float.round(10)
+      |> Float.round(2)
 
     items_amount =
       changeset.changes.items_amount
       |> Decimal.to_float()
 
     cond do
+      items_amount == 0 ->
+        changeset
       items_amount < total_amount ->
         add_error(changeset,
           :total_amount,
@@ -80,7 +82,7 @@ defmodule SalesReg.Business.Expense do
 
       _ ->
         expense.total_amount
-        |> Float.round(10)
+        |> Float.round(2)
     end
   end
 end
