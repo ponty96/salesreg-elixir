@@ -3,6 +3,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ExpenseResolver do
 
   def upsert_expense(%{expense: params, expense_id: id}, _res) do
     new_params = put_items_amount(params)
+
     Business.get_expense(id)
     |> Business.update_expense(new_params)
   end

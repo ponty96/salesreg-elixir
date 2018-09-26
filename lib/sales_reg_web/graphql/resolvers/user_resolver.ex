@@ -11,7 +11,9 @@ defmodule SalesRegWeb.GraphQL.Resolvers.UserResolver do
           TokenImpl.exchange(token, "access", "refresh", ttl: {30, :days})
 
         {:ok, %{user: user, access_token: old_token, refresh_token: new_token}}
-      {:error, changeset} -> {:error, changeset}
+
+      {:error, changeset} ->
+        {:error, changeset}
     end
   end
 
