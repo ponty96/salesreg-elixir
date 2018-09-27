@@ -313,12 +313,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     value(:cash, as: "cash")
   end
 
-  @desc "Sale order types"
-  enum :sale_order_type do
-    value(:product, as: "product")
-    value(:service, as: "service")
-  end
-
   @desc "UUID is a scalar macro that checks if id is a valid uuid"
   scalar :uuid do
     parse(fn input ->
@@ -442,7 +436,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :purchase_input do
     field(:date, non_null(:string))
     field(:payment_method, non_null(:payment_method))
-    field(:purchasing_agent, non_null(:string))
+    field(:purchasing_agent, :string)
     field(:items, non_null(list_of(:item_input)))
 
     field(:user_id, non_null(:uuid))
@@ -459,7 +453,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   input_object :sale_input do
-    field(:type, non_null(:sale_order_type))
     field(:items, non_null(list_of(:item_input)))
     field(:payment_method, non_null(:payment_method))
     field(:tax, :string)

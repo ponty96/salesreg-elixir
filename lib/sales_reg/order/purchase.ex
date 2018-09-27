@@ -23,14 +23,13 @@ defmodule SalesReg.Order.Purchase do
   @required_fields [
     :date,
     :payment_method,
-    :purchasing_agent,
     :amount,
     :user_id,
     :contact_id,
     :company_id
   ]
 
-  @optional_fields [:status]
+  @optional_fields [:status, :purchasing_agent]
 
   @doc false
   def changeset(purchase, attrs) do

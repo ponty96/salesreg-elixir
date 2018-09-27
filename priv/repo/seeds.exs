@@ -14,17 +14,29 @@ use SalesRegWeb, :context
 {:ok, user} = Seed.create_user()
 {:ok, company} = Seed.create_company(user.id)
 
-Enum.map(1..20, fn _index ->
-  Seed.add_product(user.id, company.id)
-end)
+products =
+  Enum.map(1..20, fn _index ->
+    {:ok, product} = Seed.add_product(user.id, company.id)
+    product
+  end)
 
-Enum.map(1..20, fn _index ->
-  Seed.add_service(user.id, company.id)
-end)
+services =
+  Enum.map(1..20, fn _index ->
+    {:ok, service} = Seed.add_service(user.id, company.id)
+    service
+  end)
 
-Enum.map(1..50, fn _index ->
-  Seed.add_contact(user.id, company.id, Enum.random(["customer", "vendor"]))
-end)
+customers =
+  Enum.map(1..25, fn _index ->
+    {:ok, customer} = Seed.add_contact(user.id, company.id, "customer")
+    customer
+  end)
+
+vendors =
+  Enum.map(1..25, fn _index ->
+    {:ok, vendor} = Seed.add_contact(user.id, company.id, "vendor")
+    vendor
+  end)
 
 Enum.map(1..20, fn _index ->
   Seed.add_expense(user.id, company.id)
@@ -33,3 +45,22 @@ end)
 branch =
   Repo.all(Branch)
   |> Enum.random()
+
+random_vendors = Enum.take_random(vendors, 8)
+random_customers = Enum.take_random(customers, 8)
+
+Enum.map(random_vendors, fn vendor ->
+  Seed.create_purchase_order(company.id, user.id, vendor.id, products)
+end)
+
+Enum.map(random_customers, fn customer ->
+  Seed.create_sales_order(company.id, user.id, customer.id, %{items: products, type: "product"})
+end)
+
+Enum.map(random_customers, fn customer ->
+  Seed.create_sales_order(company.id, user.id, customer.id, %{items: services, type: "service"})
+end)
+
+Enum.map(random_customers, fn customer ->
+  Seed.create_sales_order(company.id, user.id, customer.id, products, services)
+end)

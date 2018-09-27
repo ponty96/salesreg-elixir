@@ -9,7 +9,7 @@ defmodule SalesReg.Repo.Migrations.CreatePhones do
 
       add(:contact_id, references(:contacts, on_delete: :nothing, type: :binary_id))
       add(:company_id, references(:companies, on_delete: :nothing, type: :binary_id))
-      
+
       timestamps()
     end
 
