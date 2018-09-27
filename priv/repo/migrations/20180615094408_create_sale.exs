@@ -6,7 +6,6 @@ defmodule SalesReg.Repo.Migrations.CreateSale do
       add(:id, :binary_id, primary_key: true)
       add(:status, :string, default: "pending", null: false)
       add(:amount, :string)
-      add(:type, :string)
       add(:payment_method, :string)
       add(:tax, :string)
 

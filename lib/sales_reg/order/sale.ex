@@ -8,7 +8,6 @@ defmodule SalesReg.Order.Sale do
   schema "sales" do
     field(:status, :string, default: "pending")
     field(:amount, :string)
-    field(:type, :string)
     field(:payment_method, :string)
     field(:tax, :string)
 
@@ -22,15 +21,13 @@ defmodule SalesReg.Order.Sale do
 
   @required_fields [
     :amount,
-    :type,
     :payment_method,
-    :tax,
     :user_id,
     :contact_id,
     :company_id
   ]
 
-  @optional_fields [:status]
+  @optional_fields [:status, :tax]
 
   @doc false
   def changeset(sale, attrs) do
@@ -42,16 +39,7 @@ defmodule SalesReg.Order.Sale do
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
     |> assoc_constraint(:contact)
-    |> validate_type()
     |> validate_payment_method()
-  end
-
-  defp validate_type(changeset) do
-    case get_field(changeset, :type) do
-      "product" -> changeset
-      "service" -> changeset
-      _ -> add_error(changeset, :type, "Invalid sales order type")
-    end
   end
 
   defp validate_payment_method(changeset) do
