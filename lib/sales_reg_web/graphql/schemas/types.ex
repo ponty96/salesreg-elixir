@@ -164,7 +164,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:unit_price, :string)
 
     field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
-    field(:service, list_of(:service), resolve: dataloader(SalesReg.Store, :service))
+    field(:service, :service, resolve: dataloader(SalesReg.Store, :service))
   end
 
   @desc """
