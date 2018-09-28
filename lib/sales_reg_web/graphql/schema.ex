@@ -64,6 +64,8 @@ defmodule SalesRegWeb.GraphQL.Schemas do
     Dataloader.new()
     |> Dataloader.add_source(SalesReg.Business, SalesReg.Business.data())
     |> Dataloader.add_source(SalesReg.Accounts, SalesReg.Accounts.data())
+    |> Dataloader.add_source(SalesReg.Order, SalesReg.Order.data())
+    |> Dataloader.add_source(SalesReg.Store, SalesReg.Store.data())
   end
 
   def context(ctx) do

@@ -4,21 +4,19 @@ defmodule SalesReg.Order do
   """
 
   import Ecto.Query, warn: false
-  alias SalesReg.Repo
   use SalesRegWeb, :context
+  alias Dataloader.Ecto, as: DataloaderEcto
 
   use SalesReg.Context, [
     Purchase,
     Sale
   ]
 
-  def list_purchases do
-    Repo.all(Purchase)
+  def data do
+    DataloaderEcto.new(Repo, query: &query/2)
   end
 
-  def create_purchase(attrs \\ %{}) do
-    %Purchase{}
-    |> Purchase.changeset(attrs)
-    |> Repo.insert()
+  def query(queryable, _) do
+    queryable
   end
 end
