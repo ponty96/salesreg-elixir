@@ -6,6 +6,7 @@ defmodule SalesReg.Order.Sale do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "sales" do
+    field(:date, :string)
     field(:status, :string, default: "pending")
     field(:amount, :string)
     field(:payment_method, :string)
@@ -24,7 +25,8 @@ defmodule SalesReg.Order.Sale do
     :payment_method,
     :user_id,
     :contact_id,
-    :company_id
+    :company_id,
+    :date
   ]
 
   @optional_fields [:status, :tax]
