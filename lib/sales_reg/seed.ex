@@ -16,6 +16,7 @@ defmodule SalesReg.Seed do
   @likes ["honesty", "integrity", "principled"]
   @dislikes ["lies", "pride", "laziness"]
   @payment_method ["cash", "POS", "cheque", "direct transfer"]
+  @seed_order_status ["pending", "processed", "delivering"]
 
   def create_user() do
     user_params = %{
@@ -187,7 +188,8 @@ defmodule SalesReg.Seed do
       "company_id" => company_id,
       "contact_id" => contact_id,
       "items" => order_items,
-      "amount" => order_total_cost(order_items)
+      "amount" => order_total_cost(order_items),
+      "status" => Enum.random(@seed_order_status)
     }
 
     SalesReg.Order.add_purchase(params)
@@ -228,7 +230,8 @@ defmodule SalesReg.Seed do
       "company_id" => company_id,
       "contact_id" => contact_id,
       "items" => order_items,
-      "amount" => order_total_cost(order_items)
+      "amount" => order_total_cost(order_items),
+      "status" => Enum.random(@seed_order_status)
     }
 
     SalesReg.Order.add_sale(params)

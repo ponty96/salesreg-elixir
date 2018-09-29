@@ -299,6 +299,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     value(:female, as: "FEMALE")
   end
 
+  @desc "sorts the order from either ASC or DESC"
+  enum :order_status do
+    value(:pending, as: "pending")
+    value(:processed, as: "processed")
+    value(:delivering, as: "delivering")
+    value(:recalled, as: "delivered | recalled")
+    value(:delivered, as: "delivered")
+  end
+
   @desc "The selected company category"
   enum :category do
     value(:product, as: "product", description: "Product")
@@ -444,6 +453,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:contact_id, non_null(:uuid))
     field(:company_id, non_null(:uuid))
     field(:amount, non_null(:string))
+    field(:status, non_null(:order_status))
   end
 
   input_object :item_input do
@@ -464,6 +474,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:user_id, non_null(:uuid))
     field(:contact_id, non_null(:uuid))
     field(:company_id, non_null(:uuid))
+
+    field(:status, non_null(:order_status))
   end
 
   input_object :bank_input do
