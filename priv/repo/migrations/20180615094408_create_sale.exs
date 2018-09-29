@@ -8,6 +8,7 @@ defmodule SalesReg.Repo.Migrations.CreateSale do
       add(:amount, :string)
       add(:payment_method, :string)
       add(:tax, :string)
+      add(:date, :string)
 
       add(:user_id, references(:users, on_delete: :nothing, type: :binary_id))
       add(:contact_id, references(:contacts, on_delete: :nothing, type: :binary_id))

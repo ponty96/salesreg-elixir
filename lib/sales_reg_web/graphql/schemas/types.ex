@@ -172,6 +172,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   """
   object :sale do
     field(:id, :uuid)
+    field(:date, :string)
     field(:status, :string)
     field(:payment_method, :string)
     field(:tax, :string)
@@ -453,6 +454,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   input_object :sale_input do
+    field(:date, non_null(:string))
     field(:items, non_null(list_of(:item_input)))
     field(:payment_method, non_null(:payment_method))
     field(:tax, :string)
