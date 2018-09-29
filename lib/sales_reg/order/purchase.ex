@@ -5,6 +5,9 @@ defmodule SalesReg.Order.Purchase do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+
+  @order_status ["pending", "processed", "delivering", "delivered | recalled", "delivered"]
+
   schema "purchases" do
     field(:date, :string)
     field(:payment_method, :string)
@@ -42,6 +45,7 @@ defmodule SalesReg.Order.Purchase do
     |> assoc_constraint(:contact)
     |> assoc_constraint(:user)
     |> validate_payment_method()
+    |> validate_inclusion(:status, @order_status)
   end
 
   defp validate_payment_method(changeset) do
