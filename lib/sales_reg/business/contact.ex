@@ -18,6 +18,7 @@ defmodule SalesReg.Business.Contact do
     field(:likes, {:array, :string})
     field(:dislikes, {:array, :string})
     field(:type, :string)
+    field(:gender, :string)
 
     belongs_to(:company, Company)
     belongs_to(:user, SalesReg.Accounts.User)
@@ -35,7 +36,8 @@ defmodule SalesReg.Business.Contact do
     :company_id,
     :user_id,
     :currency,
-    :type
+    :type,
+    :gender
   ]
   @optional_fields [
     :image,

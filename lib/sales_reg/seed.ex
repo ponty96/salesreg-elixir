@@ -17,13 +17,14 @@ defmodule SalesReg.Seed do
   @dislikes ["lies", "pride", "laziness"]
   @payment_method ["cash", "POS", "cheque", "direct transfer"]
   @seed_order_status ["pending", "processed", "delivering"]
+  @gender ["MALE", "FEMALE"]
 
   def create_user() do
     user_params = %{
       "date_of_birth" => past_date(:dob),
       "email" => "someemail@gmail.com",
       "first_name" => "Opeyemi",
-      "gender" => "male",
+      "gender" => "MALE",
       "last_name" => "Badmos",
       "password" => "asdfasdf",
       "password_confirmation" => "asdfasdf"
@@ -88,6 +89,7 @@ defmodule SalesReg.Seed do
       "birthday" => past_date(:dob),
       "marital_status" => "#{Enum.random(@marital_status)}",
       "marriage_anniversary" => past_date(:marr_anni),
+      "gender" => Enum.random(@gender),
       "likes" => [
         Enum.random(@likes)
       ],
