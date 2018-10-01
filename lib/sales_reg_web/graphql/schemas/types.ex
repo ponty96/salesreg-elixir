@@ -119,6 +119,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:likes, list_of(:string))
     field(:dislikes, list_of(:string))
     field(:type, :string)
+    field(:gender, :string)
 
     field(:address, :location, resolve: dataloader(SalesReg.Business, :address))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
@@ -436,6 +437,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:likes, non_null(list_of(:string)))
     field(:dislikes, non_null(list_of(:string)))
     field(:bank, :bank_input)
+    field(:gender, non_null(:gender))
 
     field(:type, non_null(:string))
 
