@@ -21,8 +21,12 @@ defmodule SalesReg.Order do
     queryable
   end
 
+  def preload_order(order) do
+    Repo.preload(order, items: [:product, :service])
+  end
+
   def update_status(:purchase, order_id, new_status) do
-    purchase_order = get_purchase(order_id)
+    purchase_order = get_purchase(order_id) |> preload_order()
     purchase_order = Map.put(purchase_order, :state, purchase_order.status)
 
     case Machinery.transition_to(purchase_order, OrderStateMachine, new_status) do
