@@ -43,4 +43,18 @@ defmodule SalesReg.Order.OrderStateMachine do
     Store.update_product_inventory(:decrement, order.items)
     order
   end
+
+    # decrement inventory after a sales order has been processed
+    def after_transition(%Sale{} = order, "processed") do
+      # Write code to handle errors
+      Store.update_product_inventory(:decrement, order.items)
+      order
+    end
+
+    # increment inventory after a recalled sale order
+    def after_transition(%Sale{} = order, "recalled") do
+      # Write code to handle errors
+      Store.update_product_inventory(:increment, order.items)
+      order
+    end
 end

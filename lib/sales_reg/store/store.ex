@@ -20,13 +20,21 @@ defmodule SalesReg.Store do
 
   def update_product_inventory(:increment, order_items) when is_list(order_items) do
     Enum.map(order_items, fn order_item ->
-      increment_product_sku(order_item.product_id, order_item.quantity)
+      if order_item.product_id do
+        increment_product_sku(order_item.product_id, order_item.quantity)
+      end
+
+      order_item
     end)
   end
 
   def update_product_inventory(:decrement, order_items) when is_list(order_items) do
     Enum.map(order_items, fn order_item ->
-      decrement_product_sku(order_item.product_id, order_item.quantity)
+      if order_item.product_id do
+        decrement_product_sku(order_item.product_id, order_item.quantity)
+      end
+
+      order_item
     end)
   end
 
