@@ -18,15 +18,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       resolve(&OrderResolver.upsert_purchase/2)
     end
 
-    @desc """
-    cancel a particular purchase order
-    """
-    field :cancel_purchase_order, :mutation_response do
-      arg(:purchase_id, non_null(:uuid))
-
-      resolve(&OrderResolver.cancel_purchase_order/2)
-    end
-
     ### Sale order mutations
     @desc """
     upsert a sale order
@@ -39,12 +30,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
     end
 
     @desc """
-    cancel a particular sale order
+    update an order's status
     """
-    field :cancel_sale_order, :mutation_response do
-      arg(:sale_id, non_null(:uuid))
+    field :update_order_status, :mutation_response do
+      arg(:status, non_null(:order_status))
+      arg(:id, :uuid)
+      arg(:order_type, :string)
 
-      resolve(&OrderResolver.cancel_sale_order/2)
+      resolve(&OrderResolver.update_order_status/2)
     end
   end
 

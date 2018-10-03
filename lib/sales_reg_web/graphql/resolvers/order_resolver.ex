@@ -13,13 +13,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     Order.add_purchase(params)
   end
 
-  def cancel_purchase_order(%{purchase_id: id}, _res) do
-    purchase = Order.get_purchase(id)
-    attrs = %{status: "cancelled"}
-
-    Order.update_purchase(purchase, attrs)
-  end
-
   def list_company_purchases(%{company_id: company_id}, _res) do
     Order.list_company_purchases(company_id)
   end
@@ -40,11 +33,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     Order.list_company_sales(company_id)
   end
 
-  def cancel_sale_order(%{sale_id: id}, _res) do
-    sale = Order.get_sale(id)
-    attrs = %{status: "cancelled"}
-
-    Order.update_sale(sale, attrs)
+  def update_order_status(%{status: status, id: id, order_type: order_type}, _res) do
+    Order.update_status(String.to_atom(order_type), id, status)
   end
 
   # # Private functions
