@@ -62,7 +62,8 @@ defmodule SalesReg.Mixfile do
       {:ex_aws_s3, "~> 2.0"},
       {:uuid, "~> 1.1"},
       {:hackney, "~> 1.9"},
-      {:sweet_xml, "~> 0.6"}
+      {:sweet_xml, "~> 0.6"},
+      {:machinery, "~> 0.16.0"}
     ]
   end
 

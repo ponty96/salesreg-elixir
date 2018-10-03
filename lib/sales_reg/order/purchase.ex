@@ -6,7 +6,7 @@ defmodule SalesReg.Order.Purchase do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
-  @order_status ["pending", "processed", "delivering", "delivered | recalled", "delivered"]
+  @order_status ["pending", "processed", "delivering", "recalled", "delivered"]
 
   schema "purchases" do
     field(:date, :string)
@@ -14,6 +14,8 @@ defmodule SalesReg.Order.Purchase do
     field(:purchasing_agent, :string)
     field(:status, :string, default: "pending")
     field(:amount, :string)
+
+    field(:state, :string, virtual: true)
 
     has_many(:items, SalesReg.Order.Item, on_replace: :delete)
     belongs_to(:user, SalesReg.Accounts.User)
