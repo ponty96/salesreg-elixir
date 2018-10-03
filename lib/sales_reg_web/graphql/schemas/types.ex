@@ -455,7 +455,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:contact_id, non_null(:uuid))
     field(:company_id, non_null(:uuid))
     field(:amount, non_null(:string))
-    field(:status, non_null(:order_status))
   end
 
   input_object :item_input do
@@ -476,8 +475,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:user_id, non_null(:uuid))
     field(:contact_id, non_null(:uuid))
     field(:company_id, non_null(:uuid))
-
-    field(:status, non_null(:order_status))
   end
 
   input_object :bank_input do

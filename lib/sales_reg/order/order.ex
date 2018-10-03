@@ -34,4 +34,18 @@ defmodule SalesReg.Order do
         {:error, error}
     end
   end
+
+  def update_status(:sale, order_id, new_status) do
+    sale_order = get_sale(order_id)
+    sale_order = Map.put(sale_order, :state, sale_order.status)
+
+    case Machinery.transition_to(sale_order, OrderStateMachine, new_status) do
+      {:ok, updated} ->
+        {:ok, updated}
+
+      {:error, error} ->
+        IO.inspect(error, label: "transition state error")
+        {:error, error}
+    end
+  end
 end
