@@ -305,7 +305,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     value(:pending, as: "pending")
     value(:processed, as: "processed")
     value(:delivering, as: "delivering")
-    value(:recalled, as: "delivered | recalled")
+    value(:recalled, as: "recalled")
     value(:delivered, as: "delivered")
   end
 

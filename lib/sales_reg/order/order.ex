@@ -42,7 +42,8 @@ defmodule SalesReg.Order do
   def update_status(:sale, order_id, new_status) do
     sale_order = get_sale(order_id) |> preload_order()
     sale_order = Map.put(sale_order, :state, sale_order.status)
-
+    IO.inspect(sale_order.status, label: "current sale order status")
+    IO.inspect(new_status, label: "next sale order status")
     case Machinery.transition_to(sale_order, OrderStateMachine, new_status) do
       {:ok, updated} ->
         {:ok, updated}
