@@ -47,6 +47,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:branches, list_of(:branch), resolve: dataloader(SalesReg.Business, :branches))
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
+    field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
   end
 
   @desc """
@@ -120,12 +121,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:dislikes, list_of(:string))
     field(:type, :string)
     field(:gender, :string)
+    field(:instagram, :string)
+    field(:twitter, :string)
+    field(:facebook, :string)
+    field(:snapchat, :string)
 
     field(:address, :location, resolve: dataloader(SalesReg.Business, :address))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
-    field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
 
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
@@ -381,6 +385,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:description, :string)
     field(:phone, :phone_input)
     field(:logo, :string)
+    field(:bank, :bank_input)
   end
 
   input_object :branch_input do
@@ -439,8 +444,11 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:marriage_anniversary, :string)
     field(:likes, non_null(list_of(:string)))
     field(:dislikes, non_null(list_of(:string)))
-    field(:bank, :bank_input)
     field(:gender, non_null(:gender))
+    field(:instagram, :string)
+    field(:twitter, :string)
+    field(:facebook, :string)
+    field(:snapchat, :string)
 
     field(:type, non_null(:string))
 

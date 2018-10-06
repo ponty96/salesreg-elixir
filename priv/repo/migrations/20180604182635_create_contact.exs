@@ -13,6 +13,12 @@ defmodule SalesReg.Repo.Migrations.CreateContact do
       add(:email, :string)
       add(:fax, :string)
 
+
+      add(:instagram, :string)
+      add(:twitter, :string)
+      add(:facebook, :string)
+      add(:snapchat, :string)
+
       add(:gender, :string)
 
       add(:company_id, references(:companies, on_delete: :nothing, type: :binary_id))

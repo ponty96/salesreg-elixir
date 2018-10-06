@@ -42,7 +42,8 @@ defmodule SalesReg.Seed do
       head_office: gen_location_params(),
       currency: "Naira(₦)",
       description: CompanyEn.bs(),
-      logo: Avatar.image_url()
+      logo: Avatar.image_url(),
+      # bank: gen_bank_details()
     }
 
     Business.create_company(user_id, company_params)
@@ -96,7 +97,6 @@ defmodule SalesReg.Seed do
       "dislikes" => [
         Enum.random(@dislikes)
       ],
-      "bank" => gen_bank_details(),
       "type" => type
     }
 
