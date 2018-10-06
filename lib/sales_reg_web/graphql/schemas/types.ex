@@ -126,6 +126,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
     field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
+
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
   end
 
   @desc """
