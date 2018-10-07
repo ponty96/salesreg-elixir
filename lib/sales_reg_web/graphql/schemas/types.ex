@@ -438,22 +438,23 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:phone, non_null(:phone_input))
     field(:address, non_null(:location_input))
     field(:email, non_null(:string))
-    field(:currency, non_null(:string))
-    field(:birthday, non_null(:string))
-    field(:marital_status, non_null(:string))
-    field(:marriage_anniversary, :string)
-    field(:likes, non_null(list_of(:string)))
-    field(:dislikes, non_null(list_of(:string)))
     field(:gender, non_null(:gender))
+
+    field(:type, non_null(:string))
+
+    field(:company_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
+
+    field(:currency, :string)
+    field(:birthday, :string)
+    field(:marital_status, :string)
+    field(:marriage_anniversary, :string)
+    field(:likes, list_of(:string))
+    field(:dislikes, list_of(:string))
     field(:instagram, :string)
     field(:twitter, :string)
     field(:facebook, :string)
     field(:snapchat, :string)
-
-    field(:type, non_null(:string))
-
-    field(:company_id, :uuid)
-    field(:user_id, non_null(:uuid))
   end
 
   input_object :purchase_input do

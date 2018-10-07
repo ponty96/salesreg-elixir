@@ -39,13 +39,13 @@ defmodule SalesReg.Business.Contact do
     :email,
     :company_id,
     :user_id,
-    :currency,
     :type,
     :gender
   ]
   @optional_fields [
     :image,
     :birthday,
+    :currency,
     :marital_status,
     :marriage_anniversary,
     :likes,
