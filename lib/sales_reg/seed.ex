@@ -42,7 +42,7 @@ defmodule SalesReg.Seed do
       head_office: gen_location_params(),
       currency: "Naira(₦)",
       description: CompanyEn.bs(),
-      logo: Avatar.image_url(),
+      logo: Avatar.image_url()
       # bank: gen_bank_details()
     }
 
@@ -91,12 +91,8 @@ defmodule SalesReg.Seed do
       "marital_status" => "#{Enum.random(@marital_status)}",
       "marriage_anniversary" => past_date(:marr_anni),
       "gender" => Enum.random(@gender),
-      "likes" => [
-        Enum.random(@likes)
-      ],
-      "dislikes" => [
-        Enum.random(@dislikes)
-      ],
+      "likes" => @likes,
+      "dislikes" => @dislikes,
       "type" => type
     }
 
