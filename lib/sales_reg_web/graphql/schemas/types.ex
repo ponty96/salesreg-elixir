@@ -125,6 +125,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:twitter, :string)
     field(:facebook, :string)
     field(:snapchat, :string)
+    field(:allows_marketing, :string)
 
     field(:address, :location, resolve: dataloader(SalesReg.Business, :address))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
@@ -445,6 +446,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
 
+
+    field(:allows_marketing, :string)
     field(:currency, :string)
     field(:birthday, :string)
     field(:marital_status, :string)

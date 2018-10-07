@@ -24,6 +24,7 @@ defmodule SalesReg.Business.Contact do
     field(:twitter, :string)
     field(:facebook, :string)
     field(:snapchat, :string)
+    field(:allows_marketing, :string)
 
     belongs_to(:company, Company)
     belongs_to(:user, SalesReg.Accounts.User)
@@ -53,7 +54,8 @@ defmodule SalesReg.Business.Contact do
     :instagram,
     :twitter,
     :facebook,
-    :snapchat
+    :snapchat,
+    :allows_marketing
   ]
 
   @doc false

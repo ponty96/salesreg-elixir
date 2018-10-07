@@ -12,6 +12,7 @@ defmodule SalesReg.Repo.Migrations.CreateContact do
       add(:office_add, :string)
       add(:email, :string)
       add(:fax, :string)
+      add(:allows_marketing, :string)
 
 
       add(:instagram, :string)
