@@ -21,6 +21,7 @@ defmodule SalesReg.Business.Company do
     has_many(:contacts, Contact)
     has_many(:purchases, SalesReg.Order.Purchase)
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
+    has_one(:bank, SalesReg.Business.Bank, on_replace: :delete)
     timestamps()
   end
 
@@ -29,13 +30,14 @@ defmodule SalesReg.Business.Company do
   @doc false
   def changeset(company, attrs) do
     company
-    |> Repo.preload([:phone])
+    |> Repo.preload([:phone, :bank])
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> unique_constraint(:owner_id, message: "Sorry, but you already have a business with us")
     |> cast_assoc(:phone)
     |> validate_required(@required_fields)
     # |> cast_assoc(:branches)
     |> validate_category()
+    |> cast_assoc(:bank)
   end
 
   def validate_category(changeset) do

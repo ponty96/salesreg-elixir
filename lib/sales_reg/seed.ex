@@ -43,6 +43,7 @@ defmodule SalesReg.Seed do
       currency: "Naira(₦)",
       description: CompanyEn.bs(),
       logo: Avatar.image_url()
+      # bank: gen_bank_details()
     }
 
     Business.create_company(user_id, company_params)
@@ -90,13 +91,8 @@ defmodule SalesReg.Seed do
       "marital_status" => "#{Enum.random(@marital_status)}",
       "marriage_anniversary" => past_date(:marr_anni),
       "gender" => Enum.random(@gender),
-      "likes" => [
-        Enum.random(@likes)
-      ],
-      "dislikes" => [
-        Enum.random(@dislikes)
-      ],
-      "bank" => gen_bank_details(),
+      "likes" => @likes,
+      "dislikes" => @dislikes,
       "type" => type
     }
 

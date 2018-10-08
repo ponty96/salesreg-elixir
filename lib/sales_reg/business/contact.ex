@@ -20,12 +20,17 @@ defmodule SalesReg.Business.Contact do
     field(:type, :string)
     field(:gender, :string)
 
+    field(:instagram, :string)
+    field(:twitter, :string)
+    field(:facebook, :string)
+    field(:snapchat, :string)
+    field(:allows_marketing, :string)
+
     belongs_to(:company, Company)
     belongs_to(:user, SalesReg.Accounts.User)
 
     has_one(:address, SalesReg.Business.Location, on_replace: :delete)
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
-    has_one(:bank, SalesReg.Business.Bank, on_replace: :delete)
 
     timestamps()
   end
@@ -35,23 +40,28 @@ defmodule SalesReg.Business.Contact do
     :email,
     :company_id,
     :user_id,
-    :currency,
     :type,
     :gender
   ]
   @optional_fields [
     :image,
     :birthday,
+    :currency,
     :marital_status,
     :marriage_anniversary,
     :likes,
-    :dislikes
+    :dislikes,
+    :instagram,
+    :twitter,
+    :facebook,
+    :snapchat,
+    :allows_marketing
   ]
 
   @doc false
   def changeset(contact, attrs) do
     contact
-    |> Repo.preload([:address, :phone, :bank])
+    |> Repo.preload([:address, :phone])
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_format(:email, ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/)
@@ -60,7 +70,6 @@ defmodule SalesReg.Business.Contact do
     |> assoc_constraint(:user)
     |> cast_assoc(:address)
     |> cast_assoc(:phone)
-    |> cast_assoc(:bank)
   end
 
   defp validate_contact_type(changeset) do
