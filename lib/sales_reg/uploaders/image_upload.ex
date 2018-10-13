@@ -5,10 +5,11 @@ defmodule SalesReg.ImageUpload do
   # use Arc.Ecto.Definition
 
   @versions [:original, :thumb]
+  @acl :public_read
 
   # Override the bucket on a per definition basis:
   def bucket do
-    :custom_bucket_name
+    :yipcartimages
   end
 
   # Whitelist file extensions:
@@ -27,9 +28,9 @@ defmodule SalesReg.ImageUpload do
   end
 
   # Override the storage directory:
-  def storage_dir(version, {file, scope}) do
-    "uploads/user/avatars/#{scope.id}"
-  end
+  # def storage_dir(version, {file, scope}) do
+  #   "uploads/user/avatars/#{scope.id}"
+  # end
 
   # Provide a default URL if there hasn't been a file uploaded
   def default_url(version, scope) do
