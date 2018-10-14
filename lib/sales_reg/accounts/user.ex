@@ -19,6 +19,7 @@ defmodule SalesReg.Accounts.User do
     field(:password, :string, virtual: true)
     field(:password_confirmation, :string, virtual: true)
     field(:profile_picture, :string)
+    field(:upload_successful?, :boolean, virtual: true)
 
     has_one(:company, Company, foreign_key: :owner_id)
     has_many(:contacts, SalesReg.Business.Contact)
@@ -35,8 +36,10 @@ defmodule SalesReg.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
+    |> change(attrs)
     |> cast(attrs, @update_fields ++ @fields)
     |> validate_required(@update_fields ++ [:date_of_birth])
+    |> ensure_image_upload()
   end
 
   def registration_changeset(user, attrs) do
@@ -45,8 +48,8 @@ defmodule SalesReg.Accounts.User do
     |> validate_required(@required_fields ++ @registration_fields ++ @update_fields)
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
-    |> validate_password
-    |> set_password
+    |> validate_password()
+    |> set_password()
     |> cast_assoc(:company)
   end
 
@@ -68,6 +71,17 @@ defmodule SalesReg.Accounts.User do
       %Ecto.Changeset{valid?: true, changes: %{password: password}} ->
         put_change(changeset, :hashed_password, Comeonin.Bcrypt.hashpwsalt(password))
 
+      _ ->
+        changeset
+    end
+  end
+
+  defp ensure_image_upload(changeset) do
+    case changeset.changes do
+      %{upload_successful: true} -> 
+        changeset
+      %{upload_successful?: false} -> 
+        add_error(changeset, :profile_picture, "Unable to upload")
       _ ->
         changeset
     end

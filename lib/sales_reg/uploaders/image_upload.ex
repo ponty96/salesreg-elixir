@@ -45,4 +45,24 @@ defmodule SalesReg.ImageUpload do
   def s3_object_headers(version, {file, scope}) do
     [content_type: MIME.from_path(file.file_name)]
   end
+
+  def upload_image(binary) do
+    decode_binary = Base.decode64(binary)
+    case decode_binary do
+      {:ok, image_binary} -> 
+        __MODULE__.store(image_binary)
+        |> handle_response()
+      
+      _  -> 
+        :error
+    end
+  end
+
+  defp handle_response({:ok, filename}) do
+    {:ok, filename}
+  end
+
+  defp handle_response({:error, reason} = tuple) do
+    :error
+  end
 end
