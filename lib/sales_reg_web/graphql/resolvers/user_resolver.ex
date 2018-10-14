@@ -1,7 +1,6 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.UserResolver do
   use SalesRegWeb, :context
   alias SalesRegWeb.TokenImpl
-  alias SalesReg.ImageUpload
 
   def register_user(%{user: user_params}, _resolution) do
     case Accounts.create_user(user_params) do
@@ -53,30 +52,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.UserResolver do
   end
 
   def update_user(%{user: params}, %{context: %{current_user: user}}) do
-    case params do
-      %{profile_picture: binary} -> 
-        build_params = 
-        ImageUpload.upload_image(binary)
-        |> build_params(params)
-    
-        Accounts.update_user(user, build_params)
-      
-      _ ->
-        Accounts.update_user(user, params)
-    end
-  end
-
-  defp build_params(term, params) when is_tuple(term) do
-    {:ok, filename} = term
-    %{
-      params | 
-      profile_picture: filename
-    }
-    |> Map.put_new(:upload_successful?, true)
-  end
-
-  defp build_params(term, params) when is_atom(term) do
-    params
-    |> Map.put_new(:upload_successful?, false)
+    Accounts.update_user(user, params)
   end
 end

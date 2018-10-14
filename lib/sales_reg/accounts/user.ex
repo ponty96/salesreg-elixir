@@ -78,10 +78,9 @@ defmodule SalesReg.Accounts.User do
 
   defp ensure_image_upload(changeset) do
     case changeset.changes do
-      %{upload_successful: true} -> 
-        changeset
-      %{upload_successful?: false} -> 
+      %{upload_successful?: false} ->
         add_error(changeset, :profile_picture, "Unable to upload")
+
       _ ->
         changeset
     end
