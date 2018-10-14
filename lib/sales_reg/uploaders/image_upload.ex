@@ -48,21 +48,22 @@ defmodule SalesReg.ImageUpload do
 
   def upload_image(binary) do
     decode_binary = Base.decode64(binary)
+
     case decode_binary do
-      {:ok, image_binary} -> 
+      {:ok, image_binary} ->
         __MODULE__.store(image_binary)
         |> handle_response()
-      
-      _  -> 
+
+      _ ->
         :error
     end
   end
 
   defp handle_response({:ok, filename}) do
-    {:ok, filename}
+    filename
   end
 
-  defp handle_response({:error, reason} = tuple) do
+  defp handle_response({:error, _reason}) do
     :error
   end
 end

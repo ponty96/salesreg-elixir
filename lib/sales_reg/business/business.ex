@@ -4,6 +4,7 @@ defmodule SalesReg.Business do
   """
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
+  alias SalesReg.ImageUpload
 
   use SalesReg.Context, [
     Location,
@@ -30,11 +31,12 @@ defmodule SalesReg.Business do
   end
 
   def update_company_details(id, company_params) do
+    new_params = gen_new_company_params(company_params)
     with %Company{} = company <- get_company(id),
-         {:ok, company} <- update_company(company, company_params),
+         {:ok, company} <- update_company(company, new_params),
          branch_params <- %{
            type: "head_office",
-           location: Map.get(company_params, :head_office)
+           location: Map.get(new_params, :head_office)
          },
          {:ok, branch} <- update_company_head_office(company.id, branch_params) do
       {:ok, company}
@@ -70,5 +72,74 @@ defmodule SalesReg.Business do
 
   def send_registration_email(_user_id, _company) do
     {:ok, "sent"}
+  end
+
+  ### Private functions
+  defp gen_new_company_params(company_params) do
+    case company_params do
+      %{cover_photo: cover_photo, logo: logo} ->
+        cover_photo = ImageUpload.upload_image(cover_photo)
+        logo = ImageUpload.upload_image(logo)
+
+        build_params(cover_photo, logo, company_params)
+      
+      %{cover_photo: cover_photo} ->
+        cover_photo = ImageUpload.upload_image(cover_photo)
+        build_params(:cover_photo, cover_photo}, company_params)
+
+      %{logo: logo} ->
+        logo = ImageUpload.upload_image(logo)
+        build_params({:logo, logo}, company_params)
+
+      _ ->
+        company_params
+    end
+  end
+
+  #term in this case is the filename
+  defp build_params({:logo, term}, params) do
+    if is_binary(term) do
+      params
+      |> Map.update(:logo, term)
+      |> Map.put_new(:upload_successful?, %{logo: true})
+    else
+      params
+      |> Map.put_new(:upload_successful?, %{logo: false})
+    end
+  end
+
+  defp build_params({:cover_photo}, term, params) do
+    if is_binary(term) do
+      params
+      |> Map.update(:cover_photo, term)
+      |> Map.put_new(:upload_successful?, %{cover_photo: true})
+    else
+      params
+      |> Map.put_new(:upload_successful?, %{cover_photo: false})
+    end
+  end
+
+  defp build_params(cover_photo_filename, logo_filename, params) do
+    %{
+      params |
+      cover_photo: cover_photo_filename,
+      logo: logo_filename
+    }
+    |> Map.put_new(:upload_successful?, %{cover_photo: true, logo: true})
+  end
+
+  defp build_params(cover_photo_filename, :error, params) do
+    params
+    |> Map.put_new(:upload_successful?, %{cover_photo: true, logo: false})
+  end
+
+  defp build_params(:error, logo_filename, params) do
+    params
+    |> Map.put_new(:upload_successful?, %{cover_photo: false, logo: true})
+  end
+
+  defp build_params(:error, :error, params) do
+    params
+    |> Map.put_new(:upload_successful?, %{cover_photo: false, logo: false})
   end
 end

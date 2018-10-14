@@ -16,6 +16,7 @@ defmodule SalesReg.Business.Company do
     field(:description, :string)
     field(:logo, :string)
     field(:cover_photo, :string)
+    field(:upload_successful?, :map)
 
     belongs_to(:owner, SalesReg.Accounts.User)
     has_many(:branches, Branch)
@@ -27,10 +28,11 @@ defmodule SalesReg.Business.Company do
   end
 
   @required_fields [:title, :contact_email, :owner_id, :category]
-  @optional_fields [:about, :currency, :description, :logo, :cover_photo] 
+  @optional_fields [:about, :currency, :description, :logo, :cover_photo]
   @doc false
   def changeset(company, attrs) do
     company
+    |> change(attrs)
     |> Repo.preload([:phone, :bank])
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> unique_constraint(:owner_id, message: "Sorry, but you already have a business with us")
@@ -47,6 +49,23 @@ defmodule SalesReg.Business.Company do
       "service" -> changeset
       "product_service" -> changeset
       _ -> add_error(changeset, :category, "Invalid category")
+    end
+  end
+
+  def ensure_image_upload(changeset) do
+    case changeset.changes do
+      %{upload_successful?: %{cover_photo: false, logo: false}} ->
+        add_error(changeset, :cover_photo, "Unable to upload cover photo")
+        |> add_error(:logo, "Unable to upload logo")
+      
+      %{upload_successful?: %{cover_photo: false}} ->
+        add_error(changeset, :cover_photo, "Unable to upload cover photo")
+
+      %{upload_successful?: %{logo: false}} ->
+        add_error(changeset, :logo, "Unable to upload logo")
+
+      _ ->
+        changeset
     end
   end
 end
