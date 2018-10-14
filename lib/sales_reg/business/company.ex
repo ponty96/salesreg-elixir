@@ -15,6 +15,7 @@ defmodule SalesReg.Business.Company do
     field(:category, :string)
     field(:description, :string)
     field(:logo, :string)
+    field(:cover_photo, :string)
 
     belongs_to(:owner, SalesReg.Accounts.User)
     has_many(:branches, Branch)
@@ -26,7 +27,7 @@ defmodule SalesReg.Business.Company do
   end
 
   @required_fields [:title, :contact_email, :owner_id, :category]
-  @optional_fields [:about, :currency, :description, :logo]
+  @optional_fields [:about, :currency, :description, :logo, :cover_photo] 
   @doc false
   def changeset(company, attrs) do
     company

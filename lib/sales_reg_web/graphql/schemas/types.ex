@@ -43,6 +43,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:currency, :string)
     field(:description, :string)
     field(:logo, :string)
+    field(:cover_photo, :string)
 
     field(:branches, list_of(:branch), resolve: dataloader(SalesReg.Business, :branches))
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
@@ -387,6 +388,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:phone, :phone_input)
     field(:logo, :string)
     field(:bank, :bank_input)
+    field(:cover_photo, :string)
   end
 
   input_object :branch_input do

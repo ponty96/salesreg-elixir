@@ -43,6 +43,7 @@ defmodule SalesReg.Seed do
       currency: "Naira(₦)",
       description: CompanyEn.bs(),
       logo: Avatar.image_url()
+      cover_photo: Avatar.image_url()
       # bank: gen_bank_details()
     }
 
