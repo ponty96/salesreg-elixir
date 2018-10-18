@@ -245,6 +245,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:id, :uuid)
     field(:description, :string)
     field(:title, :string)
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
 
     field(
       :products,
