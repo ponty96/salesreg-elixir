@@ -197,6 +197,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
   end
 
+
   object :bank do
     field(:id, :uuid)
     field(:account_name, :string)
@@ -235,6 +236,27 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:amount, :float)
 
     field(:expense, :expense, resolve: dataloader(SalesReg.Business, :expense))
+  end
+
+  @desc """
+    Category object Type
+  """
+  object :category do
+    field(:id, :uuid)
+    field(:description, :string)
+    field(:title, :string)
+
+    field(
+      :products,
+      list_of(:product),
+      resolve: dataloader(SalesReg.Business, :products)
+    )
+
+    field(
+      :expense_items,
+      list_of(:expense_item),
+      resolve: dataloader(SalesReg.Business, :expense_items)
+    )
   end
 
   @desc """
@@ -318,7 +340,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc "The selected company category"
-  enum :category do
+  enum :company_category do
     value(:product, as: "product", description: "Product")
     value(:service, as: "service", description: "Service")
     value(:product_service, as: "product_service", description: "Product and Service")
@@ -381,7 +403,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:about, :string)
     field(:contact_email, non_null(:string))
     field(:head_office, non_null(:location_input))
-    field(:category, non_null(:category))
+    field(:category, non_null(:company_category))
     field(:currency, :string)
     field(:description, :string)
     field(:phone, :phone_input)
@@ -445,7 +467,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
-
 
     field(:allows_marketing, :string)
     field(:currency, :string)
@@ -511,6 +532,11 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :expense_item_input do
     field(:item_name, non_null(:string))
     field(:amount, non_null(:float))
+  end
+
+  input_object :category_input do
+    field(:description, :string)
+    field(:title, :string)
   end
 
   #########################################################

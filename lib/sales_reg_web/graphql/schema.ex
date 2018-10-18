@@ -20,8 +20,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
 
   query do
     import_fields(:single_user)
-    import_fields(:product_queries)
-    import_fields(:service_queries)
+    import_fields(:store_queries)
     import_fields(:contact_queries)
     import_fields(:order_queries)
     import_fields(:expense_queries)
@@ -30,8 +29,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
   mutation do
     import_fields(:company_mutations)
     import_fields(:authentication_mutations)
-    import_fields(:product_mutations)
-    import_fields(:service_mutations)
+    import_fields(:store_mutations)
     import_fields(:contact_mutations)
     import_fields(:order_mutations)
     import_fields(:user_mutations)
