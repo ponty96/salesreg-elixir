@@ -102,6 +102,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:description, :string)
     field(:name, :string)
     field(:price, :string)
+    field(:images, list_of(:string))
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
@@ -430,6 +431,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:description, :string)
     field(:name, non_null(:string))
     field(:price, :string)
+    field(:images, list_of(:string))
 
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))

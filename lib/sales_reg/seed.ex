@@ -72,7 +72,8 @@ defmodule SalesReg.Seed do
       "name" => "#{CompanyEn.bs()} Service",
       "price" => "#{Enum.random([10_000, 50_000, 150_000])}",
       "user_id" => "#{user_id}",
-      "company_id" => "#{company_id}"
+      "company_id" => "#{company_id}",
+      "images" => [Avatar.image_url()]
     }
 
     Store.add_service(service_params)
