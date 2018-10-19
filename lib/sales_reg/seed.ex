@@ -217,6 +217,15 @@ defmodule SalesReg.Seed do
     )
   end
 
+  def add_category(company_id, user_id) do
+    params = %{
+      "company_id" => company_id,
+      "user_id" => user_id,
+      "title" => "#{Commerce.department()}"
+    }
+    Store.add_category(params)
+  end
+
   defp create_sales_order(
          %{company_id: company_id, user_id: user_id, contact_id: contact_id},
          order_items

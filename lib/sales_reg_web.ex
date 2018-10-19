@@ -91,6 +91,7 @@ defmodule SalesRegWeb do
         Store,
         Store.Product,
         Store.Service,
+        Store.Category,
         Order,
         Order.Purchase,
         Order.Item,
