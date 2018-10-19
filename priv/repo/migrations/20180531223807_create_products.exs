@@ -5,7 +5,7 @@ defmodule SalesReg.Repo.Migrations.CreateProducts do
     create table(:products, primary_key: false) do
       add(:id, :binary_id, primary_key: true)
       add(:name, :string)
-      add(:featured_image, :string)
+      add(:images, {:array, :string})
       add(:pack_quantity, :string)
       add(:price_per_pack, :string)
       add(:unit_quantity, :string)

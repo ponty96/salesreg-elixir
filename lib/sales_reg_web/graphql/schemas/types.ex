@@ -83,7 +83,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   object :product do
     field(:id, :uuid)
     field(:description, :string)
-    field(:featured_image, :string)
+    field(:images, list_of(:string))
     field(:name, :string)
     field(:stock_quantity, :string)
     field(:minimum_stock_quantity, :string)
@@ -415,7 +415,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   input_object :product_input do
     field(:description, :string)
-    field(:featured_image, :string)
+    field(:images, list_of(:string))
     field(:name, non_null(:string))
     field(:stock_quantity, non_null(:string))
     field(:minimum_stock_quantity, non_null(:string))
