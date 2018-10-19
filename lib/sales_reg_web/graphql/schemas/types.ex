@@ -286,7 +286,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :purchase,
       :item,
       :sale,
-      :expense
+      :expense,
+      :category
     ])
 
     resolve_type(fn
@@ -303,6 +304,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Sale{}, _ -> :sale
       %{user: %User{}}, _ -> :authorization
       %Expense{}, _ -> :expense
+      %Category{}, _ -> :category
     end)
   end
 
@@ -538,7 +540,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   input_object :category_input do
     field(:description, :string)
-    field(:title, :string)
+    field(:title, non_null(:string))
+    field(:user_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
   end
 
   #########################################################
