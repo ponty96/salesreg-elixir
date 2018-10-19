@@ -16,7 +16,7 @@ defmodule SalesReg.Business.Company do
     field(:description, :string)
     field(:logo, :string)
     field(:cover_photo, :string)
-    field(:upload_successful?, :map)
+    field(:upload_successful?, :map, virtual: true)
 
     belongs_to(:owner, SalesReg.Accounts.User)
     has_many(:branches, Branch)
@@ -28,12 +28,12 @@ defmodule SalesReg.Business.Company do
   end
 
   @required_fields [:title, :contact_email, :owner_id, :category]
-  @optional_fields [:about, :currency, :description, :logo, :cover_photo]
+  @optional_fields [:about, :currency, :description, :logo, :cover_photo, :upload_successful?]
   @doc false
   def changeset(company, attrs) do
     company
-    |> change(attrs)
     |> Repo.preload([:phone, :bank])
+    |> change(attrs)
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> unique_constraint(:owner_id, message: "Sorry, but you already have a business with us")
     |> cast_assoc(:phone)
@@ -41,6 +41,7 @@ defmodule SalesReg.Business.Company do
     # |> cast_assoc(:branches)
     |> validate_category()
     |> cast_assoc(:bank)
+    |> ensure_image_upload()
   end
 
   def validate_category(changeset) do

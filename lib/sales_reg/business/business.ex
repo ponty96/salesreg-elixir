@@ -16,7 +16,6 @@ defmodule SalesReg.Business do
 
   def create_company(user_id, company_params) do
     company_params = Map.put(company_params, :owner_id, user_id)
-
     with {:ok, company} <- add_company(company_params),
          branch_params <- %{
            type: "head_office",
@@ -85,7 +84,7 @@ defmodule SalesReg.Business do
       
       %{cover_photo: cover_photo} ->
         cover_photo = ImageUpload.upload_image(cover_photo)
-        build_params(:cover_photo, cover_photo}, company_params)
+        build_params({:cover_photo, cover_photo}, company_params)
 
       %{logo: logo} ->
         logo = ImageUpload.upload_image(logo)
@@ -100,7 +99,7 @@ defmodule SalesReg.Business do
   defp build_params({:logo, term}, params) do
     if is_binary(term) do
       params
-      |> Map.update(:logo, term)
+      |> Map.put(:logo, term)
       |> Map.put_new(:upload_successful?, %{logo: true})
     else
       params
@@ -108,10 +107,12 @@ defmodule SalesReg.Business do
     end
   end
 
-  defp build_params({:cover_photo}, term, params) do
+  defp build_params({:cover_photo, term}, params) do
+    IO.inspect term, label: "term"
+    IO.inspect params, label: "params"
     if is_binary(term) do
       params
-      |> Map.update(:cover_photo, term)
+      |> Map.put(:cover_photo, term)
       |> Map.put_new(:upload_successful?, %{cover_photo: true})
     else
       params
@@ -119,27 +120,27 @@ defmodule SalesReg.Business do
     end
   end
 
-  defp build_params(cover_photo_filename, logo_filename, params) do
-    %{
-      params |
-      cover_photo: cover_photo_filename,
-      logo: logo_filename
-    }
-    |> Map.put_new(:upload_successful?, %{cover_photo: true, logo: true})
+  defp build_params(:error, :error, params) do
+    params
+    |> Map.put_new(:upload_successful?, %{cover_photo: false, logo: false})
   end
 
-  defp build_params(cover_photo_filename, :error, params) do
+  defp build_params(_cover_photo, :error, params) do
     params
     |> Map.put_new(:upload_successful?, %{cover_photo: true, logo: false})
   end
 
-  defp build_params(:error, logo_filename, params) do
+  defp build_params(:error, _logo, params) do
     params
     |> Map.put_new(:upload_successful?, %{cover_photo: false, logo: true})
   end
 
-  defp build_params(:error, :error, params) do
-    params
-    |> Map.put_new(:upload_successful?, %{cover_photo: false, logo: false})
+  defp build_params(cover_photo, logo, params) do
+    %{
+      params |
+      cover_photo: cover_photo,
+      logo: logo
+    }
+    |> Map.put_new(:upload_successful?, %{cover_photo: true, logo: true})
   end
 end

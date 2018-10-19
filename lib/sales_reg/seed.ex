@@ -42,7 +42,7 @@ defmodule SalesReg.Seed do
       head_office: gen_location_params(),
       currency: "Naira(₦)",
       description: CompanyEn.bs(),
-      logo: Avatar.image_url()
+      logo: Avatar.image_url(),
       cover_photo: Avatar.image_url()
       # bank: gen_bank_details()
     }

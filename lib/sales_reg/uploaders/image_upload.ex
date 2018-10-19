@@ -63,7 +63,7 @@ defmodule SalesReg.ImageUpload do
     filename
   end
 
-  defp handle_response({:error, _reason}) do
+  defp handle_response({:error, _reason} = error_tuple) do
     :error
   end
 end
