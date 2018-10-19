@@ -7,7 +7,8 @@ defmodule SalesReg.Store do
 
   use SalesReg.Context, [
     Product,
-    Service
+    Service,
+    Category
   ]
 
   def data do

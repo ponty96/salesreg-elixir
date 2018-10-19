@@ -38,6 +38,12 @@ vendors =
     vendor
   end)
 
+categories =
+  Enum.map(1..25, fn _index ->
+    {:ok, category} = Seed.add_category(company.id, user.id)
+    category
+  end)
+
 Enum.map(1..20, fn _index ->
   Seed.add_expense(user.id, company.id)
 end)
