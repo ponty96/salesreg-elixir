@@ -447,6 +447,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
+    field(:categories, list_of(:uuid))
   end
 
   input_object :service_input do
@@ -456,6 +457,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
+    field(:categories, list_of(:uuid))
   end
 
   input_object :contact_input do
