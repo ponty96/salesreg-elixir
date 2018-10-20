@@ -8,7 +8,8 @@ defmodule SalesReg.Store do
 
   use SalesReg.Context, [
     Product,
-    Service
+    Service,
+    Category
   ]
 
   def data do
@@ -17,6 +18,18 @@ defmodule SalesReg.Store do
 
   def query(queryable, _) do
     queryable
+  end
+
+  def load_categories(%{"categories" => categories_ids}) do
+    Repo.all(
+      from(c in Category,
+        where: c.id in ^categories_ids
+      )
+    )
+  end
+
+  def load_categories(%{"categories" => []}) do
+    []
   end
 
   def update_product_inventory(:increment, order_items) when is_list(order_items) do

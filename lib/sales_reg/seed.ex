@@ -50,7 +50,7 @@ defmodule SalesReg.Seed do
     Business.create_company(user_id, company_params)
   end
 
-  def add_product(user_id, company_id) do
+  def add_product(user_id, company_id, categories) do
     product_params = %{
       "description" => "Our product is #{CommerceEn.product_name()}",
       "images" => [Avatar.image_url()],
@@ -60,13 +60,14 @@ defmodule SalesReg.Seed do
       "selling_price" => "#{Commerce.price()}",
       "stock_quantity" => "#{Enum.random([3, 6, 12, 24])}",
       "user_id" => "#{user_id}",
-      "company_id" => "#{company_id}"
+      "company_id" => "#{company_id}",
+      "categories" => categories
     }
 
     Store.add_product(product_params)
   end
 
-  def add_service(user_id, company_id) do
+  def add_service(user_id, company_id, categories) do
     service_params = %{
       "description" => "Our service is #{CompanyEn.bs()}",
       "name" => "#{CompanyEn.bs()} Service",
@@ -74,6 +75,7 @@ defmodule SalesReg.Seed do
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}",
       "images" => [Avatar.image_url()]
+      "categories" => categories
     }
 
     Store.add_service(service_params)
@@ -217,6 +219,16 @@ defmodule SalesReg.Seed do
       %{company_id: company_id, user_id: user_id, contact_id: contact_id},
       order_items
     )
+  end
+
+  def add_category(company_id, user_id) do
+    params = %{
+      "company_id" => company_id,
+      "user_id" => user_id,
+      "title" => "#{Commerce.department()}"
+    }
+
+    Store.add_category(params)
   end
 
   defp create_sales_order(

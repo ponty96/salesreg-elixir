@@ -7,7 +7,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
 
   ### MUTATIONS
-  object :product_mutations do
+  object :store_mutations do
     @desc """
     upsert a product in a company's store
     """
@@ -18,11 +18,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       middleware(Authorize)
       resolve(&StoreResolver.upsert_product/2)
     end
-  end
 
-  object :service_mutations do
     @desc """
-    upsert a product in a company's store
+    upsert a service in a company's store
     """
     field :upsert_service, :mutation_response do
       arg(:service, non_null(:service_input))
@@ -31,11 +29,21 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       middleware(Authorize)
       resolve(&StoreResolver.upsert_service/2)
     end
+
+    @desc """
+    upsert a category in a company's store
+    """
+    field :upsert_category, :mutation_response do
+      arg(:category, non_null(:category_input))
+      arg(:category_id, :uuid)
+
+      middleware(Authorize)
+      resolve(&StoreResolver.upsert_category/2)
+    end
   end
 
   ### QUERIES
-  ## Product queries
-  object :product_queries do
+  object :store_queries do
     @desc """
       query for all products in a company's store
     """
@@ -55,10 +63,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       middleware(Authorize)
       resolve(&StoreResolver.search_products_by_name/2)
     end
-  end
 
-  ## Service queries
-  object :service_queries do
     @desc """
       query for all services in a company's store
     """
@@ -77,6 +82,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
 
       middleware(Authorize)
       resolve(&StoreResolver.search_services_by_name/2)
+    end
+
+    @desc """
+      query for all company product / service categories
+    """
+    field :list_company_categories, list_of(:category) do
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.list_company_categories/2)
     end
   end
 end

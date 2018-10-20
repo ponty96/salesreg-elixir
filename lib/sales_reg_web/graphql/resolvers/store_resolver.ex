@@ -35,4 +35,19 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     products = Context.search_schema_by_field(Product, query, :name)
     {:ok, products}
   end
+
+  # category
+  def upsert_category(%{category: params, category_id: id}, _res) do
+    Store.get_category(id)
+    |> Store.update_category(params)
+  end
+
+  def upsert_category(%{category: params}, _res) do
+    Store.add_category(params)
+  end
+
+  def list_company_categories(%{company_id: company_id}, _res) do
+    ## TODO - change context to use plural form
+    Store.list_company_categorys(company_id)
+  end
 end
