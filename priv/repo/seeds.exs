@@ -14,15 +14,21 @@ use SalesRegWeb, :context
 {:ok, user} = Seed.create_user()
 {:ok, company} = Seed.create_company(user.id)
 
+categories =
+  Enum.map(1..25, fn _index ->
+    {:ok, category} = Seed.add_category(company.id, user.id)
+    category.id
+  end)
+
 products =
   Enum.map(1..20, fn _index ->
-    {:ok, product} = Seed.add_product(user.id, company.id)
+    {:ok, product} = Seed.add_product(user.id, company.id, Enum.take_random(categories, 6))
     product
   end)
 
 services =
   Enum.map(1..20, fn _index ->
-    {:ok, service} = Seed.add_service(user.id, company.id)
+    {:ok, service} = Seed.add_service(user.id, company.id, Enum.take_random(categories, 5))
     service
   end)
 
@@ -36,12 +42,6 @@ vendors =
   Enum.map(1..25, fn _index ->
     {:ok, vendor} = Seed.add_contact(user.id, company.id, "vendor")
     vendor
-  end)
-
-categories =
-  Enum.map(1..25, fn _index ->
-    {:ok, category} = Seed.add_category(company.id, user.id)
-    category
   end)
 
 Enum.map(1..20, fn _index ->

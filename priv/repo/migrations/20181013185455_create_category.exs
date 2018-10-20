@@ -19,11 +19,14 @@ defmodule SalesReg.Repo.Migrations.CreateCategory do
     end
 
     create table(:services_categories, primary_key: false) do
-      add :services_id, references(:services, type: :binary_id)
+      add :service_id, references(:services, type: :binary_id)
       add :category_id, references(:categories, type: :binary_id)
     end
 
     create(index(:categories, [:company_id]))
     create(index(:categories, [:user_id]))
+
+    create(unique_index(:products_categories, [:product_id, :category_id]))
+    create(unique_index(:services_categories, [:service_id, :category_id]))
   end
 end
