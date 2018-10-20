@@ -88,6 +88,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:minimum_stock_quantity, :string)
     field(:cost_price, :string)
     field(:selling_price, :string)
+    field(:categories, list_of(:category), resolve: dataloader(SalesReg.Store, :categories))
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
@@ -101,6 +102,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:description, :string)
     field(:name, :string)
     field(:price, :string)
+    field(:categories, list_of(:category), resolve: dataloader(SalesReg.Store, :categories))
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
