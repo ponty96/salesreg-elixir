@@ -3,12 +3,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   require SalesReg.Context
 
   def upsert_service(%{service: params, service_id: id}, _res) do
-    Store.get_service(id)
-    |> Store.update_service(params)
+    Store.update_service(id, params)
   end
 
   def upsert_service(%{service: params}, _res) do
-    Store.add_service(params)
+    Store.create_service(params)
   end
 
   def list_company_services(%{company_id: company_id}, _res) do
@@ -21,12 +20,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   end
 
   def upsert_product(%{product: params, product_id: id}, _res) do
-    Store.get_product(id)
-    |> Store.update_product(params)
+    Store.update_product(id, params)
   end
 
   def upsert_product(%{product: params}, _res) do
-    Store.add_product(params)
+    Store.create_product(params)
   end
 
   def list_company_products(%{company_id: company_id}, _res) do
