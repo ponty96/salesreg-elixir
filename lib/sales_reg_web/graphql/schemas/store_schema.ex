@@ -64,7 +64,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       resolve(&StoreResolver.search_products_by_name/2)
     end
 
-
     @desc """
       query for all services in a company's store
     """

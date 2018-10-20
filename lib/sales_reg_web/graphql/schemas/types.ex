@@ -197,7 +197,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
   end
 
-
   object :bank do
     field(:id, :uuid)
     field(:account_name, :string)

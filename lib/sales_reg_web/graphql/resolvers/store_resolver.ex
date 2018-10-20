@@ -38,8 +38,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     {:ok, products}
   end
 
-
-
   # category
   def upsert_category(%{category: params, category_id: id}, _res) do
     Store.get_category(id)
@@ -51,6 +49,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   end
 
   def list_company_categories(%{company_id: company_id}, _res) do
-    Store.list_company_categorys(company_id) ## TODO - change context to use plural form
+    ## TODO - change context to use plural form
+    Store.list_company_categorys(company_id)
   end
 end
