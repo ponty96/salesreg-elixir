@@ -74,7 +74,7 @@ defmodule SalesReg.Seed do
       "price" => "#{Enum.random([10_000, 50_000, 150_000])}",
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}",
-      "images" => [Avatar.image_url()]
+      "images" => [Avatar.image_url()],
       "categories" => categories
     }
 

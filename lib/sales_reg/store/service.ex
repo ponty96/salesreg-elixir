@@ -31,8 +31,8 @@ defmodule SalesReg.Store.Service do
   @doc false
   def changeset(service, attrs) do
     service
-    |> cast(attrs, @required_fields ++ @optional_fields)
     |> Repo.preload(:categories)
+    |> cast(attrs, @required_fields ++ @optional_fields)
     |> cast(attrs, @required_fields ++ [:description])
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)

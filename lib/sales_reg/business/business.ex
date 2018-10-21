@@ -73,6 +73,38 @@ defmodule SalesReg.Business do
     {:ok, "sent"}
   end
 
+  def create_contact(params) do
+    case params do
+      %{image: image} -> 
+        image_response = ImageUpload.upload_image(image)
+        if is_binary(image_response) do
+          %{params | image: image_response}
+          |> Business.add_contact()
+        else
+          Map.delete(params, :image)
+          |> Business.add_contact(params)
+        end
+      _ -> 
+        Business.add_contact(params)
+    end
+  end
+
+  def update_contact(contact_id, params) do
+    case params do
+      %{image: image} -> 
+        image_response = ImageUpload.upload_image(image)
+        if is_binary(image_response) do
+          new_params = %{params | image: image_response}
+          Business.update_contact(contact_id, new_params)
+        else
+          new_params = Map.delete(params, :image)
+          Business.update_contact(contact_id, new_params)
+        end
+      _ -> 
+        Business.update_contact(contact_id, params)
+    end
+  end
+
   ### Private functions
   defp gen_new_company_params(company_params) do
     case company_params do
@@ -108,8 +140,6 @@ defmodule SalesReg.Business do
   end
 
   defp build_params({:cover_photo, term}, params) do
-    IO.inspect term, label: "term"
-    IO.inspect params, label: "params"
     if is_binary(term) do
       params
       |> Map.put(:cover_photo, term)
