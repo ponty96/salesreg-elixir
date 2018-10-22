@@ -1,31 +1,21 @@
-defmodule SalesReg.Store.Service do
+defmodule SalesReg.Store.Tag do
   use Ecto.Schema
   import Ecto.Changeset
-  alias SalesReg.Store.Category
-  alias SalesReg.Repo
-  alias SalesReg.Store
+  alias SalesReg.Store.{Product, Service}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  schema "services" do
-    field(:description, :string)
+  schema "tags" do
     field(:name, :string)
-    field(:price, :string)
 
     belongs_to(:company, SalesReg.Business.Company)
-    belongs_to(:user, SalesReg.Accounts.User)
-
-    many_to_many(:categories, Category,
-      join_through: "services_categories",
-      on_replace: :delete,
-      on_delete: :delete_all
-    )
-    many_to_many(:tags, SalesReg.Store.Tag, join_through: "service_tags", on_delete: :delete_all)
+    many_to_many(:products, Product, join_through: "products_tags", on_delete: :delete_all)
+    many_to_many(:services, Service, join_through: "services_tags", on_delete: :delete_all)
 
     timestamps()
   end
 
-  @required_fields [:name, :price, :company_id, :user_id]
+  @required_fields [:name]
   @doc false
   def changeset(service, attrs) do
     service
