@@ -15,8 +15,8 @@ defmodule SalesReg.Business.Bank do
     timestamps()
   end
 
-  @required_fields [:account_name, :account_number, :bank_name]
-  @optional_fields []
+  @required_fields [:account_number, :bank_name]
+  @optional_fields [:account_name]
 
   @doc false
   def changeset(bank, attrs) do
