@@ -30,10 +30,12 @@ defmodule SalesReg.Store.Service do
   def changeset(service, attrs) do
     service
     |> Repo.preload(:categories)
+    |> Repo.preload(:tags)
     |> cast(attrs, @required_fields ++ [:description])
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
     |> put_assoc(:categories, Store.load_categories(attrs))
+    |> put_assoc(:tags, Store.load_tags(attrs))
   end
 end

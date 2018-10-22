@@ -88,6 +88,7 @@ defmodule SalesRegWeb do
         Business.Bank,
         Business.Expense,
         Business.ExpenseItem,
+        Business.Tag,
         Store,
         Store.Product,
         Store.Service,

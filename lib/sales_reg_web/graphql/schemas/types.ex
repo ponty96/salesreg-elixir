@@ -263,6 +263,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Tag object Type
+  """
+  object :tag do
+    field(:id, :uuid)
+    field(:name, :string)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -288,7 +298,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :item,
       :sale,
       :expense,
-      :category
+      :category,
+      :tag
     ])
 
     resolve_type(fn
@@ -306,6 +317,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %{user: %User{}}, _ -> :authorization
       %Expense{}, _ -> :expense
       %Category{}, _ -> :category
+      %Tag{}, _ -> :tag
     end)
   end
 
@@ -450,6 +462,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
     field(:categories, list_of(:uuid))
+    field(:tags, list_of(:string))
   end
 
   input_object :service_input do
@@ -460,6 +473,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
     field(:categories, list_of(:uuid))
+    field(:tags, list_of(:string))
   end
 
   input_object :contact_input do
