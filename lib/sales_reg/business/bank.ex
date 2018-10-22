@@ -23,6 +23,5 @@ defmodule SalesReg.Business.Bank do
     bank
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
-    |> assoc_constraint(:company)
   end
 end

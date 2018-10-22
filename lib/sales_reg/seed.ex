@@ -43,7 +43,6 @@ defmodule SalesReg.Seed do
       currency: "Naira(₦)",
       description: CompanyEn.bs(),
       logo: Avatar.image_url()
-      # bank: gen_bank_details()
     }
 
     Business.create_company(user_id, company_params)
@@ -116,6 +115,11 @@ defmodule SalesReg.Seed do
     }
 
     Business.add_expense(expense_params)
+  end
+
+  def create_bank() do
+    params = gen_bank_details()
+    Business.add_bank(params)
   end
 
   defp total_expense_cost(expense_items) do

@@ -70,3 +70,7 @@ end)
 Enum.map(random_customers, fn customer ->
   Seed.create_sales_order(company.id, user.id, customer.id, products, services)
 end)
+
+Enum.map(1..10, fn _index ->
+  Seed.create_bank()
+end)
