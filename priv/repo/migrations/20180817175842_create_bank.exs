@@ -8,7 +8,10 @@ defmodule SalesReg.Repo.Migrations.CreateBank do
       add(:account_number, :string)
       add(:bank_name, :string)
 
+      add(:company_id, references(:companies, on_delete: :nothing, type: :binary_id))
+
       timestamps()
     end
+    create(index(:banks, [:company_id]))
   end
 end

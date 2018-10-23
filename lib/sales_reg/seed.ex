@@ -117,9 +117,10 @@ defmodule SalesReg.Seed do
     Business.add_expense(expense_params)
   end
 
-  def create_bank() do
-    params = gen_bank_details()
-    Business.add_bank(params)
+  def create_bank(company_id) do
+    gen_bank_details()
+    |> Map.put_new(:company_id, company_id)
+    |> Business.add_bank(params)
   end
 
   defp total_expense_cost(expense_items) do

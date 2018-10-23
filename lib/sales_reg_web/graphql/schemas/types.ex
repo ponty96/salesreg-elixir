@@ -47,6 +47,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:branches, list_of(:branch), resolve: dataloader(SalesReg.Business, :branches))
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
+    field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
   end
 
   @desc """

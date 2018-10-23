@@ -72,5 +72,5 @@ Enum.map(random_customers, fn customer ->
 end)
 
 Enum.map(1..10, fn _index ->
-  Seed.create_bank()
+  Seed.create_bank(company.id)
 end)
