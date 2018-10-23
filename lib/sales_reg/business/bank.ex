@@ -16,7 +16,7 @@ defmodule SalesReg.Business.Bank do
     timestamps()
   end
 
-  @required_fields [:account_number, :bank_name, :is_primary]
+  @required_fields [:account_number, :bank_name, :is_primary, :company_id]
   @optional_fields [:account_name]
 
   @doc false

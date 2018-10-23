@@ -3,12 +3,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BankResolver do
 
   def upsert_bank(%{bank: params, bank_id: id}, _res) do
     Business.get_bank(id)
-    |> Business.update_bank(params)
+    |> Business.update_bank_details(params)
   end
 
   def upsert_bank(%{bank: params}, _res) do
-    params
-    |> Business.add_bank()
+    Business.create_bank(params)
   end
   
   def delete_bank(%{bank_id: bank_id}, _res) do
