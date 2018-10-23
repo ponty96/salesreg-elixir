@@ -4,6 +4,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
   """
   use Absinthe.Schema.Notation
   alias SalesRegWeb.GraphQL.Resolvers.CompanyResolver
+  alias SalesRegWeb.GraphQL.Resolvers.BankResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
 
   object :company_mutations do
