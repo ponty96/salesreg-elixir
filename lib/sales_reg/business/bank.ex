@@ -9,13 +9,14 @@ defmodule SalesReg.Business.Bank do
     field(:account_name, :string)
     field(:account_number, :string)
     field(:bank_name, :string)
+    field(:is_primary, :boolean, default: false)
 
     belongs_to(:company, SalesReg.Business.Company)
 
     timestamps()
   end
 
-  @required_fields [:account_number, :bank_name]
+  @required_fields [:account_number, :bank_name, :is_primary]
   @optional_fields [:account_name]
 
   @doc false

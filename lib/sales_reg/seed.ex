@@ -160,7 +160,8 @@ defmodule SalesReg.Seed do
     %{
       "account_name" => NameEn.name(),
       "account_number" => "#{Enum.random(0_152_637_490..0_163_759_275)}",
-      "bank_name" => "#{Enum.random(@banks)}"
+      "bank_name" => "#{Enum.random(@banks)}",
+      "is_primary" => false
     }
   end
 

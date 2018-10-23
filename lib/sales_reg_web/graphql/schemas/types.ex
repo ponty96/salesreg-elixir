@@ -204,6 +204,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:account_name, :string)
     field(:account_number, :string)
     field(:bank_name, :string)
+    field(:is_primary, :boolean)
 
     field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
   end
@@ -523,6 +524,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:account_name, :string)
     field(:account_number, non_null(:string))
     field(:bank_name, non_null(:string))
+    field(:is_primary, non_null(:boolean)
   end
 
   input_object :expense_input do
