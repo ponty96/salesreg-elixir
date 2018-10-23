@@ -25,8 +25,8 @@ defmodule SalesReg.Business.Company do
     timestamps()
   end
 
-  @required_fields [:title, :contact_email, :owner_id, :category]
-  @optional_fields [:about, :currency, :description, :logo]
+  @required_fields [:title, :contact_email, :owner_id, :currency]
+  @optional_fields [:about, :description, :logo, :category]
   @doc false
   def changeset(company, attrs) do
     company

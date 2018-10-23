@@ -408,7 +408,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:about, :string)
     field(:contact_email, non_null(:string))
     field(:head_office, non_null(:location_input))
-    field(:category, non_null(:company_category))
+    field(:category, :company_category)
     field(:currency, :string)
     field(:description, :string)
     field(:phone, :phone_input)
