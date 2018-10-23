@@ -206,6 +206,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:bank_name, :string)
     field(:is_primary, :boolean)
 
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
+
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
 

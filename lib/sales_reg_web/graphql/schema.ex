@@ -25,6 +25,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
     import_fields(:contact_queries)
     import_fields(:order_queries)
     import_fields(:expense_queries)
+    import_fields(:bank_queries)
   end
 
   mutation do

@@ -28,4 +28,17 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       resolve(&CompanyResolver.update_company/2)
     end
   end
+
+  ### QUERIES
+  object :bank_queries do
+    @desc """
+      query all banks of a company
+    """
+    field :company_banks, list_of(:bank) do
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&BankResolver.list_company_banks/2)
+    end
+  end
 end

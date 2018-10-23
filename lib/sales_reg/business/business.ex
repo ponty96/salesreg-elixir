@@ -75,6 +75,7 @@ defmodule SalesReg.Business do
 
   def create_bank(params) do
     bank_list = company_banks(params.company_id)
+
     if Enum.count(bank_list) == 0 do
       params
       |> Map.put_new(:is_primary, true)
@@ -86,7 +87,7 @@ defmodule SalesReg.Business do
 
   def update_bank_details(bank, params) do
     case params do
-      %{is_primary: true} -> 
+      %{is_primary: true} ->
         update_bank_field(params.company_id)
         Business.update_bank(bank, params)
 
@@ -97,6 +98,7 @@ defmodule SalesReg.Business do
 
   defp update_bank_field(company_id) do
     attrs = %{"is_primary" => false}
+
     Bank
     |> where([b], b.company_id == ^company_id)
     |> where([b], b.is_primary == true)
