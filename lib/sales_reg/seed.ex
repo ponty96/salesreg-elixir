@@ -12,7 +12,7 @@ defmodule SalesReg.Seed do
   @phone_types ["home", "mobile", "work"]
   @currency ["Dollars", "Naira", "Euro", "Pounds"]
   @marital_status ["Single", "Married", "Widowed"]
-  @banks ["GTB", "FBN", "Sterling Bank", "Zenith Bank"]
+  @banks ["076", "011", "063", "058"]
   @likes ["honesty", "integrity", "principled"]
   @dislikes ["lies", "pride", "laziness"]
   @payment_method ["cash", "POS", "cheque", "direct transfer"]
