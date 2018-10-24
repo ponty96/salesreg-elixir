@@ -10,7 +10,8 @@ defmodule SalesReg.Business do
     Contact,
     Company,
     Branch,
-    Expense
+    Expense,
+    Bank
   ]
 
   def create_company(user_id, company_params) do
@@ -70,5 +71,55 @@ defmodule SalesReg.Business do
 
   def send_registration_email(_user_id, _company) do
     {:ok, "sent"}
+  end
+
+  def create_bank(params) do
+    bank_list = company_banks(params.company_id)
+    
+    case params do
+      %{is_primary: true} -> 
+        if Enum.count(bank_list) == 0 do
+          Business.add_bank(params)
+        else
+          update_bank_field(params.company_id)
+          Business.add_bank(params)
+        end
+      
+      _ ->
+        if Enum.count(bank_list) == 0 do
+          params
+          |> Map.put(:is_primary, true)
+          |> Business.add_bank()
+        else 
+          Business.add_bank(params)
+        end
+    end
+  end
+
+  def update_bank_details(bank, params) do
+    case params do
+      %{is_primary: true} ->
+        update_bank_field(params.company_id)
+        Business.update_bank(bank, params)
+
+      _ ->
+        Business.update_bank(bank, params)
+    end
+  end
+
+  defp update_bank_field(company_id) do
+    attrs = %{"is_primary" => false}
+
+    Bank
+    |> where([b], b.company_id == ^company_id)
+    |> where([b], b.is_primary == true)
+    |> Repo.one()
+    |> Business.update_bank(attrs)
+  end
+
+  def company_banks(company_id) do
+    Bank
+    |> where([b], b.company_id == ^company_id)
+    |> Repo.all()
   end
 end
