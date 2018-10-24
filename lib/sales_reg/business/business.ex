@@ -114,7 +114,6 @@ defmodule SalesReg.Business do
     |> where([b], b.company_id == ^company_id)
     |> where([b], b.is_primary == true)
     |> Repo.one()
-    |> IO.inspect(label: "bank")
     |> Business.update_bank(attrs)
   end
 

@@ -16,8 +16,6 @@ defmodule SalesRegWeb.GraphQL.Schemas do
   import_types(__MODULE__.StoreSchema)
   import_types(__MODULE__.ContactSchema)
   import_types(__MODULE__.OrderSchema)
-  import_types(__MODULE__.ExpenseSchema)
-  import_types(__MODULE__.BankSchema)
 
   query do
     import_fields(:single_user)
