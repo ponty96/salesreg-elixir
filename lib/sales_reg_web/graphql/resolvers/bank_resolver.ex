@@ -16,6 +16,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BankResolver do
   end
 
   def list_company_banks(%{company_id: id}, _res) do
-    Business.list_company_banks(id)
+    banks =
+      Business.list_company_banks(id)
+      |> elem(1)
+      |> Enum.sort(&(&1.is_primary >= &2.is_primary))
+    {:ok, banks}
   end
 end
