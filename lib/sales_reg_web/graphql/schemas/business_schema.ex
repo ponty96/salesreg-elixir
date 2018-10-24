@@ -18,7 +18,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       arg(:company, non_null(:company_input))
 
       middleware(Authorize)
-      resolve(&CompanyResolver.register_company/2)
+      resolve(&BusinessResolver.register_company/2)
     end
 
     @desc """
@@ -28,7 +28,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       arg(:id, non_null(:uuid))
       arg(:company, non_null(:company_input))
 
-      resolve(&CompanyResolver.update_company/2)
+      resolve(&BusinessResolver.update_company/2)
     end
   end
 
