@@ -37,7 +37,6 @@ defmodule SalesReg.Business.Company do
     |> validate_required(@required_fields)
     # |> cast_assoc(:branches)
     |> validate_category()
-    |> cast_assoc(:bank)
   end
 
   def validate_category(changeset) do
