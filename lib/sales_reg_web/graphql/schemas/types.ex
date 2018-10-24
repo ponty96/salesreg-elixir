@@ -256,9 +256,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     )
 
     field(
-      :expense_items,
-      list_of(:expense_item),
-      resolve: dataloader(SalesReg.Business, :expense_items)
+      :services,
+      list_of(:service),
+      resolve: dataloader(SalesReg.Business, :services)
     )
   end
 
