@@ -19,13 +19,14 @@ defmodule SalesReg.Accounts do
   def update_user(%User{} = user, attrs) do
     case attrs do
       %{profile_picture: binary} ->
-        new_params = ImageUpload.upload_image(binary)
-        |> build_params(attrs)
-        
+        new_params =
+          ImageUpload.upload_image(binary)
+          |> build_params(attrs)
+
         user
         |> User.changeset(new_params)
         |> Repo.update()
-      
+
       _ ->
         user
         |> User.changeset(attrs)
@@ -46,11 +47,11 @@ defmodule SalesReg.Accounts do
   end
 
   ### Private functions
-  #term in this case is the filename
+  # term in this case is the filename
   defp build_params(term, params) when is_binary(term) do
     %{
-      params | 
-      profile_picture: term
+      params
+      | profile_picture: term
     }
     |> Map.put_new(:upload_successful?, true)
   end

@@ -20,16 +20,16 @@ defmodule SalesReg.Store do
     queryable
   end
 
+  def load_categories(%{"categories" => []}) do
+    []
+  end
+
   def load_categories(%{"categories" => categories_ids}) do
     Repo.all(
       from(c in Category,
         where: c.id in ^categories_ids
       )
     )
-  end
-
-  def load_categories(%{"categories" => []}) do
-    []
   end
 
   def update_product_inventory(:increment, order_items) when is_list(order_items) do
@@ -70,9 +70,10 @@ defmodule SalesReg.Store do
   def create_service(params) do
     case params do
       %{images: images} ->
-        image_list = images
-        |> uploaded_image_list()
-    
+        image_list =
+          images
+          |> uploaded_image_list()
+
         new_params = build_params(params, image_list)
         Store.add_service(new_params)
 
@@ -85,29 +86,31 @@ defmodule SalesReg.Store do
     case params do
       %{images: images} ->
         service = Store.get_service(service_id)
-        image_list = images
+
+        image_list =
+          images
           |> uploaded_image_list()
-          |> build_image_list(service) 
-    
+          |> build_image_list(service)
+
         new_params = build_params(params, image_list)
         Store.update_service(service_id, new_params)
 
       _ ->
         Store.update_service(service_id, params)
     end
-    
   end
 
   def create_product(params) do
     case params do
       %{images: images} ->
-        image_list = images
-        |> uploaded_image_list()
-  
+        image_list =
+          images
+          |> uploaded_image_list()
+
         new_params = build_params(params, image_list)
         Store.add_product(new_params)
-      
-      _ -> 
+
+      _ ->
         Store.add_product(params)
     end
   end
@@ -116,30 +119,32 @@ defmodule SalesReg.Store do
     case params do
       %{images: images} ->
         product = Store.get_product(product_id)
-        image_list = images
-        |> uploaded_image_list()
-        |> build_image_list(product) 
+
+        image_list =
+          images
+          |> uploaded_image_list()
+          |> build_image_list(product)
 
         new_params = build_params(params, image_list)
         Store.update_product(product_id, new_params)
-      
-      _ -> 
+
+      _ ->
         Store.update_product(product_id, params)
     end
   end
 
   defp build_image_list(images, schema) do
-    images ++ schema.images
+    (images ++ schema.images)
     |> Enum.uniq()
   end
 
   defp uploaded_image_list(images) do
     images
-    |> Enum.map(fn(binary) ->
+    |> Enum.map(fn binary ->
       ImageUpload.upload_image(binary)
     end)
-    |> Enum.filter(fn(term) -> 
-      is_binary(term) 
+    |> Enum.filter(fn term ->
+      is_binary(term)
     end)
   end
 

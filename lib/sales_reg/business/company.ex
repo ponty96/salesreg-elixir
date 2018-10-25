@@ -27,8 +27,8 @@ defmodule SalesReg.Business.Company do
     timestamps()
   end
 
-  @required_fields [:title, :contact_email, :owner_id, :category]
-  @optional_fields [:about, :currency, :description, :logo, :cover_photo, :upload_successful?]
+  @required_fields [:title, :contact_email, :owner_id, :currency]
+  @optional_fields [:about, :category, :description, :logo, :cover_photo, :upload_successful?]
   @doc false
   def changeset(company, attrs) do
     company
@@ -40,7 +40,6 @@ defmodule SalesReg.Business.Company do
     |> validate_required(@required_fields)
     # |> cast_assoc(:branches)
     |> validate_category()
-    |> cast_assoc(:bank)
     |> ensure_image_upload()
   end
 
@@ -58,7 +57,7 @@ defmodule SalesReg.Business.Company do
       %{upload_successful?: %{cover_photo: false, logo: false}} ->
         add_error(changeset, :cover_photo, "Unable to upload cover photo")
         |> add_error(:logo, "Unable to upload logo")
-      
+
       %{upload_successful?: %{cover_photo: false}} ->
         add_error(changeset, :cover_photo, "Unable to upload cover photo")
 
