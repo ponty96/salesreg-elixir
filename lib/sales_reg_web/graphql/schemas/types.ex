@@ -206,8 +206,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:account_name, :string)
     field(:account_number, :string)
     field(:bank_name, :string)
+    field(:is_primary, :boolean)
 
-    field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
 
   @desc """
@@ -301,7 +305,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :sale,
       :expense,
       :category,
-      :tag
+      :tag,
+      :bank
     ])
 
     resolve_type(fn
@@ -320,6 +325,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Expense{}, _ -> :expense
       %Category{}, _ -> :category
       %Tag{}, _ -> :tag
+      %Bank{}, _ -> :bank
     end)
   end
 
@@ -427,7 +433,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:description, :string)
     field(:phone, :phone_input)
     field(:logo, :string)
-    field(:bank, :bank_input)
   end
 
   input_object :branch_input do
@@ -537,9 +542,11 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   input_object :bank_input do
-    field(:account_name, non_null(:string))
+    field(:account_name, :string)
     field(:account_number, non_null(:string))
     field(:bank_name, non_null(:string))
+    field(:is_primary, :boolean)
+    field(:company_id, non_null(:uuid))
   end
 
   input_object :expense_input do

@@ -20,6 +20,10 @@ defmodule SalesReg.Store do
     queryable
   end
 
+  def load_categories(%{"categories" => []}) do
+    []
+  end
+
   def load_categories(%{"categories" => categories_ids}) do
     Repo.all(
       from(c in Category,
