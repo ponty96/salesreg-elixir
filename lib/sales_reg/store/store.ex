@@ -28,23 +28,29 @@ defmodule SalesReg.Store do
     )
   end
 
-  def load_tags(%{"tags" => tag_names} = params) do
-    gen_company_tags(tag_names, acc, params.company_id)
+  def load_tags(%{"tags" => tag_names, "company_id" => company_id}) do
+    gen_company_tags(tag_names, [], company_id)
   end
 
-  defp gen_company_tags(tag_names \\ [], acc \\ [], company_id)
+  def load_tags(%{tags: tag_names, company_id: company_id}) do
+    gen_company_tags(tag_names, [], company_id)
+  end
   
-  defp gen_company_tags([], acc) do
+  defp gen_company_tags([], acc, _company_id) do
     acc
   end
 
   defp gen_company_tags([tag_name | tail], acc, company_id) do
-    gen_company_tags(tail, acc ++ tag_struct(tag_name, company_id))
+    gen_company_tags(tail, acc ++ [tag_struct(tag_name, company_id)], company_id)
   end
 
   defp tag_struct(tag_name, company_id) do
-    tag = Repo.get_by(Tag, title: tag_name, company_id: company_id)
-
+    tag = 
+      Tag
+      |> where([t], t.name == ^tag_name)
+      |> where([t], t.company_id == ^company_id)
+      |> Repo.one()
+    
     case tag do
       %Tag{} ->
         tag

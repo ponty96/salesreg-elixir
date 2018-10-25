@@ -11,6 +11,18 @@
 # and so on) as they will fail if something goes wrong.
 use SalesRegWeb, :context
 
+names = [
+  "Oil & Gas",
+  "Utilities",
+  "Consumer Services",
+  "Basic Materials",
+  "Consumer Goods",
+  "Latest",
+  "Quality",
+  "Nigeria products",
+  "Manufactured"
+]
+
 {:ok, user} = Seed.create_user()
 {:ok, company} = Seed.create_company(user.id)
 
@@ -20,15 +32,21 @@ categories =
     category.id
   end)
 
+tags =
+  Enum.map(names, fn name -> 
+    {:ok, tag} = Seed.add_tag(company.id, name)
+    tag.name
+  end)
+
 products =
   Enum.map(1..20, fn _index ->
-    {:ok, product} = Seed.add_product(user.id, company.id, Enum.take_random(categories, 6))
+    {:ok, product} = Seed.add_product(user.id, company.id, Enum.take_random(categories, 6), tags)
     product
   end)
 
 services =
   Enum.map(1..20, fn _index ->
-    {:ok, service} = Seed.add_service(user.id, company.id, Enum.take_random(categories, 5))
+    {:ok, service} = Seed.add_service(user.id, company.id, Enum.take_random(categories, 5), tags)
     service
   end)
 

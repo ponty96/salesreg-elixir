@@ -89,6 +89,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:cost_price, :string)
     field(:selling_price, :string)
     field(:categories, list_of(:category), resolve: dataloader(SalesReg.Store, :categories))
+    field(:tags, list_of(:tag), resolve: dataloader(SalesReg.Store, :tags))
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
@@ -103,6 +104,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:name, :string)
     field(:price, :string)
     field(:categories, list_of(:category), resolve: dataloader(SalesReg.Store, :categories))
+    field(:tags, list_of(:tag), resolve: dataloader(SalesReg.Store, :tags))
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
@@ -462,7 +464,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
     field(:categories, list_of(:uuid))
-    field(:tags, list_of(:string))
+    field(:tags, non_null(list_of(:string)))
   end
 
   input_object :service_input do
@@ -473,7 +475,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
     field(:categories, list_of(:uuid))
-    field(:tags, list_of(:string))
+    field(:tags, non_null(list_of(:string)))
   end
 
   input_object :contact_input do

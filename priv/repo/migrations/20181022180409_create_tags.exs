@@ -26,6 +26,5 @@ defmodule SalesReg.Repo.Migrations.CreateTags do
     create(unique_index(:products_tags, [:product_id, :tag_id]))
     create(unique_index(:services_tags, [:service_id, :tag_id]))
   end
-  end
 end
 

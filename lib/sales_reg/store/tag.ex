@@ -15,15 +15,12 @@ defmodule SalesReg.Store.Tag do
     timestamps()
   end
 
-  @required_fields [:name]
+  @required_fields [:name, :company_id]
   @doc false
-  def changeset(service, attrs) do
-    service
-    |> Repo.preload(:categories)
-    |> cast(attrs, @required_fields ++ [:description])
+  def changeset(tag, attrs) do
+    tag
+    |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
-    |> assoc_constraint(:user)
-    |> put_assoc(:categories, Store.load_categories(attrs))
   end
 end
