@@ -12,15 +12,17 @@
 use SalesRegWeb, :context
 
 names = [
-  "Oil & Gas",
-  "Utilities",
-  "Consumer Services",
-  "Basic Materials",
-  "Consumer Goods",
-  "Latest",
-  "Quality",
-  "Nigeria products",
-  "Manufactured"
+  "#love",
+  "#instagood",
+  "#tgif",
+  "#tbt",
+  "#picoftheday",
+  "#instalike",
+  "#igers",
+  "#follow4follow",
+  "#instamood",
+  "#family",
+  "#nofilter"
 ]
 
 {:ok, user} = Seed.create_user()
@@ -33,7 +35,7 @@ categories =
   end)
 
 tags =
-  Enum.map(names, fn name -> 
+  Enum.map(names, fn name ->
     {:ok, tag} = Seed.add_tag(company.id, name)
     tag.name
   end)
