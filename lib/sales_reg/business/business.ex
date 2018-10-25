@@ -122,4 +122,12 @@ defmodule SalesReg.Business do
     |> where([b], b.company_id == ^company_id)
     |> Repo.all()
   end
+
+  def list_company_tags(company_id) do
+    {:ok,
+      Tag
+      |> where([t], t.company_id == ^company_id)
+      |> Repo.all()
+    }
+  end
 end

@@ -3,7 +3,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
     GraphQL Schemas for Company
   """
   use Absinthe.Schema.Notation
-  alias SalesRegWeb.GraphQL.Resolvers.CompanyResolver
   alias SalesRegWeb.GraphQL.Resolvers.BusinessResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
 
@@ -94,6 +93,19 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
 
       middleware(Authorize)
       resolve(&BusinessResolver.list_company_expenses/2)
+    end
+  end
+
+  # Tag Queries
+  object :tag_queries do
+    @desc """
+      query all tags of a company
+    """
+    field :company_tags, list_of(:tag) do
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&BusinessResolver.list_company_tags/2)
     end
   end
 end

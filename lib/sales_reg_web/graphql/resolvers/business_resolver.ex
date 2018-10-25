@@ -57,6 +57,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
     Business.list_company_expenses(id)
   end
 
+  def list_company_tags(%{company_id: id}, _res) do
+    Business.list_company_tags(id)
+  end
+
   defp put_items_amount(params) do
     total_amount =
       params.expense_items
