@@ -262,9 +262,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     )
 
     field(
-      :expense_items,
-      list_of(:expense_item),
-      resolve: dataloader(SalesReg.Business, :expense_items)
+      :services,
+      list_of(:service),
+      resolve: dataloader(SalesReg.Business, :services)
     )
   end
 
@@ -428,7 +428,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:about, :string)
     field(:contact_email, non_null(:string))
     field(:head_office, non_null(:location_input))
-    field(:category, non_null(:company_category))
+    field(:category, :company_category)
     field(:currency, :string)
     field(:description, :string)
     field(:phone, :phone_input)
