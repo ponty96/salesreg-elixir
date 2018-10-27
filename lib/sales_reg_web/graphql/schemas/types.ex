@@ -89,6 +89,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:cost_price, :string)
     field(:selling_price, :string)
     field(:categories, list_of(:category), resolve: dataloader(SalesReg.Store, :categories))
+    field(:tags, list_of(:tag), resolve: dataloader(SalesReg.Store, :tags))
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
@@ -103,6 +104,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:name, :string)
     field(:price, :string)
     field(:categories, list_of(:category), resolve: dataloader(SalesReg.Store, :categories))
+    field(:tags, list_of(:tag), resolve: dataloader(SalesReg.Store, :tags))
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
@@ -267,6 +269,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Tag object Type
+  """
+  object :tag do
+    field(:id, :uuid)
+    field(:name, :string)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -293,6 +305,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :sale,
       :expense,
       :category,
+      :tag,
       :bank
     ])
 
@@ -311,6 +324,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %{user: %User{}}, _ -> :authorization
       %Expense{}, _ -> :expense
       %Category{}, _ -> :category
+      %Tag{}, _ -> :tag
       %Bank{}, _ -> :bank
     end)
   end
@@ -455,6 +469,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
     field(:categories, list_of(:uuid))
+    field(:tags, non_null(list_of(:string)))
   end
 
   input_object :service_input do
@@ -465,6 +480,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
     field(:categories, list_of(:uuid))
+    field(:tags, non_null(list_of(:string)))
   end
 
   input_object :contact_input do
