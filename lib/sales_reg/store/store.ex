@@ -8,7 +8,8 @@ defmodule SalesReg.Store do
   use SalesReg.Context, [
     Product,
     Service,
-    Category
+    Category,
+    Tag
   ]
 
   def data do
@@ -29,6 +30,44 @@ defmodule SalesReg.Store do
         where: c.id in ^categories_ids
       )
     )
+  end
+
+  def load_tags(%{"tags" => tag_names, "company_id" => company_id}) do
+    gen_company_tags(tag_names, [], company_id)
+  end
+
+  def load_tags(%{tags: tag_names, company_id: company_id}) do
+    gen_company_tags(tag_names, [], company_id)
+  end
+  
+  defp gen_company_tags([], acc, _company_id) do
+    acc
+  end
+
+  defp gen_company_tags([tag_name | tail], acc, company_id) do
+    gen_company_tags(tail, acc ++ [tag_struct(tag_name, company_id)], company_id)
+  end
+
+  defp tag_struct(tag_name, company_id) do
+    tag = 
+      Tag
+      |> where([t], t.name == ^tag_name)
+      |> where([t], t.company_id == ^company_id)
+      |> Repo.one()
+    
+    case tag do
+      %Tag{} ->
+        tag
+
+      _ ->
+        tag_params = %{
+          name: tag_name,
+          company_id: company_id
+        }
+
+        {:ok, tag} = Store.add_tag(tag_params)
+        tag
+    end
   end
 
   def update_product_inventory(:increment, order_items) when is_list(order_items) do

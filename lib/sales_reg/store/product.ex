@@ -24,6 +24,7 @@ defmodule SalesReg.Store.Product do
       on_replace: :delete,
       on_delete: :delete_all
     )
+    many_to_many(:tags, SalesReg.Store.Tag, join_through: "products_tags", on_delete: :delete_all)
 
     timestamps()
   end
@@ -46,10 +47,12 @@ defmodule SalesReg.Store.Product do
   def changeset(product, attrs) do
     product
     |> Repo.preload(:categories)
+    |> Repo.preload(:tags)
     |> cast(attrs, @fields ++ @required_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
     |> put_assoc(:categories, Store.load_categories(attrs))
+    |> put_assoc(:tags, Store.load_tags(attrs))
   end
 end
