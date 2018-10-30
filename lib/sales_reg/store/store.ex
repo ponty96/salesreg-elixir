@@ -4,7 +4,6 @@ defmodule SalesReg.Store do
   """
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
-  alias SalesReg.ImageUpload
 
   use SalesReg.Context, [
     Product,

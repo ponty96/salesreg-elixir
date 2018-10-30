@@ -4,8 +4,7 @@ defmodule SalesReg.Business do
   """
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
-  alias SalesReg.ImageUpload
-
+  
   use SalesReg.Context, [
     Location,
     Contact,
@@ -32,13 +31,11 @@ defmodule SalesReg.Business do
   end
 
   def update_company_details(id, company_params) do
-    new_params = gen_new_company_params(company_params)
-
     with %Company{} = company <- get_company(id),
-         {:ok, company} <- update_company(company, new_params),
+         {:ok, company} <- update_company(company, company_params),
          branch_params <- %{
            type: "head_office",
-           location: Map.get(new_params, :head_office)
+           location: Map.get(company_params, :head_office)
          },
          {:ok, branch} <- update_company_head_office(company.id, branch_params) do
       {:ok, company}

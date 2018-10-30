@@ -4,7 +4,6 @@ defmodule SalesReg.Accounts do
   """
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
-  alias SalesReg.ImageUpload
 
   def get_user(id), do: Repo.get(User, id)
 

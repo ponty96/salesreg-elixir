@@ -28,7 +28,6 @@ defmodule SalesReg.Store.Service do
   end
 
   @required_fields [:name, :price, :company_id, :user_id]
-  @optional_fields [:description]
 
   @doc false
   def changeset(service, attrs) do

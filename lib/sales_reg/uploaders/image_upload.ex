@@ -38,7 +38,7 @@ defmodule SalesReg.ImageUpload do
   # end
 
   # Provide a default URL if there hasn't been a file uploaded
-  def default_url(version, scope) do
+  def default_url(version, _scope) do
     "/images/avatars/default_#{version}.png"
   end
 
@@ -47,7 +47,7 @@ defmodule SalesReg.ImageUpload do
   #    :content_encoding, :content_length, :content_type,
   #    :expect, :expires, :storage_class, :website_redirect_location]
   #
-  def s3_object_headers(version, {file, scope}) do
+  def s3_object_headers(_version, {file, _scope}) do
     [content_type: MIME.from_path(file.file_name)]
   end
 

@@ -38,7 +38,6 @@ defmodule SalesReg.Accounts.User do
     |> change(attrs)
     |> cast(attrs, @update_fields ++ @fields)
     |> validate_required(@update_fields ++ [:date_of_birth])
-    |> ensure_image_upload()
   end
 
   def registration_changeset(user, attrs) do
