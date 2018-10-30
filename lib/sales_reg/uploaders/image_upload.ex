@@ -33,7 +33,7 @@ defmodule SalesReg.ImageUpload do
   end
 
   # Override the storage directory:
-  # def storage_dir(version, {file, scope}) git do
+  # def storage_dir(version, {file, scope}) do
   #   "uploads/user/avatars/#{scope.id}"
   # end
 
