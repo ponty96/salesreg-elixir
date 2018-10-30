@@ -44,28 +44,28 @@ config :guardian, Guardian.DB,
 #   host: %{"nyc3" => System.get_env("AWS_HOST")},
 #   region: "nyc3"
 
-config :arc,  
+config :arc,
   storage: Arc.Storage.S3,
   bucket: System.get_env("AWS_S3_BUCKET"),
   virtual_host: false,
-  asset_host: "https://yipcartimages.nyc3.digitaloceanspaces.com/#{System.get_env("AWS_S3_BUCKET")}"
+  asset_host:
+    "https://yipcartimages.nyc3.digitaloceanspaces.com/#{System.get_env("AWS_S3_BUCKET")}"
 
 config :ex_aws,
   access_key_id: System.get_env("AWS_ACCESS_KEY_ID"),
-  secret_access_key: System.get_env("AWS_SECRET_ACCESS_KEY"), 
+  secret_access_key: System.get_env("AWS_SECRET_ACCESS_KEY"),
   s3: [
     scheme: "https://",
     host: System.get_env("AWS_HOST"),
     region: "nyc3"
   ]
-  
+
 config :ex_aws, debug_requests: true
 
 config :plug, :statuses, %{
   210 => "Image not uploaded",
-  209 => "Image successfully uploaded",
+  209 => "Image successfully uploaded"
 }
-
 
 ###############################################################
 ### AWS (image upload functionality) config

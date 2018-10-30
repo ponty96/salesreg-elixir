@@ -16,6 +16,7 @@ defmodule SalesReg.Business do
 
   def create_company(user_id, company_params) do
     company_params = Map.put(company_params, :owner_id, user_id)
+
     with {:ok, company} <- add_company(company_params),
          branch_params <- %{
            type: "head_office",
@@ -31,6 +32,7 @@ defmodule SalesReg.Business do
 
   def update_company_details(id, company_params) do
     new_params = gen_new_company_params(company_params)
+
     with %Company{} = company <- get_company(id),
          {:ok, company} <- update_company(company, new_params),
          branch_params <- %{
@@ -75,8 +77,9 @@ defmodule SalesReg.Business do
 
   def create_contact(params) do
     case params do
-      %{image: image} -> 
+      %{image: image} ->
         image_response = ImageUpload.upload_image(image)
+
         if is_binary(image_response) do
           %{params | image: image_response}
           |> Business.add_contact()
@@ -84,15 +87,17 @@ defmodule SalesReg.Business do
           Map.delete(params, :image)
           |> Business.add_contact(params)
         end
-      _ -> 
+
+      _ ->
         Business.add_contact(params)
     end
   end
 
   def update_contact(contact_id, params) do
     case params do
-      %{image: image} -> 
+      %{image: image} ->
         image_response = ImageUpload.upload_image(image)
+
         if is_binary(image_response) do
           new_params = %{params | image: image_response}
           Business.update_contact(contact_id, new_params)
@@ -100,7 +105,8 @@ defmodule SalesReg.Business do
           new_params = Map.delete(params, :image)
           Business.update_contact(contact_id, new_params)
         end
-      _ -> 
+
+      _ ->
         Business.update_contact(contact_id, params)
     end
   end
@@ -113,7 +119,7 @@ defmodule SalesReg.Business do
         logo = ImageUpload.upload_image(logo)
 
         build_params(cover_photo, logo, company_params)
-      
+
       %{cover_photo: cover_photo} ->
         cover_photo = ImageUpload.upload_image(cover_photo)
         build_params({:cover_photo, cover_photo}, company_params)
@@ -127,7 +133,7 @@ defmodule SalesReg.Business do
     end
   end
 
-  #term in this case is the filename
+  # term in this case is the filename
   defp build_params({:logo, term}, params) do
     if is_binary(term) do
       params
@@ -167,9 +173,9 @@ defmodule SalesReg.Business do
 
   defp build_params(cover_photo, logo, params) do
     %{
-      params |
-      cover_photo: cover_photo,
-      logo: logo
+      params
+      | cover_photo: cover_photo,
+        logo: logo
     }
     |> Map.put_new(:upload_successful?, %{cover_photo: true, logo: true})
   end

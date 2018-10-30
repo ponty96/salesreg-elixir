@@ -58,7 +58,7 @@ defmodule SalesReg.Business.Company do
       %{upload_successful?: %{cover_photo: false, logo: false}} ->
         add_error(changeset, :cover_photo, "Unable to upload cover photo")
         |> add_error(:logo, "Unable to upload logo")
-      
+
       %{upload_successful?: %{cover_photo: false}} ->
         add_error(changeset, :cover_photo, "Unable to upload cover photo")
 

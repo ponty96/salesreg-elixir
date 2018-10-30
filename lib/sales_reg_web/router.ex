@@ -15,8 +15,8 @@ defmodule SalesRegWeb.Router do
 
   scope "/api/image" do
     pipe_through(:api)
-    
-    post "/upload", SalesRegWeb.ImageController, :upload_image
+
+    post("/upload", SalesRegWeb.ImageController, :upload_image)
   end
 
   pipeline :graphql do
