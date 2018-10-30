@@ -48,7 +48,7 @@ config :arc,
   storage: Arc.Storage.S3,
   bucket: System.get_env("AWS_S3_BUCKET"),
   virtual_host: false,
-  asset_host: "https://yigcartimages.nyc3.digitaloceanspaces.com/#{System.get_env("AWS_S3_BUCKET")}"
+  asset_host: "https://yipcartimages.nyc3.digitaloceanspaces.com/#{System.get_env("AWS_S3_BUCKET")}"
 
 config :ex_aws,
   access_key_id: System.get_env("AWS_ACCESS_KEY_ID"),
@@ -60,6 +60,11 @@ config :ex_aws,
   ]
   
 config :ex_aws, debug_requests: true
+
+config :plug, :statuses, %{
+  210 => "Image not uploaded",
+  209 => "Image successfully uploaded",
+}
 
 
 ###############################################################
