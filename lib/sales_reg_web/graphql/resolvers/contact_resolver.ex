@@ -7,7 +7,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ContactResolver do
 
   def upsert_contact(%{contact: params}, _res) do
     params
-    |> Business.create_contact()
+    |> Business.add_contact()
   end
 
   def list_company_contacts(%{company_id: company_id, type: type}, _res) do

@@ -7,7 +7,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   end
 
   def upsert_service(%{service: params}, _res) do
-    Store.create_service(params)
+    Store.add_service(params)
   end
 
   def list_company_services(%{company_id: company_id}, _res) do
@@ -24,7 +24,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   end
 
   def upsert_product(%{product: params}, _res) do
-    Store.create_product(params)
+    Store.add_product(params)
   end
 
   def list_company_products(%{company_id: company_id}, _res) do

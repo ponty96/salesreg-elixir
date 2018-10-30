@@ -19,7 +19,6 @@ defmodule SalesReg.Accounts.User do
     field(:password, :string, virtual: true)
     field(:password_confirmation, :string, virtual: true)
     field(:profile_picture, :string)
-    field(:upload_successful?, :boolean, virtual: true)
 
     has_one(:company, Company, foreign_key: :owner_id)
     has_many(:contacts, SalesReg.Business.Contact)
@@ -70,16 +69,6 @@ defmodule SalesReg.Accounts.User do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: password}} ->
         put_change(changeset, :hashed_password, Comeonin.Bcrypt.hashpwsalt(password))
-
-      _ ->
-        changeset
-    end
-  end
-
-  defp ensure_image_upload(changeset) do
-    case changeset.changes do
-      %{upload_successful?: false} ->
-        add_error(changeset, :profile_picture, "Unable to upload")
 
       _ ->
         changeset

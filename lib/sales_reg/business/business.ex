@@ -11,7 +11,8 @@ defmodule SalesReg.Business do
     Contact,
     Company,
     Branch,
-    Expense
+    Expense,
+    Bank
   ]
 
   def create_company(user_id, company_params) do
@@ -75,108 +76,61 @@ defmodule SalesReg.Business do
     {:ok, "sent"}
   end
 
-  def create_contact(params) do
+  def create_bank(params) do
+    bank_list = company_banks(params.company_id)
+    
     case params do
-      %{image: image} ->
-        image_response = ImageUpload.upload_image(image)
-
-        if is_binary(image_response) do
-          %{params | image: image_response}
-          |> Business.add_contact()
+      %{is_primary: true} -> 
+        if Enum.count(bank_list) == 0 do
+          Business.add_bank(params)
         else
-          Map.delete(params, :image)
-          |> Business.add_contact(params)
+          update_bank_field(params.company_id)
+          Business.add_bank(params)
         end
-
+      
       _ ->
-        Business.add_contact(params)
+        if Enum.count(bank_list) == 0 do
+          params
+          |> Map.put(:is_primary, true)
+          |> Business.add_bank()
+        else 
+          Business.add_bank(params)
+        end
     end
   end
 
-  def update_contact(contact_id, params) do
+  def update_bank_details(bank, params) do
     case params do
-      %{image: image} ->
-        image_response = ImageUpload.upload_image(image)
-
-        if is_binary(image_response) do
-          new_params = %{params | image: image_response}
-          Business.update_contact(contact_id, new_params)
-        else
-          new_params = Map.delete(params, :image)
-          Business.update_contact(contact_id, new_params)
-        end
+      %{is_primary: true} ->
+        update_bank_field(params.company_id)
+        Business.update_bank(bank, params)
 
       _ ->
-        Business.update_contact(contact_id, params)
+        Business.update_bank(bank, params)
     end
   end
 
-  ### Private functions
-  defp gen_new_company_params(company_params) do
-    case company_params do
-      %{cover_photo: cover_photo, logo: logo} ->
-        cover_photo = ImageUpload.upload_image(cover_photo)
-        logo = ImageUpload.upload_image(logo)
+  defp update_bank_field(company_id) do
+    attrs = %{"is_primary" => false}
 
-        build_params(cover_photo, logo, company_params)
-
-      %{cover_photo: cover_photo} ->
-        cover_photo = ImageUpload.upload_image(cover_photo)
-        build_params({:cover_photo, cover_photo}, company_params)
-
-      %{logo: logo} ->
-        logo = ImageUpload.upload_image(logo)
-        build_params({:logo, logo}, company_params)
-
-      _ ->
-        company_params
-    end
+    Bank
+    |> where([b], b.company_id == ^company_id)
+    |> where([b], b.is_primary == true)
+    |> Repo.one()
+    |> Business.update_bank(attrs)
   end
 
-  # term in this case is the filename
-  defp build_params({:logo, term}, params) do
-    if is_binary(term) do
-      params
-      |> Map.put(:logo, term)
-      |> Map.put_new(:upload_successful?, %{logo: true})
-    else
-      params
-      |> Map.put_new(:upload_successful?, %{logo: false})
-    end
+  def company_banks(company_id) do
+    Bank
+    |> where([b], b.company_id == ^company_id)
+    |> Repo.all()
   end
 
-  defp build_params({:cover_photo, term}, params) do
-    if is_binary(term) do
-      params
-      |> Map.put(:cover_photo, term)
-      |> Map.put_new(:upload_successful?, %{cover_photo: true})
-    else
-      params
-      |> Map.put_new(:upload_successful?, %{cover_photo: false})
-    end
-  end
-
-  defp build_params(:error, :error, params) do
-    params
-    |> Map.put_new(:upload_successful?, %{cover_photo: false, logo: false})
-  end
-
-  defp build_params(_cover_photo, :error, params) do
-    params
-    |> Map.put_new(:upload_successful?, %{cover_photo: true, logo: false})
-  end
-
-  defp build_params(:error, _logo, params) do
-    params
-    |> Map.put_new(:upload_successful?, %{cover_photo: false, logo: true})
-  end
-
-  defp build_params(cover_photo, logo, params) do
-    %{
-      params
-      | cover_photo: cover_photo,
-        logo: logo
+  def list_company_tags(company_id) do
+    {:ok,
+      Tag
+      |> where([t], t.company_id == ^company_id)
+      |> Repo.all()
     }
-    |> Map.put_new(:upload_successful?, %{cover_photo: true, logo: true})
   end
 end

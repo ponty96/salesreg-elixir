@@ -7,7 +7,6 @@ defmodule SalesReg.Repo.Migrations.CreateServices do
       add(:name, :string)
       add(:description, :string)
       add(:price, :string)
-      add(:images, {:array, :string})
       add(:user_id, references(:users, on_delete: :nothing, type: :binary_id))
       add(:company_id, references(:companies, on_delete: :nothing, type: :binary_id))
 

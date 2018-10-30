@@ -12,7 +12,7 @@ defmodule SalesReg.Seed do
   @phone_types ["home", "mobile", "work"]
   @currency ["Dollars", "Naira", "Euro", "Pounds"]
   @marital_status ["Single", "Married", "Widowed"]
-  @banks ["GTB", "FBN", "Sterling Bank", "Zenith Bank"]
+  @banks ["076", "011", "063", "058"]
   @likes ["honesty", "integrity", "principled"]
   @dislikes ["lies", "pride", "laziness"]
   @payment_method ["cash", "POS", "cheque", "direct transfer"]
@@ -42,15 +42,13 @@ defmodule SalesReg.Seed do
       head_office: gen_location_params(),
       currency: "Naira(₦)",
       description: CompanyEn.bs(),
-      logo: Avatar.image_url(),
-      cover_photo: Avatar.image_url()
-      # bank: gen_bank_details()
+      logo: Avatar.image_url()
     }
 
     Business.create_company(user_id, company_params)
   end
 
-  def add_product(user_id, company_id, categories) do
+  def add_product(user_id, company_id, categories, tags) do
     product_params = %{
       "description" => "Our product is #{CommerceEn.product_name()}",
       "images" => [Avatar.image_url()],
@@ -61,21 +59,22 @@ defmodule SalesReg.Seed do
       "stock_quantity" => "#{Enum.random([3, 6, 12, 24])}",
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}",
-      "categories" => categories
+      "categories" => categories,
+      "tags" => tags
     }
 
     Store.add_product(product_params)
   end
 
-  def add_service(user_id, company_id, categories) do
+  def add_service(user_id, company_id, categories, tags) do
     service_params = %{
       "description" => "Our service is #{CompanyEn.bs()}",
       "name" => "#{CompanyEn.bs()} Service",
       "price" => "#{Enum.random([10_000, 50_000, 150_000])}",
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}",
-      "images" => [Avatar.image_url()],
-      "categories" => categories
+      "categories" => categories,
+      "tags" => tags
     }
 
     Store.add_service(service_params)
@@ -120,6 +119,12 @@ defmodule SalesReg.Seed do
     Business.add_expense(expense_params)
   end
 
+  def create_bank(company_id) do
+    gen_bank_details()
+    |> Map.put_new(:company_id, company_id)
+    |> Business.create_bank()
+  end
+
   defp total_expense_cost(expense_items) do
     Enum.sum(Enum.map(expense_items, fn expense_item -> expense_item["amount"] end))
   end
@@ -155,9 +160,10 @@ defmodule SalesReg.Seed do
 
   def gen_bank_details() do
     %{
-      "account_name" => NameEn.name(),
-      "account_number" => "#{Enum.random(0_152_637_490..0_163_759_275)}",
-      "bank_name" => "#{Enum.random(@banks)}"
+      account_name: NameEn.name(),
+      account_number: "#{Enum.random(0_152_637_490..0_163_759_275)}",
+      bank_name: "#{Enum.random(@banks)}",
+      is_primary: false
     }
   end
 
@@ -229,6 +235,14 @@ defmodule SalesReg.Seed do
     }
 
     Store.add_category(params)
+  end
+
+  def add_tag(company_id, name) do
+    %{
+      company_id: company_id,
+      name: name
+    }
+    |> Store.add_tag
   end
 
   defp create_sales_order(

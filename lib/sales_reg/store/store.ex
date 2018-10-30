@@ -9,7 +9,8 @@ defmodule SalesReg.Store do
   use SalesReg.Context, [
     Product,
     Service,
-    Category
+    Category,
+    Tag
   ]
 
   def data do
@@ -18,6 +19,10 @@ defmodule SalesReg.Store do
 
   def query(queryable, _) do
     queryable
+  end
+
+  def load_categories(%{"categories" => []}) do
+    []
   end
 
   def load_categories(%{"categories" => categories_ids}) do
@@ -29,8 +34,42 @@ defmodule SalesReg.Store do
     )
   end
 
-  def load_categories(%{"categories" => []}) do
-    []
+  def load_tags(%{"tags" => tag_names, "company_id" => company_id}) do
+    gen_company_tags(tag_names, [], company_id)
+  end
+
+  def load_tags(%{tags: tag_names, company_id: company_id}) do
+    gen_company_tags(tag_names, [], company_id)
+  end
+  
+  defp gen_company_tags([], acc, _company_id) do
+    acc
+  end
+
+  defp gen_company_tags([tag_name | tail], acc, company_id) do
+    gen_company_tags(tail, acc ++ [tag_struct(tag_name, company_id)], company_id)
+  end
+
+  defp tag_struct(tag_name, company_id) do
+    tag = 
+      Tag
+      |> where([t], t.name == ^tag_name)
+      |> where([t], t.company_id == ^company_id)
+      |> Repo.one()
+    
+    case tag do
+      %Tag{} ->
+        tag
+
+      _ ->
+        tag_params = %{
+          name: tag_name,
+          company_id: company_id
+        }
+
+        {:ok, tag} = Store.add_tag(tag_params)
+        tag
+    end
   end
 
   def update_product_inventory(:increment, order_items) when is_list(order_items) do
@@ -66,90 +105,5 @@ defmodule SalesReg.Store do
     product_stock_quantity = String.to_integer(product.stock_quantity)
 
     update_product(product, %{"stock_quantity" => "#{product_stock_quantity - quantity}"})
-  end
-
-  def create_service(params) do
-    case params do
-      %{images: images} ->
-        image_list =
-          images
-          |> uploaded_image_list()
-
-        new_params = build_params(params, image_list)
-        Store.add_service(new_params)
-
-      _ ->
-        Store.add_service(params)
-    end
-  end
-
-  def update_service(service_id, params) do
-    case params do
-      %{images: images} ->
-        service = Store.get_service(service_id)
-
-        image_list =
-          images
-          |> uploaded_image_list()
-          |> build_image_list(service)
-
-        new_params = build_params(params, image_list)
-        Store.update_service(service_id, new_params)
-
-      _ ->
-        Store.update_service(service_id, params)
-    end
-  end
-
-  def create_product(params) do
-    case params do
-      %{images: images} ->
-        image_list =
-          images
-          |> uploaded_image_list()
-
-        new_params = build_params(params, image_list)
-        Store.add_product(new_params)
-
-      _ ->
-        Store.add_product(params)
-    end
-  end
-
-  def update_product(product_id, params) do
-    case params do
-      %{images: images} ->
-        product = Store.get_product(product_id)
-
-        image_list =
-          images
-          |> uploaded_image_list()
-          |> build_image_list(product)
-
-        new_params = build_params(params, image_list)
-        Store.update_product(product_id, new_params)
-
-      _ ->
-        Store.update_product(product_id, params)
-    end
-  end
-
-  defp build_image_list(images, schema) do
-    (images ++ schema.images)
-    |> Enum.uniq()
-  end
-
-  defp uploaded_image_list(images) do
-    images
-    |> Enum.map(fn binary ->
-      ImageUpload.upload_image(binary)
-    end)
-    |> Enum.filter(fn term ->
-      is_binary(term)
-    end)
-  end
-
-  defp build_params(params, images) do
-    %{params | images: images}
   end
 end
