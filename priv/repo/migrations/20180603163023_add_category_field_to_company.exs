@@ -4,6 +4,7 @@ defmodule SalesReg.Repo.Migrations.AddCategoryFieldToCompany do
   def change do
     alter table(:companies) do
       add(:category, :string)
+      remove(:category)
     end
   end
 end
