@@ -242,7 +242,7 @@ defmodule SalesReg.Seed do
       company_id: company_id,
       name: name
     }
-    |> Store.add_tag
+    |> Store.add_tag()
   end
 
   defp create_sales_order(

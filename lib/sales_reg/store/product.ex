@@ -24,14 +24,21 @@ defmodule SalesReg.Store.Product do
       on_replace: :delete,
       on_delete: :delete_all
     )
-    many_to_many(:tags, SalesReg.Store.Tag, join_through: "products_tags", on_delete: :delete_all)
+
+    many_to_many(:tags, Store.Tag, join_through: "products_tags", on_delete: :delete_all)
+
+    many_to_many(:option_values, Store.OptionValue, join_through: "products_option_values", on_delete: :delete_all)
+
+    belongs_to(:product_group, Store.ProductGroup)
+
 
     timestamps()
   end
 
   @fields [
     :featured_image,
-    :description
+    :description,
+    :product_group_id
   ]
 
   @required_fields [
@@ -48,6 +55,7 @@ defmodule SalesReg.Store.Product do
     product
     |> Repo.preload(:categories)
     |> Repo.preload(:tags)
+    |> Repo.preload(:option_values)
     |> cast(attrs, @fields ++ @required_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
