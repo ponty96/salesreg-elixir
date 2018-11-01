@@ -21,16 +21,14 @@ defmodule SalesReg.Store.Product do
 
     many_to_many(:categories, Category,
       join_through: "products_categories",
-      on_replace: :delete,
-      on_delete: :delete_all
+      on_replace: :delete
     )
 
-    many_to_many(:tags, Store.Tag, join_through: "products_tags", on_delete: :delete_all)
+    many_to_many(:tags, Store.Tag, join_through: "products_tags")
 
-    many_to_many(:option_values, Store.OptionValue, join_through: "products_option_values", on_delete: :delete_all)
+    many_to_many(:option_values, Store.OptionValue, join_through: "products_option_values")
 
     belongs_to(:product_group, Store.ProductGroup)
-
 
     timestamps()
   end

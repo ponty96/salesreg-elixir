@@ -11,7 +11,8 @@ defmodule SalesReg.Store.OptionValue do
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:option, Store.Option)
 
-    many_to_many(:products, Store.Product, join_through: "products_option_values", on_delete: :delete_all)
+    many_to_many(:products, Store.Product, join_through: "products_option_values")
+
     timestamps()
   end
 

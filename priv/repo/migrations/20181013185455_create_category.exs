@@ -14,13 +14,13 @@ defmodule SalesReg.Repo.Migrations.CreateCategory do
     end
 
     create table(:products_categories, primary_key: false) do
-      add :product_id, references(:products, type: :binary_id)
-      add :category_id, references(:categories, type: :binary_id)
+      add(:product_id, references(:products, type: :binary_id, on_delete: :delete_all))
+      add(:category_id, references(:categories, type: :binary_id, on_delete: :delete_all))
     end
 
     create table(:services_categories, primary_key: false) do
-      add :service_id, references(:services, type: :binary_id)
-      add :category_id, references(:categories, type: :binary_id)
+      add(:service_id, references(:services, type: :binary_id, on_delete: :delete_all))
+      add(:category_id, references(:categories, type: :binary_id, on_delete: :delete_all))
     end
 
     create(index(:categories, [:company_id]))

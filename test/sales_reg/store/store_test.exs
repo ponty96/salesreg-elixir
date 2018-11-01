@@ -274,7 +274,10 @@ defmodule SalesReg.StoreTest do
 
     test "update_option_values/2 with invalid data returns error changeset" do
       option_values = option_values_fixture()
-      assert {:error, %Ecto.Changeset{}} = Store.update_option_values(option_values, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               Store.update_option_values(option_values, @invalid_attrs)
+
       assert option_values == Store.get_option_values!(option_values.id)
     end
 

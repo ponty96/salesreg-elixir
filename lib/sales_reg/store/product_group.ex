@@ -13,9 +13,9 @@ defmodule SalesReg.Store.ProductGroup do
 
     many_to_many(:options, Store.ProductGroup,
       join_through: "product_groups_options",
-      on_replace: :delete,
-      on_delete: :delete_all
+      on_replace: :delete
     )
+
     has_many(:products, Store.Product)
     timestamps()
   end

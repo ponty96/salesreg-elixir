@@ -13,11 +13,10 @@ defmodule SalesReg.Store.Option do
 
     many_to_many(:product_groups, Store.ProductGroup,
       join_through: "product_groups_options",
-      on_replace: :delete,
-      on_delete: :delete_all
+      on_replace: :delete
     )
 
-    has_many(:option_values, Store.OptionValue, on_delete: :delete_all)
+    has_many(:option_values, Store.OptionValue)
 
     timestamps()
   end
