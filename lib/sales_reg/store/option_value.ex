@@ -11,17 +11,19 @@ defmodule SalesReg.Store.OptionValue do
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:option, Store.Option)
 
-    many_to_many(:products, Store.Product, join_through: "products_option_values")
+    belongs_to(:product, Store.Product)
 
     timestamps()
   end
 
-  @fields [:name, :company_id, :option_id]
+  @fields [:name, :company_id, :option_id, :product_id]
 
   @doc false
   def changeset(option_values, attrs) do
     option_values
     |> cast(attrs, @fields)
     |> validate_required(@fields)
+    |> assoc_constraint(:option)
+    |> assoc_constraint(:product)
   end
 end

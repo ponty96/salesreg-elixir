@@ -16,7 +16,7 @@ defmodule SalesReg.Store.Option do
       on_replace: :delete
     )
 
-    has_many(:option_values, Store.OptionValue)
+    has_many(:option_values, Store.OptionValue, on_replace: :delete)
 
     timestamps()
   end

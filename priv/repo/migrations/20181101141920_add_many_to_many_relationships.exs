@@ -11,11 +11,6 @@ defmodule SalesReg.Repo.Migrations.AddManyToManyRelationships do
       add(:option_id, references(:options, type: :binary_id, on_delete: :delete_all))
     end
 
-    create table(:products_option_values, primary_key: false) do
-      add(:product_id, references(:products, type: :binary_id, on_delete: :delete_all))
-      add(:option_value_id, references(:option_values, type: :binary_id, on_delete: :delete_all))
-    end
-
     alter table(:products) do
       add(
         :product_group_id,

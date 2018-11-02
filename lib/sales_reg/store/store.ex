@@ -121,24 +121,26 @@ defmodule SalesReg.Store do
   #     sku: "",
   #     minimum_sku: "",
   #     selling_price: "",
-  #     images: []
-  #   },
-  #   options: [
+  #     images: [],
+  #     option_values: [
   #     %{
   #       option_id: "ffddf43334", # basically the ID of the option
   #       name: "XL"
   #     },
   #     %{option_id: "ddeyu84djd09393d", name: "Red"}
   #   ]
+  #   },
   # }
 
   # create new product with options and no existing product group
-
   # 1 create a product_group, add options association
-  # 2 insert option values, with option association set
-  # 3 insert product, with option values association and product_group
+  # 2 insert product, with option values association and product_group
   def create_product(%{product_option_id: nil} = params) do
-    options_values = Map.get(params, :options)
+    options_values =
+      params
+      |> Map.get(:product)
+      |> Map.get(:option_values)
+
     option_ids = get_option_ids_from_option_values(options_values)
     product_params = Map.get(params, :product)
 
@@ -150,18 +152,16 @@ defmodule SalesReg.Store do
     opts =
       Multi.new()
       |> Multi.insert(:insert_product_grp, ProductGroup, product_grp_params)
-      |> Multi.insert_all(:insert_option_values, OptionValue, options_values)
-      |> Multi.insert(:product, fn %{
-                                     insert_option_values: option_values,
-                                     insert_product_grp: product_grp
-                                   } ->
-        product_params =
-          product_params
-          |> Map.put(:option_values_ids, get_option_values_ids(option_values))
-          |> Map.put(:product_group_id, product_grp.id)
+      |> Multi.insert(
+        :product,
+        fn %{insert_product_grp: product_grp} ->
+          product_params =
+            product_params
+            |> Map.put(:product_group_id, product_grp.id)
 
-        Product.changeset(Product, product_params)
-      end)
+          Product.changeset(Product, product_params)
+        end
+      )
 
     case Repo.transaction(opts) do
       {:ok, %{product: product}} -> {:ok, product}
@@ -169,9 +169,9 @@ defmodule SalesReg.Store do
     end
   end
 
-  # 1 create new product with no options
-  # 2 create product group
-  # 3 create product, with product_group association
+  # create new product with no options
+  # 1 create product group
+  # 2 create product, with product_group association
   def create_product(%{options: []} = params) do
     product_params = Map.get(params, :product)
 
@@ -182,15 +182,16 @@ defmodule SalesReg.Store do
     opts =
       Multi.new()
       |> Multi.insert(:insert_product_grp, ProductGroup, product_grp_params)
-      |> Multi.insert(:product, fn %{
-                                     insert_product_grp: product_grp
-                                   } ->
-        product_params =
-          product_params
-          |> Map.put(:product_group_id, product_grp.id)
+      |> Multi.insert(
+        :product,
+        fn %{insert_product_grp: product_grp} ->
+          product_params =
+            product_params
+            |> Map.put(:product_group_id, product_grp.id)
 
-        Product.changeset(Product, product_params)
-      end)
+          Product.changeset(Product, product_params)
+        end
+      )
 
     case Repo.transaction(opts) do
       {:ok, %{product: product}} -> {:ok, product}
@@ -204,17 +205,7 @@ defmodule SalesReg.Store do
     Repo.all(from(opt in Option, where: opt.id in ^option_ids))
   end
 
-  def load_product_options_values(%{option_values_ids: []}), do: []
-
-  def load_product_options_values(%{option_values_ids: option_values_ids}) do
-    Repo.all(from(option_value in OptionValue, where: option_value.id in ^option_values_ids))
-  end
-
   defp get_option_ids_from_option_values(options_values) do
     Enum.map(options_values, & &1.option_id)
-  end
-
-  defp get_option_values_ids(option_values) do
-    Enum.map(option_values, & &1.id)
   end
 end

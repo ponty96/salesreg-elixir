@@ -8,10 +8,13 @@ defmodule SalesReg.Repo.Migrations.CreateOptionValues do
       add(:company_id, references(:companies, on_delete: :nothing, type: :binary_id))
       add(:option_id, references(:options, on_delete: :delete_all, type: :binary_id))
 
+      add(:product_id, references(:products, type: :binary_id, on_delete: :delete_all))
+
       timestamps()
     end
 
     create(index(:option_values, [:company_id]))
     create(index(:option_values, [:option_id]))
+    create(unique_index(:option_values, [:product_id, :name]))
   end
 end

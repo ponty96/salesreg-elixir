@@ -26,7 +26,7 @@ defmodule SalesReg.Store.Product do
 
     many_to_many(:tags, Store.Tag, join_through: "products_tags")
 
-    many_to_many(:option_values, Store.OptionValue, join_through: "products_option_values")
+    has_many(:option_values, Store.OptionValue, on_replace: :delete)
 
     belongs_to(:product_group, Store.ProductGroup)
 
@@ -60,6 +60,6 @@ defmodule SalesReg.Store.Product do
     |> assoc_constraint(:user)
     |> put_assoc(:categories, Store.load_categories(attrs))
     |> put_assoc(:tags, Store.load_tags(attrs))
-    |> put_assoc(:option_values, Store.load_product_options_values(attrs))
+    |> cast_assoc(:option_values)
   end
 end
