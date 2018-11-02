@@ -109,13 +109,6 @@ defmodule SalesReg.Store do
 
   # PRODUCT VARIANT
 
-  # if product_group id in params
-  # if the params, contains options and their values
-  # check if options exist and are related to product group
-  # create relationship
-  # upsert option values
-  # we upsert the product, create the association between the product and the option values
-
   # EXPECTED PRODUCT PARAMS
   # product_params
   # %{
@@ -140,9 +133,10 @@ defmodule SalesReg.Store do
   # }
 
   # create new product with options and no existing product group
-  # create a product_group, add options association
-  # insert option values, with option association set
-  # insert product, with option values association
+
+  # 1 create a product_group, add options association
+  # 2 insert option values, with option association set
+  # 3 insert product, with option values association and product_group
   def create_product(%{product_option_id: nil} = params) do
     options_values = Map.get(params, :options)
     option_ids = get_option_ids_from_option_values(options_values)
@@ -157,9 +151,14 @@ defmodule SalesReg.Store do
       Multi.new()
       |> Multi.insert(:insert_product_grp, ProductGroup, product_grp_params)
       |> Multi.insert_all(:insert_option_values, OptionValue, options_values)
-      |> Multi.insert(:product, fn %{insert_option_values: option_values} ->
+      |> Multi.insert(:product, fn %{
+                                     insert_option_values: option_values,
+                                     insert_product_grp: product_grp
+                                   } ->
         product_params =
-          Map.put(product_params, :option_values_ids, get_option_values_ids(option_values))
+          product_params
+          |> Map.put(:option_values_ids, get_option_values_ids(option_values))
+          |> Map.put(:product_group_id, product_grp.id)
 
         Product.changeset(Product, product_params)
       end)
@@ -170,9 +169,9 @@ defmodule SalesReg.Store do
     end
   end
 
-  # create new product with no options
-  # create product group
-  # create product
+  # 1 create new product with no options
+  # 2 create product group
+  # 3 create product, with product_group association
   def create_product(%{options: []} = params) do
     product_params = Map.get(params, :product)
 
@@ -183,7 +182,15 @@ defmodule SalesReg.Store do
     opts =
       Multi.new()
       |> Multi.insert(:insert_product_grp, ProductGroup, product_grp_params)
-      |> Multi.insert(:product, Product, product_params)
+      |> Multi.insert(:product, fn %{
+                                     insert_product_grp: product_grp
+                                   } ->
+        product_params =
+          product_params
+          |> Map.put(:product_group_id, product_grp.id)
+
+        Product.changeset(Product, product_params)
+      end)
 
     case Repo.transaction(opts) do
       {:ok, %{product: product}} -> {:ok, product}
