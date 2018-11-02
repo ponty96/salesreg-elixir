@@ -109,23 +109,14 @@ defmodule SalesReg.Store do
 
   # PRODUCT VARIANT
 
-  # create product
-  # if no product_group id in params, create a product_group
-    # if the params, contains options and their values
-    # create the association between product_group and options
-    # we upsert the option values
-    # we upsert the product, create the association between the product and the option values
-
-  # if the params, don't contain options and their values
-  # we insert the product
-
   # if product_group id in params
-    # if the params, contains options and their values
-    # check if options exist and are related to product group
-    # create relationship
-    # upsert option values
-    # we upsert the product, create the association between the product and the option values
+  # if the params, contains options and their values
+  # check if options exist and are related to product group
+  # create relationship
+  # upsert option values
+  # we upsert the product, create the association between the product and the option values
 
+  # EXPECTED PRODUCT PARAMS
   # product_params
   # %{
   #   product_group_id: nil,
@@ -148,6 +139,10 @@ defmodule SalesReg.Store do
   #   ]
   # }
 
+  # create new product with options and no existing product group
+  # create a product_group, add options association
+  # insert option values, with option association set
+  # insert product, with option values association
   def create_product(%{product_option_id: nil} = params) do
     options_values = Map.get(params, :options)
     option_ids = get_option_ids_from_option_values(options_values)
@@ -175,12 +170,35 @@ defmodule SalesReg.Store do
     end
   end
 
+  # create new product with no options
+  # create product group
+  # create product
+  def create_product(%{options: []} = params) do
+    product_params = Map.get(params, :product)
+
+    product_grp_params = %{
+      "title" => Map.get(params, :product_group_title)
+    }
+
+    opts =
+      Multi.new()
+      |> Multi.insert(:insert_product_grp, ProductGroup, product_grp_params)
+      |> Multi.insert(:product, Product, product_params)
+
+    case Repo.transaction(opts) do
+      {:ok, %{product: product}} -> {:ok, product}
+      {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
+    end
+  end
+
   def load_product_grp_options(%{"option_ids" => []}), do: []
+
   def load_product_grp_options(%{"option_ids" => option_ids}) do
     Repo.all(from(opt in Option, where: opt.id in ^option_ids))
   end
 
   def load_product_options_values(%{option_values_ids: []}), do: []
+
   def load_product_options_values(%{option_values_ids: option_values_ids}) do
     Repo.all(from(option_value in OptionValue, where: option_value.id in ^option_values_ids))
   end
