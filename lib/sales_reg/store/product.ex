@@ -11,8 +11,8 @@ defmodule SalesReg.Store.Product do
     field(:description, :string)
     field(:featured_image, :string)
     field(:name, :string)
-    field(:stock_quantity, :string)
-    field(:minimum_stock_quantity, :string)
+    field(:sku, :string)
+    field(:minimum_sku, :string)
     field(:cost_price, :string)
     field(:selling_price, :string)
 
@@ -36,7 +36,8 @@ defmodule SalesReg.Store.Product do
   @fields [
     :featured_image,
     :description,
-    :product_group_id
+    :product_group_id,
+    :cost_price
   ]
 
   @required_fields [
@@ -44,9 +45,8 @@ defmodule SalesReg.Store.Product do
     :selling_price,
     :company_id,
     :user_id,
-    :stock_quantity,
-    :minimum_stock_quantity,
-    :cost_price
+    :sku,
+    :minimum_sku
   ]
   @doc false
   def changeset(product, attrs) do
@@ -60,5 +60,6 @@ defmodule SalesReg.Store.Product do
     |> assoc_constraint(:user)
     |> put_assoc(:categories, Store.load_categories(attrs))
     |> put_assoc(:tags, Store.load_tags(attrs))
+    |> put_assoc(:option_values, Store.load_product_options_values(attrs))
   end
 end

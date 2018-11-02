@@ -9,7 +9,10 @@ defmodule SalesReg.Store do
     Product,
     Service,
     Category,
-    Tag
+    Tag,
+    ProductGroup,
+    Option,
+    OptionValue
   ]
 
   def data do
@@ -20,9 +23,7 @@ defmodule SalesReg.Store do
     queryable
   end
 
-  def load_categories(%{"categories" => []}) do
-    []
-  end
+  def load_categories(%{"categories" => []}), do: []
 
   def load_categories(%{"categories" => categories_ids}) do
     Repo.all(
@@ -70,6 +71,7 @@ defmodule SalesReg.Store do
     end
   end
 
+  # PRODUCT INVENTORY
   def update_product_inventory(:increment, order_items) when is_list(order_items) do
     Enum.map(order_items, fn order_item ->
       if order_item.product_id do
@@ -93,15 +95,101 @@ defmodule SalesReg.Store do
   defp increment_product_sku(product_id, quantity) do
     product = get_product(product_id)
     quantity = String.to_integer(quantity)
-    product_stock_quantity = String.to_integer(product.stock_quantity)
-    update_product(product, %{"stock_quantity" => "#{quantity + product_stock_quantity}"})
+    product_sku = String.to_integer(product.sku)
+    update_product(product, %{"sku" => "#{quantity + product_sku}"})
   end
 
   defp decrement_product_sku(product_id, quantity) do
     product = get_product(product_id)
     quantity = String.to_integer(quantity)
-    product_stock_quantity = String.to_integer(product.stock_quantity)
+    product_sku = String.to_integer(product.sku)
 
-    update_product(product, %{"stock_quantity" => "#{product_stock_quantity - quantity}"})
+    update_product(product, %{"sku" => "#{product_sku - quantity}"})
+  end
+
+  # PRODUCT VARIANT
+
+  # create product
+  # if no product_group id in params, create a product_group
+    # if the params, contains options and their values
+    # create the association between product_group and options
+    # we upsert the option values
+    # we upsert the product, create the association between the product and the option values
+
+  # if the params, don't contain options and their values
+  # we insert the product
+
+  # if product_group id in params
+    # if the params, contains options and their values
+    # check if options exist and are related to product group
+    # create relationship
+    # upsert option values
+    # we upsert the product, create the association between the product and the option values
+
+  # product_params
+  # %{
+  #   product_group_id: nil,
+  #   product_group_title: "",
+  #   product: %{
+  #     decription: "",
+  #     featured_image: "",
+  #     name: "",
+  #     sku: "",
+  #     minimum_sku: "",
+  #     selling_price: "",
+  #     images: []
+  #   },
+  #   options: [
+  #     %{
+  #       option_id: "ffddf43334", # basically the ID of the option
+  #       name: "XL"
+  #     },
+  #     %{option_id: "ddeyu84djd09393d", name: "Red"}
+  #   ]
+  # }
+
+  def create_product(%{product_option_id: nil} = params) do
+    options_values = Map.get(params, :options)
+    option_ids = get_option_ids_from_option_values(options_values)
+    product_params = Map.get(params, :product)
+
+    product_grp_params = %{
+      "title" => Map.get(params, :product_group_title),
+      "option_ids" => option_ids
+    }
+
+    opts =
+      Multi.new()
+      |> Multi.insert(:insert_product_grp, ProductGroup, product_grp_params)
+      |> Multi.insert_all(:insert_option_values, OptionValue, options_values)
+      |> Multi.insert(:product, fn %{insert_option_values: option_values} ->
+        product_params =
+          Map.put(product_params, :option_values_ids, get_option_values_ids(option_values))
+
+        Product.changeset(Product, product_params)
+      end)
+
+    case Repo.transaction(opts) do
+      {:ok, %{product: product}} -> {:ok, product}
+      {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
+    end
+  end
+
+  def load_product_grp_options(%{"option_ids" => []}), do: []
+  def load_product_grp_options(%{"option_ids" => option_ids}) do
+    Repo.all(from(opt in Option, where: opt.id in ^option_ids))
+  end
+
+  def load_product_options_values(%{option_values_ids: []}), do: []
+  def load_product_options_values(%{option_values_ids: option_values_ids}) do
+    Repo.all(from(option_value in OptionValue, where: option_value.id in ^option_values_ids))
+  end
+
+  defp get_option_ids_from_option_values(options_values) do
+    Enum.map(options_values, & &1.option_id)
+  end
+
+  defp get_option_values_ids(option_values) do
+    Enum.map(option_values, & &1.id)
   end
 end

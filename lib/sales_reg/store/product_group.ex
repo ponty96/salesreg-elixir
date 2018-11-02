@@ -26,5 +26,6 @@ defmodule SalesReg.Store.ProductGroup do
     |> Repo.preload(:options)
     |> cast(attrs, [:title])
     |> validate_required([:title])
+    |> put_assoc(:options, Store.load_product_grp_options(attrs))
   end
 end
