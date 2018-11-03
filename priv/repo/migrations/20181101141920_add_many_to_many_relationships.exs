@@ -19,7 +19,6 @@ defmodule SalesReg.Repo.Migrations.AddManyToManyRelationships do
     end
 
     create(unique_index(:product_groups_options, [:product_group_id, :option_id]))
-    create(unique_index(:products_option_values, [:product_id, :option_value_id]))
     create(index(:products, [:product_group_id]))
   end
 end
