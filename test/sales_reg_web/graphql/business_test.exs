@@ -1,14 +1,9 @@
 defmodule SalesRegWeb.GraphqlBusinessTest do
-  use SalesReg.DataCase
-  use Phoenix.ConnTest
-  alias SalesRegWeb.GraphqlTestHelpers, as: Helpers
-  alias SalesReg.{Business, Accounts}
-
-  @endpoint SalesRegWeb.Endpoint
+  use SalesRegWeb.ConnCase
   
   @user_params %{
     date_of_birth: "20-11-1999",
-    email: "someemail@gmail.com",
+    email: "randomemail@gmail.com",
     first_name: "firstname",
     gender: "Male",
     last_name: "lastname",
@@ -16,33 +11,12 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     password_confirmation: "asdfasdf",
     profile_picture: "picture.jpg"
   }
-
-  @company_params %{
-    title: "this is the title",
-    contact_email: "someemail@gmail.com",
-    currency: "Euro",
-    phone: %{
-      number: "+2348131900893"
-    }
-  }
-
-  setup do
-    {:ok, user} = Accounts.create_user(@user_params)
-    login_params = %{email: user.email, password: user.password}
-    conn = Helpers.authenticate(build_conn(), login_params)
-
-    {:ok, company} = user.id
-    |> Business.create_company(@company_params)
-    
-    %{user: user, conn: conn, company: company}
-  end
   
   describe "company tests" do
     # adds a user to a company
     @tag :add_user_company
     test "add user company", context do
       {:ok, user} = @user_params
-        |> Map.put(:email, "randomemail@gmail.com")
         |> Accounts.create_user()
       
       query_doc = """
