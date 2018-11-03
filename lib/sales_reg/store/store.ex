@@ -259,6 +259,36 @@ defmodule SalesReg.Store do
     end
   end
 
+  # update product details -> use context
+
+  # update product group options -> use context
+  def update_product_group_options(%{product_group_id: id, options: options}) do
+    # preload and get the current options associated with the product group
+    %ProductGroup{options: current_associated_options} = get_product_grp(id)
+
+    new_option_ids = Enum.map(options, & &1.id)
+
+    product_grp_params = %{
+      "option_ids" => new_option_ids
+    }
+
+    # delete irrelevant option values associated with options disconnected from the product group
+    option_values_to_delete =
+      current_associated_options
+      |> compare_and_get_disconnected_options(new_option_ids)
+      |> option_values_of_disconnected_options()
+
+    opts =
+      Multi.new()
+      |> Multi.update(:update_product_grp, ProductGroup, product_grp_params)
+      |> Multi.delete_all(:delete_option_values, option_values_to_delete)
+
+    case Repo.transaction(opts) do
+      {:ok, %{update_product_grp: update_product_grp}} -> {:ok, update_product_grp}
+      {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
+    end
+  end
+
   def load_product_grp_options(%{"option_ids" => []}), do: []
 
   def load_product_grp_options(%{"option_ids" => option_ids}) do
