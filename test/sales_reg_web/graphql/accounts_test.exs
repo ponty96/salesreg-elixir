@@ -7,7 +7,7 @@ defmodule SalesReg.Test.GraphqlAccountsTest do
   @endpoint MyApp.Web.Endpoint
 
   alias SalesReg.Accounts
-  
+
   # describe "user schema tests" do
   #   @login_params %{
   #     email: "someemail@gmail.com",

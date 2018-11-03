@@ -23,6 +23,16 @@ defmodule SalesReg.Store do
     queryable
   end
 
+  def insert_default_options(company_id) do
+    [
+      %{name: "Size", company_id: company_id},
+      %{name: "Color", company_id: company_id},
+      %{name: "Weight", company_id: company_id},
+      %{name: "Height", company_id: company_id}
+    ]
+    |> Enum.map(&Repo.insert(Option.changeset(%Option{}, &1)))
+  end
+
   def load_categories(%{"categories" => []}), do: []
 
   def load_categories(%{"categories" => categories_ids}) do

@@ -18,12 +18,12 @@ defmodule SalesRegWeb.GraphqlTestHelpers do
   end
 
   def authenticate(conn, login_params) do
-    %{access_token: token} = 
+    %{access_token: token} =
       login_params
       |> Authentication.login()
       |> elem(1)
 
     conn
-      |> Plug.Conn.put_req_header("authorization", token)
+    |> Plug.Conn.put_req_header("authorization", token)
   end
 end

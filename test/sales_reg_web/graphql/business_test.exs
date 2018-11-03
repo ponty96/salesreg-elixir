@@ -1,6 +1,6 @@
 defmodule SalesRegWeb.GraphqlBusinessTest do
   use SalesRegWeb.ConnCase
-  
+
   @user_params %{
     date_of_birth: "20-11-1999",
     email: "randomemail@gmail.com",
@@ -11,14 +11,15 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     password_confirmation: "asdfasdf",
     profile_picture: "picture.jpg"
   }
-  
+
   describe "company tests" do
     # adds a user to a company
     @tag :add_user_company
     test "add user company", context do
-      {:ok, user} = @user_params
+      {:ok, user} =
+        @user_params
         |> Accounts.create_user()
-      
+
       query_doc = """
         addUserCompany(
           user: "#{user.id}",
@@ -50,11 +51,12 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
           }
       """
 
-      res = context.conn
+      res =
+        context.conn
         |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "addUserCompany"))
 
-      response = json_response(res, 200)["data"]["addUserCompany"] 
-      
+      response = json_response(res, 200)["data"]["addUserCompany"]
+
       assert response["data"]["title"] == "company title"
       assert response["data"]["contact_email"] == "someemail@gmail.com"
       assert response["data"]["currency"] == "Dollars"
@@ -96,10 +98,11 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
         }
       """
 
-      res = context.conn
-      |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "updateCompany"))
+      res =
+        context.conn
+        |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "updateCompany"))
 
-      response = json_response(res, 200)["data"]["updateCompany"] 
+      response = json_response(res, 200)["data"]["updateCompany"]
       company_id = context.company.id
 
       assert response["data"]["id"] == company_id

@@ -20,10 +20,12 @@ defmodule SalesRegWeb.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
       import SalesRegWeb.Router.Helpers
+
       alias SalesReg.{
         Business,
         Accounts
       }
+
       alias SalesRegWeb.GraphqlTestHelpers, as: Helpers
 
       # The default endpoint for testing
@@ -67,9 +69,10 @@ defmodule SalesRegWeb.ConnCase do
     login_params = %{email: user.email, password: user.password}
     conn = SalesRegWeb.GraphqlTestHelpers.authenticate(conn, login_params)
 
-    {:ok, company} = user.id
-    |> SalesReg.Business.create_company(@company_params)
-    
+    {:ok, company} =
+      user.id
+      |> SalesReg.Business.create_company(@company_params)
+
     %{user: user, conn: conn, company: company}
   end
 end
