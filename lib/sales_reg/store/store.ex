@@ -115,6 +115,7 @@ defmodule SalesReg.Store do
   #   product_group_id: nil,
   #   product_group_title: "",
   #   product: %{
+  #     id: ""
   #     decription: "",
   #     featured_image: "",
   #     name: "",
@@ -139,7 +140,7 @@ defmodule SalesReg.Store do
     options_values =
       params
       |> Map.get(:product)
-      |> Map.get(:option_values)
+      |> Map.get(:option_values, [])
 
     option_ids = get_option_ids_from_option_values(options_values)
     product_params = Map.get(params, :product)
@@ -199,13 +200,87 @@ defmodule SalesReg.Store do
     end
   end
 
+  # create new product from existing product group
+  # use cases here are simple:
+  #  if the product group has options already, we create a new product
+  #      1 update product group options association
+  #      2 delete irrelevant option values associated with options disconnected from the product group
+  #      2 insert the product, with option values association
+  ## if the product group doesn't have options already,
+  ##     1 update product group options association
+  ##     2 update product with option values association
+  def create_product(%{product_option_id: id} = params) do
+    # preload and get the current options associated with the product group
+    %ProductGroup{options: current_associated_options} = get_product_grp(id)
+
+    # get the new options from params
+    options_values =
+      params
+      |> Map.get(:product)
+      |> Map.get(:option_values, [])
+
+    new_option_ids = get_option_ids_from_option_values(options_values)
+
+    # delete irrelevant option values associated with options disconnected from the product group
+    option_values_to_delete =
+      current_associated_options
+      |> compare_and_get_disconnected_options(new_option_ids)
+      |> option_values_of_disconnected_options()
+
+    product_params = Map.get(params, :product)
+
+    product_grp_params = %{
+      "title" => Map.get(params, :product_group_title),
+      "option_ids" => new_option_ids
+    }
+
+    opts =
+      Multi.new()
+      |> Multi.insert(:insert_product_grp, ProductGroup, product_grp_params)
+      |> Ecto.Multi.run(:product, fn _repo ->
+        product_id = Map.get(product_params, :id)
+        Repo.get!(Product, product_id)
+      end)
+      |> Multi.delete_all(:delete_option_values, option_values_to_delete)
+      |> Multi.insert_or_update(
+        :product,
+        fn %{insert_product_grp: product_grp, product: product} ->
+          product_params =
+            product_params
+            |> Map.put(:product_group_id, product_grp.id)
+
+          Product.changeset(product, product_params)
+        end
+      )
+
+    case Repo.transaction(opts) do
+      {:ok, %{product: product}} -> {:ok, product}
+      {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
+    end
+  end
+
   def load_product_grp_options(%{"option_ids" => []}), do: []
 
   def load_product_grp_options(%{"option_ids" => option_ids}) do
     Repo.all(from(opt in Option, where: opt.id in ^option_ids))
   end
 
+  defp get_option_ids_from_option_values([]), do: []
+
   defp get_option_ids_from_option_values(options_values) do
     Enum.map(options_values, & &1.option_id)
+  end
+
+  defp get_product_grp(id), do: get_product_group(id) |> Repo.preload([:options])
+
+  defp compare_and_get_disconnected_options([], _new_options_ids), do: []
+
+  defp compare_and_get_disconnected_options(current_options_structs, new_options_ids) do
+    options_ids = Enum.map(current_options_structs, & &1.id)
+    MapSet.difference(MapSet.new(options_ids), MapSet.new(new_options_ids))
+  end
+
+  defp option_values_of_disconnected_options(options_ids) do
+    from(option_value in OptionValue, where: option_value.option_id in ^options_ids)
   end
 end
