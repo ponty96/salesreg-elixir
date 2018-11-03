@@ -77,6 +77,28 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Product Group object type
+  """
+  object :product_group do
+    field(:id, :uuid)
+    field(:title, :string)
+
+    field(:products, list_of(:product), resolve: dataloader(SalesReg.Store, :products))
+    field(:options, list_of(:option), resolve: dataloader(SalesReg.Store, :options))
+  end
+
+  @desc """
+    Option object type
+  """
+  object :option do
+    field(:id, :uuid)
+    field(:name, :string)
+
+    field(:option_values, list_of(:option_value), resolve: dataloader(SalesReg.Store, :option_values))
+    field(:product_groups, list_of(:product_group), resolve: dataloader(SalesReg.Store, :product_groups))
+  end
+
+  @desc """
     Product object type
   """
   object :product do
@@ -91,8 +113,21 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:categories, list_of(:category), resolve: dataloader(SalesReg.Store, :categories))
     field(:tags, list_of(:tag), resolve: dataloader(SalesReg.Store, :tags))
 
+    field(:option_values, list_of(:option_value), resolve: dataloader(SalesReg.Store, :option_values))
+
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+  end
+
+  @desc """
+    Option Value Object Type
+  """
+  object :option_value do
+    field(:id, :uuid)
+    field(:name, :string)
+
+    field(:option, :option, resolve: dataloader(SalesReg.Store, :option))
+    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
   end
 
   @desc """
