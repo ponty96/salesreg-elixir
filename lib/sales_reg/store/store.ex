@@ -136,7 +136,7 @@ defmodule SalesReg.Store do
   # create new product with options and no existing product group
   # 1 create a product_group, add options association
   # 2 insert product, with option values association and product_group
-  def create_product(%{product_option_id: nil} = params) do
+  def create_product(%{product_option_id: nil, product_group_title: product_group_title} = params) do
     options_values =
       params
       |> Map.get(:product)
@@ -146,7 +146,7 @@ defmodule SalesReg.Store do
     product_params = Map.get(params, :product)
 
     product_grp_params = %{
-      "title" => Map.get(params, :product_group_title),
+      "title" => product_group_title,
       "option_ids" => option_ids
     }
 
@@ -173,11 +173,11 @@ defmodule SalesReg.Store do
   # create new product with no options
   # 1 create product group
   # 2 create product, with product_group association
-  def create_product(%{options: []} = params) do
+  def create_product(%{options: [], product_group_title: product_group_title} = params) do
     product_params = Map.get(params, :product)
 
     product_grp_params = %{
-      "title" => Map.get(params, :product_group_title)
+      "title" => product_group_title
     }
 
     opts =
@@ -262,11 +262,9 @@ defmodule SalesReg.Store do
   # update product details -> use context
 
   # update product group options -> use context
-  def update_product_group_options(%{product_group_id: id, options: options}) do
+  def update_product_group_options(%{id: id, options: new_option_ids}) do
     # preload and get the current options associated with the product group
     %ProductGroup{options: current_associated_options} = get_product_grp(id)
-
-    new_option_ids = Enum.map(options, & &1.id)
 
     product_grp_params = %{
       "option_ids" => new_option_ids

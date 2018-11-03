@@ -12,11 +12,44 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     upsert a product in a company's store
     """
     field :upsert_product, :mutation_response do
+      deprecate
       arg(:product, non_null(:product_input))
       arg(:product_id, :uuid)
 
       middleware(Authorize)
       resolve(&StoreResolver.upsert_product/2)
+    end
+
+    @desc """
+      Create a product
+    """
+    field :create_product, :mutation_response do
+      arg(:product, non_null(:product_group_input))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.create_product/2)
+    end
+
+    @desc """
+      Update Product Group Options
+    """
+    field :update_product_group_options, :mutation_response do
+      arg(:product_group, non_null(:product_group_update_input))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.update_product_group_options/2)
+    end
+
+    @desc """
+      Update Product
+    """
+    field :update_product, :mutation_response do
+      deprecate
+      arg(:product, non_null(:product_input))
+      arg(:product_id, :uuid)
+
+      middleware(Authorize)
+      resolve(&StoreResolver.update_product/2)
     end
 
     @desc """

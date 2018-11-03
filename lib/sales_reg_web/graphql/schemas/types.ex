@@ -94,8 +94,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:id, :uuid)
     field(:name, :string)
 
-    field(:option_values, list_of(:option_value), resolve: dataloader(SalesReg.Store, :option_values))
-    field(:product_groups, list_of(:product_group), resolve: dataloader(SalesReg.Store, :product_groups))
+    field(:option_values, list_of(:option_value),
+      resolve: dataloader(SalesReg.Store, :option_values)
+    )
+
+    field(:product_groups, list_of(:product_group),
+      resolve: dataloader(SalesReg.Store, :product_groups)
+    )
   end
 
   @desc """
@@ -113,7 +118,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:categories, list_of(:category), resolve: dataloader(SalesReg.Store, :categories))
     field(:tags, list_of(:tag), resolve: dataloader(SalesReg.Store, :tags))
 
-    field(:option_values, list_of(:option_value), resolve: dataloader(SalesReg.Store, :option_values))
+    field(:option_values, list_of(:option_value),
+      resolve: dataloader(SalesReg.Store, :option_values)
+    )
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
@@ -492,19 +499,38 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:type, :string)
   end
 
+  input_object :product_group_input do
+    field(:product_group_id, :uuid)
+    field(:product_group_title, :string)
+
+    field(:product, non_null(:product_input))
+  end
+
+  input_object :product_group_update_input do
+    field(:id, non_null(:id))
+    field(:options, non_null(list_of(:uuid)))
+  end
+
   input_object :product_input do
     field(:description, :string)
     field(:featured_image, :string)
     field(:name, non_null(:string))
     field(:sku, non_null(:string))
     field(:minimum_sku, non_null(:string))
-    field(:cost_price, non_null(:string))
+    field(:cost_price, :string)
     field(:selling_price, non_null(:string))
-
+    field(:images, list_of(:string))
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
     field(:categories, list_of(:uuid))
     field(:tags, non_null(list_of(:string)))
+
+    field(:option_values, list_of(:option_value_input))
+  end
+
+  input_object :option_value_input do
+    field(:name, non_null(:string))
+    field(:option_id, non_null(:uuid))
   end
 
   input_object :service_input do

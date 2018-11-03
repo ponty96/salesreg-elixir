@@ -52,4 +52,17 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     ## TODO - change context to use plural form
     Store.list_company_categorys(company_id)
   end
+
+  def create_product(%{product: params}, _res) do
+    Store.create_product(params)
+  end
+
+  def update_product(%{product: params, product_id: id}, _res) do
+    Store.get_product(id)
+    |> Store.update_product(params)
+  end
+
+  def update_product_group_options(%{product_group: params}, _res) do
+    Store.update_product_group_options(params)
+  end
 end
