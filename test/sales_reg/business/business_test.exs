@@ -157,9 +157,9 @@ defmodule SalesReg.BusinessTest do
       assert Business.get_employee!(employee.id) == employee
     end
 
-    test "create_employee/1 with valid data creates a employee" do
-      assert {:ok, %Employee{} = employee} = Business.create_employee(@valid_attrs)
-    end
+    # test "create_employee/1 with valid data creates a employee" do
+    #   assert {:ok, %Employee{} = employee} = Business.create_employee(@valid_attrs)
+    # end
 
     test "create_employee/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Business.create_employee(@invalid_attrs)

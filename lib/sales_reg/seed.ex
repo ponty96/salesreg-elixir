@@ -38,7 +38,6 @@ defmodule SalesReg.Seed do
       about: "Building software products",
       contact_email: "someemail@gmail.com",
       title: "Stacknbit Private Limited Company",
-      category: Enum.random(@company_categories),
       head_office: gen_location_params(),
       currency: "Naira(₦)",
       description: CompanyEn.bs(),
