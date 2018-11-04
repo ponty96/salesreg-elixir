@@ -156,7 +156,6 @@ defmodule SalesReg.Store do
           product: %{option_values: []}
         } = params
       ) do
-    IO.puts("I got called here now now now ")
     product_params = Map.get(params, :product)
 
     product_grp_params = %{
