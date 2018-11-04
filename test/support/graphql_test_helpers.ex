@@ -17,6 +17,13 @@ defmodule SalesRegWeb.GraphqlTestHelpers do
     }
   end
 
+  def query_skeleton(query, variables) when is_map(variables) do
+    %{
+      "query" => "#{query}",
+      "variables" => "#{Jason.encode!(variables)}"
+    }
+  end
+
   def authenticate(conn, login_params) do
     %{access_token: token} =
       login_params
