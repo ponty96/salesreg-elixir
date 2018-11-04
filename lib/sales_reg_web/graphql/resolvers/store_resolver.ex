@@ -53,7 +53,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.list_company_categorys(company_id)
   end
 
-  def create_product(%{product: params}, _res) do
+  def create_product(%{params: params}, _res) do
     Store.create_product(params)
   end
 

@@ -72,6 +72,19 @@ defmodule SalesRegWeb do
     end
   end
 
+  def graphql_context do
+    quote do
+      alias SalesReg.Repo
+      alias SalesReg.Search
+      alias SalesReg.Seed
+      alias SalesReg.Context
+      alias SalesRegWeb.Authentication
+
+      alias Ecto.Queryable
+      SalesRegWeb.shared_aliases()
+    end
+  end
+
   defmacro shared_aliases do
     quote do
       alias Ecto.Queryable

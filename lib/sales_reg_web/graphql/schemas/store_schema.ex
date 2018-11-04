@@ -8,23 +8,23 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
 
   ### MUTATIONS
   object :store_mutations do
-    @desc """
-    upsert a product in a company's store
-    """
-    field :upsert_product, :mutation_response do
-      deprecate
-      arg(:product, non_null(:product_input))
-      arg(:product_id, :uuid)
+    # @desc """
+    # upsert a product in a company's store
+    # """
+    # field :upsert_product, :mutation_response do
+    #   deprecate
+    #   arg(:product, non_null(:product_input))
+    #   arg(:product_id, :uuid)
 
-      middleware(Authorize)
-      resolve(&StoreResolver.upsert_product/2)
-    end
+    #   middleware(Authorize)
+    #   resolve(&StoreResolver.upsert_product/2)
+    # end
 
     @desc """
       Create a product
     """
     field :create_product, :mutation_response do
-      arg(:product, non_null(:product_group_input))
+      arg(:params, non_null(:product_group_input))
 
       middleware(Authorize)
       resolve(&StoreResolver.create_product/2)
@@ -44,7 +44,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       Update Product
     """
     field :update_product, :mutation_response do
-      deprecate
       arg(:product, non_null(:product_input))
       arg(:product_id, :uuid)
 

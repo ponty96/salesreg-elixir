@@ -44,17 +44,17 @@ defmodule SalesReg.Mixfile do
     [
       {:phoenix, "~> 1.3.2"},
       {:phoenix_pubsub, "~> 1.0"},
-      {:phoenix_ecto, "~> 3.2"},
+      {:phoenix_ecto, "~> 4.0"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
       {:comeonin, "~> 4.0"},
       {:guardian, "~> 1.0"},
       {:bcrypt_elixir, "~> 1.0"},
-      {:absinthe, "~> 1.4.13"},
-      {:absinthe_ecto, "~> 0.1.3"},
+      {:absinthe, "~> 1.5.0-alpha.0", override: true},
+      # {:absinthe_ecto, "~> 0.1.3"},
       {:absinthe_plug, "~> 1.4.5"},
-      {:absinthe_relay, "~> 1.4.3"},
+      {:absinthe_relay, github: "absinthe-graphql/absinthe_relay"},
       {:dataloader, "~> 1.0.0"},
       {:faker, "~> 0.10"},
       {:guardian_db, github: "ueberauth/guardian_db"},
@@ -63,7 +63,9 @@ defmodule SalesReg.Mixfile do
       {:uuid, "~> 1.1"},
       {:hackney, "~> 1.9"},
       {:sweet_xml, "~> 0.6"},
-      {:machinery, "~> 0.16.0"}
+      {:machinery, github: "ponty96/machinery", branch: "bump_ecto_version"},
+      {:ecto_sql, "~> 3.0"},
+      {:jason, "~> 1.1"}
     ]
   end
 

@@ -33,9 +33,13 @@ defmodule SalesReg.Store do
     |> Enum.map(&Repo.insert(Option.changeset(%Option{}, &1)))
   end
 
-  def load_categories(%{"categories" => []}), do: []
+  def load_categories(%{"categories" => categories}) do
+    load_categories(%{categories: categories})
+  end
 
-  def load_categories(%{"categories" => categories_ids}) do
+  def load_categories(%{categories: []}), do: []
+
+  def load_categories(%{categories: categories_ids}) do
     Repo.all(
       from(c in Category,
         where: c.id in ^categories_ids
@@ -143,6 +147,43 @@ defmodule SalesReg.Store do
   #   },
   # }
 
+  # create new product with no options
+  # 1 create product group
+  # 2 create product, with product_group association
+  def create_product(
+        %{
+          product_group_title: product_group_title,
+          product: %{option_values: []}
+        } = params
+      ) do
+    IO.puts("I got called here now now now ")
+    product_params = Map.get(params, :product)
+
+    product_grp_params = %{
+      "title" => product_group_title,
+      "option_ids" => []
+    }
+
+    opts =
+      Multi.new()
+      |> Multi.insert(:insert_product_grp, product_group_changeset(product_grp_params))
+      |> Multi.insert(
+        :product,
+        fn %{insert_product_grp: product_grp} ->
+          product_params =
+            product_params
+            |> Map.put(:product_group_id, product_grp.id)
+
+          Product.changeset(%Product{}, product_params)
+        end
+      )
+
+    case Repo.transaction(opts) do
+      {:ok, %{product: product}} -> {:ok, product}
+      {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
+    end
+  end
+
   # create new product with options and no existing product group
   # 1 create a product_group, add options association
   # 2 insert product, with option values association and product_group
@@ -162,37 +203,10 @@ defmodule SalesReg.Store do
 
     opts =
       Multi.new()
-      |> Multi.insert(:insert_product_grp, ProductGroup, product_grp_params)
       |> Multi.insert(
-        :product,
-        fn %{insert_product_grp: product_grp} ->
-          product_params =
-            product_params
-            |> Map.put(:product_group_id, product_grp.id)
-
-          Product.changeset(Product, product_params)
-        end
+        :insert_product_grp,
+        ProductGroup.changeset(ProductGroup, product_grp_params)
       )
-
-    case Repo.transaction(opts) do
-      {:ok, %{product: product}} -> {:ok, product}
-      {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
-    end
-  end
-
-  # create new product with no options
-  # 1 create product group
-  # 2 create product, with product_group association
-  def create_product(%{options: [], product_group_title: product_group_title} = params) do
-    product_params = Map.get(params, :product)
-
-    product_grp_params = %{
-      "title" => product_group_title
-    }
-
-    opts =
-      Multi.new()
-      |> Multi.insert(:insert_product_grp, ProductGroup, product_grp_params)
       |> Multi.insert(
         :product,
         fn %{insert_product_grp: product_grp} ->
@@ -200,7 +214,7 @@ defmodule SalesReg.Store do
             product_params
             |> Map.put(:product_group_id, product_grp.id)
 
-          Product.changeset(Product, product_params)
+          Product.changeset(%Product{}, product_params)
         end
       )
 
@@ -221,7 +235,7 @@ defmodule SalesReg.Store do
   ##     2 update product with option values association
   def create_product(%{product_option_id: id} = params) do
     # preload and get the current options associated with the product group
-    %ProductGroup{options: current_associated_options} = get_product_grp(id)
+    %ProductGroup{options: current_associated_options} = product_grp = get_product_grp(id)
 
     # get the new options from params
     options_values =
@@ -246,7 +260,10 @@ defmodule SalesReg.Store do
 
     opts =
       Multi.new()
-      |> Multi.insert(:insert_product_grp, ProductGroup, product_grp_params)
+      |> Multi.insert(
+        :insert_product_grp,
+        product_group_changeset(product_grp, product_grp_params)
+      )
       |> Ecto.Multi.run(:product, fn _repo ->
         product_id = Map.get(product_params, :id)
         Repo.get!(Product, product_id)
@@ -274,7 +291,7 @@ defmodule SalesReg.Store do
   # update product group options -> use context
   def update_product_group_options(%{id: id, options: new_option_ids}) do
     # preload and get the current options associated with the product group
-    %ProductGroup{options: current_associated_options} = get_product_grp(id)
+    %ProductGroup{options: current_associated_options} = product_grp = get_product_grp(id)
 
     product_grp_params = %{
       "option_ids" => new_option_ids
@@ -288,13 +305,24 @@ defmodule SalesReg.Store do
 
     opts =
       Multi.new()
-      |> Multi.update(:update_product_grp, ProductGroup, product_grp_params)
+      |> Multi.update(
+        :update_product_grp,
+        product_group_changeset(product_grp, product_grp_params)
+      )
       |> Multi.delete_all(:delete_option_values, option_values_to_delete)
 
     case Repo.transaction(opts) do
       {:ok, %{update_product_grp: update_product_grp}} -> {:ok, update_product_grp}
       {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
     end
+  end
+
+  defp product_group_changeset(%ProductGroup{} = schema, params) do
+    ProductGroup.changeset(schema, params)
+  end
+
+  defp product_group_changeset(params) do
+    ProductGroup.changeset(%ProductGroup{}, params)
   end
 
   def load_product_grp_options(%{"option_ids" => []}), do: []
@@ -309,7 +337,7 @@ defmodule SalesReg.Store do
     Enum.map(options_values, & &1.option_id)
   end
 
-  defp get_product_grp(id), do: get_product_group(id) |> Repo.preload([:options])
+  defp get_product_grp(id), do: get_product_group(id) |> Repo.preload(:options)
 
   defp compare_and_get_disconnected_options([], _new_options_ids), do: []
 

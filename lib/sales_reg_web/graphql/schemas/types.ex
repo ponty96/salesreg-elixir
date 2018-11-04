@@ -4,8 +4,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   """
 
   use Absinthe.Schema.Notation
-  use Absinthe.Ecto, repo: SalesReg.Repo
-  use SalesRegWeb, :context
+  use SalesRegWeb, :graphql_context
   import Absinthe.Resolution.Helpers
 
   alias SalesReg.Accounts.User
@@ -120,6 +119,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:option_values, list_of(:option_value),
       resolve: dataloader(SalesReg.Store, :option_values)
     )
+
+    field(:product_group, :product_group, resolve: dataloader(SalesReg.Store, :product_group))
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
@@ -513,10 +514,10 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:images, list_of(:string))
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
-    field(:categories, list_of(:uuid))
-    field(:tags, non_null(list_of(:string)))
+    field(:categories, list_of(:uuid), default_value: [])
+    field(:tags, list_of(:string), default_value: [])
 
-    field(:option_values, list_of(:option_value_input))
+    field(:option_values, list_of(:option_value_input), default_value: [])
   end
 
   input_object :option_value_input do
