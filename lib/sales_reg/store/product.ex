@@ -24,6 +24,7 @@ defmodule SalesReg.Store.Product do
       on_replace: :delete,
       on_delete: :delete_all
     )
+
     many_to_many(:tags, SalesReg.Store.Tag, join_through: "products_tags", on_delete: :delete_all)
 
     timestamps()

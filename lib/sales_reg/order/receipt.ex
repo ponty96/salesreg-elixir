@@ -1,22 +1,20 @@
 defmodule SalesReg.Order.Receipt do
   use Ecto.Schema
   import Ecto.Changeset
-  alias SalesReg.Repo
 
   schema "receipts" do
     field(:amount_paid, :string)
     field(:time_paid, :string)
     field(:payment_method, :string)
-    
-    belongs_to(:invoices, SalesReg.Order.Invoice)
+
+    belongs_to(:invoice, SalesReg.Order.Invoice)
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:company, SalesReg.Business.Company)
 
-		timestamps()
-		
-	end
-	
-	@required_fields [
+    timestamps()
+  end
+
+  @required_fields [
     :amount_paid,
     :time_paid,
     :payment_method,
@@ -25,13 +23,13 @@ defmodule SalesReg.Order.Receipt do
     :company_id
   ]
 
-	def changeset(receipts, attrs) do
-		receipts
-		|> cast(attrs, @required_fields)
+  def changeset(receipts, attrs) do
+    receipts
+    |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
     |> validate_payment_method()
   end
-  
+
   defp validate_payment_method(changeset) do
     case get_field(changeset, :payment_method) do
       "POS" -> changeset
