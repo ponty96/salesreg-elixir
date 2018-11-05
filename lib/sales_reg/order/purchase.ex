@@ -18,6 +18,7 @@ defmodule SalesReg.Order.Purchase do
     field(:state, :string, virtual: true)
 
     has_many(:items, SalesReg.Order.Item, on_replace: :delete)
+    belongs_to(:receipts, SalesReg.Order.Receipts)
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:contact, SalesReg.Business.Contact)
     belongs_to(:company, SalesReg.Business.Company)
