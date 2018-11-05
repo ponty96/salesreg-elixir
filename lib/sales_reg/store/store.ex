@@ -160,7 +160,8 @@ defmodule SalesReg.Store do
 
     product_grp_params = %{
       "title" => product_group_title,
-      "option_ids" => []
+      "option_ids" => [],
+      "company_id" => params.company_id
     }
 
     opts =
@@ -186,7 +187,7 @@ defmodule SalesReg.Store do
   # create new product with options and no existing product group
   # 1 create a product_group, add options association
   # 2 insert product, with option values association and product_group
-  def create_product(%{product_option_id: nil, product_group_title: product_group_title} = params) do
+  def create_product(%{product_group_title: product_group_title} = params) do
     options_values =
       params
       |> Map.get(:product)
@@ -197,14 +198,15 @@ defmodule SalesReg.Store do
 
     product_grp_params = %{
       "title" => product_group_title,
-      "option_ids" => option_ids
+      "option_ids" => option_ids,
+      "company_id" => params.company_id
     }
 
     opts =
       Multi.new()
       |> Multi.insert(
         :insert_product_grp,
-        ProductGroup.changeset(ProductGroup, product_grp_params)
+        product_group_changeset(product_grp_params)
       )
       |> Multi.insert(
         :product,
@@ -218,8 +220,11 @@ defmodule SalesReg.Store do
       )
 
     case Repo.transaction(opts) do
-      {:ok, %{product: product}} -> {:ok, product}
-      {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
+      {:ok, %{product: product}} ->
+        {:ok, product}
+
+      {:error, _failed_operation, failed_value, _changeset} ->
+        {:error, failed_value}
     end
   end
 
@@ -232,7 +237,7 @@ defmodule SalesReg.Store do
   ## if the product group doesn't have options already,
   ##     1 update product group options association
   ##     2 update product with option values association
-  def create_product(%{product_option_id: id} = params) do
+  def create_product(%{product_group_id: id} = params) do
     # preload and get the current options associated with the product group
     %ProductGroup{options: current_associated_options} = product_grp = get_product_grp(id)
 
@@ -254,7 +259,8 @@ defmodule SalesReg.Store do
 
     product_grp_params = %{
       "title" => Map.get(params, :product_group_title),
-      "option_ids" => new_option_ids
+      "option_ids" => new_option_ids,
+      "company_id" => params.company_id
     }
 
     opts =

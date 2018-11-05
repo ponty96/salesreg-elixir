@@ -494,6 +494,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :product_group_input do
     field(:product_group_id, :uuid)
     field(:product_group_title, :string)
+    field(:company_id, non_null(:uuid))
 
     field(:product, non_null(:product_input))
   end
@@ -523,6 +524,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :option_value_input do
     field(:name, non_null(:string))
     field(:option_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
   end
 
   input_object :service_input do

@@ -15,6 +15,5 @@ defmodule SalesReg.Repo.Migrations.CreateOptionValues do
 
     create(index(:option_values, [:company_id]))
     create(index(:option_values, [:option_id]))
-    create(unique_index(:option_values, [:product_id, :name]))
   end
 end

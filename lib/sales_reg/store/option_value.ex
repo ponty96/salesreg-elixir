@@ -16,7 +16,7 @@ defmodule SalesReg.Store.OptionValue do
     timestamps()
   end
 
-  @fields [:name, :company_id, :option_id, :product_id]
+  @fields [:name, :company_id, :option_id]
 
   @doc false
   def changeset(option_values, attrs) do

@@ -11,7 +11,7 @@ defmodule SalesReg.Store.ProductGroup do
     field(:title, :string)
     field(:company_id, :binary_id)
 
-    many_to_many(:options, Store.ProductGroup,
+    many_to_many(:options, Store.Option,
       join_through: "product_groups_options",
       on_replace: :delete
     )
@@ -24,8 +24,8 @@ defmodule SalesReg.Store.ProductGroup do
   def changeset(product_group, attrs) do
     product_group
     |> Repo.preload(:options)
-    |> cast(attrs, [:title])
-    |> validate_required([:title])
+    |> cast(attrs, [:title, :company_id])
+    |> validate_required([:title, :company_id])
     |> put_assoc(:options, Store.load_product_grp_options(attrs))
   end
 end
