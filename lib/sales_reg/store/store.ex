@@ -257,17 +257,17 @@ defmodule SalesReg.Store do
 
     opts =
       Multi.new()
-      |> Multi.insert(
-        :insert_product_grp,
+      |> Multi.update(
+        :update_product_grp,
         product_group_changeset(product_grp, product_grp_params)
       )
       |> Multi.run(:get_product, fn _repo ->
         product_id = Map.get(product_params, :id)
-        Repo.get!(Product, product_id)
+        {:ok, Repo.get!(Product, product_id)}
       end)
       |> Multi.update(
         :product,
-        fn %{insert_product_grp: product_grp, get_product: product} ->
+        fn %{update_product_grp: product_grp, get_product: product} ->
           product_params =
             product_params
             |> Map.put(:product_group_id, product_grp.id)
