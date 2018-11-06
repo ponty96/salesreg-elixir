@@ -500,11 +500,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   input_object :product_group_update_input do
-    field(:id, non_null(:id))
+    field(:id, non_null(:uuid))
     field(:options, non_null(list_of(:uuid)))
   end
 
   input_object :product_input do
+    field(:id, :uuid)
     field(:description, :string)
     field(:featured_image, :string)
     field(:name, non_null(:string))

@@ -184,6 +184,13 @@ defmodule SalesReg.Store do
     end
   end
 
+  # create new product from existing product group
+  def create_product(%{product_group_id: id} = params) do
+    # preload and get the current options associated with the product group
+    %ProductGroup{options: current_associated_options} = product_grp = get_product_grp(id)
+    add_product_to_existing(current_associated_options, params, product_grp)
+  end
+
   # create new product with options and no existing product group
   # 1 create a product_group, add options association
   # 2 insert product, with option values association and product_group
@@ -228,32 +235,17 @@ defmodule SalesReg.Store do
     end
   end
 
-  # create new product from existing product group
-  # use cases here are simple:
-  #  if the product group has options already, we create a new product
-  #      1 update product group options association
-  #      2 delete irrelevant option values associated with options disconnected from the product group
-  #      2 insert the product, with option values association
   ## if the product group doesn't have options already,
   ##     1 update product group options association
   ##     2 update product with option values association
-  def create_product(%{product_group_id: id} = params) do
-    # preload and get the current options associated with the product group
-    %ProductGroup{options: current_associated_options} = product_grp = get_product_grp(id)
-
-    # get the new options from params
+  defp add_product_to_existing([], params, product_grp) do
+    # get the options from params
     options_values =
       params
       |> Map.get(:product)
       |> Map.get(:option_values, [])
 
     new_option_ids = get_option_ids_from_option_values(options_values)
-
-    # delete irrelevant option values associated with options disconnected from the product group
-    option_values_to_delete =
-      current_associated_options
-      |> compare_and_get_disconnected_options(new_option_ids)
-      |> option_values_of_disconnected_options()
 
     product_params = Map.get(params, :product)
 
@@ -269,14 +261,13 @@ defmodule SalesReg.Store do
         :insert_product_grp,
         product_group_changeset(product_grp, product_grp_params)
       )
-      |> Ecto.Multi.run(:product, fn _repo ->
+      |> Multi.run(:get_product, fn _repo ->
         product_id = Map.get(product_params, :id)
         Repo.get!(Product, product_id)
       end)
-      |> Multi.delete_all(:delete_option_values, option_values_to_delete)
-      |> Multi.insert_or_update(
+      |> Multi.update(
         :product,
-        fn %{insert_product_grp: product_grp, product: product} ->
+        fn %{insert_product_grp: product_grp, get_product: product} ->
           product_params =
             product_params
             |> Map.put(:product_group_id, product_grp.id)
@@ -289,6 +280,17 @@ defmodule SalesReg.Store do
       {:ok, %{product: product}} -> {:ok, product}
       {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
     end
+  end
+
+  #  if the product group has options already, we create a new product
+  #      1 insert the product, with option values association
+  defp add_product_to_existing(_options, params, product_grp) do
+    product_params =
+      params
+      |> Map.get(:product)
+      |> Map.put(:product_group_id, product_grp.id)
+
+    add_product(product_params)
   end
 
   # update product details -> use context
