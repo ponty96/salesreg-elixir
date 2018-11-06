@@ -112,6 +112,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
     # test that user successfully creates a new product without variant
     test "create product without variant", %{company: company, user: user, conn: conn} do
       variables = %{params: product_mutation_variables_without_variant(company, user)}
+
       res =
         conn
         |> post("/graphiql", Helpers.query_skeleton(@query, variables))
@@ -134,6 +135,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
     # test that user successfully creates a new product with variant
     test "create product with variant", %{company: company, user: user, conn: conn} do
       variables = %{params: product_mutation_variables_with_variant(company, user)}
+
       res =
         conn
         |> post("/graphiql", Helpers.query_skeleton(@query, variables))
@@ -161,6 +163,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
     } do
       # create product with variant first
       variables = %{params: product_mutation_variables_with_variant(company, user)}
+
       res =
         conn
         |> post("/graphiql", Helpers.query_skeleton(@query, variables))
@@ -205,6 +208,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
   @tag :make_an_existing_product_a_variant
   test "make an existing product a variant", %{company: company, user: user, conn: conn} do
     variables = %{params: product_mutation_variables_without_variant(company, user)}
+
     res =
       conn
       |> post("/graphiql", Helpers.query_skeleton(@query, variables))
@@ -224,29 +228,29 @@ defmodule SalesRegWeb.GraphqlStoreTest do
         product_mutation_variables_with_variant(company, user)
         |> Map.put(:product_group_id, data["productGroup"]["id"])
         |> Map.update(:product, %{}, fn product ->
-            Map.put(product, :id, response["data"]["id"])
-          end)
+          Map.put(product, :id, response["data"]["id"])
+        end)
     }
 
     add_variant_res =
-        conn
-        |> post("/graphiql", Helpers.query_skeleton(@query, add_variant_variables))
+      conn
+      |> post("/graphiql", Helpers.query_skeleton(@query, add_variant_variables))
 
-      add_variant_response = json_response(add_variant_res, 200)["data"]["createProduct"]
+    add_variant_response = json_response(add_variant_res, 200)["data"]["createProduct"]
 
-      assert add_variant_response["success"] == true
-      assert add_variant_response["data"]
+    assert add_variant_response["success"] == true
+    assert add_variant_response["data"]
 
-      add_variant_data = add_variant_response["data"]
+    add_variant_data = add_variant_response["data"]
 
-      assert add_variant_data["productGroup"]["id"] == data["productGroup"]["id"]
-      refute add_variant_data["productGroup"]["options"] == data["productGroup"]["options"]
-      assert add_variant_data["id"] == data["id"]
-      refute add_variant_data["optionValues"] == []
-      assert add_variant_data["productGroup"]
-      refute add_variant_data["productGroup"]["options"] == []
+    assert add_variant_data["productGroup"]["id"] == data["productGroup"]["id"]
+    refute add_variant_data["productGroup"]["options"] == data["productGroup"]["options"]
+    assert add_variant_data["id"] == data["id"]
+    refute add_variant_data["optionValues"] == []
+    assert add_variant_data["productGroup"]
+    refute add_variant_data["productGroup"]["options"] == []
 
     {:ok, company_products} = Store.list_company_products(company.id)
-      assert length(company_products) == 1
+    assert length(company_products) == 1
   end
 end
