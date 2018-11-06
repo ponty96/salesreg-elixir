@@ -18,13 +18,13 @@ defmodule SalesRegWeb.GraphqlTestHelpers do
   end
 
   def authenticate(conn, login_params) do
-    %{access_token: token} = 
+    %{access_token: token} =
       login_params
       |> Authentication.login()
       |> elem(1)
 
     conn
-      |> Plug.Conn.put_req_header("authorization", token)
+    |> Plug.Conn.put_req_header("authorization", token)
   end
 
   def transform_struct(struct, fields \\ []) do
@@ -32,8 +32,8 @@ defmodule SalesRegWeb.GraphqlTestHelpers do
     |> Map.from_struct()
     |> Map.take(fields)
     |> Enum.map(fn {key, val} ->
-        {Atom.to_string(key), val}
-        end)
+      {Atom.to_string(key), val}
+    end)
     |> Enum.into(%{})
   end
 
