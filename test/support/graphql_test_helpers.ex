@@ -4,7 +4,7 @@ defmodule SalesRegWeb.GraphqlTestHelpers do
   def query_skeleton(:query, query_doc, query_name) do
     %{
       "operationName" => "#{query_name}",
-      "query" => "query #{query_name} #{query_doc}",
+      "query" => "query #{query_name}{#{query_doc}}",
       "variables" => "{}"
     }
   end
@@ -25,5 +25,24 @@ defmodule SalesRegWeb.GraphqlTestHelpers do
 
     conn
       |> Plug.Conn.put_req_header("authorization", token)
+  end
+
+  def transform_struct(struct, fields \\ []) do
+    struct
+    |> Map.from_struct()
+    |> Map.take(fields)
+    |> Enum.map(fn {key, val} ->
+        {Atom.to_string(key), val}
+        end)
+    |> Enum.into(%{})
+  end
+
+  def underscore_map_keys(schema_list) do
+    schema_list
+    |> Enum.map(fn map ->
+      for {key, val} <- map, into: %{} do
+        {Macro.underscore(key), val}
+      end
+    end)
   end
 end
