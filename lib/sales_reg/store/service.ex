@@ -15,7 +15,9 @@ defmodule SalesReg.Store.Service do
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
 
-    many_to_many(:categories, Category,
+    many_to_many(
+      :categories,
+      Category,
       join_through: "services_categories",
       on_replace: :delete,
       on_delete: :delete_all
@@ -27,6 +29,7 @@ defmodule SalesReg.Store.Service do
   end
 
   @required_fields [:name, :price, :company_id, :user_id]
+
   @doc false
   def changeset(service, attrs) do
     service

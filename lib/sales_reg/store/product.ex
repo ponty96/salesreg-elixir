@@ -9,7 +9,6 @@ defmodule SalesReg.Store.Product do
   @foreign_key_type :binary_id
   schema "products" do
     field(:description, :string)
-    field(:featured_image, :string)
     field(:name, :string)
     field(:stock_quantity, :string)
     field(:minimum_stock_quantity, :string)
@@ -19,7 +18,9 @@ defmodule SalesReg.Store.Product do
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
 
-    many_to_many(:categories, Category,
+    many_to_many(
+      :categories,
+      Category,
       join_through: "products_categories",
       on_replace: :delete,
       on_delete: :delete_all
@@ -31,7 +32,6 @@ defmodule SalesReg.Store.Product do
   end
 
   @fields [
-    :featured_image,
     :description
   ]
 
