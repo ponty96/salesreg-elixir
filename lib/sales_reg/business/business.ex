@@ -4,7 +4,7 @@ defmodule SalesReg.Business do
   """
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
-
+  
   use SalesReg.Context, [
     Location,
     Contact,
