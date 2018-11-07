@@ -348,7 +348,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :expense,
       :category,
       :tag,
-      :bank
+      :bank,
+      :product_group,
+      :option
     ])
 
     resolve_type(fn
@@ -368,6 +370,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Category{}, _ -> :category
       %Tag{}, _ -> :tag
       %Bank{}, _ -> :bank
+      %ProductGroup{}, _ -> :product_group
+      %Option{}, _ -> :option
     end)
   end
 
@@ -497,11 +501,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company_id, non_null(:uuid))
 
     field(:product, non_null(:product_input))
-  end
-
-  input_object :product_group_update_input do
-    field(:id, non_null(:uuid))
-    field(:options, non_null(list_of(:uuid)))
   end
 
   input_object :product_input do

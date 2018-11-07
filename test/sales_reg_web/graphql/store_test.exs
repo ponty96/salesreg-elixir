@@ -1,6 +1,6 @@
 defmodule SalesRegWeb.GraphqlStoreTest do
   use SalesRegWeb.ConnCase
-  alias SalesReg.{Store, Repo}
+  alias SalesReg.Store
   alias Faker.Commerce.En, as: CommerceEn
 
   @create_product_query """
@@ -152,9 +152,6 @@ defmodule SalesRegWeb.GraphqlStoreTest do
   end
 
   describe "product tests" do
-    # test for user editing a products details
-    # test for user editing a product's options
-
     @tag :create_product_without_variant
     # test that user successfully creates a new product without variant
     test "create product without variant", %{company: company, user: user, conn: conn} do
@@ -333,5 +330,83 @@ defmodule SalesRegWeb.GraphqlStoreTest do
     assert product["id"] == edit_product_res["data"]["id"]
     refute product["minimum_sku"] == edit_product_res["data"]["minimum_sku"]
     assert edit_product_res["data"]["minimum_sku"] == "30"
+  end
+
+  # test for user editing a product's options
+  @tag :edit_product_options
+  test "test that user can successfully change a product's options", %{
+    company: company,
+    user: user,
+    conn: conn
+  } do
+    variables = %{params: product_mutation_variables_with_variant(company, user)}
+
+    res =
+      conn
+      |> post("/graphiql", Helpers.query_skeleton(@create_product_query, variables))
+
+    response = json_response(res, 200)["data"]["createProduct"]
+
+    assert response["success"] == true
+    assert response["data"]
+    data = response["data"]
+    assert @valid_product_params.name == data["name"]
+    refute data["optionValues"] == []
+    assert data["productGroup"]
+    refute data["productGroup"]["options"] == []
+
+    product_options = data["productGroup"]["options"]
+
+    {:ok, company_products} = Store.list_company_products(company.id)
+    assert length(company_products) == 1
+
+    edit_product_options_query = """
+      mutation updateProductGroupOptions($id: Uuid!, $options: [Uuid]!){
+        updateProductGroupOptions(id: $id, options: $options){
+          success
+          data {
+            ... on ProductGroup {
+              id
+              title
+              options {
+                id
+                name
+                optionValues {
+                  name
+                  option {
+                    name
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    """
+
+    options =
+      Store.list_company_options(company.id)
+      |> elem(1)
+      |> Enum.take_random(4)
+      |> Enum.map(& &1.id)
+
+    edit_product_options_variables = %{
+      id: data["productGroup"]["id"],
+      options: options
+    }
+
+    edit_product_options_res =
+      conn
+      |> post(
+        "/graphiql",
+        Helpers.query_skeleton(edit_product_options_query, edit_product_options_variables)
+      )
+
+    edit_product_options_response =
+      json_response(edit_product_options_res, 200)["data"]["updateProductGroupOptions"]
+
+    edit_product_options_response["success"] == true
+
+    refute edit_product_options_response["data"]["options"] == product_options
   end
 end

@@ -62,7 +62,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     |> Store.update_product(params)
   end
 
-  def update_product_group_options(%{product_group: params}, _res) do
+  def update_product_group_options(%{id: id, options: options} = params, _res) do
     Store.update_product_group_options(params)
   end
 end

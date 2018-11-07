@@ -350,7 +350,7 @@ defmodule SalesReg.Store do
 
   defp compare_and_get_disconnected_options(current_options_structs, new_options_ids) do
     options_ids = Enum.map(current_options_structs, & &1.id)
-    MapSet.difference(MapSet.new(options_ids), MapSet.new(new_options_ids))
+    MapSet.difference(MapSet.new(options_ids), MapSet.new(new_options_ids)) |> MapSet.to_list()
   end
 
   defp option_values_of_disconnected_options(options_ids) do

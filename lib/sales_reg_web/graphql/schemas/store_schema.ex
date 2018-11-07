@@ -34,7 +34,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       Update Product Group Options
     """
     field :update_product_group_options, :mutation_response do
-      arg(:product_group, non_null(:product_group_update_input))
+      arg(:id, non_null(:uuid))
+      arg(:options, non_null(list_of(:uuid)))
 
       middleware(Authorize)
       resolve(&StoreResolver.update_product_group_options/2)
