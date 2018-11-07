@@ -45,7 +45,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     """
     field :update_product, :mutation_response do
       arg(:product, non_null(:product_input))
-      arg(:product_id, :uuid)
+      arg(:product_id, non_null(:uuid))
 
       middleware(Authorize)
       resolve(&StoreResolver.update_product/2)

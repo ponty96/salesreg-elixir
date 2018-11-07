@@ -3,7 +3,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
   alias SalesReg.{Store, Repo}
   alias Faker.Commerce.En, as: CommerceEn
 
-  @query """
+  @create_product_query """
     mutation createProduct($params: ProductGroupInput!){
       createProduct(
       params: $params
@@ -17,6 +17,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
           ... on Product {
             id
             name
+            minimum_sku
             productGroup {
               id
               title
@@ -47,6 +48,52 @@ defmodule SalesRegWeb.GraphqlStoreTest do
       }
     }
   """
+
+  @update_product_query """
+    mutation updateProduct($id: Uuid!, $params: ProductInput!){
+      updateProduct(productId: $id, product: $params){
+        success
+        fieldErrors {
+          key
+          message
+        }
+
+        data {
+          ... on Product {
+            id
+            name
+            minimum_sku
+            productGroup {
+              id
+              title
+              options {
+                id
+                name
+              }
+
+              products {
+                optionValues {
+                  name
+                  option {
+                    name
+                  }
+                }
+              }
+            }
+            optionValues {
+              id
+              name
+              option {
+                id,
+                name
+              }
+            }
+          }
+        }
+      }
+    }
+  """
+
   @valid_product_group_params %{
     product_group_title: "Leather Shoe"
   }
@@ -115,7 +162,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
 
       res =
         conn
-        |> post("/graphiql", Helpers.query_skeleton(@query, variables))
+        |> post("/graphiql", Helpers.query_skeleton(@create_product_query, variables))
 
       response = json_response(res, 200)["data"]["createProduct"]
 
@@ -138,7 +185,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
 
       res =
         conn
-        |> post("/graphiql", Helpers.query_skeleton(@query, variables))
+        |> post("/graphiql", Helpers.query_skeleton(@create_product_query, variables))
 
       response = json_response(res, 200)["data"]["createProduct"]
 
@@ -166,7 +213,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
 
       res =
         conn
-        |> post("/graphiql", Helpers.query_skeleton(@query, variables))
+        |> post("/graphiql", Helpers.query_skeleton(@create_product_query, variables))
 
       response = json_response(res, 200)["data"]["createProduct"]
 
@@ -186,7 +233,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
 
       add_variant_res =
         conn
-        |> post("/graphiql", Helpers.query_skeleton(@query, add_variant_variables))
+        |> post("/graphiql", Helpers.query_skeleton(@create_product_query, add_variant_variables))
 
       add_variant_response = json_response(add_variant_res, 200)["data"]["createProduct"]
 
@@ -211,7 +258,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
 
     res =
       conn
-      |> post("/graphiql", Helpers.query_skeleton(@query, variables))
+      |> post("/graphiql", Helpers.query_skeleton(@create_product_query, variables))
 
     response = json_response(res, 200)["data"]["createProduct"]
 
@@ -234,7 +281,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
 
     add_variant_res =
       conn
-      |> post("/graphiql", Helpers.query_skeleton(@query, add_variant_variables))
+      |> post("/graphiql", Helpers.query_skeleton(@create_product_query, add_variant_variables))
 
     add_variant_response = json_response(add_variant_res, 200)["data"]["createProduct"]
 
@@ -252,5 +299,39 @@ defmodule SalesRegWeb.GraphqlStoreTest do
 
     {:ok, company_products} = Store.list_company_products(company.id)
     assert length(company_products) == 1
+  end
+
+  # test for user editing a products details
+  @tag :edit_product_details
+  test "edit a product details", %{company: company, user: user, conn: conn} do
+    variables = %{params: product_mutation_variables_without_variant(company, user)}
+
+    res =
+      conn
+      |> post("/graphiql", Helpers.query_skeleton(@create_product_query, variables))
+
+    response = json_response(res, 200)["data"]["createProduct"]
+
+    assert response["success"] == true
+    product = response["data"]
+    assert product["minimum_sku"] == "10"
+
+    edit_product_params =
+      company
+      |> valid_product_params(user)
+      |> Map.update(:minimum_sku, "30", fn val -> "30" end)
+
+    edit_product_variables = %{id: product["id"], params: edit_product_params}
+
+    edit_product_res =
+      conn
+      |> post("/graphiql", Helpers.query_skeleton(@update_product_query, edit_product_variables))
+
+    edit_product_res = json_response(edit_product_res, 200)["data"]["updateProduct"]
+
+    assert edit_product_res["success"] == true
+    assert product["id"] == edit_product_res["data"]["id"]
+    refute product["minimum_sku"] == edit_product_res["data"]["minimum_sku"]
+    assert edit_product_res["data"]["minimum_sku"] == "30"
   end
 end

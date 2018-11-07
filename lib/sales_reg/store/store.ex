@@ -261,7 +261,7 @@ defmodule SalesReg.Store do
         :update_product_grp,
         product_group_changeset(product_grp, product_grp_params)
       )
-      |> Multi.run(:get_product, fn _repo ->
+      |> Multi.run(:get_product, fn _repo, _params ->
         product_id = Map.get(product_params, :id)
         {:ok, Repo.get!(Product, product_id)}
       end)
