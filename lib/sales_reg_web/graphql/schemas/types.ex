@@ -483,7 +483,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:categories, list_of(:uuid))
     field(:tags, list_of(:string))
 
-
     field(:featured_image, non_null(:string))
     field(:images, list_of(:string))
   end

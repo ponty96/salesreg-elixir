@@ -2,6 +2,8 @@ defmodule SalesReg.Order.Invoice do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
   schema "invoices" do
     field(:due_date, :string)
 
