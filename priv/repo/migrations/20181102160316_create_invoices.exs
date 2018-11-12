@@ -3,13 +3,13 @@ defmodule SalesReg.Repo.Migrations.CreateInvoices do
 
   def change do
     create table(:invoices, primary_key: false) do
-      add(:id, :binary_id)
+      add(:id, :binary_id, primary_key: true)
       add(:due_date, :string)
 
-      add(:sale_id, references(:sales))
-      add(:user_id, references(:users))
-      add(:company_id, references(:companies))
-      
+      add(:sale_id, references(:sales, type: :binary_id))
+      add(:user_id, references(:users, type: :binary_id))
+      add(:company_id, references(:companies, type: :binary_id))
+
       timestamps()
     end
 
