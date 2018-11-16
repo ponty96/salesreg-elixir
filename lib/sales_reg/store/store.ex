@@ -25,6 +25,18 @@ defmodule SalesReg.Store do
   end
 
   def load_categories(%{"categories" => categories_ids}) do
+    all_categories(categories_ids)
+  end
+
+  def load_categories(%{categories: []}) do
+    []
+  end
+
+  def load_categories(%{categories: categories_ids}) do
+    all_categories(categories_ids)
+  end
+
+  defp all_categories(categories_ids) do
     Repo.all(
       from(
         c in Category,
