@@ -63,7 +63,8 @@ defmodule SalesReg.Mixfile do
       {:uuid, "~> 1.1"},
       {:hackney, "~> 1.9"},
       {:sweet_xml, "~> 0.6"},
-      {:machinery, "~> 0.16.0"}
+      {:machinery, "~> 0.16.0"},
+      {:jason, "~> 1.1"}
     ]
   end
 
