@@ -74,7 +74,9 @@ defmodule SalesReg.Seed do
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}",
       "categories" => categories,
-      "tags" => tags
+      "tags" => tags,
+      "images" => [Avatar.image_url()],
+      "featured_image" => Avatar.image_url()
     }
 
     Store.add_service(service_params)
