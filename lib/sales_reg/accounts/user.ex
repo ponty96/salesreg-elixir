@@ -35,6 +35,7 @@ defmodule SalesReg.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
+    |> change(attrs)
     |> cast(attrs, @update_fields ++ @fields)
     |> validate_required(@update_fields ++ [:date_of_birth])
   end
@@ -45,8 +46,8 @@ defmodule SalesReg.Accounts.User do
     |> validate_required(@required_fields ++ @registration_fields ++ @update_fields)
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
-    |> validate_password
-    |> set_password
+    |> validate_password()
+    |> set_password()
     |> cast_assoc(:company)
   end
 

@@ -9,7 +9,6 @@ defmodule SalesReg.Store.Product do
   @foreign_key_type :binary_id
   schema "products" do
     field(:description, :string)
-    field(:featured_image, :string)
     field(:name, :string)
     field(:stock_quantity, :string)
     field(:minimum_stock_quantity, :string)
@@ -33,7 +32,6 @@ defmodule SalesReg.Store.Product do
   end
 
   @fields [
-    :featured_image,
     :description
   ]
 

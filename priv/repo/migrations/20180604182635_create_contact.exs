@@ -14,7 +14,6 @@ defmodule SalesReg.Repo.Migrations.CreateContact do
       add(:fax, :string)
       add(:allows_marketing, :string)
 
-
       add(:instagram, :string)
       add(:twitter, :string)
       add(:facebook, :string)
