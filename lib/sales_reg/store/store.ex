@@ -26,7 +26,8 @@ defmodule SalesReg.Store do
 
   def load_categories(%{"categories" => categories_ids}) do
     Repo.all(
-      from(c in Category,
+      from(
+        c in Category,
         where: c.id in ^categories_ids
       )
     )
@@ -39,7 +40,7 @@ defmodule SalesReg.Store do
   def load_tags(%{tags: tag_names, company_id: company_id}) do
     gen_company_tags(tag_names, [], company_id)
   end
-  
+
   defp gen_company_tags([], acc, _company_id) do
     acc
   end
@@ -49,12 +50,12 @@ defmodule SalesReg.Store do
   end
 
   defp tag_struct(tag_name, company_id) do
-    tag = 
+    tag =
       Tag
       |> where([t], t.name == ^tag_name)
       |> where([t], t.company_id == ^company_id)
       |> Repo.one()
-    
+
     case tag do
       %Tag{} ->
         tag

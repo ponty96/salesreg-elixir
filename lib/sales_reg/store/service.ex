@@ -15,11 +15,14 @@ defmodule SalesReg.Store.Service do
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
 
-    many_to_many(:categories, Category,
+    many_to_many(
+      :categories,
+      Category,
       join_through: "services_categories",
       on_replace: :delete,
       on_delete: :delete_all
     )
+
     many_to_many(:tags, SalesReg.Store.Tag, join_through: "services_tags", on_delete: :delete_all)
 
     timestamps()

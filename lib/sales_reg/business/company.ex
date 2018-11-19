@@ -34,6 +34,7 @@ defmodule SalesReg.Business.Company do
     |> unique_constraint(:owner_id, message: "Sorry, but you already have a business with us")
     |> cast_assoc(:phone)
     |> validate_required(@required_fields)
+
     # |> cast_assoc(:branches)
   end
 end
