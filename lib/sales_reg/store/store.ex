@@ -20,6 +20,10 @@ defmodule SalesReg.Store do
     queryable
   end
 
+  def load_categories(%{categories: categories}) do
+    load_categories(%{"categories" => categories})
+  end
+
   def load_categories(%{"categories" => []}) do
     []
   end
