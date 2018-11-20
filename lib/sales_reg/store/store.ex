@@ -9,7 +9,8 @@ defmodule SalesReg.Store do
     Product,
     Service,
     Category,
-    Tag
+    Tag,
+    Invoice
   ]
 
   def data do
