@@ -18,10 +18,11 @@ defmodule SalesReg.Order.Sale do
 
     has_one(:invoice, SalesReg.Order.Invoice)
     has_many(:items, SalesReg.Order.Item, on_replace: :delete)
+    has_many(:receipts, SalesReg.Order.Receipt)
+    
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:contact, SalesReg.Business.Contact)
     belongs_to(:company, SalesReg.Business.Company)
-    belongs_to(:receipts, SalesReg.Order.Receipt)
 
     timestamps()
   end
