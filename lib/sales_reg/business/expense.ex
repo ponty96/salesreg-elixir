@@ -52,6 +52,7 @@ defmodule SalesReg.Business.Expense do
     items_amount =
       changeset.changes.items_amount
       |> Decimal.to_float()
+      |> Float.round(2)
 
     cond do
       items_amount == 0 ->
