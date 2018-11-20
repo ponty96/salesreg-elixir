@@ -4,10 +4,11 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
   alias Faker.Commerce
 
   setup %{company: company, user: user} do
-    categories = Enum.map(1..3, fn _index ->
-      {:ok, category} = Seed.add_category(company.id, user.id)
-      category.id
-    end)
+    categories =
+      Enum.map(1..3, fn _index ->
+        {:ok, category} = Seed.add_category(company.id, user.id)
+        category.id
+      end)
 
     %{categories: categories}
   end
@@ -20,7 +21,9 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}",
       "categories" => categories,
-      "tags" => tags
+      "tags" => tags,
+      "featured_image" =>
+        "https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/9d799c33cbf767ffc1a72e53997218f7"
     }
   end
 
@@ -43,13 +46,13 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
   }
 
   describe "service tests" do
-    @tag :create_service 
+    @tag :create_service
     test "create a service", %{
-      company: company, 
+      company: company,
       user: user,
       categories: categories,
       conn: conn
-      } do
+    } do
       query_doc = """
         mutation upsertService($service: ServiceInput!){
           upsertService(service: $service){
@@ -70,10 +73,11 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
         }
       """
 
-      variables = service_params(
-          user.id, 
+      variables =
+        service_params(
+          user.id,
           company.id,
-          categories, 
+          categories,
           ["#love", "#tbt", "#tgif", "#igers"]
         )
 
@@ -83,7 +87,6 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
 
       response = json_response(res, 200)["data"]["upsertService"]
 
-      
       assert response["data"]["description"] == variables["description"]
       assert response["data"]["name"] == variables["name"]
       assert response["data"]["price"] == variables["price"]
@@ -91,17 +94,18 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
       assert response["fieldErrors"] == []
     end
 
-    @tag :update_service 
+    @tag :update_service
     test "update a service", %{
-      company: company, 
+      company: company,
       user: user,
       categories: categories,
-      conn: conn,
-      } do
-        {:ok, service} = user.id
+      conn: conn
+    } do
+      {:ok, service} =
+        user.id
         |> Seed.add_service(company.id, categories, [])
-      
-        query_doc = """
+
+      query_doc = """
           mutation upsertService($service: ServiceInput!, $serviceId: ID!){
             upsertService(service: $service, serviceId: $serviceId){
               success,
@@ -121,19 +125,23 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
           }
       """
 
-      variables = service_params(
-          user.id, 
+      variables =
+        service_params(
+          user.id,
           company.id,
-          categories, 
+          categories,
           ["#love", "#tbt", "#tgif", "#igers"]
         )
-  
+
       res =
         conn
-        |> post("/graphiql", Helpers.query_skeleton(query_doc, %{service: variables, serviceId: "#{service.id}"}))
+        |> post(
+          "/graphiql",
+          Helpers.query_skeleton(query_doc, %{service: variables, serviceId: "#{service.id}"})
+        )
 
       response = json_response(res, 200)["data"]["upsertService"]
-      
+
       assert response["data"]["description"] == variables["description"]
       assert response["data"]["name"] == variables["name"]
       assert response["data"]["price"] == variables["price"]
@@ -153,10 +161,10 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
           {:ok, service} =
             user.id
             |> Seed.add_service(
-                company.id, 
-                categories,
-                ["#love", "#tbt", "#tgif", "#igers"]
-              )
+              company.id,
+              categories,
+              ["#love", "#tbt", "#tgif", "#igers"]
+            )
 
           service
           |> Helpers.transform_struct([
@@ -178,6 +186,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
           }
         }
       """
+
       variables = %{companyId: company.id}
 
       res =
@@ -200,55 +209,56 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
       conn: conn
     } do
       add_many_services =
-      Enum.map(1..3, fn _index ->
-        {:ok, service} =
-          user.id
-          |> service_params(
-            company.id,
-            categories, 
-            ["#love", "#tbt", "#tgif", "#igers"]
-          )
-          |> Store.add_service()
+        Enum.map(1..3, fn _index ->
+          {:ok, service} =
+            user.id
+            |> service_params(
+              company.id,
+              categories,
+              ["#love", "#tbt", "#tgif", "#igers"]
+            )
+            |> Store.add_service()
 
-        service
-        |> Helpers.transform_struct([
-          :id,
-          :name
-        ])
-      end)
-      |> Enum.sort()
+          service
+          |> Helpers.transform_struct([
+            :id,
+            :name
+          ])
+        end)
+        |> Enum.sort()
 
-    query_doc = """
-      query searchServicesByName($query: String!){
-        searchServicesByName(query: $query){
-          id,
-          name
+      query_doc = """
+        query searchServicesByName($query: String!){
+          searchServicesByName(query: $query){
+            id,
+            name
+          }
         }
-      }
-    """
-    variables = %{query: "engineering"}
+      """
 
-    res =
-      conn
-      |> post("/graphiql", Helpers.query_skeleton(query_doc, variables))
+      variables = %{query: "engineering"}
 
-    response =
-      json_response(res, 200)["data"]["searchServicesByName"]
-      |> Helpers.underscore_map_keys()
-      |> Enum.sort()
+      res =
+        conn
+        |> post("/graphiql", Helpers.query_skeleton(query_doc, variables))
 
-    assert response == add_many_services
+      response =
+        json_response(res, 200)["data"]["searchServicesByName"]
+        |> Helpers.underscore_map_keys()
+        |> Enum.sort()
+
+      assert response == add_many_services
     end
   end
 
   describe "category tests" do
-    @tag :create_category 
+    @tag :create_category
     test "create a category", %{
-      company: company, 
+      company: company,
       user: user,
       conn: conn
-      } do
-        query_doc = """
+    } do
+      query_doc = """
           mutation upsertCategory($category: CategoryInput!){
             upsertCategory(category: $category){
               success,
@@ -273,23 +283,24 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
         |> post("/graphiql", Helpers.query_skeleton(query_doc, %{category: variables}))
 
       response = json_response(res, 200)["data"]["upsertCategory"]
-      
+
       assert response["data"]["description"] == variables["description"]
       assert response["data"]["title"] == variables["title"]
       assert response["success"] == true
       assert response["fieldErrors"] == []
     end
 
-    @tag :update_category 
+    @tag :update_category
     test "update a category", %{
-      company: company, 
+      company: company,
       user: user,
       conn: conn
-      } do
-        {:ok, category} = company.id
+    } do
+      {:ok, category} =
+        company.id
         |> Seed.add_category(user.id)
 
-        query_doc = """
+      query_doc = """
           mutation upsertCategory($category: CategoryInput!, $categoryId: ID!){
             upsertCategory(category: $category, categoryId: $categoryId){
               success,
@@ -311,10 +322,13 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
 
       res =
         conn
-        |> post("/graphiql", Helpers.query_skeleton(query_doc, %{category: variables, categoryId: "#{category.id}"}))
+        |> post(
+          "/graphiql",
+          Helpers.query_skeleton(query_doc, %{category: variables, categoryId: "#{category.id}"})
+        )
 
       response = json_response(res, 200)["data"]["upsertCategory"]
-      
+
       assert response["data"]["description"] == variables["description"]
       assert response["data"]["title"] == variables["title"]
       assert response["success"] == true
@@ -327,6 +341,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     } do
       {:ok, user} = Accounts.create_user(@user_params)
       {:ok, company} = Seed.create_company(user.id)
+
       add_many_services =
         Enum.map(1..3, fn _index ->
           {:ok, category} =
@@ -351,6 +366,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
           }
         }
       """
+
       variables = %{companyId: company.id}
 
       res =

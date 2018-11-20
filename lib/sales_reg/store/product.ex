@@ -14,6 +14,8 @@ defmodule SalesReg.Store.Product do
     field(:minimum_stock_quantity, :string)
     field(:cost_price, :string)
     field(:selling_price, :string)
+    field(:featured_image, :string)
+    field(:images, {:array, :string})
 
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
@@ -32,7 +34,8 @@ defmodule SalesReg.Store.Product do
   end
 
   @fields [
-    :description
+    :description,
+    :images
   ]
 
   @required_fields [
@@ -42,7 +45,8 @@ defmodule SalesReg.Store.Product do
     :user_id,
     :stock_quantity,
     :minimum_stock_quantity,
-    :cost_price
+    :cost_price,
+    :featured_image
   ]
   @doc false
   def changeset(product, attrs) do

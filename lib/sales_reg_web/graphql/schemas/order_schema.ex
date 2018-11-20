@@ -49,7 +49,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
       resolve(&OrderResolver.update_invoice_due_date/2)
     end
-
   end
 
   ### QUERIES
