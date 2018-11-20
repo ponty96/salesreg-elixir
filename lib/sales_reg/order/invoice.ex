@@ -4,7 +4,7 @@ defmodule SalesReg.Order.Invoice do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
-  
+
   schema "invoices" do
     field(:due_date, :string)
 

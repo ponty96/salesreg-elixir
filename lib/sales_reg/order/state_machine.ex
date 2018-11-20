@@ -44,7 +44,7 @@ defmodule SalesReg.Order.OrderStateMachine do
 
   # decrement inventory after a sales order has been processed
   def after_transition(%Sale{} = order, "processed") do
-    invoice_params =  build_invoice_params(order)
+    invoice_params = build_invoice_params(order)
     Store.add_invoice(invoice_params)
     # Write code to handle errors
     Store.update_product_inventory(:decrement, order.items)
