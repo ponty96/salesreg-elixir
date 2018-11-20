@@ -11,6 +11,7 @@ defmodule SalesReg.Repo.Migrations.CreateCompanies do
       add(:currency, :string)
       add(:description, :string)
       add(:logo, :string)
+      add(:cover_photo, :string)
 
       timestamps()
     end

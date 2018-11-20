@@ -13,6 +13,12 @@ defmodule SalesRegWeb.Router do
     plug(:accepts, ["json"])
   end
 
+  scope "/api/image" do
+    pipe_through(:api)
+
+    post("/upload", SalesRegWeb.ImageController, :upload_image)
+  end
+
   pipeline :graphql do
     plug(SalesRegWeb.AuthPipeline)
     plug(SalesRegWeb.AbsintheContext)
