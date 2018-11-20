@@ -21,13 +21,18 @@ defmodule SalesReg.Store do
     queryable
   end
 
+  def load_categories(%{categories: categories}) do
+    load_categories(%{"categories" => categories})
+  end
+
   def load_categories(%{"categories" => []}) do
     []
   end
 
   def load_categories(%{"categories" => categories_ids}) do
     Repo.all(
-      from(c in Category,
+      from(
+        c in Category,
         where: c.id in ^categories_ids
       )
     )

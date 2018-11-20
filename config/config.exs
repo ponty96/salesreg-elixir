@@ -33,13 +33,43 @@ config :guardian, Guardian.DB,
   sweep_interval: 60,
   ttl: {30, :days}
 
-###############################################################
-### AWS (image upload functionality) config
-###############################################################
+# config :arc,
+#   storage: Arc.Storage.S3, # or Arc.Storage.Local
+#   bucket: System.get_env("AWS_S3_BUCKET")
 
 # config :ex_aws,
 #   access_key_id: [{:system, "AWS_ACCESS_KEY_ID"}, :instance_role],
-#   secret_access_key: [{:system, "AWS_SECRET_ACCESS_KEY"}, :instance_role]
+#   secret_access_key: [{:system, "AWS_SECRET_ACCESS_KEY"}, :instance_role],
+#   scheme: "https://",
+#   host: %{"nyc3" => System.get_env("AWS_HOST")},
+#   region: "nyc3"
+
+config :arc,
+  storage: Arc.Storage.S3,
+  bucket: System.get_env("AWS_S3_BUCKET"),
+  virtual_host: false,
+  asset_host:
+    "https://yipcartimages.nyc3.digitaloceanspaces.com/#{System.get_env("AWS_S3_BUCKET")}"
+
+config :ex_aws,
+  access_key_id: System.get_env("AWS_ACCESS_KEY_ID"),
+  secret_access_key: System.get_env("AWS_SECRET_ACCESS_KEY"),
+  s3: [
+    scheme: "https://",
+    host: System.get_env("AWS_HOST"),
+    region: "nyc3"
+  ]
+
+config :ex_aws, debug_requests: true
+
+config :plug, :statuses, %{
+  210 => "Image not uploaded",
+  209 => "Image successfully uploaded"
+}
+
+###############################################################
+### AWS (image upload functionality) config
+###############################################################
 
 # config :ex_aws, :hackney_opts,
 #   follow_redirect: true,

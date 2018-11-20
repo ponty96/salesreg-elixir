@@ -51,7 +51,7 @@ defmodule SalesReg.Seed do
   def add_product(user_id, company_id, categories, tags) do
     product_params = %{
       "description" => "Our product is #{CommerceEn.product_name()}",
-      "featured_image" => Avatar.image_url(),
+      "images" => [Avatar.image_url()],
       "name" => CommerceEn.product_name(),
       "cost_price" => "#{Enum.random(3000..100_000)}",
       "minimum_stock_quantity" => "#{Enum.random(5..100)}",
@@ -74,7 +74,9 @@ defmodule SalesReg.Seed do
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}",
       "categories" => categories,
-      "tags" => tags
+      "tags" => tags,
+      "images" => [Avatar.image_url()],
+      "featured_image" => Avatar.image_url()
     }
 
     Store.add_service(service_params)
