@@ -13,7 +13,14 @@ defmodule SalesRegWeb.GraphqlTestHelpers do
     %{
       "operationName" => "#{query_name}",
       "query" => "mutation #{query_name}{#{query_doc}}",
-      "variables" => "{}"
+      "variables" => "#{}"
+    }
+  end
+
+  def query_skeleton(query, variables) when is_map(variables) do
+    %{
+      "query" => "#{query}",
+      "variables" => "#{Jason.encode!(variables)}"
     }
   end
 

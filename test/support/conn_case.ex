@@ -23,7 +23,9 @@ defmodule SalesRegWeb.ConnCase do
 
       alias SalesReg.{
         Business,
-        Accounts
+        Accounts,
+        Seed,
+        Store
       }
 
       alias SalesRegWeb.GraphqlTestHelpers, as: Helpers
