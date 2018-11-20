@@ -94,3 +94,11 @@ end)
 Enum.map(1..10, fn _index ->
   Seed.create_bank(company.id)
 end)
+
+sale_order = 
+  Seed.processed_sale_orders() 
+  |> Enum.random()
+
+Seed.create_invoice(sale_order)
+  
+

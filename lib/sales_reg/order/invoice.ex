@@ -4,6 +4,7 @@ defmodule SalesReg.Order.Invoice do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+  
   schema "invoices" do
     field(:due_date, :string)
 
@@ -26,5 +27,6 @@ defmodule SalesReg.Order.Invoice do
     invoice
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
+    |> assoc_constraint(:sale)
   end
 end
