@@ -38,7 +38,6 @@ defmodule SalesReg.Seed do
       about: "Building software products",
       contact_email: "someemail@gmail.com",
       title: "Stacknbit Private Limited Company",
-      category: Enum.random(@company_categories),
       head_office: gen_location_params(),
       currency: "Naira(₦)",
       description: CompanyEn.bs(),
@@ -263,6 +262,17 @@ defmodule SalesReg.Seed do
     }
 
     SalesReg.Order.add_sale(params)
+  end
+
+  def create_invoice(order) do
+    params = %{
+      "due_date" => order.date,
+      "user_id" => order.user_id,
+      "company_id" => order.company_id,
+      "sale_id" => order.sale_id
+    }
+
+    SalesReg.Order.add_invoice(params)
   end
 
   # type could be product or service

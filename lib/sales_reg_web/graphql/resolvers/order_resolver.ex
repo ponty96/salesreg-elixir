@@ -37,7 +37,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     Order.update_status(String.to_atom(order_type), id, status)
   end
 
-  def update_invoice_due_date(%{invoice: params, invoice_id: id}) do
+  def update_invoice_due_date(%{invoice: params, invoice_id: id}, _res) do
     Order.get_invoice(id)
     |> Order.update_invoice(params)
   end
