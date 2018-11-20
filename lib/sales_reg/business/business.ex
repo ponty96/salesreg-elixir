@@ -75,22 +75,22 @@ defmodule SalesReg.Business do
 
   def create_bank(params) do
     bank_list = company_banks(params.company_id)
-    
+
     case params do
-      %{is_primary: true} -> 
+      %{is_primary: true} ->
         if Enum.count(bank_list) == 0 do
           Business.add_bank(params)
         else
           update_bank_field(params.company_id)
           Business.add_bank(params)
         end
-      
+
       _ ->
         if Enum.count(bank_list) == 0 do
           params
           |> Map.put(:is_primary, true)
           |> Business.add_bank()
-        else 
+        else
           Business.add_bank(params)
         end
     end
@@ -125,9 +125,8 @@ defmodule SalesReg.Business do
 
   def list_company_tags(company_id) do
     {:ok,
-      Tag
-      |> where([t], t.company_id == ^company_id)
-      |> Repo.all()
-    }
+     Tag
+     |> where([t], t.company_id == ^company_id)
+     |> Repo.all()}
   end
 end

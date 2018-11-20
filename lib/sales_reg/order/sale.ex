@@ -16,10 +16,12 @@ defmodule SalesReg.Order.Sale do
 
     field(:state, :string, virtual: true)
 
+    has_one(:invoice, SalesReg.Order.Invoice)
     has_many(:items, SalesReg.Order.Item, on_replace: :delete)
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:contact, SalesReg.Business.Contact)
     belongs_to(:company, SalesReg.Business.Company)
+    belongs_to(:receipts, SalesReg.Order.Receipt)
 
     timestamps()
   end
