@@ -12,7 +12,8 @@ defmodule SalesReg.Store do
     Tag,
     ProductGroup,
     Option,
-    OptionValue
+    OptionValue,
+    Invoice
   ]
 
   def data do
@@ -33,15 +34,20 @@ defmodule SalesReg.Store do
     |> Enum.map(&Repo.insert(Option.changeset(%Option{}, &1)))
   end
 
-  def load_categories(%{"categories" => categories}) do
-    load_categories(%{categories: categories})
-  end
-
   def load_categories(%{categories: []}), do: []
-
-  def load_categories(%{categories: categories_ids}) do
+  def load_categories(%{categories: categories}) do
+    load_categories(%{"categories" => categories})
+  end
+  def load_categories(%{"categories" => []}) do
+    []
+  end
+  def load_categories(%{"categories" => categories_ids}) do
+    all_categories(categories_ids)
+  end
+  defp all_categories(categories_ids) do
     Repo.all(
-      from(c in Category,
+      from(
+        c in Category,
         where: c.id in ^categories_ids
       )
     )

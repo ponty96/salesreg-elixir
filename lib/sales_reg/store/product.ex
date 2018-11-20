@@ -9,17 +9,20 @@ defmodule SalesReg.Store.Product do
   @foreign_key_type :binary_id
   schema "products" do
     field(:description, :string)
-    field(:featured_image, :string)
     field(:name, :string)
     field(:sku, :string)
     field(:minimum_sku, :string)
     field(:cost_price, :string)
     field(:selling_price, :string)
+    field(:featured_image, :string)
+    field(:images, {:array, :string})
 
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
 
-    many_to_many(:categories, Category,
+    many_to_many(
+      :categories,
+      Category,
       join_through: "products_categories",
       on_replace: :delete
     )
@@ -34,10 +37,9 @@ defmodule SalesReg.Store.Product do
   end
 
   @fields [
-    :featured_image,
     :description,
-    :product_group_id,
-    :cost_price
+    :images,
+    :product_group_id
   ]
 
   @required_fields [
@@ -46,7 +48,8 @@ defmodule SalesReg.Store.Product do
     :company_id,
     :user_id,
     :sku,
-    :minimum_sku
+    :minimum_sku,
+    :featured_image
   ]
   @doc false
   def changeset(product, attrs) do

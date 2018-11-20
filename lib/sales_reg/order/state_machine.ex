@@ -1,8 +1,6 @@
 defmodule SalesReg.Order.OrderStateMachine do
-  alias SalesReg.Order.Purchase
-  alias SalesReg.Order.Sale
-  alias SalesReg.Order
-  alias SalesReg.Store
+  alias SalesReg.Order.{Purchase, Sale}
+  alias SalesReg.{Order, Store}
 
   use Machinery,
     # The first state declared will be considered
@@ -46,6 +44,8 @@ defmodule SalesReg.Order.OrderStateMachine do
 
   # decrement inventory after a sales order has been processed
   def after_transition(%Sale{} = order, "processed") do
+    invoice_params = build_invoice_params(order)
+    Store.add_invoice(invoice_params)
     # Write code to handle errors
     Store.update_product_inventory(:decrement, order.items)
     order
@@ -56,5 +56,14 @@ defmodule SalesReg.Order.OrderStateMachine do
     # Write code to handle errors
     Store.update_product_inventory(:increment, order.items)
     order
+  end
+
+  defp build_invoice_params(order) do
+    %{
+      due_date: order.date,
+      sale_id: order.id,
+      user_id: order.user_id,
+      company_id: order.company_id
+    }
   end
 end

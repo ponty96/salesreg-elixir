@@ -10,7 +10,6 @@ defmodule SalesReg.Order.Item do
 
     belongs_to(:purchase, SalesReg.Order.Purchase)
     belongs_to(:sale, SalesReg.Order.Sale)
-
     belongs_to(:product, SalesReg.Store.Product)
     belongs_to(:service, SalesReg.Store.Service)
 

@@ -112,7 +112,9 @@ defmodule SalesRegWeb do
         Order.Sale,
         Store.ProductGroup,
         Store.Option,
-        Store.OptionValue
+        Store.OptionValue,
+        Order.Invoice,
+        Order.Receipt
       }
     end
   end

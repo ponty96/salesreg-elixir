@@ -23,10 +23,13 @@ defmodule SalesRegWeb.ConnCase do
 
       alias SalesReg.{
         Business,
-        Accounts
+        Accounts,
+        Seed,
+        Store
       }
 
       alias SalesRegWeb.GraphqlTestHelpers, as: Helpers
+      alias SalesReg.Seed
 
       # The default endpoint for testing
       @endpoint SalesRegWeb.Endpoint

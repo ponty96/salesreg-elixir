@@ -21,8 +21,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   end
 
   def upsert_product(%{product: params, product_id: id}, _res) do
-    Store.get_product(id)
-    |> Store.update_product(params)
+    Store.update_product(id, params)
   end
 
   def upsert_product(%{product: params}, _res) do

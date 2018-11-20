@@ -10,6 +10,9 @@ defmodule SalesReg.Repo.Migrations.UpdateProductSchema do
       add(:sku, :string)
       add(:minimum_sku, :string)
       add(:cost_price, :string)
+
+      add :featured_image, :string
+      add(:images, {:array, :string})
     end
   end
 end

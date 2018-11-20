@@ -50,7 +50,7 @@ defmodule SalesReg.Seed do
   def add_product(user_id, company_id, categories, tags) do
     product_params = %{
       "description" => "Our product is #{CommerceEn.product_name()}",
-      "featured_image" => Avatar.image_url(),
+      "images" => [Avatar.image_url()],
       "name" => CommerceEn.product_name(),
       "cost_price" => "#{Enum.random(3000..100_000)}",
       "minimum_sku" => "#{Enum.random(5..100)}",
@@ -59,7 +59,9 @@ defmodule SalesReg.Seed do
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}",
       "categories" => categories,
-      "tags" => tags
+      "tags" => tags,
+      "images" => [Avatar.image_url()],
+      "featured_image" => Avatar.image_url()
     }
 
     Store.add_product(product_params)
@@ -73,7 +75,9 @@ defmodule SalesReg.Seed do
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}",
       "categories" => categories,
-      "tags" => tags
+      "tags" => tags,
+      "images" => [Avatar.image_url()],
+      "featured_image" => Avatar.image_url()
     }
 
     Store.add_service(service_params)
@@ -260,6 +264,17 @@ defmodule SalesReg.Seed do
     }
 
     SalesReg.Order.add_sale(params)
+  end
+
+  def create_invoice(order) do
+    params = %{
+      "due_date" => order.date,
+      "user_id" => order.user_id,
+      "company_id" => order.company_id,
+      "sale_id" => order.id
+    }
+
+    SalesReg.Order.add_invoice(params)
   end
 
   # type could be product or service

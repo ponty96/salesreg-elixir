@@ -10,7 +10,8 @@ defmodule SalesReg.Order do
 
   use SalesReg.Context, [
     Purchase,
-    Sale
+    Sale,
+    Invoice
   ]
 
   def data do
@@ -51,5 +52,11 @@ defmodule SalesReg.Order do
         IO.inspect(error, label: "transition state error")
         {:error, error}
     end
+  end
+
+  def processed_sale_orders() do
+    Sale
+    |> where([s], s.status == "processed")
+    |> Repo.all()
   end
 end

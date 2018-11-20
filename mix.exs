@@ -66,7 +66,8 @@ defmodule SalesReg.Mixfile do
       {:machinery, github: "ponty96/machinery", branch: "bump_ecto_version"},
       {:ecto_sql, "~> 3.0"},
       {:jason, "~> 1.1"},
-      {:plug_cowboy, "~> 1.0"}
+      {:plug_cowboy, "~> 1.0"},
+      {:arc, "~> 0.11.0"}
     ]
   end
 

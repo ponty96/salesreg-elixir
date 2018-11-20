@@ -11,7 +11,7 @@
 # and so on) as they will fail if something goes wrong.
 use SalesRegWeb, :context
 
-names = [
+tags = [
   "#love",
   "#instagood",
   "#tgif",
@@ -32,12 +32,6 @@ categories =
   Enum.map(1..25, fn _index ->
     {:ok, category} = Seed.add_category(company.id, user.id)
     category.id
-  end)
-
-tags =
-  Enum.map(names, fn name ->
-    {:ok, tag} = Seed.add_tag(company.id, name)
-    tag.name
   end)
 
 products =
@@ -94,3 +88,11 @@ end)
 Enum.map(1..10, fn _index ->
   Seed.create_bank(company.id)
 end)
+
+sale_order =
+  SalesReg.Order.processed_sale_orders()
+  |> Enum.random()
+
+Seed.create_invoice(sale_order)
+
+
