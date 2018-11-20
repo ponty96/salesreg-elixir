@@ -263,6 +263,17 @@ defmodule SalesReg.Seed do
     SalesReg.Order.add_sale(params)
   end
 
+  def create_invoice(order) do
+    params = %{
+      "due_date" => order.date,
+      "user_id" => order.user_id,
+      "company_id" => order.company_id,
+      "sale_id" => order.sale_id
+    }
+
+    SalesReg.Order.add_invoice(params)
+  end
+
   # type could be product or service
   defp order_items(items, type) do
     Enum.map(items, fn item ->

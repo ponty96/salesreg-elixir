@@ -8,7 +8,7 @@ defmodule SalesReg.Order.Invoice do
     has_many(:receipts, SalesReg.Order.Receipt)
     belongs_to(:sale, SalesReg.Order.Sale)
     belongs_to(:user, SalesReg.Accounts.User)
-    belongs_to(:company, SalesReg.Business.Companies)
+    belongs_to(:company, SalesReg.Business.Company)
 
     timestamps()
   end
