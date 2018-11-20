@@ -12,7 +12,6 @@ defmodule SalesReg.Business.Company do
     field(:contact_email, :string)
     field(:currency, :string)
     field(:title, :string)
-    field(:category, :string)
     field(:description, :string)
     field(:logo, :string)
     field(:cover_photo, :string)
@@ -28,7 +27,8 @@ defmodule SalesReg.Business.Company do
   end
 
   @required_fields [:title, :contact_email, :owner_id, :currency]
-  @optional_fields [:about, :description, :logo, :category, :cover_photo]
+  @optional_fields [:about, :description, :logo]
+
   @doc false
   def changeset(company, attrs) do
     company
@@ -38,16 +38,7 @@ defmodule SalesReg.Business.Company do
     |> unique_constraint(:owner_id, message: "Sorry, but you already have a business with us")
     |> cast_assoc(:phone)
     |> validate_required(@required_fields)
-    # |> cast_assoc(:branches)
-    |> validate_category()
-  end
 
-  def validate_category(changeset) do
-    case get_field(changeset, :category) do
-      "product" -> changeset
-      "service" -> changeset
-      "product_service" -> changeset
-      _ -> add_error(changeset, :category, "Invalid category")
-    end
+    # |> cast_assoc(:branches)
   end
 end

@@ -39,7 +39,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:about, :string)
     field(:contact_email, :string)
     field(:title, :string)
-    field(:category, :string)
     field(:currency, :string)
     field(:description, :string)
     field(:logo, :string)
@@ -378,13 +377,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     value(:delivered, as: "delivered")
   end
 
-  @desc "The selected company category"
-  enum :company_category do
-    value(:product, as: "product", description: "Product")
-    value(:service, as: "service", description: "Service")
-    value(:product_service, as: "product_service", description: "Product and Service")
-  end
-
   @desc "Payment method types"
   enum :payment_method do
     value(:pos, as: "POS")
@@ -442,7 +434,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:about, :string)
     field(:contact_email, non_null(:string))
     field(:head_office, non_null(:location_input))
-    field(:category, :company_category)
     field(:currency, :string)
     field(:description, :string)
     field(:phone, :phone_input)

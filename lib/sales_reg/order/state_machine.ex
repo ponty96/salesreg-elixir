@@ -60,10 +60,10 @@ defmodule SalesReg.Order.OrderStateMachine do
 
   defp build_invoice_params(order) do
     %{
-      due_date: "#{order.date}",
-      sale: "#{order.id}",
-      user: "#{order.user_id}",
-      company: "#{order.company_id}"
+      due_date: order.date,
+      sale_id: order.id,
+      user_id: order.user_id,
+      company_id: order.company_id
     }
   end
 end
