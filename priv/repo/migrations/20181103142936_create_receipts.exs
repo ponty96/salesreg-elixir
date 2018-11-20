@@ -11,6 +11,7 @@ defmodule SalesReg.Repo.Migrations.CreateReceipts do
       add(:invoice_id, references(:invoices, type: :binary_id))
       add(:user_id, references(:users, type: :binary_id))
       add(:company_id, references(:companies, type: :binary_id))
+      add(:sale_id, references(:sales, type: :binary_id))
 
       timestamps()
     end

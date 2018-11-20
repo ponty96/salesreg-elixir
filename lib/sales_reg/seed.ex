@@ -269,7 +269,7 @@ defmodule SalesReg.Seed do
       "due_date" => order.date,
       "user_id" => order.user_id,
       "company_id" => order.company_id,
-      "sale_id" => order.sale_id
+      "sale_id" => order.id
     }
 
     SalesReg.Order.add_invoice(params)

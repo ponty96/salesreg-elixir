@@ -96,7 +96,8 @@ defmodule SalesRegWeb do
         Order,
         Order.Purchase,
         Order.Item,
-        Order.Sale
+        Order.Sale,
+        Order.Invoice
       }
     end
   end
