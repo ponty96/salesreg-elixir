@@ -11,27 +11,34 @@ defmodule SalesReg.Store.Service do
     field(:description, :string)
     field(:name, :string)
     field(:price, :string)
+    field(:featured_image, :string)
+    field(:images, {:array, :string})
 
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
 
-    many_to_many(:categories, Category,
+    many_to_many(
+      :categories,
+      Category,
       join_through: "services_categories",
       on_replace: :delete,
       on_delete: :delete_all
     )
+
     many_to_many(:tags, SalesReg.Store.Tag, join_through: "services_tags", on_delete: :delete_all)
 
     timestamps()
   end
 
-  @required_fields [:name, :price, :company_id, :user_id]
+  @required_fields [:name, :price, :company_id, :user_id, :featured_image]
+  @optional_fields [:description, :images]
+
   @doc false
   def changeset(service, attrs) do
     service
     |> Repo.preload(:categories)
     |> Repo.preload(:tags)
-    |> cast(attrs, @required_fields ++ [:description])
+    |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
