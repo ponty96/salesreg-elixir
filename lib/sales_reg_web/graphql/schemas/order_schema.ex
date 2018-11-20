@@ -39,6 +39,17 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
       resolve(&OrderResolver.update_order_status/2)
     end
+
+    @desc """
+      update invoice due date
+    """
+    field :update_invoice, :mutation_response do
+      arg(:invoice, non_null(:invoice_input))
+      arg(:id, non_null(:uuid))
+
+      resolve(&OrderResolver.update_invoice_due_date/2)
+    end
+
   end
 
   ### QUERIES
