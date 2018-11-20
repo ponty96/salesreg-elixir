@@ -2,8 +2,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ContactResolver do
   use SalesRegWeb, :context
 
   def upsert_contact(%{contact: params, contact_id: id}, _res) do
-    Business.get_contact(id)
-    |> Business.update_contact(params)
+    Business.update_contact(id, params)
   end
 
   def upsert_contact(%{contact: params}, _res) do
