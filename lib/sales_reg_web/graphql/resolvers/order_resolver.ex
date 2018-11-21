@@ -42,6 +42,14 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     |> Order.update_invoice(params)
   end
 
+  def upsert_receipt(%{receipt: params}, _res) do
+    current_date = Date.utc_today() |> Date.to_string()
+    
+    params
+    |> Map.put(:time_paid, current_date)
+    |> Order.add_receipt()
+  end
+
   # # Private functions
   # defp add_order_amount(params) do
   #   cost = calc_order_cost(params)
