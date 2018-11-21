@@ -49,6 +49,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
       resolve(&OrderResolver.update_invoice_due_date/2)
     end
+
+    ### Receipt mutations
+    @desc """
+    upsert a receipt
+    """
+    field :upsert_receipt, :mutation_response do
+      arg(:receipt, non_null(:receipt_input))
+
+      resolve(&OrderResolver.upsert_receipt/2)
+    end
   end
 
   ### QUERIES
