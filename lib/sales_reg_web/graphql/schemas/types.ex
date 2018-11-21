@@ -296,6 +296,20 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Receipt object Type
+  """
+  object :receipt do
+    field(:id, :uuid)
+    field(:amount_paid, :string)
+    field(:time_paid, :string)
+    field(:payment_method, :payment_method)
+    
+    field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))    
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -587,6 +601,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   input_object :invoice_input do
     field(:due_date, non_null(:string))
+  end
+
+  input_object :receipt_input do
+    field(:amount_paid, :string)
+    field(:payment_method, :payment_method)
+    field(:invoice_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
   end
 
   #########################################################
