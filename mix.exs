@@ -28,7 +28,8 @@ defmodule SalesReg.Mixfile do
         :ex_aws,
         :ex_aws_s3,
         :uuid,
-        :hackney
+        :hackney,
+        :pdf_generator
       ]
     ]
   end
