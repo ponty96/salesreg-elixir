@@ -59,6 +59,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
       resolve(&OrderResolver.upsert_receipt/2)
     end
+
+    @desc """
+      mutation to delete receipt
+    """
+    field :delete_receipt, :mutation_response do
+      arg(:receipt_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&OrderResolver.delete_receipt/2)
+    end
   end
 
   ### QUERIES

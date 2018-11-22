@@ -50,6 +50,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     |> Order.add_receipt()
   end
 
+  def delete_receipt(%{receipt_id: receipt_id}, _res) do
+    Order.get_receipt(receipt_id)
+    |> Order.delete_bank()
+  end
+
   # # Private functions
   # defp add_order_amount(params) do
   #   cost = calc_order_cost(params)
