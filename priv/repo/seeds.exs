@@ -93,6 +93,8 @@ sale_order =
   SalesReg.Order.processed_sale_orders()
   |> Enum.random()
 
-Seed.create_invoice(sale_order)
+{:ok, invoice} = Seed.create_invoice(sale_order)
+
+Seed.create_receipt(invoice.id, user.id, company.id)
 
 

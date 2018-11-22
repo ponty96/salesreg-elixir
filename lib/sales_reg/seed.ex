@@ -128,6 +128,14 @@ defmodule SalesReg.Seed do
     |> Business.create_bank()
   end
 
+  def create_receipt(invoice_id, user_id, company_id) do
+    current_date = Date.utc_today() |> Date.to_string()
+    
+    gen_receipt_details(invoice_id, user_id, company_id)
+    |> Map.put_new(:time_paid, current_date)
+    |> Order.add_receipt()
+  end
+
   defp total_expense_cost(expense_items) do
     Enum.sum(Enum.map(expense_items, fn expense_item -> expense_item["amount"] end))
   end
@@ -167,6 +175,16 @@ defmodule SalesReg.Seed do
       account_number: "#{Enum.random(0_152_637_490..0_163_759_275)}",
       bank_name: "#{Enum.random(@banks)}",
       is_primary: false
+    }
+  end
+
+  def gen_receipt_details(invoice_id, user_id, company_id) do
+    %{
+      amount_paid: "#{Enum.random([1000, 2000, 3000])}",
+      payment_method: "#{Enum.random(@payment_method)}",
+      invoice_id: invoice_id,
+      user_id: user_id,
+      company_id: company_id
     }
   end
 

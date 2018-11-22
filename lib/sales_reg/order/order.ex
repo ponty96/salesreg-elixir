@@ -11,7 +11,8 @@ defmodule SalesReg.Order do
   use SalesReg.Context, [
     Purchase,
     Sale,
-    Invoice
+    Invoice,
+    Receipt
   ]
 
   def data do
