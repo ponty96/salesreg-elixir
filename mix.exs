@@ -66,7 +66,8 @@ defmodule SalesReg.Mixfile do
       {:sweet_xml, "~> 0.6"},
       {:machinery, "~> 0.16.0"},
       {:jason, "~> 1.1"},
-      {:arc, "~> 0.11.0"}
+      {:arc, "~> 0.11.0"},
+      {:pdf_generator, "~> 0.4.0"}
     ]
   end
 
