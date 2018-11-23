@@ -10,8 +10,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.add_service(params)
   end
 
-  def list_company_services(%{company_id: company_id}, _res) do
-    Store.list_company_services(company_id)
+  def list_company_services(%{company_id: company_id} = args, _res) do
+    {:ok, services} = Store.list_company_services(company_id)
+
+    services
+    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
   def search_services_by_name(%{query: query}, _res) do
@@ -27,8 +30,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.add_product(params)
   end
 
-  def list_company_products(%{company_id: company_id}, _res) do
-    Store.list_company_products(company_id)
+  def list_company_products(%{company_id: company_id} = args, _res) do
+    {:ok, products} = Store.list_company_products(company_id)
+  
+    products
+    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
   def search_products_by_name(%{query: query}, _res) do
@@ -46,8 +52,22 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.add_category(params)
   end
 
-  def list_company_categories(%{company_id: company_id}, _res) do
-    ## TODO - change context to use plural form
-    Store.list_company_categorys(company_id)
+  def list_company_categories(%{company_id: company_id} = args, _res) do
+    {:ok, categories} = Store.list_company_categorys(company_id)
+
+    categories
+    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+  end
+
+  # tag
+  def list_company_tags(%{company_id: id} = args, _res) do
+    {:ok, tags} = Business.list_company_tags(id)
+
+    tags
+    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+  end
+
+  defp pagination_args(args) do
+    Map.take(args, [:first, :after, :last, :before])
   end
 end

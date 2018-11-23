@@ -33,13 +33,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
     |> Business.delete_bank()
   end
 
-  def list_company_banks(%{company_id: id}, _res) do
-    banks =
-      Business.list_company_banks(id)
-      |> elem(1)
-      |> Enum.sort(&(&1.is_primary >= &2.is_primary))
-
-    {:ok, banks}
+  def list_company_banks(%{company_id: id} = args, _res) do
+    Business.list_company_banks(id)
+    |> elem(1)
+    |> Enum.sort(&(&1.is_primary >= &2.is_primary))
+    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
   def upsert_expense(%{expense: params, expense_id: id}, _res) do
@@ -54,12 +52,15 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
     Business.add_expense(new_params)
   end
 
-  def list_company_expenses(%{company_id: id}, _res) do
-    Business.list_company_expenses(id)
+  def list_company_expenses(%{company_id: id} = args, _res) do
+    {:ok, expenses} = Business.list_company_expenses(id)
+
+    expenses
+    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
-  def list_company_tags(%{company_id: id}, _res) do
-    Business.list_company_tags(id)
+  defp pagination_args(args) do
+    Map.take(args, [:first, :after, :last, :before])
   end
 
   defp put_items_amount(params) do

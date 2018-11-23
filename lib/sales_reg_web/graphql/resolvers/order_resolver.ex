@@ -13,8 +13,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     Order.add_purchase(params)
   end
 
-  def list_company_purchases(%{company_id: company_id}, _res) do
-    Order.list_company_purchases(company_id)
+  def list_company_purchases(%{company_id: company_id} = args, _res) do
+    {:ok, purchases} = Order.list_company_purchases(company_id)
+    
+    purchases
+    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
   def upsert_sale(%{sale: params, sale_id: id}, _res) do
@@ -29,8 +32,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     Order.add_sale(params)
   end
 
-  def list_company_sales(%{company_id: company_id}, _res) do
-    Order.list_company_sales(company_id)
+  def list_company_sales(%{company_id: company_id} = args, _res) do
+    {:ok, sales} = Order.list_company_sales(company_id)
+
+    sales
+    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
   def update_order_status(%{status: status, id: id, order_type: order_type}, _res) do
@@ -40,6 +46,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   def update_invoice_due_date(%{invoice: params, invoice_id: id}, _res) do
     Order.get_invoice(id)
     |> Order.update_invoice(params)
+  end
+
+  defp pagination_args(args) do
+    Map.take(args, [:first, :after, :last, :before])
   end
 
   # # Private functions
