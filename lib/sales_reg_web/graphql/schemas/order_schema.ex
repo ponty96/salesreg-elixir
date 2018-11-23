@@ -17,6 +17,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       arg(:purchase, non_null(:purchase_input))
       arg(:purchase_id, :uuid)
 
+      middleware(Authorize)
       resolve(&OrderResolver.upsert_purchase/2)
     end
 
@@ -28,6 +29,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       arg(:sale, non_null(:sale_input))
       arg(:sale_id, :uuid)
 
+      middleware(Authorize)
       resolve(&OrderResolver.upsert_sale/2)
     end
 
@@ -39,6 +41,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       arg(:id, :uuid)
       arg(:order_type, :string)
 
+      middleware(Authorize)
       resolve(&OrderResolver.update_order_status/2)
     end
 
@@ -49,6 +52,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       arg(:invoice, non_null(:invoice_input))
       arg(:id, non_null(:uuid))
 
+      middleware(Authorize)
       resolve(&OrderResolver.update_invoice_due_date/2)
     end
   end
@@ -63,6 +67,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
     connection field :list_company_purchases, node_type: :purchase do
       arg(:company_id, non_null(:uuid))
 
+      middleware(Authorize)
       resolve(&OrderResolver.list_company_purchases/2)
     end
 
@@ -72,6 +77,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
     connection field :list_company_sales, node_type: :sale do
       arg(:company_id, non_null(:uuid))
 
+      middleware(Authorize)
       resolve(&OrderResolver.list_company_sales/2)
     end
   end
