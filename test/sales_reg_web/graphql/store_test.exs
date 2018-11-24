@@ -793,5 +793,3 @@ defmodule SalesRegWeb.GraphqlStoreTest do
     end
   end
 end
-
-

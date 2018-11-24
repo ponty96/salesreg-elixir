@@ -28,17 +28,19 @@ tags = [
 {:ok, user} = Seed.create_user()
 {:ok, company} = Seed.create_company(user.id)
 
+Enum.map(1..5, fn _index ->
+  Seed.add_product_without_variant(company, user)
+end)
+
+Enum.map(1..5, fn _index ->
+  Seed.add_product_with_variant(company, user)
+end)
+
 categories =
   Enum.map(1..25, fn _index ->
     {:ok, category} = Seed.add_category(company.id, user.id)
     category.id
   end)
-
-# products =
-#   Enum.map(1..20, fn _index ->
-#     {:ok, product} = Seed.add_product(user.id, company.id, Enum.take_random(categories, 6), tags)
-#     product
-#   end)
 
 services =
   Enum.map(1..20, fn _index ->
