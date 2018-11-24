@@ -122,4 +122,15 @@ defmodule SalesReg.Store do
 
     update_product(product, %{"stock_quantity" => "#{product_stock_quantity - quantity}"})
   end
+
+  def load_prod_and_serv(query) do
+    query_regex = "%" <> query <> "%"
+    
+    Product
+    |> join(:inner, [p], s in Service)
+    |> where([p, s], ilike(p.name, ^query_regex))
+    |> where([p, s], ilike(s.name, ^query_regex))
+    |> select([p, s], {p.name, s.name})
+    |> Repo.all()
+  end
 end
