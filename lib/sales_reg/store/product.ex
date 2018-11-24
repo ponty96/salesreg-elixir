@@ -20,6 +20,8 @@ defmodule SalesReg.Store.Product do
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
 
+    has_many(:items, SalesReg.Order.Item)
+
     many_to_many(
       :categories,
       Category,
@@ -59,5 +61,16 @@ defmodule SalesReg.Store.Product do
     |> assoc_constraint(:user)
     |> put_assoc(:categories, Store.load_categories(attrs))
     |> put_assoc(:tags, Store.load_tags(attrs))
+    |> no_assoc_constraint(:items, message: "This product is still associated with sales")
+  end
+
+   @doc false
+   def delete_changeset(product) do
+    product
+    |> Repo.preload(:categories)
+    |> Repo.preload(:tags)
+    |> Repo.preload(:items)
+    |> cast(%{}, @fields ++ @required_fields)
+    |> no_assoc_constraint(:items, message: "This product is still associated with sales")
   end
 end
