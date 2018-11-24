@@ -13,6 +13,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     Order.add_purchase(params)
   end
 
+  def delete_purchase(%{purchase_id: purchase_id}, _res) do
+    purchase = Order.get_purchase(purchase_id)
+    Order.delete_purchase(purchase)
+  end
+
   def list_company_purchases(%{company_id: company_id}, _res) do
     Order.list_company_purchases(company_id)
   end
@@ -27,6 +32,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   def upsert_sale(%{sale: params}, _res) do
     # new_params = add_order_amount(params)
     Order.add_sale(params)
+  end
+
+  def delete_sale(%{sale_id: sale_id}, _res) do
+    sale = Order.get_sale(sale_id)
+    Order.delete_sale(sale)
   end
 
   def list_company_sales(%{company_id: company_id}, _res) do
