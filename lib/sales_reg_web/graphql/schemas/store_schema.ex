@@ -86,6 +86,22 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       resolve(&StoreResolver.search_products_by_name/2)
     end
 
+    field :list_featured_items, list_of(:search_response) do
+      arg(:company_id, non_null(:string))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.list_featured_items/2)
+    end
+
+    field :list_top_rated_items, list_of(:search_response) do
+      arg(:company_id, non_null(:string))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.list_top_rated_items/2)
+    end
+
+    field :list_featured_items
+
     @desc """
       query for all services in a company's store
     """

@@ -46,6 +46,14 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.delete_product(product)
   end
 
+  def list_featured_items(%{company_id: company_id}, _res) do
+    Store.list_featured_items(company_id)
+  end
+
+  def list_top_rated_items(%{company_id: company_id}, _res) do
+    Store.list_top_rated_items(company_id)
+  end
+
   # category
   def upsert_category(%{category: params, category_id: id}, _res) do
     Store.get_category(id)
@@ -60,4 +68,5 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     ## TODO - change context to use plural form
     Store.list_company_categorys(company_id)
   end
+
 end
