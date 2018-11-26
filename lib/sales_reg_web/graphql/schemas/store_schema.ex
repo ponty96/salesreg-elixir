@@ -3,6 +3,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     GraphQL Schemas for Store
   """
   use Absinthe.Schema.Notation
+  use Absinthe.Relay.Schema.Notation, :classic
   alias SalesRegWeb.GraphQL.Resolvers.StoreResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
 
@@ -69,7 +70,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     @desc """
       query for all products in a company's store
     """
-    field :list_company_products, list_of(:product) do
+    connection field :list_company_products, node_type: :product do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
@@ -89,7 +90,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     @desc """
       query for all services in a company's store
     """
-    field :list_company_services, list_of(:service) do
+    connection field :list_company_services, node_type: :service do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
@@ -109,11 +110,21 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     @desc """
       query for all company product / service categories
     """
-    field :list_company_categories, list_of(:category) do
+    connection field :list_company_categories, node_type: :category do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
       resolve(&StoreResolver.list_company_categories/2)
+    end
+
+    @desc """
+      query all tags of a company
+    """
+    connection field :company_tags, node_type: :tag do
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.list_company_tags/2)
     end
   end
 end
