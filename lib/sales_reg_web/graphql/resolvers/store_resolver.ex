@@ -12,9 +12,14 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
 
   def list_company_services(%{company_id: company_id} = args, _res) do
     {:ok, services} = Store.list_company_services(company_id)
-
+    
     services
     |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+  end
+
+  def delete_service(%{service_id: service_id}, _res) do
+    service = Store.get_service(service_id)
+    Store.delete_service(service)
   end
 
   def upsert_product(%{product: params, product_id: id}, _res) do
@@ -38,6 +43,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     {:ok, products_and_services}
   end
 
+  def delete_product(%{product_id: product_id}, _res) do
+    product = Store.get_product(product_id)
+    Store.delete_product(product)
+  end
+
   # category
   def upsert_category(%{category: params, category_id: id}, _res) do
     Store.get_category(id)
@@ -52,7 +62,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     {:ok, categories} = Store.list_company_categorys(company_id)
 
     categories
-    |>  Absinthe.Relay.Connection.from_list(pagination_args(args))
+    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
   # tag
