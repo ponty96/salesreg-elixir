@@ -13,6 +13,7 @@ defmodule SalesReg.Order.Receipt do
     belongs_to(:invoice, SalesReg.Order.Invoice)
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:company, SalesReg.Business.Company)
+    belongs_to(:sale, SalesReg.Order.Sale)
 
     timestamps()
   end
