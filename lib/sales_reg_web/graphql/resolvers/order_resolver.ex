@@ -20,6 +20,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
+  def delete_purchase(%{purchase_id: purchase_id}, _res) do
+    purchase = Order.get_purchase(purchase_id)
+    Order.delete_purchase(purchase)
+  end
+
   def upsert_sale(%{sale: params, sale_id: id}, _res) do
     # new_params = add_order_amount(params)
 
@@ -37,6 +42,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
 
     sales
     |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+  end
+
+  def delete_sale(%{sale_id: sale_id}, _res) do
+    sale = Order.get_sale(sale_id)
+    Order.delete_sale(sale)
   end
 
   def update_order_status(%{status: status, id: id, order_type: order_type}, _res) do

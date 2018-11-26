@@ -22,6 +22,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     {:ok, services}
   end
 
+  def delete_service(%{service_id: service_id}, _res) do
+    service = Store.get_service(service_id)
+    Store.delete_service(service)
+  end
+
   def upsert_product(%{product: params, product_id: id}, _res) do
     Store.update_product(id, params)
   end
@@ -40,6 +45,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   def search_products_by_name(%{query: query}, _res) do
     products = Context.search_schema_by_field(Product, query, :name)
     {:ok, products}
+  end
+
+  def delete_product(%{product_id: product_id}, _res) do
+    product = Store.get_product(product_id)
+    Store.delete_product(product)
   end
 
   # category

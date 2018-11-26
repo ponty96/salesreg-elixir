@@ -21,6 +21,17 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     end
 
     @desc """
+      mutation to delete product
+    """
+    field :delete_product, :mutation_response do
+      arg(:product_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.delete_product/2)
+
+    end
+
+    @desc """
     upsert a service in a company's store
     """
     field :upsert_service, :mutation_response do
@@ -30,6 +41,17 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       middleware(Authorize)
       resolve(&StoreResolver.upsert_service/2)
     end
+
+    @desc """
+    mutation to delete service
+  """
+  field :delete_service, :mutation_response do
+    arg(:service_id, non_null(:uuid))
+
+    middleware(Authorize)
+    resolve(&StoreResolver.delete_service/2)
+
+  end
 
     @desc """
     upsert a category in a company's store

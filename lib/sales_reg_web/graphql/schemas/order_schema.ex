@@ -21,6 +21,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       resolve(&OrderResolver.upsert_purchase/2)
     end
 
+    @desc """
+      delete a purchase order
+    """
+    field :delete_purchase_order, :mutation_response do
+      arg(:purchase_id, non_null(:uuid))
+
+      resolve(&OrderResolver.delete_purchase/2)
+    end
+
     ### Sale order mutations
     @desc """
     upsert a sale order
@@ -31,6 +40,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
       middleware(Authorize)
       resolve(&OrderResolver.upsert_sale/2)
+    end
+
+    @desc """
+    delete a sale order
+    """
+    field :delete_sale_order, :mutation_response do
+      arg(:sale_id, non_null(:uuid))
+
+      resolve(&OrderResolver.delete_sale/2)
     end
 
     @desc """
