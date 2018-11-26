@@ -78,16 +78,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     end
 
     @desc """
-      search for products by name
-    """
-    field :search_products_by_name, list_of(:search_response) do
-      arg(:query, non_null(:string))
-
-      middleware(Authorize)
-      resolve(&StoreResolver.search_products_by_name/2)
-    end
-
-    @desc """
       query for all services in a company's store
     """
     connection field :list_company_services, node_type: :service do
@@ -98,13 +88,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     end
 
     @desc """
-      search for services by name
+      search for products and services by name
     """
-    field :search_services_by_name, list_of(:search_response) do
+    field :search_products_and_services_by_name, list_of(:search_response) do
       arg(:query, non_null(:string))
 
       middleware(Authorize)
-      resolve(&StoreResolver.search_services_by_name/2)
+      resolve(&StoreResolver.search_products_services_by_name/2)
     end
 
     @desc """
