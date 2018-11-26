@@ -125,12 +125,21 @@ defmodule SalesReg.Store do
 
   def load_prod_and_serv(query) do
     query_regex = "%" <> query <> "%"
-    
+
     Product
     |> join(:inner, [p], s in Service)
     |> where([p, s], ilike(p.name, ^query_regex))
     |> where([p, s], ilike(s.name, ^query_regex))
-    |> select([p, s], {p.name, s.name})
+    |> order_by([p, s], asc: [p.name, s.name])
+    |> select([p, s], [p, s])
     |> Repo.all()
+    |> Enum.map(fn [product, service] ->
+      [
+        Map.put_new(product, :type, "Product"),
+        Map.put_new(service, :type, "Service")
+      ]
+    end)
+    |> List.flatten()
   end
 end
+

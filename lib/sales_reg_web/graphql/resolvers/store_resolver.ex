@@ -17,11 +17,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
-  def search_services_by_name(%{query: query}, _res) do
-    services = Context.search_schema_by_field(Service, query, :name)
-    {:ok, services}
-  end
-
   def upsert_product(%{product: params, product_id: id}, _res) do
     Store.update_product(id, params)
   end
@@ -37,9 +32,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
-  def search_products_by_name(%{query: query}, _res) do
-    products = Context.search_schema_by_field(Product, query, :name)
-    {:ok, products}
+  def search_products_services_by_name(%{query: query}, _res) do
+    products_and_services = Store.load_prod_and_serv(query)
+ 
+    {:ok, products_and_services}
   end
 
   # category
@@ -56,7 +52,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     {:ok, categories} = Store.list_company_categorys(company_id)
 
     categories
-    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+    |>  Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
   # tag
