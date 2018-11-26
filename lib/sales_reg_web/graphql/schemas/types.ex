@@ -374,6 +374,10 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   object :search_response do
     field(:id, non_null(:uuid))
     field(:name, non_null(:string))
+    field(:price, :string)
+    field(:cost_price, :string)
+    field(:type, :string)
+    field(:stock_quantity, :string)
   end
 
   @desc "sorts the order from either ASC or DESC"
