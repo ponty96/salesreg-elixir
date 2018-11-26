@@ -4,7 +4,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   """
 
   use Absinthe.Schema.Notation
-  use SalesRegWeb, :graphql_context
+  use Absinthe.Relay.Schema.Notation
+  use Absinthe.Ecto, repo: SalesReg.Repo
+  use SalesRegWeb, :context
   import Absinthe.Resolution.Helpers
 
   alias SalesReg.Accounts.User
@@ -129,6 +131,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
   end
+  connection node_type: :product
 
   @desc """
     Option Value Object Type
@@ -157,6 +160,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
   end
+  connection node_type: :service
 
   @desc """
     Contact object type
@@ -187,6 +191,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
   end
+  connection node_type: :contact
 
   @desc """
     Phone object type
@@ -215,6 +220,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :items))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
+  connection node_type: :purchase
 
   @desc """
     Item object type
@@ -248,6 +254,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
   end
+  connection node_type: :sale
 
   object :bank do
     field(:id, :uuid)
@@ -261,6 +268,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
+  connection node_type: :bank
 
   @desc """
     Expense object type
@@ -281,6 +289,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       resolve: dataloader(SalesReg.Business, :expense_items)
     )
   end
+  connection node_type: :expense
 
   @desc """
     Expense Item object type
@@ -315,6 +324,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       resolve: dataloader(SalesReg.Business, :services)
     )
   end
+  connection node_type: :category
 
   @desc """
     Tag object Type
@@ -325,6 +335,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
+  connection node_type: :tag
 
   @desc """
     Invoice object Type
@@ -411,6 +422,10 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   object :search_response do
     field(:id, non_null(:uuid))
     field(:name, non_null(:string))
+    field(:price, :string)
+    field(:cost_price, :string)
+    field(:type, :string)
+    field(:stock_quantity, :string)
   end
 
   @desc "sorts the order from either ASC or DESC"

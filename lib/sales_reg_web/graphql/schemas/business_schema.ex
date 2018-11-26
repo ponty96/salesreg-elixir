@@ -3,6 +3,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
     GraphQL Schemas for Company
   """
   use Absinthe.Schema.Notation
+  use Absinthe.Relay.Schema.Notation, :classic
   alias SalesRegWeb.GraphQL.Resolvers.BusinessResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
 
@@ -76,7 +77,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
     @desc """
       query all banks of a company
     """
-    field :company_banks, list_of(:bank) do
+    connection field :company_banks, node_type: :bank do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
@@ -89,24 +90,11 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
     @desc """
       query all expenses of a company
     """
-    field :company_expenses, list_of(:expense) do
+    connection field :company_expenses, node_type: :expense do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
       resolve(&BusinessResolver.list_company_expenses/2)
-    end
-  end
-
-  # Tag Queries
-  object :tag_queries do
-    @desc """
-      query all tags of a company
-    """
-    field :company_tags, list_of(:tag) do
-      arg(:company_id, non_null(:uuid))
-
-      middleware(Authorize)
-      resolve(&BusinessResolver.list_company_tags/2)
     end
   end
 end

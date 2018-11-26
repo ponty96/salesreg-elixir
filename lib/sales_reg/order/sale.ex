@@ -18,7 +18,6 @@ defmodule SalesReg.Order.Sale do
 
     has_one(:invoice, SalesReg.Order.Invoice)
     has_many(:items, SalesReg.Order.Item, on_replace: :delete)
-    has_many(:receipts, SalesReg.Order.Receipt)
 
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:contact, SalesReg.Business.Contact)
@@ -60,5 +59,12 @@ defmodule SalesReg.Order.Sale do
       "cash" -> changeset
       _ -> add_error(changeset, :payment_method, "Invalid payment method")
     end
+  end
+
+  def delete_changeset(sale) do
+    sale
+    |> Repo.preload(:items)
+    |> cast(%{},  @required_fields ++ @optional_fields)
+    |> no_assoc_constraint(:items, message: "This sale is still associated with a product or service ")
   end
 end
