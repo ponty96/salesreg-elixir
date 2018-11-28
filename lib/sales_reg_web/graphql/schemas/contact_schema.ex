@@ -36,7 +36,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.ContactSchema do
     @desc """
       query all contacts of a company
     """
-    connection field :company_contacts, node_type: :contact do
+    connection field(:company_contacts, node_type: :contact) do
       arg(:company_id, non_null(:uuid))
       arg(:type, non_null(:string))
 
