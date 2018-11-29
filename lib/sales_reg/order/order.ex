@@ -7,11 +7,14 @@ defmodule SalesReg.Order do
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
   alias SalesReg.Order.OrderStateMachine
+  alias SalesReg.Repo
 
   use SalesReg.Context, [
     Purchase,
     Sale,
-    Invoice
+    Invoice,
+    Review,
+    Star
   ]
 
   def data do
@@ -39,7 +42,7 @@ defmodule SalesReg.Order do
         {:error, error}
     end
   end
-
+  
   def update_status(:sale, order_id, new_status) do
     sale_order = get_sale(order_id) |> preload_order()
     sale_order = Map.put(sale_order, :state, sale_order.status)
