@@ -8,6 +8,7 @@ defmodule SalesReg.Application do
 
     # Define workers and child supervisors to be supervised
     children = [
+      {Task.Supervisor, name: SalesReg.TaskSupervisor},
       # Start the Ecto repository
       supervisor(SalesReg.Repo, []),
       # Start the endpoint when the application starts

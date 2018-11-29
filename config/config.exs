@@ -68,7 +68,7 @@ config :plug, :statuses, %{
 }
 
 config :pdf_generator,
-  wkhtml_path: "/path/to/wkhtmltopdf",
+  wkhtml_path: "/usr/local/bin/wkhtmltopdf",
   pdftk_path:  "/path/to/pdftk"
 
 ###############################################################

@@ -303,10 +303,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:amount_paid, :string)
     field(:time_paid, :string)
     field(:payment_method, :payment_method)
+    field(:pdf_url, :string)
     
     field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))    
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+    field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
   end
 
   @desc """
@@ -337,7 +339,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :expense,
       :category,
       :tag,
-      :bank
+      :bank,
+      :receipt,
+      :invoice
     ])
 
     resolve_type(fn
@@ -357,6 +361,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Category{}, _ -> :category
       %Tag{}, _ -> :tag
       %Bank{}, _ -> :bank
+      %Receipt{}, _ -> :receipt
+      %Invoice{}, _ -> :invoice
     end)
   end
 
@@ -604,11 +610,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   input_object :receipt_input do
-    field(:amount_paid, :string)
-    field(:payment_method, :payment_method)
+    field(:amount_paid, non_null(:string))
+    field(:payment_method, non_null(:payment_method))
     field(:invoice_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
     field(:company_id, non_null(:uuid))
+    field(:sale_id, non_null(:uuid))
   end
 
   #########################################################

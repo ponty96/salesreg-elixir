@@ -14,6 +14,7 @@ defmodule SalesReg.Order do
     Invoice,
     Receipt
   ]
+  @receipt_html_path "lib/sales_reg_web/templates/mailer/receipt.html.eex"
 
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
@@ -59,5 +60,43 @@ defmodule SalesReg.Order do
     Sale
     |> where([s], s.status == "processed")
     |> Repo.all()
+  end
+
+  def update_receipt_details(filename, receipt) do
+    company = load_pdf_resource(receipt).company
+    url = SalesReg.ImageUpload.url({filename, company})
+    __MODULE__.update_receipt(receipt, %{pdf_url: url})
+  end
+
+  def upload_pdf(%Receipt{} = receipt) do
+    receipt = load_pdf_resource(receipt)
+    uniq_name = gen_pdf_uniq_name(receipt)
+    {:ok, path} = 
+      receipt
+      |> build_receipt_html()
+      |> PdfGenerator.generate(filename: uniq_name) 
+  
+    SalesReg.ImageUpload.store({path, receipt.company})
+  end
+
+  defp build_receipt_html(receipt) do
+    receipt = load_pdf_resource(receipt)
+    EEx.eval_file(@receipt_html_path, [receipt: receipt])
+  end
+
+  defp gen_pdf_uniq_name(%Receipt{} = receipt) do
+    receipt = load_pdf_resource(receipt)
+    count = Enum.count(Repo.all(Receipt))
+
+    "#{String.replace(receipt.company.title, " ", "-")}-receipt-#{count}"
+  end
+
+  defp load_pdf_resource(struct) do
+    case struct do
+      %Receipt{} ->
+        Repo.preload(struct, [:company, :user, sale: [items: [:product, :service]]])
+      
+      _ -> %{}
+    end
   end
 end
