@@ -27,7 +27,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
 
       middleware(Authorize)
       resolve(&StoreResolver.delete_product/2)
-
     end
 
     @desc """
@@ -42,15 +41,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     end
 
     @desc """
-    mutation to delete service
-  """
-  field :delete_service, :mutation_response do
-    arg(:service_id, non_null(:uuid))
+      mutation to delete service
+    """
+    field :delete_service, :mutation_response do
+      arg(:service_id, non_null(:uuid))
 
-    middleware(Authorize)
-    resolve(&StoreResolver.delete_service/2)
-
-  end
+      middleware(Authorize)
+      resolve(&StoreResolver.delete_service/2)
+    end
 
     @desc """
     upsert a category in a company's store
@@ -100,7 +98,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       resolve(&StoreResolver.list_top_rated_items/2)
     end
 
-    field :list_featured_items
+    field(:list_featured_items)
 
     @desc """
       query for all services in a company's store

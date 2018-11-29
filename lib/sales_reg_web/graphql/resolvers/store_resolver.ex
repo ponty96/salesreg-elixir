@@ -68,5 +68,4 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     ## TODO - change context to use plural form
     Store.list_company_categorys(company_id)
   end
-
 end

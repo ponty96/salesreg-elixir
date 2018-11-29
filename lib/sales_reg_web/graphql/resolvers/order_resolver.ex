@@ -52,6 +52,14 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     |> Order.update_invoice(params)
   end
 
+  def add_review(%{review: params}, _res) do
+    Order.add_review(params)
+  end
+
+  def add_star(%{star: params}, _res) do
+    Order.add_star(params)
+  end
+
   # # Private functions
   # defp add_order_amount(params) do
   #   cost = calc_order_cost(params)
