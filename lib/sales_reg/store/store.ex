@@ -386,4 +386,3 @@ defmodule SalesReg.Store do
     |> List.flatten()
   end
 end
-
