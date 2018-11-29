@@ -23,6 +23,8 @@ defmodule SalesReg.Store.Product do
     belongs_to(:user, SalesReg.Accounts.User)
 
     has_many(:items, SalesReg.Order.Item)
+    has_many(:review, SalesReg.Order.Review)
+    has_many(:star, SalesReg.Order.Star)
 
     many_to_many(
       :categories,
@@ -68,8 +70,8 @@ defmodule SalesReg.Store.Product do
     |> no_assoc_constraint(:items, message: "This product is still associated with sales")
   end
 
-   @doc false
-   def delete_changeset(product) do
+  @doc false
+  def delete_changeset(product) do
     product
     |> Repo.preload(:categories)
     |> Repo.preload(:tags)

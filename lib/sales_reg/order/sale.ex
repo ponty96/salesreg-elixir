@@ -18,6 +18,8 @@ defmodule SalesReg.Order.Sale do
 
     has_one(:invoice, SalesReg.Order.Invoice)
     has_many(:items, SalesReg.Order.Item, on_replace: :delete)
+    has_many(:review, SalesReg.Order.Review)
+    has_many(:star, SalesReg.Order.Star)
 
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:contact, SalesReg.Business.Contact)
@@ -64,7 +66,9 @@ defmodule SalesReg.Order.Sale do
   def delete_changeset(sale) do
     sale
     |> Repo.preload(:items)
-    |> cast(%{},  @required_fields ++ @optional_fields)
-    |> no_assoc_constraint(:items, message: "This sale is still associated with a product or service ")
+    |> cast(%{}, @required_fields ++ @optional_fields)
+    |> no_assoc_constraint(:items,
+      message: "This sale is still associated with a product or service "
+    )
   end
 end
