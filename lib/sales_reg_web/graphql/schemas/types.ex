@@ -87,7 +87,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:minimum_stock_quantity, :string)
     field(:cost_price, :string)
     field(:selling_price, :string)
-    
+
     field(:featured_image, :string)
     field(:images, list_of(:string))
 
@@ -301,6 +301,30 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Review object type
+  """
+  object :review do
+    field(:text, :string)
+
+    field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
+    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
+    field(:service, :service, resolve: dataloader(SalesReg.Store, :service))
+    field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
+  end
+
+  @desc """
+    Star object type
+  """
+  object :star do
+    field(:value, :integer)
+
+    field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
+    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
+    field(:service, :service, resolve: dataloader(SalesReg.Store, :service))
+    field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -328,7 +352,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :expense,
       :category,
       :tag,
-      :bank
+      :bank,
+      :review,
+      :star
     ])
 
     resolve_type(fn
@@ -348,6 +374,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Category{}, _ -> :category
       %Tag{}, _ -> :tag
       %Bank{}, _ -> :bank
+      %Review{}, _ -> :review
+      %Star{}, _ -> :star
     end)
   end
 
@@ -592,6 +620,21 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   input_object :invoice_input do
     field(:due_date, non_null(:string))
+  end
+
+  input_object :review_input do
+    field(:text, non_null(:string))
+    field(:product_id, non_null(:uuid))
+    field(:contact_id, non_null(:uuid))
+    field(:sale_id, non_null(:uuid))
+
+  end
+
+  input_object :star_input do
+    field(:value, non_null(:integer))
+    field(:product_id, non_null(:uuid))
+    field(:contact_id, non_null(:uuid))
+    field(:sale_id, non_null(:uuid))
   end
 
   #########################################################
