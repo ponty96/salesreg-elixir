@@ -79,7 +79,7 @@ defmodule SalesRegWeb do
       alias SalesReg.{
         Accounts,
         Accounts.User,
-        Business,
+        Business,Contact,
         Business.Company,
         Business.Branch,
         Business.Contact,
@@ -97,7 +97,10 @@ defmodule SalesRegWeb do
         Order.Purchase,
         Order.Item,
         Order.Sale,
-        Order.Invoice
+        Order.Invoice,
+        Order.Receipt,
+        Order.Review,
+        Order.Star
       }
     end
   end
