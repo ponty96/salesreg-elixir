@@ -14,7 +14,7 @@ defmodule SalesReg.ImageUpload do
 
   # Whitelist file extensions:
   def validate({file, _}) do
-    ~w(.pdf .jpg .jpeg .gif .png .pdf) 
+    ~w(.pdf .jpg .jpeg .gif .png .pdf)
     |> Enum.member?(String.downcase(Path.extname(file.file_name)))
   end
 
@@ -37,13 +37,13 @@ defmodule SalesReg.ImageUpload do
   #     ".png" ->
   #       {:convert, 
   #         "-strip -thumbnail 100x100^ -gravity center -extent 100x100"}
-  
+
   #     ".jpg" ->
   #       {:convert, "-strip -thumbnail 120x120^ -gravity center -extent 120x120"}
-  
+
   #     ".jpeg" ->
   #       {:convert, "-strip -thumbnail 120x120^ -gravity center -extent 120x120"}
-          
+
   #     _ ->
   #       {:convert, "-strip -thumbnail 100x100^ -gravity center -extent 100x100 -format png", :png}
   #   end

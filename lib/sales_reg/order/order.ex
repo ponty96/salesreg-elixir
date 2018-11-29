@@ -14,6 +14,7 @@ defmodule SalesReg.Order do
     Invoice,
     Receipt
   ]
+
   @receipt_html_path "lib/sales_reg_web/templates/mailer/receipt.html.eex"
 
   def data do
@@ -71,17 +72,18 @@ defmodule SalesReg.Order do
   def upload_pdf(%Receipt{} = receipt) do
     receipt = load_pdf_resource(receipt)
     uniq_name = gen_pdf_uniq_name(receipt)
-    {:ok, path} = 
+
+    {:ok, path} =
       receipt
       |> build_receipt_html()
-      |> PdfGenerator.generate(filename: uniq_name) 
-  
+      |> PdfGenerator.generate(filename: uniq_name)
+
     SalesReg.ImageUpload.store({path, receipt.company})
   end
 
   defp build_receipt_html(receipt) do
     receipt = load_pdf_resource(receipt)
-    EEx.eval_file(@receipt_html_path, [receipt: receipt])
+    EEx.eval_file(@receipt_html_path, receipt: receipt)
   end
 
   defp gen_pdf_uniq_name(%Receipt{} = receipt) do
@@ -95,8 +97,9 @@ defmodule SalesReg.Order do
     case struct do
       %Receipt{} ->
         Repo.preload(struct, [:company, :user, sale: [items: [:product, :service]]])
-      
-      _ -> %{}
+
+      _ ->
+        %{}
     end
   end
 end

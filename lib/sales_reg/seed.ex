@@ -130,7 +130,7 @@ defmodule SalesReg.Seed do
 
   def create_receipt(invoice_id, user_id, company_id) do
     current_date = Date.utc_today() |> Date.to_string()
-    
+
     gen_receipt_details(invoice_id, user_id, company_id)
     |> Map.put_new(:time_paid, current_date)
     |> Order.add_receipt()

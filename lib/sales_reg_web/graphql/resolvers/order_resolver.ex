@@ -46,16 +46,16 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   def upsert_receipt(%{receipt: params}, _res) do
     current_date = Date.utc_today() |> Date.to_string()
     params = Map.put(params, :time_paid, current_date)
-    create_receipt = Order.add_receipt(params) 
+    create_receipt = Order.add_receipt(params)
 
     case create_receipt do
       {:ok, receipt} ->
-          Task.Supervisor.start_child(TaskSupervisor, fn() ->
-            {:ok, filename} = Order.upload_pdf(receipt)
-            Order.update_receipt_details(filename, receipt)
-          end)
-          
-          {:ok, receipt}
+        Task.Supervisor.start_child(TaskSupervisor, fn ->
+          {:ok, filename} = Order.upload_pdf(receipt)
+          Order.update_receipt_details(filename, receipt)
+        end)
+
+        {:ok, receipt}
 
       {:error, reason} ->
         {:error, reason}

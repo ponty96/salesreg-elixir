@@ -304,8 +304,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:time_paid, :string)
     field(:payment_method, :payment_method)
     field(:pdf_url, :string)
-    
-    field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))    
+
+    field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))

@@ -1,3 +1,3 @@
 defmodule SalesRegWeb.PdfView do
-	use SalesRegWeb, :view
+  use SalesRegWeb, :view
 end

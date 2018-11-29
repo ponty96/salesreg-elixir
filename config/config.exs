@@ -69,7 +69,7 @@ config :plug, :statuses, %{
 
 config :pdf_generator,
   wkhtml_path: "/usr/local/bin/wkhtmltopdf",
-  pdftk_path:  "/path/to/pdftk"
+  pdftk_path: "/path/to/pdftk"
 
 ###############################################################
 ### AWS (image upload functionality) config
