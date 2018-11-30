@@ -3,7 +3,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   require SalesReg.Context
 
   def upsert_service(%{service: params, service_id: id}, _res) do
-    Store.update_service(id, params)
+    Store.get_service(id)
+    |> Store.update_service(params)
   end
 
   def upsert_service(%{service: params}, _res) do
@@ -12,7 +13,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
 
   def list_company_services(%{company_id: company_id} = args, _res) do
     {:ok, services} = Store.list_company_services(company_id)
-    
+
     services
     |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
@@ -32,14 +33,14 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
 
   def list_company_products(%{company_id: company_id} = args, _res) do
     {:ok, products} = Store.list_company_products(company_id)
-  
+
     products
     |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
   def search_products_services_by_name(%{query: query}, _res) do
     products_and_services = Store.load_prod_and_serv(query)
- 
+
     {:ok, products_and_services}
   end
 
@@ -75,5 +76,30 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
 
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
+  end
+
+  def create_product(%{params: params}, _res) do
+    Store.create_product(params)
+  end
+
+  def update_product(%{product: params, product_id: id}, _res) do
+    Store.get_product(id)
+    |> Store.update_product(params)
+  end
+
+  def update_product_group_options(params, _res) do
+    Store.update_product_group_options(params)
+  end
+
+  def search_product_groups_by_title(%{company_id: company_id, query: query}, _res) do
+    {:ok, SalesReg.Context.search_schema_by_field(ProductGroup, {query, company_id}, :title)}
+  end
+
+  def search_options_by_name(%{company_id: company_id, query: query}, _res) do
+    {:ok, SalesReg.Context.search_schema_by_field(Option, {query, company_id}, :name)}
+  end
+
+  def search_categories_by_title(%{company_id: company_id, query: query}, _res) do
+    {:ok, SalesReg.Context.search_schema_by_field(Category, {query, company_id}, :title)}
   end
 end

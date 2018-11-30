@@ -77,7 +77,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
     @desc """
       query all banks of a company
     """
-    connection field :company_banks, node_type: :bank do
+    connection field(:company_banks, node_type: :bank) do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
@@ -90,7 +90,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
     @desc """
       query all expenses of a company
     """
-    connection field :company_expenses, node_type: :expense do
+    connection field(:company_expenses, node_type: :expense) do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)

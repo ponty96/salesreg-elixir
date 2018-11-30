@@ -15,7 +15,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
 
   def list_company_purchases(%{company_id: company_id} = args, _res) do
     {:ok, purchases} = Order.list_company_purchases(company_id)
-    
+
     purchases
     |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end

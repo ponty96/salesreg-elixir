@@ -9,8 +9,8 @@ defmodule SalesReg.Store.Tag do
     field(:name, :string)
 
     belongs_to(:company, SalesReg.Business.Company)
-    many_to_many(:products, Product, join_through: "products_tags", on_delete: :delete_all)
-    many_to_many(:services, Service, join_through: "services_tags", on_delete: :delete_all)
+    many_to_many(:products, Product, join_through: "products_tags")
+    many_to_many(:services, Service, join_through: "services_tags")
 
     timestamps()
   end
