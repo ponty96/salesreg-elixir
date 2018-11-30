@@ -67,6 +67,10 @@ config :plug, :statuses, %{
   209 => "Image successfully uploaded"
 }
 
+config :pdf_generator,
+  wkhtml_path: "/usr/local/bin/wkhtmltopdf",
+  pdftk_path: "/path/to/pdftk"
+
 ###############################################################
 ### AWS (image upload functionality) config
 ###############################################################

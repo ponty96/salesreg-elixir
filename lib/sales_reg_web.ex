@@ -114,7 +114,8 @@ defmodule SalesRegWeb do
         Store.Option,
         Store.OptionValue,
         Order.Invoice,
-        Order.Receipt
+        Order.Receipt,
+        TaskSupervisor
       }
     end
   end
