@@ -14,7 +14,9 @@ defmodule SalesReg.Repo.Migrations.CreateProductStar do
       timestamps()
     end
 
-    create unique_index(:review, [:sale_id, :contact_id, :product_id], on_delete: :nothing, type: :binary_id, name: :review_index_on_product)
-    create unique_index(:review, [:sale_id, :contact_id, :service_id], on_delete: :nothing, type: :binary_id, name: :review_index_on_service)
+    create(index(:star, [:sale_id], on_delete: :nothing, type: :binary_id))
+    create(index(:star, [:contact_id], on_delete: :nothing, type: :binary_id))
+    create(index(:star, [:product_id], on_delete: :nothing, type: :binary_id))
+    create(index(:star, [:service_id], on_delete: :nothing, type: :binary_id))
   end 
 end

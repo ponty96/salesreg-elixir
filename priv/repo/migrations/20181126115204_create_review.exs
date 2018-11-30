@@ -14,8 +14,9 @@ defmodule SalesReg.Repo.Migrations.CreateReview do
       timestamps()
     end
 
-    create unique_index(:review, [:sale_id, :contact_id, :product_id], on_delete: :nothing, type: :binary_id, name: :review_index_on_product)
-    create unique_index(:review, [:sale_id, :contact_id, :service_id], on_delete: :nothing, type: :binary_id, name: :review_index_on_service)
-
+    create(index(:review, [:sale_id], on_delete: :nothing, type: :binary_id))
+    create(index(:review, [:contact_id], on_delete: :nothing, type: :binary_id))
+    create(index(:review, [:product_id], on_delete: :nothing, type: :binary_id))
+    create(index(:review, [:service_id], on_delete: :nothing, type: :binary_id))
   end
 end
