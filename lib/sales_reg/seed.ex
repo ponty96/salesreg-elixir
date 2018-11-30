@@ -18,6 +18,8 @@ defmodule SalesReg.Seed do
   @payment_method ["cash", "POS", "cheque", "direct transfer"]
   @seed_order_status ["pending", "processed", "delivering"]
   @gender ["MALE", "FEMALE"]
+  @is_featured [true, false]
+  @is_top_rated_by_merchant [true, false]
 
   def create_user() do
     user_params = %{
@@ -57,7 +59,9 @@ defmodule SalesReg.Seed do
       "categories" => categories,
       "tags" => tags,
       "images" => [Avatar.image_url()],
-      "featured_image" => Avatar.image_url()
+      "featured_image" => Avatar.image_url(),
+      "is_featured" => true,
+      "is_top_rated_by_merchant" => true
     }
 
     Store.add_service(service_params)

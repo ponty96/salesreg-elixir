@@ -23,6 +23,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.delete_service(service)
   end
 
+  def delete_service(%{service_id: service_id}, _res) do
+    service = Store.get_service(service_id)
+    Store.delete_service(service)
+  end
+
   def upsert_product(%{product: params, product_id: id}, _res) do
     Store.update_product(id, params)
   end
@@ -47,6 +52,19 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   def delete_product(%{product_id: product_id}, _res) do
     product = Store.get_product(product_id)
     Store.delete_product(product)
+  end
+
+  def delete_product(%{product_id: product_id}, _res) do
+    product = Store.get_product(product_id)
+    Store.delete_product(product)
+  end
+
+  def list_featured_items(%{company_id: company_id}, _res) do
+    Store.list_featured_items(company_id)
+  end
+
+  def list_top_rated_items(%{company_id: company_id}, _res) do
+    Store.list_top_rated_items(company_id)
   end
 
   # category
@@ -102,4 +120,5 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   def search_categories_by_title(%{company_id: company_id, query: query}, _res) do
     {:ok, SalesReg.Context.search_schema_by_field(Category, {query, company_id}, :title)}
   end
+
 end

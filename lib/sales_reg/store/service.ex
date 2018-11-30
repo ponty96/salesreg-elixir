@@ -13,6 +13,8 @@ defmodule SalesReg.Store.Service do
     field(:price, :string)
     field(:featured_image, :string)
     field(:images, {:array, :string})
+    field(:is_featured, :boolean)
+    field(:is_top_rated_by_merchant, :boolean)
 
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
@@ -32,7 +34,7 @@ defmodule SalesReg.Store.Service do
   end
 
   @required_fields [:name, :price, :company_id, :user_id, :featured_image]
-  @optional_fields [:description, :images]
+  @optional_fields [:description, :images, :is_featured, :is_top_rated_by_merchant]
 
   @doc false
   def changeset(service, attrs) do
