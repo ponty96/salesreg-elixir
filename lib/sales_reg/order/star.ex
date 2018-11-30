@@ -17,31 +17,28 @@ defmodule SalesReg.Order.Star do
     timestamps()
   end
 
-  @required_fields [
-    :value,
-    :sale_id,
-    :contact_id
-  ]
-
-  @optional_fields [:service_id, :product_id]
-
   def changeset(star, attrs) do
+    IO.inspect star, label: "review"
+    IO.inspect attrs, label: "attrs"
     star
-    |> Repo.preload([:sale, :contact, :product])
-    |> cast(attrs, @required_fields ++ @optional_fields)
-    |> validate_required(@required_fields)
-    # |> validate_product_or_service(
-    |> unique_constraint(:product, name: :review_index_on_product)
-    |> unique_constraint(:service, name: :review_index_on_service)
+    |> Repo.preload([:sale, :contact])
+    |> cast(attrs, ~w(text sale_id contact_id service_id product_id)a)
+    |> validate_required([:text, :sale_id, :contact_id])
+    |> validate_product_or_service(attrs)
   end
 
-  defp validate_product_or_service(changeset) do
-    validate_change(changeset, :product_id, fn _, :service_id ->
-      if :product_id == nil do 
-        [:service_id]
-      else 
-        []
+  defp validate_product_or_service(changeset, %{"product_id" => _}) do
+    changeset
+    |> validate_required(:product_id)
+  end
+
+  defp validate_product_or_service(changeset, %{"service_id" => _}) do
+    changeset
+    |> validate_required(:service_id)
       end
-    end)
+
+  defp validate_product_or_service(changeset, _attrs) do
+    changeset
+    |> add_error(:attrs, "either :product_id or :service_id is required")
   end
 end

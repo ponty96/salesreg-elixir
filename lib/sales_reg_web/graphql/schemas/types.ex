@@ -627,7 +627,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:product_id, non_null(:uuid))
     field(:contact_id, non_null(:uuid))
     field(:sale_id, non_null(:uuid))
-
   end
 
   input_object :star_input do

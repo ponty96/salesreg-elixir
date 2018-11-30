@@ -79,7 +79,8 @@ defmodule SalesRegWeb do
       alias SalesReg.{
         Accounts,
         Accounts.User,
-        Business,Contact,
+        Business,
+        Contact,
         Business.Company,
         Business.Branch,
         Business.Contact,
