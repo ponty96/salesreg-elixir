@@ -7,8 +7,8 @@ defmodule SalesReg.Repo.Migrations.UpdateProductSchema do
       remove(:price_per_pack)
       remove(:unit_quantity)
 
-      add(:stock_quantity, :string)
-      add(:minimum_stock_quantity, :string)
+      add(:sku, :string)
+      add(:minimum_sku, :string)
       add(:cost_price, :string)
 
       add(:featured_image, :string)

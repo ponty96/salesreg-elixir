@@ -28,16 +28,18 @@ tags = [
 {:ok, user} = Seed.create_user()
 {:ok, company} = Seed.create_company(user.id)
 
+Enum.map(1..5, fn _index ->
+  Seed.add_product_without_variant(company, user)
+end)
+
+Enum.map(1..5, fn _index ->
+  Seed.add_product_with_variant(company, user)
+end)
+
 categories =
   Enum.map(1..25, fn _index ->
     {:ok, category} = Seed.add_category(company.id, user.id)
     category.id
-  end)
-
-products =
-  Enum.map(1..20, fn _index ->
-    {:ok, product} = Seed.add_product(user.id, company.id, Enum.take_random(categories, 6), tags)
-    product
   end)
 
 services =
@@ -69,21 +71,21 @@ branch =
 random_vendors = Enum.take_random(vendors, 8)
 random_customers = Enum.take_random(customers, 8)
 
-Enum.map(random_vendors, fn vendor ->
-  Seed.create_purchase_order(company.id, user.id, vendor.id, products)
-end)
+# Enum.map(random_vendors, fn vendor ->
+#   Seed.create_purchase_order(company.id, user.id, vendor.id, products)
+# end)
 
-Enum.map(random_customers, fn customer ->
-  Seed.create_sales_order(company.id, user.id, customer.id, %{items: products, type: "product"})
-end)
+# Enum.map(random_customers, fn customer ->
+#   Seed.create_sales_order(company.id, user.id, customer.id, %{items: products, type: "product"})
+# end)
 
 Enum.map(random_customers, fn customer ->
   Seed.create_sales_order(company.id, user.id, customer.id, %{items: services, type: "service"})
 end)
 
-Enum.map(random_customers, fn customer ->
-  Seed.create_sales_order(company.id, user.id, customer.id, products, services)
-end)
+# Enum.map(random_customers, fn customer ->
+#   Seed.create_sales_order(company.id, user.id, customer.id, products, services)
+# end)
 
 Enum.map(1..10, fn _index ->
   Seed.create_bank(company.id)

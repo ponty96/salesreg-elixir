@@ -64,6 +64,6 @@ defmodule SalesReg.Order.Purchase do
     purchase
     |> Repo.preload(:items)
     |> cast(%{}, @required_fields ++ @optional_fields)
-    |> no_assoc_constraint(:items, message: "This purchase is still associated with a product or service ")
+    |> no_assoc_constraint(:items, message: "This purchase is still associated with a product or service")
   end
 end

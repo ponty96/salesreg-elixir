@@ -10,8 +10,8 @@ defmodule SalesReg.Store.Product do
   schema "products" do
     field(:description, :string)
     field(:name, :string)
-    field(:stock_quantity, :string)
-    field(:minimum_stock_quantity, :string)
+    field(:sku, :string)
+    field(:minimum_sku, :string)
     field(:cost_price, :string)
     field(:selling_price, :string)
     field(:featured_image, :string)
@@ -28,11 +28,14 @@ defmodule SalesReg.Store.Product do
       :categories,
       Category,
       join_through: "products_categories",
-      on_replace: :delete,
-      on_delete: :delete_all
+      on_replace: :delete
     )
 
-    many_to_many(:tags, SalesReg.Store.Tag, join_through: "products_tags", on_delete: :delete_all)
+    many_to_many(:tags, Store.Tag, join_through: "products_tags")
+
+    has_many(:option_values, Store.OptionValue, on_replace: :delete)
+
+    belongs_to(:product_group, Store.ProductGroup)
 
     timestamps()
   end
@@ -41,7 +44,8 @@ defmodule SalesReg.Store.Product do
     :description,
     :images,
     :is_featured,
-    :is_top_rated_by_merchant
+    :is_top_rated_by_merchant,
+    :product_group_id
   ]
 
   @required_fields [
@@ -49,9 +53,8 @@ defmodule SalesReg.Store.Product do
     :selling_price,
     :company_id,
     :user_id,
-    :stock_quantity,
-    :minimum_stock_quantity,
-    :cost_price,
+    :sku,
+    :minimum_sku,
     :featured_image
   ]
   @doc false
@@ -59,17 +62,19 @@ defmodule SalesReg.Store.Product do
     product
     |> Repo.preload(:categories)
     |> Repo.preload(:tags)
+    |> Repo.preload(:option_values)
     |> cast(attrs, @fields ++ @required_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
     |> put_assoc(:categories, Store.load_categories(attrs))
     |> put_assoc(:tags, Store.load_tags(attrs))
+    |> cast_assoc(:option_values)
     |> no_assoc_constraint(:items, message: "This product is still associated with sales")
   end
 
-   @doc false
-   def delete_changeset(product) do
+  @doc false
+  def delete_changeset(product) do
     product
     |> Repo.preload(:categories)
     |> Repo.preload(:tags)

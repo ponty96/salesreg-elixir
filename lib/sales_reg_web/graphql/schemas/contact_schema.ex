@@ -3,6 +3,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.ContactSchema do
     GraphQL Schemas for Contact
   """
   use Absinthe.Schema.Notation
+  use Absinthe.Relay.Schema.Notation, :classic
   alias SalesRegWeb.GraphQL.Resolvers.ContactResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
 
@@ -35,7 +36,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.ContactSchema do
     @desc """
       query all contacts of a company
     """
-    field :company_contacts, list_of(:contact) do
+    connection field(:company_contacts, node_type: :contact) do
       arg(:company_id, non_null(:uuid))
       arg(:type, non_null(:string))
 

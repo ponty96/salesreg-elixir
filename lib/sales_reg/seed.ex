@@ -49,28 +49,6 @@ defmodule SalesReg.Seed do
     Business.create_company(user_id, company_params)
   end
 
-  def add_product(user_id, company_id, categories, tags) do
-    product_params = %{
-      "description" => "Our product is #{CommerceEn.product_name()}",
-      "images" => [Avatar.image_url()],
-      "name" => CommerceEn.product_name(),
-      "cost_price" => "#{Enum.random(3000..100_000)}",
-      "minimum_stock_quantity" => "#{Enum.random(5..100)}",
-      "selling_price" => "#{Commerce.price()}",
-      "stock_quantity" => "#{Enum.random([3, 6, 12, 24])}",
-      "user_id" => "#{user_id}",
-      "company_id" => "#{company_id}",
-      "categories" => categories,
-      "tags" => tags,
-      "images" => [Avatar.image_url()],
-      "featured_image" => Avatar.image_url(),
-      "is_featured" => true,
-      "is_top_rated_by_merchant" => true
-    }
-
-    Store.add_product(product_params)
-  end
-
   def add_service(user_id, company_id, categories, tags) do
     service_params = %{
       "description" => "Our service is #{CompanyEn.bs()}",
@@ -305,5 +283,74 @@ defmodule SalesReg.Seed do
       end)
 
     "#{Enum.sum(amounts)}"
+  end
+
+  # create product
+  @valid_product_params %{
+    name: "Random Product name here",
+    sku: "#{Enum.random(30..100)}",
+    minimum_sku: "#{Enum.random(1..50)}",
+    selling_price: "#{Enum.random(1..50000)}",
+    featured_image:
+      "http://shfcs.org/en/wp-content/uploads/2015/11/MedRes_Product-presentation-2.jpg"
+  }
+
+  def add_product_without_variant(company, user) do
+    product =
+      company
+      |> valid_product_params(user)
+      |> Map.put(:option_values, [])
+      |> Map.put(:tags, [])
+      |> Map.put(:categories, [])
+
+    params = %{
+      product_group_title: CommerceEn.product_name(),
+      product: product,
+      company_id: company.id
+    }
+
+    Store.create_product(params)
+  end
+
+  def add_product_with_variant(company, user) do
+    option_values = valid_option_values(company.id)
+
+    product =
+      company
+      |> valid_product_params(user)
+      |> Map.put(:option_values, option_values)
+      |> Map.put(:tags, [])
+      |> Map.put(:categories, [])
+
+    params = %{
+      product_group_title: CommerceEn.product_name(),
+      product: product,
+      company_id: company.id
+    }
+
+    Store.create_product(params)
+  end
+
+  defp valid_product_params(company, user) do
+    @valid_product_params
+    |> Map.put(:company_id, company.id)
+    |> Map.put(:user_id, user.id)
+  end
+
+  defp valid_option_values(company_id) do
+    options =
+      company_id
+      |> Store.list_company_options()
+      |> elem(1)
+      |> Enum.take(3)
+      |> Enum.map(fn option ->
+        %{
+          option_id: option.id,
+          name: CommerceEn.color(),
+          company_id: company_id
+        }
+      end)
+
+    options
   end
 end
