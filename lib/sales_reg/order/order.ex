@@ -42,7 +42,7 @@ defmodule SalesReg.Order do
         {:error, error}
     end
   end
-  
+
   def update_status(:sale, order_id, new_status) do
     sale_order = get_sale(order_id) |> preload_order()
     sale_order = Map.put(sale_order, :state, sale_order.status)
@@ -61,5 +61,29 @@ defmodule SalesReg.Order do
     Sale
     |> where([s], s.status == "processed")
     |> Repo.all()
+  end
+
+  def create_review(%{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id}) do
+    sale =
+      Order.Sale
+      |> where([sale], sale.id == ^sale_id)
+      |> where([sale], sale.contact_id == ^contact_id)
+      |> join(:left, [sale], items in assoc(sale, :items))
+      |> join(:left, [sale, items], product_id in assoc(items, :product_id))
+      |> preload([sale, items, product_id], items: {items, product_id: product_id})
+      |> Repo.one!()
+      |> Order.add_review()
+  end
+
+  def create_review(%{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id}) do
+    sale =
+      Order.Sale
+      |> where([sale], sale.id == ^sale_id)
+      |> where([sale], sale.contact_id == ^contact_id)
+      |> join(:left, [sale], items in assoc(sale, :items))
+      |> join(:left, [sale, items], service_id in assoc(items, :service_id))
+      |> preload([sale, items, service_id], items: {items, service_id: service_id})
+      |> Repo.one!()
+      |> Order.add_review()
   end
 end

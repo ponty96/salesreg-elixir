@@ -73,7 +73,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
     """
     field :add_review, :mutation_response do
       arg(:review, non_null(:review_input))
-      
+
       resolve(&OrderResolver.add_review/2)
     end
 
