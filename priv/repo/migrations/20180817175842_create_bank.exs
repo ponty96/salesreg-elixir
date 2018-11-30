@@ -13,6 +13,7 @@ defmodule SalesReg.Repo.Migrations.CreateBank do
 
       timestamps()
     end
+
     create(index(:banks, [:company_id]))
   end
 end

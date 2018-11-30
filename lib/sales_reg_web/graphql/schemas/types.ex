@@ -4,8 +4,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   """
 
   use Absinthe.Schema.Notation
-  use Absinthe.Ecto, repo: SalesReg.Repo
-  use SalesRegWeb, :context
+  use Absinthe.Relay.Schema.Notation
+  use SalesRegWeb, :graphql_context
   import Absinthe.Resolution.Helpers
 
   alias SalesReg.Accounts.User
@@ -77,14 +77,41 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Product Group object type
+  """
+  object :product_group do
+    field(:id, :uuid)
+    field(:title, :string)
+
+    field(:products, list_of(:product), resolve: dataloader(SalesReg.Store, :products))
+    field(:options, list_of(:option), resolve: dataloader(SalesReg.Store, :options))
+  end
+
+  @desc """
+    Option object type
+  """
+  object :option do
+    field(:id, :uuid)
+    field(:name, :string)
+
+    field(:option_values, list_of(:option_value),
+      resolve: dataloader(SalesReg.Store, :option_values)
+    )
+
+    field(:product_groups, list_of(:product_group),
+      resolve: dataloader(SalesReg.Store, :product_groups)
+    )
+  end
+
+  @desc """
     Product object type
   """
   object :product do
     field(:id, :uuid)
     field(:description, :string)
     field(:name, :string)
-    field(:stock_quantity, :string)
-    field(:minimum_stock_quantity, :string)
+    field(:sku, :string)
+    field(:minimum_sku, :string)
     field(:cost_price, :string)
     field(:selling_price, :string)
 
@@ -94,8 +121,27 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:categories, list_of(:category), resolve: dataloader(SalesReg.Store, :categories))
     field(:tags, list_of(:tag), resolve: dataloader(SalesReg.Store, :tags))
 
+    field(:option_values, list_of(:option_value),
+      resolve: dataloader(SalesReg.Store, :option_values)
+    )
+
+    field(:product_group, :product_group, resolve: dataloader(SalesReg.Store, :product_group))
+
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+  end
+
+  connection(node_type: :product)
+
+  @desc """
+    Option Value Object Type
+  """
+  object :option_value do
+    field(:id, :uuid)
+    field(:name, :string)
+
+    field(:option, :option, resolve: dataloader(SalesReg.Store, :option))
+    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
   end
 
   @desc """
@@ -114,6 +160,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
   end
+
+  connection(node_type: :service)
 
   @desc """
     Contact object type
@@ -145,6 +193,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:updated_at, :naive_datetime)
   end
 
+  connection(node_type: :contact)
+
   @desc """
     Phone object type
   """
@@ -172,6 +222,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :items))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
+
+  connection(node_type: :purchase)
 
   @desc """
     Item object type
@@ -206,6 +258,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
   end
 
+  connection(node_type: :sale)
+
   object :bank do
     field(:id, :uuid)
     field(:account_name, :string)
@@ -218,6 +272,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
+
+  connection(node_type: :bank)
 
   @desc """
     Expense object type
@@ -238,6 +294,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       resolve: dataloader(SalesReg.Business, :expense_items)
     )
   end
+
+  connection(node_type: :expense)
 
   @desc """
     Expense Item object type
@@ -273,6 +331,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     )
   end
 
+  connection(node_type: :category)
+
   @desc """
     Tag object Type
   """
@@ -282,6 +342,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
+
+  connection(node_type: :tag)
 
   @desc """
     Invoice object Type
@@ -341,7 +403,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :tag,
       :bank,
       :receipt,
-      :invoice
+      :invoice,
+      :product_group,
+      :option
     ])
 
     resolve_type(fn
@@ -363,6 +427,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Bank{}, _ -> :bank
       %Receipt{}, _ -> :receipt
       %Invoice{}, _ -> :invoice
+      %ProductGroup{}, _ -> :product_group
+      %Option{}, _ -> :option
     end)
   end
 
@@ -384,6 +450,10 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   object :search_response do
     field(:id, non_null(:uuid))
     field(:name, non_null(:string))
+    field(:price, :string)
+    field(:cost_price, :string)
+    field(:type, :string)
+    field(:stock_quantity, :string)
   end
 
   @desc "sorts the order from either ASC or DESC"
@@ -486,21 +556,38 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:type, :string)
   end
 
+  input_object :product_group_input do
+    field(:product_group_id, :uuid)
+    field(:product_group_title, :string)
+    field(:company_id, non_null(:uuid))
+
+    field(:product, non_null(:product_input))
+  end
+
   input_object :product_input do
+    field(:id, :uuid)
     field(:description, :string)
     field(:name, non_null(:string))
-    field(:stock_quantity, non_null(:string))
-    field(:minimum_stock_quantity, non_null(:string))
-    field(:cost_price, non_null(:string))
+    field(:sku, non_null(:string))
+    field(:minimum_sku, non_null(:string))
+    field(:cost_price, :string)
     field(:selling_price, non_null(:string))
-
+    field(:images, list_of(:string))
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
-    field(:categories, list_of(:uuid))
-    field(:tags, non_null(list_of(:string)))
+    field(:categories, list_of(:uuid), default_value: [])
+    field(:tags, list_of(:string), default_value: [])
 
     field(:featured_image, non_null(:string))
     field(:images, list_of(:string))
+
+    field(:option_values, list_of(:option_value_input), default_value: [])
+  end
+
+  input_object :option_value_input do
+    field(:name, non_null(:string))
+    field(:option_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
   end
 
   input_object :service_input do
@@ -510,8 +597,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
-    field(:categories, list_of(:uuid))
-    field(:tags, list_of(:string))
+    field(:categories, list_of(:uuid), default_value: [])
+    field(:tags, list_of(:string), default_value: [])
 
     field(:featured_image, non_null(:string))
     field(:images, list_of(:string))

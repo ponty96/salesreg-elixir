@@ -17,15 +17,16 @@ defmodule SalesReg.Store.Service do
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
 
+    has_many(:items, SalesReg.Order.Item)
+
     many_to_many(
       :categories,
       Category,
       join_through: "services_categories",
-      on_replace: :delete,
-      on_delete: :delete_all
+      on_replace: :delete
     )
 
-    many_to_many(:tags, SalesReg.Store.Tag, join_through: "services_tags", on_delete: :delete_all)
+    many_to_many(:tags, SalesReg.Store.Tag, join_through: "services_tags")
 
     timestamps()
   end
@@ -44,5 +45,15 @@ defmodule SalesReg.Store.Service do
     |> assoc_constraint(:user)
     |> put_assoc(:categories, Store.load_categories(attrs))
     |> put_assoc(:tags, Store.load_tags(attrs))
+    |> no_assoc_constraint(:items, message: "This service is still associated with sales")
+  end
+
+  def delete_changeset(service) do
+    service
+    |> Repo.preload(:categories)
+    |> Repo.preload(:tags)
+    |> Repo.preload(:items)
+    |> cast(%{}, @required_fields ++ @optional_fields)
+    |> no_assoc_constraint(:items, message: "This service is still associated with sales")
   end
 end
