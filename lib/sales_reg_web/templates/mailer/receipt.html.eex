@@ -6,17 +6,23 @@
 <hr/> 
 <div>
   <h2>You ordered for this items</h2>
-  <ul>
-    <%= for item <- receipt.sale.items do %>
-			<%= if item.product_id do %>
-				<li>Product Name: <%= item.product.name %></li>
-				<li>Quantity: <%= item.quantity %>
-			<% else %>
-				<li>Service Name: <%= item.service.name %></li>
-				<li>Quantity: <%= item.quantity %>
-			<% end %>
-		<% end %>
-	</ul>
+    <table>
+			<tr>
+      	<th>Name</th>
+      	<th>Quantity</th>
+    	</tr>
+			<tr>
+    		<%= for item <- receipt.sale.items do %>
+      		<%= if item.product_id do %>
+						<td><%= item.product.name %></td>
+						<td><%= item.quantity %></td>
+					<% else %>
+						<td><%= item.service.name %></td>
+						<td><%= item.quantity %></td>
+					<% end %>
+				<% end %>
+			</tr>
+	</table>
 	<hr/> 
 	<ul> 
   	<li>Amount Paid: <%= receipt.amount_paid %></li>

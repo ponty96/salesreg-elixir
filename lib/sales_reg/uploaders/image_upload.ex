@@ -22,7 +22,6 @@ defmodule SalesReg.ImageUpload do
   def transform(:original, _), do: :noaction
   # Define a thumbnail transformation
   def transform(:thumb, _), do: :noaction
-  def transform(:thumb, {%{file_name: _name}, _}), do: :noaction
 
   # def transform(:thumb, {%{file_name: name}, _}) do
   #   case String.downcase(Path.extname(name)) do

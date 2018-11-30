@@ -16,6 +16,7 @@ defmodule SalesReg.Order do
   ]
 
   @receipt_html_path "lib/sales_reg_web/templates/mailer/receipt.html.eex"
+  @invoice_html_path "lib/sales_reg_web/templates/mailer/invoice.html.eex"
 
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
@@ -63,39 +64,77 @@ defmodule SalesReg.Order do
     |> Repo.all()
   end
 
-  def update_receipt_details(filename, receipt) do
+  def update_receipt_details(filename, %Receipt{} = receipt) do
     company = load_pdf_resource(receipt).company
     url = SalesReg.ImageUpload.url({filename, company})
     __MODULE__.update_receipt(receipt, %{pdf_url: url})
   end
 
-  def upload_pdf(%Receipt{} = receipt) do
-    receipt = load_pdf_resource(receipt)
-    uniq_name = gen_pdf_uniq_name(receipt)
-
-    {:ok, path} =
-      receipt
-      |> build_receipt_html()
-      |> PdfGenerator.generate(filename: uniq_name)
-
-    SalesReg.ImageUpload.store({path, receipt.company})
+  def update_invoice_details(filename, %Invoice{} = invoice) do
+    company = load_pdf_resource(invoice).company
+    url = SalesReg.ImageUpload.url({filename, company})
+    __MODULE__.update_invoice(invoice, %{pdf_url: url})
   end
 
-  defp build_receipt_html(receipt) do
+  def upload_pdf(resource) do
+    preload_resource = load_pdf_resource(resource)
+    uniq_name = gen_pdf_uniq_name(preload_resource)
+
+    {:ok, path} =
+      preload_resource
+      |> build_resource_html()
+      |> PdfGenerator.generate(filename: uniq_name)
+
+    SalesReg.ImageUpload.store({path, preload_resource.company})
+  end
+
+  def supervise_pdf_upload(resource) do
+    Task.Supervisor.start_child(TaskSupervisor, fn ->
+      {:ok, filename} = Order.upload_pdf(resource)
+
+      case resource do
+        %Receipt{} ->
+          Order.update_receipt_details(filename, resource)
+
+        %Invoice{} ->
+          Order.update_invoice_details(filename, resource)
+
+        _ ->
+          %{}
+      end
+    end)
+  end
+
+  defp build_resource_html(%Receipt{} = receipt) do
     receipt = load_pdf_resource(receipt)
     EEx.eval_file(@receipt_html_path, receipt: receipt)
   end
 
-  defp gen_pdf_uniq_name(%Receipt{} = receipt) do
-    receipt = load_pdf_resource(receipt)
-    count = Enum.count(Repo.all(Receipt))
+  defp build_resource_html(%Invoice{} = invoice) do
+    invoice = load_pdf_resource(invoice)
+    EEx.eval_file(@invoice_html_path, invoice: invoice)
+  end
 
-    "#{String.replace(receipt.company.title, " ", "-")}-receipt-#{count}"
+  defp gen_pdf_uniq_name(resource) do
+    preload_resource = load_pdf_resource(resource)
+
+    case preload_resource do
+      %Receipt{} ->
+        count = Enum.count(Repo.all(Receipt))
+        "#{String.replace(preload_resource.company.title, " ", "-")}-receipt-#{count}"
+
+      %Invoice{} ->
+        count = Enum.count(Repo.all(Invoice))
+        "#{String.replace(preload_resource.company.title, " ", "-")}-invoice-#{count}"
+    end
   end
 
   defp load_pdf_resource(struct) do
     case struct do
       %Receipt{} ->
+        Repo.preload(struct, [:company, :user, sale: [items: [:product, :service]]])
+
+      %Invoice{} ->
         Repo.preload(struct, [:company, :user, sale: [items: [:product, :service]]])
 
       _ ->
