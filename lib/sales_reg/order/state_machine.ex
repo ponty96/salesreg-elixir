@@ -47,14 +47,14 @@ defmodule SalesReg.Order.OrderStateMachine do
     invoice_params = build_invoice_params(order)
     Store.update_product_inventory(:decrement, order.items)
     add_invoice = Store.add_invoice(invoice_params)
-    
+
     case add_invoice do
       {:ok, invoice} ->
         Order.supervise_pdf_upload(invoice)
         # Write code to handle errors
         order
 
-      _ -> 
+      _ ->
         # Write code to handle errors
         order
     end

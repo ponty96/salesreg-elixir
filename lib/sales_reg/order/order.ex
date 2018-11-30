@@ -91,14 +91,16 @@ defmodule SalesReg.Order do
   def supervise_pdf_upload(resource) do
     Task.Supervisor.start_child(TaskSupervisor, fn ->
       {:ok, filename} = Order.upload_pdf(resource)
+
       case resource do
         %Receipt{} ->
           Order.update_receipt_details(filename, resource)
 
         %Invoice{} ->
           Order.update_invoice_details(filename, resource)
-        
-        _ -> %{}
+
+        _ ->
+          %{}
       end
     end)
   end
@@ -115,8 +117,9 @@ defmodule SalesReg.Order do
 
   defp gen_pdf_uniq_name(resource) do
     preload_resource = load_pdf_resource(resource)
+
     case preload_resource do
-      %Receipt{} -> 
+      %Receipt{} ->
         count = Enum.count(Repo.all(Receipt))
         "#{String.replace(preload_resource.company.title, " ", "-")}-receipt-#{count}"
 
