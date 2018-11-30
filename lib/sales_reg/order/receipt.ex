@@ -9,10 +9,12 @@ defmodule SalesReg.Order.Receipt do
     field(:amount_paid, :string)
     field(:time_paid, :string)
     field(:payment_method, :string)
+    field(:pdf_url, :string)
 
     belongs_to(:invoice, SalesReg.Order.Invoice)
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:company, SalesReg.Business.Company)
+    belongs_to(:sale, SalesReg.Order.Sale)
 
     timestamps()
   end
@@ -23,12 +25,15 @@ defmodule SalesReg.Order.Receipt do
     :payment_method,
     :invoice_id,
     :user_id,
-    :company_id
+    :company_id,
+    :sale_id
   ]
+
+  @optional_fields [:pdf_url]
 
   def changeset(receipts, attrs) do
     receipts
-    |> cast(attrs, @required_fields)
+    |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_payment_method()
   end

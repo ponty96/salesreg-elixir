@@ -28,7 +28,8 @@ defmodule SalesReg.Mixfile do
         :ex_aws,
         :ex_aws_s3,
         :uuid,
-        :hackney
+        :hackney,
+        :pdf_generator
       ]
     ]
   end
@@ -66,8 +67,9 @@ defmodule SalesReg.Mixfile do
       {:machinery, github: "ponty96/machinery", branch: "bump_ecto_version"},
       {:ecto_sql, "~> 3.0"},
       {:jason, "~> 1.1"},
-      {:plug_cowboy, "~> 1.0"},
-      {:arc, "~> 0.11.0"}
+      {:arc, "~> 0.11.0"},
+      {:pdf_generator, "~> 0.4.0"},
+      {:plug_cowboy, "~> 1.0"}
     ]
   end
 

@@ -58,6 +58,26 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     |> Order.update_invoice(params)
   end
 
+  def upsert_receipt(%{receipt: params}, _res) do
+    current_date = Date.utc_today() |> Date.to_string()
+    params = Map.put(params, :time_paid, current_date)
+    create_receipt = Order.add_receipt(params)
+
+    case create_receipt do
+      {:ok, receipt} ->
+        Order.supervise_pdf_upload(receipt)
+        {:ok, receipt}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  def delete_receipt(%{receipt_id: receipt_id}, _res) do
+    Order.get_receipt(receipt_id)
+    |> Order.delete_receipt()
+  end
+
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
   end
