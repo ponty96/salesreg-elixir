@@ -98,7 +98,8 @@ defmodule SalesRegWeb do
         Order.Item,
         Order.Sale,
         Order.Invoice,
-        Order.Receipt
+        Order.Receipt,
+        TaskSupervisor
       }
     end
   end

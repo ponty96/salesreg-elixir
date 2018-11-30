@@ -27,7 +27,7 @@ defmodule SalesReg.Order.Invoice do
 
   def changeset(invoice, attrs) do
     invoice
-    |> cast(attrs, @required_fields)
+    |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:sale)
   end

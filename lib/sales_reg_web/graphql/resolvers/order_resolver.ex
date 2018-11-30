@@ -1,6 +1,5 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   use SalesRegWeb, :context
-  alias SalesReg.TaskSupervisor
 
   def upsert_purchase(%{purchase: params, purchase_id: id}, _res) do
     # new_params = add_order_amount(params)
@@ -50,11 +49,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
 
     case create_receipt do
       {:ok, receipt} ->
-        Task.Supervisor.start_child(TaskSupervisor, fn ->
-          {:ok, filename} = Order.upload_pdf(receipt)
-          Order.update_receipt_details(filename, receipt)
-        end)
-
+        Order.supervise_pdf_upload(receipt)
         {:ok, receipt}
 
       {:error, reason} ->
