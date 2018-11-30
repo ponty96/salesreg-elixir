@@ -114,9 +114,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:minimum_sku, :string)
     field(:cost_price, :string)
     field(:selling_price, :string)
-
+    
     field(:featured_image, :string)
     field(:images, list_of(:string))
+
+    field(:is_featured, :boolean)
+    field(:is_top_rated_by_merchant, :boolean)
 
     field(:categories, list_of(:category), resolve: dataloader(SalesReg.Store, :categories))
     field(:tags, list_of(:tag), resolve: dataloader(SalesReg.Store, :tags))
@@ -154,6 +157,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:price, :string)
     field(:featured_image, :string)
     field(:images, list_of(:string))
+    field(:is_featured, :boolean)
+    field(:is_top_rated_by_merchant, :boolean)
     field(:categories, list_of(:category), resolve: dataloader(SalesReg.Store, :categories))
     field(:tags, list_of(:tag), resolve: dataloader(SalesReg.Store, :tags))
 

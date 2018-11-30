@@ -16,6 +16,8 @@ defmodule SalesReg.Store.Product do
     field(:selling_price, :string)
     field(:featured_image, :string)
     field(:images, {:array, :string})
+    field(:is_featured, :boolean)
+    field(:is_top_rated_by_merchant, :boolean)
 
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
@@ -41,6 +43,8 @@ defmodule SalesReg.Store.Product do
   @fields [
     :description,
     :images,
+    :is_featured,
+    :is_top_rated_by_merchant,
     :product_group_id
   ]
 
