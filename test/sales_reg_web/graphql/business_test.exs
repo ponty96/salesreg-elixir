@@ -52,7 +52,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
               country: "Nigeria",
               state: "Ondo",
               street1: "Roadblock",
-            }, 
+            },
           }
         ){
             success,
@@ -229,11 +229,11 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
 
       query_doc = """
       deleteBank(
-        bankId: "#{bank.id}" 
+        bankId: "#{bank.id}"
       ){
         success,
         fieldErrors{
-          key, 
+          key,
           message
         }
       }
@@ -307,7 +307,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
               itemName: "Samsung"
             },
             {
-              amount: 30.0884, 
+              amount: 30.0884,
               itemName: "Dell"
             }
           ],
@@ -324,7 +324,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
           },
           data {
             ... on Expense{
-              id, 
+              id,
               paymentMethod,
               title,
               totalAmount,
@@ -367,7 +367,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
               itemName: "Samsung"
             },
             {
-              amount: 30.0884, 
+              amount: 30.0884,
               itemName: "Dell"
             }
           ],
@@ -384,7 +384,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
           },
           data {
             ... on Expense{
-              id, 
+              id,
               paymentMethod,
               title,
               totalAmount,

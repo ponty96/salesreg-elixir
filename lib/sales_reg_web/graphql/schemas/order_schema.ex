@@ -82,7 +82,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
     @desc """
       query for all purchases of a company
     """
-    connection field :list_company_purchases, node_type: :purchase do
+    connection field(:list_company_purchases, node_type: :purchase) do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
@@ -92,7 +92,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
     @desc """
       query for all sales of a company
     """
-    connection field :list_company_sales, node_type: :sale do
+    connection field(:list_company_sales, node_type: :sale) do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)

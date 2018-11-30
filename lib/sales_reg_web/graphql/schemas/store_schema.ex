@@ -9,15 +9,48 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
 
   ### MUTATIONS
   object :store_mutations do
+    # @desc """
+    # upsert a product in a company's store
+    # """
+    # field :upsert_product, :mutation_response do
+    #   deprecate
+    #   arg(:product, non_null(:product_input))
+    #   arg(:product_id, :uuid)
+
+    #   middleware(Authorize)
+    #   resolve(&StoreResolver.upsert_product/2)
+    # end
+
     @desc """
-    upsert a product in a company's store
+      Create a product
     """
-    field :upsert_product, :mutation_response do
-      arg(:product, non_null(:product_input))
-      arg(:product_id, :uuid)
+    field :create_product, :mutation_response do
+      arg(:params, non_null(:product_group_input))
 
       middleware(Authorize)
-      resolve(&StoreResolver.upsert_product/2)
+      resolve(&StoreResolver.create_product/2)
+    end
+
+    @desc """
+      Update Product Group Options
+    """
+    field :update_product_group_options, :mutation_response do
+      arg(:id, non_null(:uuid))
+      arg(:options, non_null(list_of(:uuid)))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.update_product_group_options/2)
+    end
+
+    @desc """
+      Update Product
+    """
+    field :update_product, :mutation_response do
+      arg(:product, non_null(:product_input))
+      arg(:product_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.update_product/2)
     end
 
     @desc """
@@ -28,7 +61,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
 
       middleware(Authorize)
       resolve(&StoreResolver.delete_product/2)
-
     end
 
     @desc """
@@ -43,15 +75,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     end
 
     @desc """
-    mutation to delete service
-  """
-  field :delete_service, :mutation_response do
-    arg(:service_id, non_null(:uuid))
+      mutation to delete service
+    """
+    field :delete_service, :mutation_response do
+      arg(:service_id, non_null(:uuid))
 
-    middleware(Authorize)
-    resolve(&StoreResolver.delete_service/2)
-
-  end
+      middleware(Authorize)
+      resolve(&StoreResolver.delete_service/2)
+    end
 
     @desc """
     upsert a category in a company's store
@@ -70,7 +101,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     @desc """
       query for all products in a company's store
     """
-    connection field :list_company_products, node_type: :product do
+    connection field(:list_company_products, node_type: :product) do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
@@ -80,7 +111,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     @desc """
       query for all services in a company's store
     """
-    connection field :list_company_services, node_type: :service do
+    connection field(:list_company_services, node_type: :service) do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
@@ -100,7 +131,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     @desc """
       query for all company product / service categories
     """
-    connection field :list_company_categories, node_type: :category do
+    connection field(:list_company_categories, node_type: :category) do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
@@ -110,11 +141,44 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     @desc """
       query all tags of a company
     """
-    connection field :company_tags, node_type: :tag do
+    connection field(:company_tags, node_type: :tag) do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
       resolve(&StoreResolver.list_company_tags/2)
+    end
+
+    @desc """
+     search for product groups by title
+    """
+    field :search_product_groups_by_title, list_of(:product_group) do
+      arg(:query, non_null(:string))
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.search_product_groups_by_title/2)
+    end
+
+    @desc """
+     search for options by name
+    """
+    field :search_options_by_name, list_of(:option) do
+      arg(:query, non_null(:string))
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.search_options_by_name/2)
+    end
+
+    @desc """
+     search for categories by title
+    """
+    field :search_categories_by_title, list_of(:category) do
+      arg(:query, non_null(:string))
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.search_categories_by_title/2)
     end
   end
 end
