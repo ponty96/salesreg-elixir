@@ -282,42 +282,7 @@ defmodule SalesReg.Seed do
 
     SalesReg.Order.add_invoice(params)
   end
-
-  def add_review(product_id, sale_id, contact_id) do
-    params = %{
-      "text" => "a very good product",
-      "product_id" => "#{product_id}",
-      "sale_id" => "#{sale_id}",
-      "contact_id" => "#{contact_id}"
-    }
-
-    Order.add_review(params)
-  end
-
-  def add_star(product_id, sale_id, contact_id) do
-    star_params = %{
-      "text" => "a very good product",
-      "product_id" => "#{product_id}",
-      "sale_id" => "#{sale_id}",
-      "contact_id" => "#{contact_id}"
-    }
-
-    Order.add_star(star_params)
-  end
-
-  # type could be product or service
-  defp order_items(items, type) do
-    Enum.map(items, fn item ->
-      unit_price = Map.get(item, :selling_price) || Map.get(item, :price)
-
-      %{
-        "quantity" => "#{Enum.random(0..20)}",
-        "unit_price" => unit_price,
-        "#{type}_id" => item.id
-      }
-    end)
-  end
-
+  
   defp order_total_cost(order_items) do
     amounts =
       Enum.map(order_items, fn item ->
