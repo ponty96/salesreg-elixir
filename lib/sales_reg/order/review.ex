@@ -18,11 +18,9 @@ defmodule SalesReg.Order.Review do
   end
 
   def changeset(review, attrs) do
-    IO.inspect review, label: "review"
-    IO.inspect attrs, label: "attrs"
     review
     |> Repo.preload([:sale, :contact])
-    |> cast(attrs, ~w(text sale_id contact_id service_id product_id)a)
+    |> cast(attrs, ~w(:text, :sale_id, :contact_id, :service_id, :product_id)a)
     |> validate_required([:text, :sale_id, :contact_id])
     |> validate_product_or_service(attrs)
   end
