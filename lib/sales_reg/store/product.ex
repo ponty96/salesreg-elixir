@@ -13,7 +13,7 @@ defmodule SalesReg.Store.Product do
     field(:sku, :string)
     field(:minimum_sku, :string)
     field(:cost_price, :string)
-    field(:selling_price, :string)
+    field(:price, :string)
     field(:featured_image, :string)
     field(:images, {:array, :string})
     field(:is_featured, :boolean)
@@ -50,7 +50,7 @@ defmodule SalesReg.Store.Product do
 
   @required_fields [
     :name,
-    :selling_price,
+    :price,
     :company_id,
     :user_id,
     :sku,

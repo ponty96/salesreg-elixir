@@ -12,7 +12,7 @@ defmodule SalesReg.StoreTest do
       name: "some name",
       pack_quantity: "some pack_quantity",
       price_per_pack: "some price_per_pack",
-      selling_price: "some selling_price",
+      price: "some price",
       unit_quantity: "some unit_quantity"
     }
     @update_attrs %{
@@ -21,7 +21,7 @@ defmodule SalesReg.StoreTest do
       name: "some updated name",
       pack_quantity: "some updated pack_quantity",
       price_per_pack: "some updated price_per_pack",
-      selling_price: "some updated selling_price",
+      price: "some updated price",
       unit_quantity: "some updated unit_quantity"
     }
     @invalid_attrs %{
@@ -30,7 +30,7 @@ defmodule SalesReg.StoreTest do
       name: nil,
       pack_quantity: nil,
       price_per_pack: nil,
-      selling_price: nil,
+      price: nil,
       unit_quantity: nil
     }
 
@@ -60,7 +60,7 @@ defmodule SalesReg.StoreTest do
       assert product.name == "some name"
       assert product.pack_quantity == "some pack_quantity"
       assert product.price_per_pack == "some price_per_pack"
-      assert product.selling_price == "some selling_price"
+      assert product.price == "some price"
       assert product.unit_quantity == "some unit_quantity"
     end
 
@@ -77,7 +77,7 @@ defmodule SalesReg.StoreTest do
       assert product.name == "some updated name"
       assert product.pack_quantity == "some updated pack_quantity"
       assert product.price_per_pack == "some updated price_per_pack"
-      assert product.selling_price == "some updated selling_price"
+      assert product.price == "some updated price"
       assert product.unit_quantity == "some updated unit_quantity"
     end
 

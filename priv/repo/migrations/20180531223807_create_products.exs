@@ -8,7 +8,7 @@ defmodule SalesReg.Repo.Migrations.CreateProducts do
       add(:pack_quantity, :string)
       add(:price_per_pack, :string)
       add(:unit_quantity, :string)
-      add(:selling_price, :string)
+      add(:price, :string)
       add(:description, :string)
       add(:company_id, references(:companies, on_delete: :nothing, type: :binary_id))
       add(:user_id, references(:users, on_delete: :nothing, type: :binary_id))

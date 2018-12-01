@@ -130,7 +130,7 @@ defmodule SalesReg.Store do
   #     name: "",
   #     sku: "",
   #     minimum_sku: "",
-  #     selling_price: "",
+  #     price: "",
   #     images: [],
   #     option_values: [
   #     %{
