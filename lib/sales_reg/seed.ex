@@ -282,7 +282,7 @@ defmodule SalesReg.Seed do
   # type could be product or service
   defp order_items(items, type) do
     Enum.map(items, fn item ->
-      unit_price = Map.get(item, :selling_price) || Map.get(item, :price)
+      unit_price = Map.get(item, :price) || Map.get(item, :price)
 
       %{
         "quantity" => "#{Enum.random(0..20)}",
@@ -308,7 +308,7 @@ defmodule SalesReg.Seed do
     name: "Random Product name here",
     sku: "#{Enum.random(30..100)}",
     minimum_sku: "#{Enum.random(1..50)}",
-    selling_price: "#{Enum.random(1..50000)}",
+    price: "#{Enum.random(1..50000)}",
     featured_image:
       "http://shfcs.org/en/wp-content/uploads/2015/11/MedRes_Product-presentation-2.jpg"
   }

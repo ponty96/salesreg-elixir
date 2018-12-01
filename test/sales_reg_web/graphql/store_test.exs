@@ -115,7 +115,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
     name: "Leather Shoe",
     sku: "30",
     minimum_sku: "10",
-    selling_price: "4000",
+    price: "4000",
     featured_image: Avatar.image_url()
   }
 

@@ -113,7 +113,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:sku, :string)
     field(:minimum_sku, :string)
     field(:cost_price, :string)
-    field(:selling_price, :string)
+    field(:price, :string)
 
     field(:featured_image, :string)
     field(:images, list_of(:string))
@@ -458,7 +458,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:price, :string)
     field(:cost_price, :string)
     field(:type, :string)
-    field(:stock_quantity, :string)
+    field(:sku, :string)
   end
 
   @desc "sorts the order from either ASC or DESC"
@@ -576,7 +576,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:sku, non_null(:string))
     field(:minimum_sku, non_null(:string))
     field(:cost_price, :string)
-    field(:selling_price, non_null(:string))
+    field(:price, non_null(:string))
     field(:images, list_of(:string))
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
