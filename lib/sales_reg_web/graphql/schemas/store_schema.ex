@@ -71,7 +71,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
 
       middleware(Authorize)
       resolve(&StoreResolver.delete_product/2)
-
     end
 
     @desc """
