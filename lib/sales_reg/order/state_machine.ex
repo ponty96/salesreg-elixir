@@ -58,28 +58,6 @@ defmodule SalesReg.Order.OrderStateMachine do
     order
   end
 
-  # A review and star can only be made after a sale order is delivered
-  def after_transition(%Sale{} = order, "delivered") do
-    params = build_review_and_star_params(order)
-
-    Order.add_review(params)
-    Order.add_star(params)
-
-    order
-  end
-
-  defp build_review_and_star_params(order, user_review \\ "") do
-    %{
-      text: user_review,
-      sale_id: order.sale_id,
-      product_id: order.product_id,
-      contact_id: order.contact_id
-    }
-  end
-
-  
-
-
   defp build_invoice_params(order) do
     %{
       due_date: order.date,
