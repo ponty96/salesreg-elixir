@@ -114,7 +114,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:minimum_sku, :string)
     field(:cost_price, :string)
     field(:selling_price, :string)
-    
+
     field(:featured_image, :string)
     field(:images, list_of(:string))
 

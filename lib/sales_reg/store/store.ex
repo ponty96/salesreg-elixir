@@ -48,15 +48,6 @@ defmodule SalesReg.Store do
     all_categories(categories_ids)
   end
 
-  defp all_categories(categories_ids) do
-    Repo.all(
-      from(
-        c in Category,
-        where: c.id in ^categories_ids
-      )
-    )
-  end
-
   def load_tags(%{"tags" => tag_names, "company_id" => company_id}) do
     gen_company_tags(tag_names, [], company_id)
   end
@@ -65,34 +56,43 @@ defmodule SalesReg.Store do
     gen_company_tags(tag_names, [], company_id)
   end
 
-  defp gen_company_tags([], acc, _company_id) do
-    acc
+  def load_prod_and_serv(query) do
+    query_regex = "%" <> query <> "%"
+
+    Product
+    |> join(:inner, [p], s in Service)
+    |> where([p, s], ilike(p.name, ^query_regex))
+    |> where([p, s], ilike(s.name, ^query_regex))
+    |> order_by([p, s], asc: [p.name, s.name])
+    |> select([p, s], [p, s])
+    |> Repo.all()
+    |> Enum.map(fn [product, service] ->
+      [
+        Map.put_new(product, :type, "Product"),
+        Map.put_new(service, :type, "Service")
+      ]
+    end)
+    |> List.flatten()
   end
 
-  defp gen_company_tags([tag_name | tail], acc, company_id) do
-    gen_company_tags(tail, acc ++ [tag_struct(tag_name, company_id)], company_id)
+  def list_featured_items(company_id) do
+    Product
+    |> join(:inner, [p], s in Service)
+    |> where([p, s], p.is_featured == true and s.is_featured == true)
+    |> where([p, s], p.company_id == ^company_id and s.company_id == ^company_id)
+    |> select([p, s], {p.name, s.name, p.is_top_rated_by_merchant, s.is_top_rated_by_merchant})
+    |> order_by([p, s], asc: p.is_featured, asc: s.is_featured)
+    |> Repo.all()
   end
 
-  defp tag_struct(tag_name, company_id) do
-    tag =
-      Tag
-      |> where([t], t.name == ^tag_name)
-      |> where([t], t.company_id == ^company_id)
-      |> Repo.one()
-
-    case tag do
-      %Tag{} ->
-        tag
-
-      _ ->
-        tag_params = %{
-          name: tag_name,
-          company_id: company_id
-        }
-
-        {:ok, tag} = Store.add_tag(tag_params)
-        tag
-    end
+  def list_top_rated_items(company_id) do
+    Product
+    |> join(:inner, [p], s in Service)
+    |> where([p, s], p.is_top_rated_by_merchant == true and s.is_top_rated_by_merchant == true)
+    |> where([p, s], p.company_id == ^company_id and s.company_id == ^company_id)
+    |> select([p, s], {p.name, s.name, p.is_top_rated_by_merchant, s.is_top_rated_by_merchant})
+    |> order_by([p, s], asc: p.is_top_rated_by_merchant, asc: s.is_top_rated_by_merchant)
+    |> Repo.all()
   end
 
   # PRODUCT INVENTORY
@@ -114,21 +114,6 @@ defmodule SalesReg.Store do
 
       order_item
     end)
-  end
-
-  defp increment_product_sku(product_id, quantity) do
-    product = get_product(product_id)
-    quantity = String.to_integer(quantity)
-    product_sku = String.to_integer(product.sku)
-    update_product(product, %{"sku" => "#{quantity + product_sku}"})
-  end
-
-  defp decrement_product_sku(product_id, quantity) do
-    product = get_product(product_id)
-    quantity = String.to_integer(quantity)
-    product_sku = String.to_integer(product.sku)
-
-    update_product(product, %{"sku" => "#{product_sku - quantity}"})
   end
 
   # PRODUCT VARIANT
@@ -245,6 +230,92 @@ defmodule SalesReg.Store do
     end
   end
 
+  # update product details -> use context
+
+  # update product group options -> use context
+  def update_product_group_options(%{id: id, options: new_option_ids}) do
+    # preload and get the current options associated with the product group
+    %ProductGroup{options: current_associated_options} = product_grp = get_product_grp(id)
+
+    product_grp_params = %{
+      "option_ids" => new_option_ids
+    }
+
+    # delete irrelevant option values associated with options disconnected from the product group
+    option_values_to_delete =
+      current_associated_options
+      |> compare_and_get_disconnected_options(new_option_ids)
+      |> option_values_of_disconnected_options()
+
+    opts =
+      Multi.new()
+      |> Multi.update(
+        :update_product_grp,
+        product_group_changeset(product_grp, product_grp_params)
+      )
+      |> Multi.delete_all(:delete_option_values, option_values_to_delete)
+
+    case Repo.transaction(opts) do
+      {:ok, %{update_product_grp: update_product_grp}} -> {:ok, update_product_grp}
+      {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
+    end
+  end
+
+  defp all_categories(categories_ids) do
+    Repo.all(
+      from(
+        c in Category,
+        where: c.id in ^categories_ids
+      )
+    )
+  end
+
+  defp gen_company_tags([], acc, _company_id) do
+    acc
+  end
+
+  defp gen_company_tags([tag_name | tail], acc, company_id) do
+    gen_company_tags(tail, acc ++ [tag_struct(tag_name, company_id)], company_id)
+  end
+
+  defp tag_struct(tag_name, company_id) do
+    tag =
+      Tag
+      |> where([t], t.name == ^tag_name)
+      |> where([t], t.company_id == ^company_id)
+      |> Repo.one()
+
+    case tag do
+      %Tag{} ->
+        tag
+
+      _ ->
+        tag_params = %{
+          name: tag_name,
+          company_id: company_id
+        }
+
+        {:ok, tag} = Store.add_tag(tag_params)
+        tag
+    end
+  end
+
+  # PRODUCT INVENTORY
+  defp increment_product_sku(product_id, quantity) do
+    product = get_product(product_id)
+    quantity = String.to_integer(quantity)
+    product_sku = String.to_integer(product.sku)
+    update_product(product, %{"sku" => "#{quantity + product_sku}"})
+  end
+
+  defp decrement_product_sku(product_id, quantity) do
+    product = get_product(product_id)
+    quantity = String.to_integer(quantity)
+    product_sku = String.to_integer(product.sku)
+
+    update_product(product, %{"sku" => "#{product_sku - quantity}"})
+  end
+
   ## if the product group doesn't have options already,
   ##     1 update product group options association
   ##     2 update product with option values association
@@ -303,37 +374,6 @@ defmodule SalesReg.Store do
     add_product(product_params)
   end
 
-  # update product details -> use context
-
-  # update product group options -> use context
-  def update_product_group_options(%{id: id, options: new_option_ids}) do
-    # preload and get the current options associated with the product group
-    %ProductGroup{options: current_associated_options} = product_grp = get_product_grp(id)
-
-    product_grp_params = %{
-      "option_ids" => new_option_ids
-    }
-
-    # delete irrelevant option values associated with options disconnected from the product group
-    option_values_to_delete =
-      current_associated_options
-      |> compare_and_get_disconnected_options(new_option_ids)
-      |> option_values_of_disconnected_options()
-
-    opts =
-      Multi.new()
-      |> Multi.update(
-        :update_product_grp,
-        product_group_changeset(product_grp, product_grp_params)
-      )
-      |> Multi.delete_all(:delete_option_values, option_values_to_delete)
-
-    case Repo.transaction(opts) do
-      {:ok, %{update_product_grp: update_product_grp}} -> {:ok, update_product_grp}
-      {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
-    end
-  end
-
   defp product_group_changeset(%ProductGroup{} = schema, params) do
     ProductGroup.changeset(schema, params)
   end
@@ -366,44 +406,4 @@ defmodule SalesReg.Store do
   defp option_values_of_disconnected_options(options_ids) do
     from(option_value in OptionValue, where: option_value.option_id in ^options_ids)
   end
-
-  def load_prod_and_serv(query) do
-    query_regex = "%" <> query <> "%"
-
-    Product
-    |> join(:inner, [p], s in Service)
-    |> where([p, s], ilike(p.name, ^query_regex))
-    |> where([p, s], ilike(s.name, ^query_regex))
-    |> order_by([p, s], asc: [p.name, s.name])
-    |> select([p, s], [p, s])
-    |> Repo.all()
-    |> Enum.map(fn [product, service] ->
-      [
-        Map.put_new(product, :type, "Product"),
-        Map.put_new(service, :type, "Service")
-      ]
-    end)
-    |> List.flatten()
-  end
-
-  def list_featured_items(company_id) do
-    Product
-    |> join(:inner, [p], s in Service)
-    |> where([p,s], p.is_featured == true and s.is_featured == true)
-    |> where([p,s], p.company_id == ^company_id and s.company_id == ^company_id)
-    |> select([p,s], {p.name, s.name, p.is_top_rated_by_merchant, s.is_top_rated_by_merchant})
-    |> order_by([p,s], asc: p.is_featured, asc: s.is_featured)
-    |> Repo.all
-  end
-
-  def list_top_rated_items(company_id) do
-    Product
-    |> join(:inner, [p], s in Service)
-    |> where([p,s], p.is_top_rated_by_merchant == true and s.is_top_rated_by_merchant == true)
-    |> where([p,s], p.company_id == ^company_id and s.company_id == ^company_id)
-    |> select([p,s], {p.name, s.name, p.is_top_rated_by_merchant, s.is_top_rated_by_merchant})
-    |> order_by([p,s], asc: p.is_top_rated_by_merchant, asc: s.is_top_rated_by_merchant)
-    |> Repo.all
-  end
-
 end
