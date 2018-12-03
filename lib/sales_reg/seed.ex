@@ -262,7 +262,7 @@ defmodule SalesReg.Seed do
       "contact_id" => contact_id,
       "items" => order_items,
       "amount" => order_total_cost(order_items),
-      "status" => Enum.random(@seed_order_status),
+      "status" => Enum.random(@seed_order_status)
     }
 
     SalesReg.Order.add_sale(params)
