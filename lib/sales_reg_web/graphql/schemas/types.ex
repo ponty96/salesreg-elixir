@@ -252,6 +252,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:payment_method, :string)
     field(:tax, :string)
     field(:amount, :string)
+    field(:discount, :string)
     field(:type, :string)
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
@@ -371,6 +372,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:time_paid, :string)
     field(:payment_method, :payment_method)
     field(:pdf_url, :string)
+    field(:reference_id, :string)
 
     field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
@@ -478,10 +480,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   @desc "Payment method types"
   enum :payment_method do
-    value(:pos, as: "POS")
-    value(:cheque, as: "cheque")
-    value(:direct_transfer, as: "direct transfer")
     value(:cash, as: "cash")
+    value(:card, as: "card")
   end
 
   @desc "UUID is a scalar macro that checks if id is a valid uuid"
@@ -635,6 +635,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:snapchat, :string)
   end
 
+  input_object :through_order_contact_input do
+    field(:contact_name, non_null(:string))
+    field(:email, non_null(:string))
+    field(:company_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
+    field(:type, non_null(:string))
+    field(:address, :location_input)
+  end
+
   input_object :purchase_input do
     field(:date, non_null(:string))
     field(:payment_method, non_null(:payment_method))
@@ -659,11 +668,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:items, non_null(list_of(:item_input)))
     field(:payment_method, non_null(:payment_method))
     field(:tax, :string)
-
+    field(:discount, :string)
     field(:amount, non_null(:string))
+    field(:contact, :through_order_contact_input)
 
     field(:user_id, non_null(:uuid))
-    field(:contact_id, non_null(:uuid))
+    field(:contact_id, :uuid)
     field(:company_id, non_null(:uuid))
   end
 
@@ -708,6 +718,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:user_id, non_null(:uuid))
     field(:company_id, non_null(:uuid))
     field(:sale_id, non_null(:uuid))
+    field(:reference_id, :string)
   end
 
   #########################################################
