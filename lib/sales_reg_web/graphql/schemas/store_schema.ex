@@ -98,8 +98,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       resolve(&StoreResolver.list_top_rated_items/2)
     end
 
-    field(:list_featured_items)
-
     @desc """
       query for all services in a company's store
     """

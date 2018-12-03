@@ -16,12 +16,14 @@ defmodule SalesReg.Order.Review do
 
     timestamps()
   end
+  @required_fields [:text, :sale_id, :contact_id]
+  @optional_fields [:service_id, :product_id]]
 
   def changeset(review, attrs) do
     review
     |> Repo.preload([:sale, :contact])
-    |> cast(attrs, ~w(:text, :sale_id, :contact_id, :service_id, :product_id)a)
-    |> validate_required([:text, :sale_id, :contact_id])
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
     |> validate_product_or_service(attrs)
   end
 
@@ -37,6 +39,7 @@ defmodule SalesReg.Order.Review do
 
   defp validate_product_or_service(changeset, _attrs) do
     changeset
-    |> add_error(:attrs, "either :product_id or :service_id is required")
+    |> add_error(:product_id, "either :product_id or :service_id is required")
+    |> add_error(:service_id, "either :product_id or :service_id is required")
   end
 end

@@ -304,6 +304,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     Review object type
   """
   object :review do
+    field(:id, :uuid)
     field(:text, :string)
 
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
@@ -316,6 +317,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     Star object type
   """
   object :star do
+    field(:id, :uuid)
     field(:value, :integer)
 
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
