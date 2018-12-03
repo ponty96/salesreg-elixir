@@ -54,9 +54,7 @@ defmodule SalesReg.Order.Sale do
 
   defp validate_payment_method(changeset) do
     case get_field(changeset, :payment_method) do
-      "POS" -> changeset
-      "cheque" -> changeset
-      "direct transfer" -> changeset
+      "card" -> changeset
       "cash" -> changeset
       _ -> add_error(changeset, :payment_method, "Invalid payment method")
     end

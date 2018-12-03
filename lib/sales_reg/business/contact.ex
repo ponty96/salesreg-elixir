@@ -72,6 +72,19 @@ defmodule SalesReg.Business.Contact do
     |> cast_assoc(:phone)
   end
 
+  def through_order_changeset(contact, attrs) do
+    contact
+    |> Repo.preload([:address, :phone])
+    |> cast(attrs, @required_fields -- [:gender])
+    |> validate_required(@required_fields -- [:gender])
+    |> validate_format(:email, ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/)
+    |> validate_contact_type()
+    |> assoc_constraint(:company)
+    |> assoc_constraint(:user)
+    |> cast_assoc(:address)
+    |> cast_assoc(:phone)
+  end
+
   defp validate_contact_type(changeset) do
     case get_field(changeset, :type) do
       "customer" -> changeset
