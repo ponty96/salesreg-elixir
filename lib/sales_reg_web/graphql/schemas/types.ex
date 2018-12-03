@@ -641,7 +641,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
     field(:type, non_null(:string))
-    field(:address, non_null(:location_input))
+    field(:address, :location_input)
   end
 
   input_object :purchase_input do
