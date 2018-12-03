@@ -13,6 +13,7 @@ defmodule SalesReg.Order.Sale do
     field(:amount, :string)
     field(:payment_method, :string)
     field(:tax, :string)
+    field(:discount, :string)
 
     field(:state, :string, virtual: true)
 
@@ -35,7 +36,7 @@ defmodule SalesReg.Order.Sale do
     :date
   ]
 
-  @optional_fields [:status, :tax]
+  @optional_fields [:status, :tax, :discount]
 
   @doc false
   def changeset(sale, attrs) do

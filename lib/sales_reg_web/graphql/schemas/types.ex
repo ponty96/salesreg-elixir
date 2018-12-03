@@ -252,6 +252,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:payment_method, :string)
     field(:tax, :string)
     field(:amount, :string)
+    field(:discount, :string)
     field(:type, :string)
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
@@ -659,7 +660,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:items, non_null(list_of(:item_input)))
     field(:payment_method, non_null(:payment_method))
     field(:tax, :string)
-
+    field(:discount, :string)
     field(:amount, non_null(:string))
 
     field(:user_id, non_null(:uuid))
