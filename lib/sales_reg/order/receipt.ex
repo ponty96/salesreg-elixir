@@ -10,6 +10,7 @@ defmodule SalesReg.Order.Receipt do
     field(:time_paid, :string)
     field(:payment_method, :string)
     field(:pdf_url, :string)
+    field(:reference_id, :string)
 
     belongs_to(:invoice, SalesReg.Order.Invoice)
     belongs_to(:user, SalesReg.Accounts.User)
@@ -29,7 +30,7 @@ defmodule SalesReg.Order.Receipt do
     :sale_id
   ]
 
-  @optional_fields [:pdf_url]
+  @optional_fields [:pdf_url, :reference_id]
 
   def changeset(receipts, attrs) do
     receipts
