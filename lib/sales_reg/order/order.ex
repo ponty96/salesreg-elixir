@@ -64,26 +64,78 @@ defmodule SalesReg.Order do
   end
 
   def create_review(%{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id}) do
-    sale =
-      Order.Sale
-      |> where([sale], sale.id == ^sale_id)
-      |> where([sale], sale.contact_id == ^contact_id)
-      |> join(:left, [sale], items in assoc(sale, :items))
-      |> join(:left, [sale, items], product_id in assoc(items, :product_id))
-      |> preload([sale, items, product_id], items: {items, product_id: product_id})
-      |> Repo.one!()
-      |> Order.add_review()
+    with {:ok, sale} <- get_sale(sale_id),
+      true <- sale.contact_id == contact_id,
+      {:ok, _item} <- find_in_items(sale.items, :product, product_id)
+    do
+    # review item
+    else
+      {:ok, "not found"} -> IO.puts("contact does not have the right to review this item")
+      false -> IO.puts("contact does not have the right to review this item")
+      nil -> IO.puts("not found") # do something
+    end
+
+    |> Order.add_review()
   end
 
   def create_review(%{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id}) do
-    sale =
-      Order.Sale
-      |> where([sale], sale.id == ^sale_id)
-      |> where([sale], sale.contact_id == ^contact_id)
-      |> join(:left, [sale], items in assoc(sale, :items))
-      |> join(:left, [sale, items], service_id in assoc(items, :service_id))
-      |> preload([sale, items, service_id], items: {items, service_id: service_id})
-      |> Repo.one!()
-      |> Order.add_review()
+    with {:ok, sale} <- get_sale(sale_id),
+      true <- sale.contact_id == contact_id,
+      {:ok, _item} <- find_in_items(sale.items, :service, service_id)
+    do
+    # review item
+    else
+      {:ok, "not found"} -> IO.puts("contact does not have the right to review this item")
+      false -> IO.puts("contact does not have the right to review this item")
+      nil -> IO.puts("not found") # do something
+    end
+
+    |> Order.add_review()
+  end
+
+  def find_in_items(items, :product, id) do
+    {:ok, Enum.find(items, "not found", fn item -> item.product_id == :product_id end)}
+  end
+
+  def find_in_items(items, :service, id) do
+    {:ok, Enum.find(items, "not found", fn item -> item.service_id == :service_id end)}
+  end
+
+  def create_star(%{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id}) do
+    with {:ok, sale} <- get_sale(sale_id),
+      true <- sale.contact_id == contact_id,
+      {:ok, _item} <- find_in_items(sale.items, :product, product_id)
+    do
+    # star item
+    else
+      {:ok, "not found"} -> IO.puts("contact does not have the right to review this item")
+      false -> IO.puts("contact does not have the right to review this item")
+      nil -> IO.puts("not found") # do something
+    end
+
+    |> Order.add_star()
+  end
+
+  def create_star(%{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id}) do
+    with {:ok, sale} <- get_sale(sale_id),
+      true <- sale.contact_id == contact_id,
+      {:ok, _item} <- find_in_items(sale.items, :service, service_id)
+    do
+    # star item
+    else
+      {:ok, "not found"} -> IO.puts("contact does not have the right to review this item")
+      false -> IO.puts("contact does not have the right to review this item")
+      nil -> IO.puts("not found") # do something
+    end
+
+    |> Order.add_star()
+  end
+
+  def find_in_items(items, :product, id) do
+    {:ok, Enum.find(items, "not found", fn item -> item.product_id == :product_id end)}
+  end
+
+  def find_in_items(items, :service, id) do
+    {:ok, Enum.find(items, "not found", fn item -> item.service_id == :service_id end)}
   end
 end

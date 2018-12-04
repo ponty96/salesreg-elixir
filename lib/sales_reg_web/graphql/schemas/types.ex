@@ -626,14 +626,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   input_object :review_input do
     field(:text, non_null(:string))
-    field(:product_id, non_null(:uuid))
+    field(:product_id, (:uuid))
+    field(:service_id, (:uuid))
     field(:contact_id, non_null(:uuid))
     field(:sale_id, non_null(:uuid))
   end
 
   input_object :star_input do
     field(:value, non_null(:integer))
-    field(:product_id, non_null(:uuid))
+    field(:product_id, (:uuid))
+    field(:service_id, (:uuid))
     field(:contact_id, non_null(:uuid))
     field(:sale_id, non_null(:uuid))
   end

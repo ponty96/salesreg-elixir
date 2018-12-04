@@ -17,7 +17,7 @@ defmodule SalesReg.Order.Review do
     timestamps()
   end
   @required_fields [:text, :sale_id, :contact_id]
-  @optional_fields [:service_id, :product_id]]
+  @optional_fields [:service_id, :product_id]
 
   def changeset(review, attrs) do
     review
@@ -35,11 +35,11 @@ defmodule SalesReg.Order.Review do
   defp validate_product_or_service(changeset, %{"service_id" => _}) do
     changeset
     |> validate_required(:service_id)
-      end
+  end
 
   defp validate_product_or_service(changeset, _attrs) do
     changeset
-    |> add_error(:product_id, "either :product_id or :service_id is required")
-    |> add_error(:service_id, "either :product_id or :service_id is required")
+    |> add_error(:product_id, "either product or service is required")
+    |> add_error(:service_id, "either product or service is required")
   end
 end

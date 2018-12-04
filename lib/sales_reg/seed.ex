@@ -282,6 +282,17 @@ defmodule SalesReg.Seed do
 
     SalesReg.Order.add_invoice(params)
   end
+
+  defp order_items(items, type) do
+    Enum.map(items, fn item ->
+      unit_price = Map.get(item, :selling_price) || Map.get(item, :price)
+      %{
+        "quantity" => "#{Enum.random(0..20)}",
+        "unit_price" => unit_price,
+        "#{type}_id" => item.id
+      }
+    end)
+  end
   
   defp order_total_cost(order_items) do
     amounts =
