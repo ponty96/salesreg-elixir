@@ -35,4 +35,9 @@ defmodule SalesReg.Store.Category do
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
   end
+
+  def delete_changeset(category) do
+    category
+    |> cast(%{}, [])
+  end
 end

@@ -34,6 +34,16 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.add_category(params)
   end
 
+  # option
+  def upsert_option(%{option: params, option_id: id}, _res) do
+    Store.get_option(id)
+    |> Store.update_option(params)
+  end
+
+  def upsert_option(%{option: params}, _res) do
+    Store.add_option(params)
+  end
+
   def delete_service(%{service_id: service_id}, _res) do
     service = Store.get_service(service_id)
     Store.delete_service(service)
@@ -42,6 +52,16 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   def delete_product(%{product_id: product_id}, _res) do
     product = Store.get_product(product_id)
     Store.delete_product(product)
+  end
+
+  def delete_category(%{category_id: category_id}, _res) do
+    category = Store.get_category(category_id)
+    Store.delete_category(category)
+  end
+
+  def delete_option(%{option_id: option_id}, _res) do
+    option = Store.get_option(option_id)
+    Store.delete_option(option)
   end
 
   def list_company_services(%{company_id: company_id} = args, _res) do
@@ -58,18 +78,17 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
-  def list_featured_items(%{company_id: company_id}, _res) do
-    Store.list_featured_items(company_id)
-  end
-
-  def list_top_rated_items(%{company_id: company_id}, _res) do
-    Store.list_top_rated_items(company_id)
-  end
-
   def list_company_categories(%{company_id: company_id} = args, _res) do
     {:ok, categories} = Store.list_company_categorys(company_id)
 
     categories
+    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+  end
+
+  def list_company_options(%{company_id: company_id} = args, _res) do
+    {:ok, option} = Store.list_company_options(company_id)
+
+    option
     |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 

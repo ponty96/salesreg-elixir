@@ -103,6 +103,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     )
   end
 
+  connection(node_type: :option)
+
   @desc """
     Product object type
   """
@@ -595,6 +597,11 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :option_value_input do
     field(:name, non_null(:string))
     field(:option_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
+  end
+
+  input_object :option_input do
+    field(:name, non_null(:string))
     field(:company_id, non_null(:uuid))
   end
 
