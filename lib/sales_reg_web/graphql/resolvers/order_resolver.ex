@@ -53,11 +53,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   end
 
   def add_review(%{review: params}, _res) do
-    Order.add_review(params)
+    Order.create_review(params)
   end
 
   def add_star(%{star: params}, _res) do
-    Order.add_star(params)
+    Order.create_star(params)
   end
 
   # # Private functions
