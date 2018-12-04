@@ -91,12 +91,12 @@ Enum.map(1..10, fn _index ->
   Seed.create_bank(company.id)
 end)
 
-sale_order =
-  SalesReg.Order.processed_sale_orders()
-  |> Enum.random()
+# sale_order =
+#   SalesReg.Order.processed_sale_orders()
+#   |> Enum.random()
 
-{:ok, invoice} = Seed.create_invoice(sale_order)
+# {:ok, invoice} = Seed.create_invoice(sale_order)
 
-Seed.create_receipt(invoice.id, user.id, company.id)
+# Seed.create_receipt(invoice.id, user.id, company.id)
 
 
