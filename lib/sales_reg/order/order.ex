@@ -7,7 +7,6 @@ defmodule SalesReg.Order do
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
   alias SalesReg.Order.OrderStateMachine
-  alias SalesReg.Repo
 
   use SalesReg.Context, [
     Purchase,
@@ -63,71 +62,63 @@ defmodule SalesReg.Order do
     |> Repo.all()
   end
 
-  def create_review(%{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id}) do
+  def create_review(%{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id} = params) do
     with {:ok, sale} <- get_sale(sale_id),
       true <- sale.contact_id == contact_id,
       {:ok, _item} <- find_in_items(sale.items, :product, product_id)
     do
-    # review item
+      Order.add_review(params)
     else
-      {:ok, "not found"} -> IO.puts("contact does not have the right to review this item")
-      false -> IO.puts("contact does not have the right to review this item")
-      nil -> IO.puts("not found") # do something
+      {:ok, "not found"} -> {:error, [%{key: "sale", message: "sale order does not exist"}]}
+      false -> {:error, [%{key: "contact", message: "contact does not have the right to review this item"}]}
+      nil -> {:error, "product not found in sales item"} 
     end
-
-    |> Order.add_review()
   end
 
-  def create_review(%{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id}) do
+  def create_review(%{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id} = params) do
     with {:ok, sale} <- get_sale(sale_id),
       true <- sale.contact_id == contact_id,
       {:ok, _item} <- find_in_items(sale.items, :service, service_id)
     do
-    # review item
+      Order.add_review(params)
     else
-      {:ok, "not found"} -> IO.puts("contact does not have the right to review this item")
-      false -> IO.puts("contact does not have the right to review this item")
-      nil -> IO.puts("not found") # do something
+      {:ok, "not found"} -> {:error, [%{key: "sale", message: "sale order does not exist"}]}
+      false -> {:error, [%{key: "contact", message: "contact does not have the right to review this item"}]}
+      nil -> {:error, "service not found in sales item"} 
     end
-
-    |> Order.add_review()
   end
 
-  def create_star(%{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id}) do
+  def create_star(%{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id} = params) do
     with {:ok, sale} <- get_sale(sale_id),
       true <- sale.contact_id == contact_id,
       {:ok, _item} <- find_in_items(sale.items, :product, product_id)
     do
-    # star item
+      Order.add_star(params)
     else
-      {:ok, "not found"} -> IO.puts("contact does not have the right to review this item")
-      false -> IO.puts("contact does not have the right to review this item")
-      nil -> IO.puts("not found") # do something
+      {:ok, "not found"} -> {:error, [%{key: "sale", message: "sale order does not exist"}]}
+      false -> {:error, [%{key: "contact", message: "contact does not have the right to review this item"}]}
+      nil -> {:error, "product not found in sales item"} 
     end
-
-    |> Order.add_star()
   end
 
-  def create_star(%{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id}) do
+  def create_star(%{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id}  = params) do
     with {:ok, sale} <- get_sale(sale_id),
       true <- sale.contact_id == contact_id,
       {:ok, _item} <- find_in_items(sale.items, :service, service_id)
     do
-    # star item
+      Order.add_star(params)
     else
-      {:ok, "not found"} -> IO.puts("contact does not have the right to review this item")
-      false -> IO.puts("contact does not have the right to review this item")
-      nil -> IO.puts("not found") # do something
+      {:ok, "not found"} -> {:error, [%{key: "sale", message: "sale order does not exist"}]}
+      false -> {:error, [%{key: "contact", message: "contact does not have the right to review this item"}]}
+      nil -> {:error, "service not found in sales item"} 
     end
-
-    |> Order.add_star()
   end
 
-  def find_in_items(items, :product, id) do
-    {:ok, Enum.find(items, "not found", fn item -> item.product_id == :product_id end)}
+  def find_in_items(items, :product, product_id) do
+    {:ok, Enum.find(items, "not found", fn item -> item.product_id == product_id end)}
   end
 
-  def find_in_items(items, :service, id) do
-    {:ok, Enum.find(items, "not found", fn item -> item.service_id == :service_id end)}
+  def find_in_items(items, :service, service_id) do
+    {:ok, Enum.find(items, "not found", fn item -> item.service_id == service_id end)}
   end
 end

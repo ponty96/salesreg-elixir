@@ -18,9 +18,7 @@ defmodule SalesReg.Seed do
   @payment_method ["cash", "POS", "cheque", "direct transfer"]
   @seed_order_status ["pending", "processed", "delivering"]
   @gender ["MALE", "FEMALE"]
-  @is_featured [true, false]
-  @is_top_rated_by_merchant [true, false]
-
+  
   def create_user() do
     user_params = %{
       "date_of_birth" => past_date(:dob),
