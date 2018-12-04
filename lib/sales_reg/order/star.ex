@@ -17,7 +17,7 @@ defmodule SalesReg.Order.Star do
     timestamps()
   end
 
-  @required_fields [:text, :sale_id, :contact_id]
+  @required_fields [:value, :sale_id, :contact_id]
   @optional_fields [:service_id, :product_id]
   
   def changeset(star, attrs) do

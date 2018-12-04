@@ -93,14 +93,6 @@ defmodule SalesReg.Order do
     |> Order.add_review()
   end
 
-  def find_in_items(items, :product, id) do
-    {:ok, Enum.find(items, "not found", fn item -> item.product_id == :product_id end)}
-  end
-
-  def find_in_items(items, :service, id) do
-    {:ok, Enum.find(items, "not found", fn item -> item.service_id == :service_id end)}
-  end
-
   def create_star(%{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id}) do
     with {:ok, sale} <- get_sale(sale_id),
       true <- sale.contact_id == contact_id,
