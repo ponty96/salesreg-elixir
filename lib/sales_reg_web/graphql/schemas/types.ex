@@ -586,6 +586,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:featured_image, non_null(:string))
     field(:images, list_of(:string))
 
+    field(:is_featured, :boolean)
+    field(:is_top_rated_by_merchant, :boolean)
+
     field(:option_values, list_of(:option_value_input), default_value: [])
   end
 
@@ -607,6 +610,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:featured_image, non_null(:string))
     field(:images, list_of(:string))
+
+    field(:is_featured, :boolean)
+    field(:is_top_rated_by_merchant, :boolean)
   end
 
   input_object :contact_input do
