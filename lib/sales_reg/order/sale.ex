@@ -33,7 +33,6 @@ defmodule SalesReg.Order.Sale do
     :company_id,
     :date
   ]
-
   @optional_fields [:status, :tax, :discount]
 
   @doc false
