@@ -18,7 +18,7 @@ defmodule SalesReg.Seed do
   @payment_method ["cash", "POS", "cheque", "direct transfer"]
   @seed_order_status ["pending", "processed", "delivering"]
   @gender ["MALE", "FEMALE"]
-  
+
   def create_user() do
     user_params = %{
       "date_of_birth" => past_date(:dob),
@@ -284,6 +284,7 @@ defmodule SalesReg.Seed do
   defp order_items(items, type) do
     Enum.map(items, fn item ->
       unit_price = Map.get(item, :selling_price) || Map.get(item, :price)
+
       %{
         "quantity" => "#{Enum.random(0..20)}",
         "unit_price" => unit_price,
@@ -291,7 +292,7 @@ defmodule SalesReg.Seed do
       }
     end)
   end
-  
+
   defp order_total_cost(order_items) do
     amounts =
       Enum.map(order_items, fn item ->

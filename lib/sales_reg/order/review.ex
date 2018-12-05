@@ -16,6 +16,7 @@ defmodule SalesReg.Order.Review do
 
     timestamps()
   end
+
   @required_fields [:text, :sale_id, :contact_id]
   @optional_fields [:service_id, :product_id]
 

@@ -62,55 +62,83 @@ defmodule SalesReg.Order do
     |> Repo.all()
   end
 
-  def create_review(%{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id} = params) do
-    with {:ok, sale} <- get_sale(sale_id),
-      true <- sale.contact_id == contact_id,
-      {:ok, _item} <- find_in_items(sale.items, :product, product_id)
-    do
+  def create_review(
+        %{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id} = params
+      ) do
+    with sale <- get_sale(sale_id),
+         true <- sale.contact_id == contact_id,
+         {:ok, _item} <- find_in_items(sale.items, :product, product_id) do
       Order.add_review(params)
     else
-      {:ok, "not found"} -> {:error, [%{key: "product_id", message: "product not found in sales item"}]}
-      false -> {:error, [%{key: "contact_id", message: "contact does not have the right to review this item"}]}
-      nil -> {:error, [%{key: "sale_id", message: "sale order does not exist"}]}
+      {:ok, "not found"} ->
+        {:error, [%{key: "product_id", message: "product not found in sales item"}]}
+
+      false ->
+        {:error,
+         [%{key: "contact_id", message: "contact does not have the right to review this item"}]}
+
+      nil ->
+        {:error, [%{key: "sale_id", message: "sale order does not exist"}]}
     end
   end
 
-  def create_review(%{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id} = params) do
+  def create_review(
+        %{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id} = params
+      ) do
     with sale <- get_sale(sale_id),
-      true <- sale.contact_id == contact_id,
-      {:ok, _item} <- find_in_items(sale.items, :service, service_id)
-    do
+         true <- sale.contact_id == contact_id,
+         {:ok, _item} <- find_in_items(sale.items, :service, service_id) do
       Order.add_review(params)
     else
-      {:ok, "not found"} -> {:error, [%{key: "service_id", message: "service not found in sales item"}]}
-      false -> {:error, [%{key: "contact_id", message: "contact does not have the right to review this item"}]}
-      nil -> {:error, [%{key: "sale_id", message: "sale order does not exist"}]}
+      {:ok, "not found"} ->
+        {:error, [%{key: "service_id", message: "service not found in sales item"}]}
+
+      false ->
+        {:error,
+         [%{key: "contact_id", message: "contact does not have the right to review this item"}]}
+
+      nil ->
+        {:error, [%{key: "sale_id", message: "sale order does not exist"}]}
     end
   end
 
-  def create_star(%{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id} = params) do
+  def create_star(
+        %{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id} = params
+      ) do
     with sale <- get_sale(sale_id),
-      true <- sale.contact_id == contact_id,
-      {:ok, _item} <- find_in_items(sale.items, :product, product_id)
-    do
+         true <- sale.contact_id == contact_id,
+         {:ok, _item} <- find_in_items(sale.items, :product, product_id) do
       Order.add_star(params)
     else
-      {:ok, "not found"} -> {:error, [%{key: "product_id", message: "product not found in sales item"}]}
-      false -> {:error, [%{key: "contact_id", message: "contact does not have the right to review this item"}]}
-      nil -> {:error, [%{key: "sale_id", message: "sale order does not exist"}]}
+      {:ok, "not found"} ->
+        {:error, [%{key: "product_id", message: "product not found in sales item"}]}
+
+      false ->
+        {:error,
+         [%{key: "contact_id", message: "contact does not have the right to review this item"}]}
+
+      nil ->
+        {:error, [%{key: "sale_id", message: "sale order does not exist"}]}
     end
   end
 
-  def create_star(%{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id}  = params) do
+  def create_star(
+        %{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id} = params
+      ) do
     with sale <- get_sale(sale_id),
-      true <- sale.contact_id == contact_id,
-      {:ok, _item} <- find_in_items(sale.items, :service, service_id)
-    do
+         true <- sale.contact_id == contact_id,
+         {:ok, _item} <- find_in_items(sale.items, :service, service_id) do
       Order.add_star(params)
     else
-      {:ok, "not found"} -> {:error, [%{key: "service_id", message: "service not found in sales item"}]}
-      false -> {:error, [%{key: "contact_id", message: "contact does not have the right to review this item"}]}
-      nil -> {:error, [%{key: "sale_id", message: "sale order does not exist"}]}
+      {:ok, "not found"} ->
+        {:error, [%{key: "service_id", message: "service not found in sales item"}]}
+
+      false ->
+        {:error,
+         [%{key: "contact_id", message: "contact does not have the right to review this item"}]}
+
+      nil ->
+        {:error, [%{key: "sale_id", message: "sale order does not exist"}]}
     end
   end
 

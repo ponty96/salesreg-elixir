@@ -8,7 +8,7 @@ defmodule SalesRegWeb.Authentication do
   alias SalesReg.Accounts.User
 
   def login(user_params) do
-  user = Accounts.get_user_by_email(String.downcase(user_params.email))
+    user = Accounts.get_user_by_email(String.downcase(user_params.email))
     password = user_params.password
 
     case user do

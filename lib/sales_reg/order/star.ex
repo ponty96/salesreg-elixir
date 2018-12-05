@@ -19,7 +19,7 @@ defmodule SalesReg.Order.Star do
 
   @required_fields [:value, :sale_id, :contact_id]
   @optional_fields [:service_id, :product_id]
-  
+
   def changeset(star, attrs) do
     star
     |> Repo.preload([:sale, :contact])
