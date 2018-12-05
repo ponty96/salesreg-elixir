@@ -55,6 +55,10 @@ defmodule SalesReg.Store.Service do
 
   def delete_changeset(service) do
     service
+    |> Repo.preload(:categories)
+    |> Repo.preload(:tags)
+    |> Repo.preload(:items)
+    |> cast(%{}, [])
     |> no_assoc_constraint(:items, message: "This service is still associated with sales")
   end
 end
