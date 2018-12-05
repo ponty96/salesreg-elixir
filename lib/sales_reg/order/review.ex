@@ -27,6 +27,12 @@ defmodule SalesReg.Order.Review do
     |> validate_product_or_service(attrs)
   end
 
+  defp validate_product_or_service(changeset, %{"product_id" => _, "service_id" => _}) do
+    changeset
+    |> add_error(:product_id, "either product or service is required")
+    |> add_error(:service_id, "either product or service is required")
+  end
+
   defp validate_product_or_service(changeset, %{"product_id" => _}) do
     changeset
     |> validate_required(:product_id)
@@ -38,12 +44,6 @@ defmodule SalesReg.Order.Review do
   end
 
   defp validate_product_or_service(changeset, _attrs) do
-    changeset
-    |> add_error(:product_id, "either product or service is required")
-    |> add_error(:service_id, "either product or service is required")
-  end
-
-  defp validate_product_or_service(changeset, %{"product_id" => _, "service_id" => _}) do
     changeset
     |> add_error(:product_id, "either product or service is required")
     |> add_error(:service_id, "either product or service is required")
