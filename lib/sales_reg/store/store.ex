@@ -406,24 +406,4 @@ defmodule SalesReg.Store do
   defp option_values_of_disconnected_options(options_ids) do
     from(option_value in OptionValue, where: option_value.option_id in ^options_ids)
   end
-
-  def list_featured_items(company_id) do
-    Product
-    |> join(:inner, [p], s in Service)
-    |> where([p, s], p.is_featured == true and s.is_featured == true)
-    |> where([p, s], p.company_id == ^company_id and s.company_id == ^company_id)
-    |> select([p, s], {p.name, s.name, p.is_top_rated_by_merchant, s.is_top_rated_by_merchant})
-    |> order_by([p, s], asc: p.is_featured, asc: s.is_featured)
-    |> Repo.all()
-  end
-
-  def list_top_rated_items(company_id) do
-    Product
-    |> join(:inner, [p], s in Service)
-    |> where([p, s], p.is_top_rated_by_merchant == true and s.is_top_rated_by_merchant == true)
-    |> where([p, s], p.company_id == ^company_id and s.company_id == ^company_id)
-    |> select([p, s], {p.name, s.name, p.is_top_rated_by_merchant, s.is_top_rated_by_merchant})
-    |> order_by([p, s], asc: p.is_top_rated_by_merchant, asc: s.is_top_rated_by_merchant)
-    |> Repo.all()
-  end
 end

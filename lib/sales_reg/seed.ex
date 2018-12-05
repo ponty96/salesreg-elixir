@@ -7,7 +7,6 @@ defmodule SalesReg.Seed do
   alias Faker.Commerce.En, as: CommerceEn
   alias Faker.Date, as: FakerDate
 
-  @company_categories ["product_service"]
   @location_types ["office", "home"]
   @phone_types ["home", "mobile", "work"]
   @currency ["Dollars", "Naira", "Euro", "Pounds"]
@@ -18,8 +17,6 @@ defmodule SalesReg.Seed do
   @payment_method ["cash", "POS", "cheque", "direct transfer"]
   @seed_order_status ["pending", "processed", "delivering"]
   @gender ["MALE", "FEMALE"]
-  @is_featured [true, false]
-  @is_top_rated_by_merchant [true, false]
 
   def create_user() do
     user_params = %{
