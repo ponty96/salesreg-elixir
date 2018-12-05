@@ -13,6 +13,7 @@ defmodule SalesReg.Order.Sale do
     field(:amount, :string)
     field(:payment_method, :string)
     field(:tax, :string)
+    field(:discount, :string)
 
     field(:state, :string, virtual: true)
 
@@ -37,7 +38,7 @@ defmodule SalesReg.Order.Sale do
     :date
   ]
 
-  @optional_fields [:status, :tax]
+  @optional_fields [:status, :tax, :discount]
 
   @doc false
   def changeset(sale, attrs) do
@@ -55,9 +56,7 @@ defmodule SalesReg.Order.Sale do
 
   defp validate_payment_method(changeset) do
     case get_field(changeset, :payment_method) do
-      "POS" -> changeset
-      "cheque" -> changeset
-      "direct transfer" -> changeset
+      "card" -> changeset
       "cash" -> changeset
       _ -> add_error(changeset, :payment_method, "Invalid payment method")
     end

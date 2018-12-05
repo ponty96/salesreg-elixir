@@ -1,6 +1,7 @@
 defmodule SalesRegWeb.GraphQL.Schemas do
   @moduledoc false
   use Absinthe.Schema
+  use Absinthe.Relay.Schema, :classic
 
   alias SalesRegWeb.GraphQL.MiddleWares.{
     ChangesetErrors,
@@ -24,7 +25,6 @@ defmodule SalesRegWeb.GraphQL.Schemas do
     import_fields(:order_queries)
     import_fields(:expense_queries)
     import_fields(:bank_queries)
-    import_fields(:tag_queries)
   end
 
   mutation do

@@ -13,8 +13,8 @@ defmodule SalesReg.Store.Category do
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
 
-    many_to_many(:products, Product, join_through: "products_categories", on_delete: :delete_all)
-    many_to_many(:services, Service, join_through: "services_categories", on_delete: :delete_all)
+    many_to_many(:products, Product, join_through: "products_categories")
+    many_to_many(:services, Service, join_through: "services_categories")
     timestamps()
   end
 

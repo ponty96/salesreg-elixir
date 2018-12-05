@@ -23,7 +23,8 @@ defmodule SalesReg.Business do
            location: Map.get(company_params, :head_office),
            company_id: company.id
          },
-         {:ok, _branch} <- add_branch(branch_params) do
+         {:ok, _branch} <- add_branch(branch_params),
+         [{:ok, _option} | _t] <- Store.insert_default_options(company.id) do
       {:ok, company}
     else
       {:error, changeset} -> {:error, changeset}

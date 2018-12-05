@@ -20,18 +20,15 @@ defmodule SalesReg.Store.Service do
     belongs_to(:user, SalesReg.Accounts.User)
 
     has_many(:items, SalesReg.Order.Item)
-    has_many(:review, SalesReg.Order.Review)
-    has_many(:star, SalesReg.Order.Star)
 
     many_to_many(
       :categories,
       Category,
       join_through: "services_categories",
-      on_replace: :delete,
-      on_delete: :delete_all
+      on_replace: :delete
     )
 
-    many_to_many(:tags, SalesReg.Store.Tag, join_through: "services_tags", on_delete: :delete_all)
+    many_to_many(:tags, SalesReg.Store.Tag, join_through: "services_tags")
 
     timestamps()
   end
