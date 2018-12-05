@@ -31,7 +31,10 @@ defmodule SalesReg.Store.Product do
       on_replace: :delete
     )
 
-    many_to_many(:tags, Store.Tag, join_through: "products_tags")
+    many_to_many(:tags, Store.Tag,
+      join_through: "products_tags",
+      on_replace: :delete
+    )
 
     has_many(:option_values, Store.OptionValue, on_replace: :delete)
 

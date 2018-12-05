@@ -28,7 +28,10 @@ defmodule SalesReg.Store.Service do
       on_replace: :delete
     )
 
-    many_to_many(:tags, SalesReg.Store.Tag, join_through: "services_tags")
+    many_to_many(:tags, SalesReg.Store.Tag,
+      join_through: "services_tags",
+      on_replace: :delete
+    )
 
     timestamps()
   end
