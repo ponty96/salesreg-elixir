@@ -22,7 +22,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
 
   def delete_purchase(%{purchase_id: purchase_id}, _res) do
     Order.get_purchase(purchase_id)
-    |> Order.delete_purchase(purchase)
+    |> Order.delete_purchase()
   end
 
   def upsert_sale(%{sale: params, sale_id: id}, _res) do
@@ -45,7 +45,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
 
   def delete_sale(%{sale_id: sale_id}, _res) do
     Order.get_sale(sale_id)
-    |> Order.delete_sale(sale)
+    |> Order.delete_sale()
   end
 
   def update_order_status(%{status: status, id: id, order_type: order_type}, _res) do
