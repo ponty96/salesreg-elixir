@@ -69,89 +69,33 @@ defmodule SalesReg.Order do
   def create_review(
         %{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id} = params
       ) do
-    with sale <- get_sale(sale_id),
-         true <- sale.contact_id == contact_id,
-         {:ok, _item} <- find_in_items(sale.items, :product, product_id) do
+    create_star_or_review(sale_id, contact_id, product_id, :product, fn params ->
       Order.add_review(params)
-    else
-      {:ok, "not found"} ->
-        {:error, [%{key: "product_id", message: "product not found in sales item"}]}
-
-      false ->
-        {:error,
-         [%{key: "contact_id", message: "contact does not have the right to review this item"}]}
-
-      nil ->
-        {:error, [%{key: "sale_id", message: "sale order does not exist"}]}
-    end
+    end)
   end
 
   def create_review(
         %{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id} = params
       ) do
-    with sale <- get_sale(sale_id),
-         true <- sale.contact_id == contact_id,
-         {:ok, _item} <- find_in_items(sale.items, :service, service_id) do
+    create_star_or_review(sale_id, contact_id, service_id, :service, fn params ->
       Order.add_review(params)
-    else
-      {:ok, "not found"} ->
-        {:error, [%{key: "service_id", message: "service not found in sales item"}]}
-
-      false ->
-        {:error,
-         [%{key: "contact_id", message: "contact does not have the right to review this item"}]}
-
-      nil ->
-        {:error, [%{key: "sale_id", message: "sale order does not exist"}]}
-    end
+    end)
   end
 
   def create_star(
         %{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id} = params
       ) do
-    with sale <- get_sale(sale_id),
-         true <- sale.contact_id == contact_id,
-         {:ok, _item} <- find_in_items(sale.items, :product, product_id) do
+    create_star_or_review(sale_id, contact_id, product_id, :product, fn params ->
       Order.add_star(params)
-    else
-      {:ok, "not found"} ->
-        {:error, [%{key: "product_id", message: "product not found in sales item"}]}
-
-      false ->
-        {:error,
-         [%{key: "contact_id", message: "contact does not have the right to review this item"}]}
-
-      nil ->
-        {:error, [%{key: "sale_id", message: "sale order does not exist"}]}
-    end
+    end)
   end
 
   def create_star(
         %{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id} = params
       ) do
-    with sale <- get_sale(sale_id),
-         true <- sale.contact_id == contact_id,
-         {:ok, _item} <- find_in_items(sale.items, :service, service_id) do
+    create_star_or_review(sale_id, contact_id, service_id, :service, fn params ->
       Order.add_star(params)
-    else
-      {:ok, "not found"} ->
-        {:error, [%{key: "service_id", message: "service not found in sales item"}]}
-
-      false ->
-        {:error,
-         [%{key: "contact_id", message: "contact does not have the right to review this item"}]}
-
-      nil ->
-        {:error, [%{key: "sale_id", message: "sale order does not exist"}]}
-    end
-  end
-
-  def find_in_items(items, :product, product_id) do
-    {:ok, Enum.find(items, "not found", fn item -> item.product_id == product_id end)}
-  end
-
-  def find_in_items(items, :service, service_id) do
-    {:ok, Enum.find(items, "not found", fn item -> item.service_id == service_id end)}
+    end)
   end
 
   def update_receipt_details(filename, %Receipt{} = receipt) do
@@ -230,5 +174,39 @@ defmodule SalesReg.Order do
       _ ->
         %{}
     end
+  end
+
+  defp create_star_or_review(sale_id, contact_id, id, type, callback) do
+    with sale <- get_sale(sale_id),
+         true <- sale.contact_id == contact_id,
+         {:ok, _item} <- find_in_items(sale.items, type, id) do
+
+      params = %{"sale_id" => sale_id, "contact_id" => contact_id, "#{Atom.to_string(type)}_id" => id}
+      callback.(params)
+    else
+      {:ok, "not found"} ->
+        {:error,
+         [
+           %{
+             key: "#{Atom.to_string(type)}_id",
+             message: "#{Atom.to_string(type)} not found in sales item"
+           }
+         ]}
+
+      false ->
+        {:error,
+         [%{key: "contact_id", message: "contact does not have the right to perform this action"}]}
+
+      nil ->
+        {:error, [%{key: "sale_id", message: "sale order does not exist"}]}
+    end
+  end
+
+  defp find_in_items(items, :product, product_id) do
+    {:ok, Enum.find(items, "not found", fn item -> item.product_id == product_id end)}
+  end
+
+  defp find_in_items(items, :service, service_id) do
+    {:ok, Enum.find(items, "not found", fn item -> item.service_id == service_id end)}
   end
 end
