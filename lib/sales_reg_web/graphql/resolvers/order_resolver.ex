@@ -33,7 +33,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   end
 
   def upsert_sale(%{sale: params}, _res) do
-    Order.add_sale(params)
+    Order.create_sale(params)
   end
 
   def list_company_sales(%{company_id: company_id} = args, _res) do
