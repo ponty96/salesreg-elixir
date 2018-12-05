@@ -24,11 +24,7 @@ defmodule SalesReg.Context do
             else
               Repo.get(unquote(module), id)
             end
-
-          case res do
-            nil -> {:error, String.to_atom("#{unquote(schema)}_not_found")}
-            resource -> resource
-          end
+          res
         end
 
         def unquote(String.to_atom("list_company_#{schema}s"))(company_id) do
