@@ -1,0 +1,7 @@
+defmodule SalesReg.Repo.Migrations.CreateCompanyTemplate do
+  use Ecto.Migration
+
+  def change do
+
+  end
+end
