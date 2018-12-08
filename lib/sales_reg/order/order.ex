@@ -76,6 +76,7 @@ defmodule SalesReg.Order do
     __MODULE__.update_invoice(invoice, %{pdf_url: url})
   end
 
+  # Called when a registered company contact makes an order and pays some amount using cash
   def create_sale(%{contact_id: _id, amount_paid: amount, payment_method: "cash"} = params) do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
@@ -89,6 +90,7 @@ defmodule SalesReg.Order do
     |> repo_transaction_resp()
   end
 
+  # Called when a registered company contact makes an order without any initial cash payment
   def create_sale(%{contact_id: _id, payment_method: "cash"} = params) do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
@@ -99,6 +101,7 @@ defmodule SalesReg.Order do
     |> repo_transaction_resp()
   end
 
+  # Called when an unregistered company contact makes an order and pays some amount using cash
   def create_sale(%{contact: contact_params, amount_paid: amount, payment_method: "cash"} = params) do
     Multi.new()
     |> Multi.insert(:insert_contact, Contact.through_order_changeset(%Contact{}, contact_params))
@@ -117,6 +120,7 @@ defmodule SalesReg.Order do
     |> repo_transaction_resp()
   end
 
+  # Called when an unregistered company contact makes an order without an initial cash payment
   def create_sale(%{contact: contact_params, payment_method: "cash"} = params) do
     Multi.new()
     |> Multi.insert(:insert_contact, Contact.through_order_changeset(%Contact{}, contact_params))
@@ -126,6 +130,33 @@ defmodule SalesReg.Order do
       |> Order.add_sale()
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
+      insert_invoice(sale)
+    end)
+    |> Repo.transaction()
+    |> repo_transaction_resp()
+  end
+
+  # Called when a registered company contact chooses to make payment for an order via card
+  def create_sale(%{contact_id: _id, payment_method: "card"} = params) do
+    Multi.new()
+    |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
+    |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
+      insert_invoice(sale)
+    end)
+    |> Repo.transaction()
+    |> repo_transaction_resp()
+  end
+
+  # Called when an unregistered company contact chooses to make payment for an order via card
+  def create_sale(%{contact: contact_params, payment_method: "card"} = params) do
+    Multi.new()
+    |> Multi.insert(:insert_contact, Contact.through_order_changeset(%Contact{}, contact_params))
+    |> Multi.run(:insert_sale, fn _repo, %{insert_contact: contact} ->
+      params
+      |> Map.put_new(:contact_id, contact.id)
+      |> Order.add_sale()
+    end)
+    |> Multi.run(:inser_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
     |> Repo.transaction()
@@ -199,6 +230,7 @@ defmodule SalesReg.Order do
     end
   end
 
+  # Private Functions
   defp repo_transaction_resp(repo_transaction) do
     case repo_transaction do
       {:ok, %{insert_sale: sale}} -> {:ok, sale}
