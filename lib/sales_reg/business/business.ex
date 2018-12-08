@@ -108,16 +108,6 @@ defmodule SalesReg.Business do
     end
   end
 
-  defp update_bank_field(company_id) do
-    attrs = %{"is_primary" => false}
-
-    Bank
-    |> where([b], b.company_id == ^company_id)
-    |> where([b], b.is_primary == true)
-    |> Repo.one()
-    |> Business.update_bank(attrs)
-  end
-
   def company_banks(company_id) do
     Bank
     |> where([b], b.company_id == ^company_id)
@@ -129,5 +119,23 @@ defmodule SalesReg.Business do
      Tag
      |> where([t], t.company_id == ^company_id)
      |> Repo.all()}
+  end
+
+  def search_customers_by_name(%{company_id: company_id, name: name}) do
+    Context.search_schema_by_field(Contact, {name, company_id}, :contact_name)
+    |> Enum.filter(fn contact ->
+      contact.type == "customer"
+    end)
+  end
+
+  # Private Functions
+  defp update_bank_field(company_id) do
+    attrs = %{"is_primary" => false}
+
+    Bank
+    |> where([b], b.company_id == ^company_id)
+    |> where([b], b.is_primary == true)
+    |> Repo.one()
+    |> Business.update_bank(attrs)
   end
 end
