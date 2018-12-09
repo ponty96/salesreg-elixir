@@ -258,7 +258,6 @@ defmodule SalesReg.Seed do
       "company_id" => company_id,
       "contact_id" => contact_id,
       "items" => order_items,
-      "amount" => order_total_cost(order_items),
       "status" => Enum.random(@seed_order_status)
     }
 

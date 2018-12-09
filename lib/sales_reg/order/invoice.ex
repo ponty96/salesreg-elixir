@@ -30,5 +30,7 @@ defmodule SalesReg.Order.Invoice do
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:sale)
+    |> assoc_constraint(:user)
+    |> assoc_constraint(:company)
   end
 end

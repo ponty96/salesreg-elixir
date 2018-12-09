@@ -5,7 +5,6 @@ defmodule SalesReg.Repo.Migrations.CreateSale do
     create table(:sales, primary_key: false) do
       add(:id, :binary_id, primary_key: true)
       add(:status, :string, default: "pending", null: false)
-      add(:amount, :string)
       add(:payment_method, :string)
       add(:tax, :string)
       add(:date, :string)
