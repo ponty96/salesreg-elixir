@@ -10,7 +10,6 @@ defmodule SalesReg.Order.Sale do
   schema "sales" do
     field(:date, :string)
     field(:status, :string, default: "pending")
-    field(:amount, :string)
     field(:payment_method, :string)
     field(:tax, :string)
     field(:discount, :string)
@@ -30,14 +29,12 @@ defmodule SalesReg.Order.Sale do
   end
 
   @required_fields [
-    :amount,
     :payment_method,
     :user_id,
     :contact_id,
     :company_id,
     :date
   ]
-
   @optional_fields [:status, :tax, :discount]
 
   @doc false

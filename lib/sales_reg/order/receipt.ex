@@ -29,23 +29,18 @@ defmodule SalesReg.Order.Receipt do
     :company_id,
     :sale_id
   ]
-
   @optional_fields [:pdf_url, :reference_id]
 
-  def changeset(receipts, attrs) do
-    receipts
+  def changeset(receipt, attrs) do
+    receipt
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
-    |> validate_payment_method()
   end
 
-  defp validate_payment_method(changeset) do
-    case get_field(changeset, :payment_method) do
-      "POS" -> changeset
-      "cheque" -> changeset
-      "direct transfer" -> changeset
-      "cash" -> changeset
-      _ -> add_error(changeset, :payment_method, "Invalid payment method")
-    end
+  def via_cash_changeset(receipt, attrs) do
+    receipt
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
+    |> validate_inclusion(:payment_method, ["cash"], message: "The payment method must be cash")
   end
 end
