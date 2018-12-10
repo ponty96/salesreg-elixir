@@ -364,8 +364,36 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Review object type
+  """
+  object :review do
+    field(:id, :uuid)
+    field(:text, :string)
+
+    field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
+    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
+    field(:service, :service, resolve: dataloader(SalesReg.Store, :service))
+    field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
+  end
+
+  @desc """
+    Star object type
+  """
+  object :star do
+    field(:id, :uuid)
+    field(:value, :integer)
+
+    field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
+    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
+    field(:service, :service, resolve: dataloader(SalesReg.Store, :service))
+    field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
+  end
+
+  @desc
+  """
     Receipt object Type
   """
+
   object :receipt do
     field(:id, :uuid)
     field(:amount_paid, :string)
@@ -409,6 +437,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :category,
       :tag,
       :bank,
+      :review,
+      :star,
       :receipt,
       :invoice,
       :product_group,
@@ -432,6 +462,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Category{}, _ -> :category
       %Tag{}, _ -> :tag
       %Bank{}, _ -> :bank
+      %Review{}, _ -> :review
+      %Star{}, _ -> :star
       %Receipt{}, _ -> :receipt
       %Invoice{}, _ -> :invoice
       %ProductGroup{}, _ -> :product_group
@@ -709,6 +741,22 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   input_object :invoice_input do
     field(:due_date, non_null(:string))
+  end
+
+  input_object :review_input do
+    field(:text, non_null(:string))
+    field(:product_id, :uuid)
+    field(:service_id, :uuid)
+    field(:contact_id, non_null(:uuid))
+    field(:sale_id, non_null(:uuid))
+  end
+
+  input_object :star_input do
+    field(:value, non_null(:integer))
+    field(:product_id, :uuid)
+    field(:service_id, :uuid)
+    field(:contact_id, non_null(:uuid))
+    field(:sale_id, non_null(:uuid))
   end
 
   input_object :receipt_input do

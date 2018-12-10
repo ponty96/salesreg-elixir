@@ -74,6 +74,24 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       resolve(&OrderResolver.update_invoice_due_date/2)
     end
 
+    @desc """
+      add product review
+    """
+    field :add_review, :mutation_response do
+      arg(:review, non_null(:review_input))
+
+      resolve(&OrderResolver.add_review/2)
+    end
+
+    @desc """
+    add product star
+    """
+    field :add_star, :mutation_response do
+      arg(:star, non_null(:star_input))
+
+      resolve(&OrderResolver.add_star/2)
+    end
+
     ### Receipt mutations
     @desc """
     upsert a receipt

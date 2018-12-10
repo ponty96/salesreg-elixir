@@ -100,3 +100,4 @@ sale_order =
 Seed.create_receipt(invoice.id, user.id, company.id)
 
 
+
