@@ -26,8 +26,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ContactResolver do
   end
 
   def search_customers_by_name(params, _res) do
-    Business.search_customers_by_name(params)
-    |> Absinthe.Relay.Connection.from_list(pagination_args(params))
+    {:ok, Business.search_customers_by_name(params)}
   end
 
   # Private Functions
