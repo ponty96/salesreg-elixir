@@ -225,7 +225,8 @@ defmodule SalesReg.Order do
     SalesReg.ImageUpload.store({path, resource.company})
   end
 
-  defp insert_invoice(order) do
+  # Use this to persist invoice when the payment method is cash
+  def insert_invoice(order) do
     add_invoice = 
       order
       |> build_invoice_params()
@@ -244,7 +245,7 @@ defmodule SalesReg.Order do
   end
 
   # Use this to persist receipt when the payment method is cash
-  defp insert_receipt(sale, invoice, amount, :cash) do
+  def insert_receipt(sale, invoice, amount, :cash) do
     add_receipt = 
       %Receipt{}
       |> Receipt.via_cash_changeset(
@@ -262,6 +263,33 @@ defmodule SalesReg.Order do
       {:error, _reason} = error_tuple ->
         error_tuple
     end
+  end
+
+  # Use this to persist receipt when the payment method is card
+  def insert_receipt(sale, transaction_id, amount, :card) do
+    sale = Repo.preload(sale, [:invoice])
+    add_receipt = 
+      %Receipt{}
+      |> Receipt.via_cash_changeset(
+        build_receipt_params(sale, sale.invoice, amount)
+        |> Map.put_new(:transaction_id, transaction_id)
+      )
+      |> Repo.insert()
+
+    case add_receipt do
+      {:ok, receipt} ->
+        receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product, :service]]])
+        Order.supervise_pdf_upload(receipt)
+
+        {:ok, receipt}
+
+      {:error, _reason} = error_tuple ->
+        error_tuple
+    end
+  end
+  
+  def get_receipt_by_transac_id(transaction_id) do
+    Repo.get_by(Receipt, transaction_id: transaction_id)
   end
 
   # Private Functions
