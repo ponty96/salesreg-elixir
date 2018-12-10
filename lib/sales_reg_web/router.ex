@@ -12,14 +12,14 @@ defmodule SalesRegWeb.Router do
   # Whitelist IPs simply by adding it to the list below
   pipeline :api do
     plug(:accepts, ["json"])
-    # plug Plug.IpWhitelist.IpWhitelistEnforcer, [
-    #   ip_whitelist: [
-    #       {52,31,139,75}, 
-    #       {52,49,173,169},
-    #       {52,214,14,220}
-    #   ],
-    #   response_code_when_blacklisted: 401
-    # ]
+    plug Plug.IpWhitelist.IpWhitelistEnforcer, [
+      ip_whitelist: [
+          {52,31,139,75}, 
+          {52,49,173,169},
+          {52,214,14,220}
+      ],
+      response_code_when_blacklisted: 401
+    ]
   end
 
   scope "/api/paystack", SalesRegWeb do
