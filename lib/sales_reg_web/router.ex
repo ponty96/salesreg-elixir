@@ -9,7 +9,7 @@ defmodule SalesRegWeb.Router do
     plug(:put_secure_browser_headers)
   end
 
-  # Whitelist IPs simply by adding it to the list below
+  # RemoteIp should always be the first in the pipeline
   pipeline :api do
     plug RemoteIp
     plug SalesRegWeb.PlugAttack
