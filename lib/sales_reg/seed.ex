@@ -17,6 +17,7 @@ defmodule SalesReg.Seed do
   @payment_method ["cash", "POS", "cheque", "direct transfer"]
   @seed_order_status ["pending", "processed", "delivering"]
   @gender ["MALE", "FEMALE"]
+  @company_template_status ["active", "inactive"]
 
   def create_user() do
     user_params = %{
@@ -69,7 +70,7 @@ defmodule SalesReg.Seed do
       "image" => Avatar.image_url(),
       "contact_name" => Name.En.name(),
       "phone" => gen_phone_params(),
-      "email" => Internet.free_email(),
+      "email" => "someemail@gmail.com",
       "address" => gen_location_params(),
       "user_id" => "#{user_id}",
       "company_id" => "#{company_id}",
@@ -274,6 +275,27 @@ defmodule SalesReg.Seed do
     }
 
     SalesReg.Order.add_invoice(params)
+  end
+
+  def add_template() do
+    params = %{
+      "title" => "General Templates",
+      "slug" => "theme/template/general_template1",
+      "featured_image" => Avatar.image_url(),
+    }
+
+    Theme.add_template(params)
+  end
+
+  def add_company_template(company_id, user_id, template_id) do
+    params = %{
+      "status" => "active",
+      "company_id" => "#{company_id}",
+      "user_id" => "#{user_id}",
+      "template_id" => "#{template_id}"
+    }
+
+    Theme.add_company_template(params)
   end
 
   defp order_items(items, type) do

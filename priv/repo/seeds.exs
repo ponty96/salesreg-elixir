@@ -27,6 +27,9 @@ tags = [
 
 {:ok, user} = Seed.create_user()
 {:ok, company} = Seed.create_company(user.id)
+{:ok, template} = Seed.add_template()
+{:ok, company_template} = Seed.add_company_template(company.id, user.id, template.id)
+
 
 Enum.map(1..5, fn _index ->
   Seed.add_product_without_variant(company, user)
@@ -63,6 +66,14 @@ vendors =
 Enum.map(1..20, fn _index ->
   Seed.add_expense(user.id, company.id)
 end)
+
+templates = 
+  Enum.map(1..5, fn _index ->
+    {:ok, templates} = Seed.add_template()
+    templates
+  end)
+
+Seed.add_company_template(company.id, user.id, template.id)
 
 branch =
   Repo.all(Branch)
