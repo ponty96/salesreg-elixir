@@ -281,7 +281,7 @@ defmodule SalesReg.Seed do
     params = %{
       "title" => "General Templates",
       "slug" => "theme/template/general_template1",
-      "featured_image" => Avatar.image_url(),
+      "featured_image" => Avatar.image_url()
     }
 
     Theme.add_template(params)

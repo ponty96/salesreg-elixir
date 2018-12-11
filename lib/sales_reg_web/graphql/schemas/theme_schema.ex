@@ -15,7 +15,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.ThemeSchema do
     list all templates
     """
     connection field(:list_templates, node_type: :template) do
-
       middleware(Authorize)
       resolve(&ThemeResolver.list_templates/2)
     end

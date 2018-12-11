@@ -23,7 +23,7 @@ defmodule SalesReg.Theme.CompanyTemplate do
 
   def changeset(company_template, attrs) do
     company_template
-    |> cast(attrs, @required_field++ @optional_fields)
+    |> cast(attrs, @required_field ++ @optional_fields)
     |> validate_required(@required_field)
     |> validate_inclusion(:status, @company_template_status)
     |> unique_constraint(:company_id)
@@ -33,7 +33,7 @@ defmodule SalesReg.Theme.CompanyTemplate do
   def delete_changeset(company_template) do
     company_template
     |> Repo.preload(:template)
-    |> cast(%{},[])
+    |> cast(%{}, [])
     |> foreign_key_constraint(:template_id)
   end
 end

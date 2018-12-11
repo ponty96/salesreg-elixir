@@ -1,6 +1,6 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.ThemeResolver do
   use SalesRegWeb, :context
-  alias SalesReg.Theme 
+  alias SalesReg.Theme
 
   def list_templates(args \\ %{}, _res) do
     {:ok, templates} = Theme.list_templates()
@@ -13,7 +13,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ThemeResolver do
     Theme.get_company_template_by_company_id(company_id)
   end
 
-  def set_company_template(%{company_id: company_id, company_template_id: company_template_id}, _res) do
+  def set_company_template(
+        %{company_id: company_id, company_template_id: company_template_id},
+        _res
+      ) do
     Theme.set_company_template(company_id, company_template_id)
   end
 

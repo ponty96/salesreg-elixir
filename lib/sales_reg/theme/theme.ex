@@ -21,7 +21,7 @@ defmodule SalesReg.Theme do
 
   def list_templates() do
     Template
-    |>  Repo.all()
+    |> Repo.all()
   end
 
   def get_company_template_by_company_id(company_id) do
@@ -29,12 +29,13 @@ defmodule SalesReg.Theme do
   end
 
   def set_company_template(company_id, template_id, params \\ %{}) do
-    params = 
-    params
-    |> Map.put("template_id", template_id)
-    |> Map.put("company_id", company_id)
+    params =
+      params
+      |> Map.put("template_id", template_id)
+      |> Map.put("company_id", company_id)
 
     company_template = Repo.get_by(CompanyTemplate, company_id: company_id)
+
     if company_template == nil do
       Theme.add_company_template(params)
     else
