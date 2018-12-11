@@ -14,10 +14,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ThemeResolver do
   end
 
   def set_company_template(
-        %{company_id: company_id, company_template_id: company_template_id},
+        %{company_id: company_id, template_id: template_id},
         _res
       ) do
-    Theme.set_company_template(company_id, company_template_id)
+    Theme.set_company_template(company_id, ctemplate_id)
   end
 
   defp pagination_args(args) do

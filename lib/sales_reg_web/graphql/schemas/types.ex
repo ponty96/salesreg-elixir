@@ -415,8 +415,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:slug, :string)
     field(:featured_image, :string)
 
-    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
-    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
 
   connection(node_type: :template)

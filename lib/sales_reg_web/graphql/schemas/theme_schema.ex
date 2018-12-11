@@ -22,7 +22,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.ThemeSchema do
     @desc """
     get company template
     """
-    field :get_company_template_by_company_id, type: :company_template do
+    field :get_company_template_by_company_id, type: :template do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
@@ -32,9 +32,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.ThemeSchema do
     @desc """
     select company template
     """
-    field :set_company_template, type: :company_template do
+    field :set_company_template, type: :template do
       arg(:company_id, non_null(:uuid))
-      arg(:company_template_id, non_null(:uuid))
+      arg(:template_id, non_null(:uuid))
 
       middleware(Authorize)
       resolve(&ThemeResolver.set_company_template/2)
