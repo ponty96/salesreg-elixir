@@ -2,7 +2,7 @@ defmodule SalesReg.Repo.Migrations.CreateTemplate do
   use Ecto.Migration
 
   def change do
-    create table(:template, primary_key: false) do
+    create table(:templates, primary_key: false) do
       add(:id, :binary_id, primary_key: true)
       add(:title, :string)
       add(:slug, :string)
@@ -14,7 +14,7 @@ defmodule SalesReg.Repo.Migrations.CreateTemplate do
       timestamps()
     end
     
-    create(index(:invoices, [:user_id], on_delete: :nothing, type: :binary_id))
-    create(index(:invoices, [:company_id], on_delete: :nothing, type: :binary_id))
+    create(index(:templates, [:user_id], on_delete: :nothing, type: :binary_id))
+    create(index(:templates, [:company_id], on_delete: :nothing, type: :binary_id))
   end
 end
