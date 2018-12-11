@@ -118,7 +118,10 @@ defmodule SalesRegWeb do
         Store.ProductGroup,
         Store.Option,
         Store.OptionValue,
-        TaskSupervisor
+        TaskSupervisor,
+        Theme,
+        Theme.Template,
+        Theme.CompanyTemplate
       }
     end
   end

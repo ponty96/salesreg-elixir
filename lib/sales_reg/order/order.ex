@@ -180,8 +180,12 @@ defmodule SalesReg.Order do
     with sale <- get_sale(sale_id),
          true <- sale.contact_id == contact_id,
          {:ok, _item} <- find_in_items(sale.items, type, id) do
+      params = %{
+        "sale_id" => sale_id,
+        "contact_id" => contact_id,
+        "#{Atom.to_string(type)}_id" => id
+      }
 
-      params = %{"sale_id" => sale_id, "contact_id" => contact_id, "#{Atom.to_string(type)}_id" => id}
       callback.(params)
     else
       {:ok, "not found"} ->
