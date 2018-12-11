@@ -4,7 +4,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   """
 
   use Absinthe.Schema.Notation
-  use Absinthe.Relay.Schema.Notation
+  use Absinthe.Relay.Schema.Notation, :classic
   use SalesRegWeb, :graphql_context
   import Absinthe.Resolution.Helpers
 
@@ -389,11 +389,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
   end
 
-  @desc
-  """
+  @desc """
     Receipt object Type
   """
-
   object :receipt do
     field(:id, :uuid)
     field(:amount_paid, :string)
@@ -406,6 +404,33 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
+  end
+
+  @desc """
+    Template object type
+  """
+  object :template do
+    field(:id, :uuid)
+    field(:title, :string)
+    field(:slug, :string)
+    field(:featured_image, :string)
+
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+  end
+
+  connection(node_type: :template)
+
+  @desc """
+    CompanyTemplate object type
+  """
+  object :company_template do
+    field(:id, :uuid)
+    field(:status, :string)
+
+    field(:template, list_of(:template), resolve: dataloader(SaleReg.Theme, :template))
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
 
   @desc """
@@ -442,7 +467,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :receipt,
       :invoice,
       :product_group,
-      :option
+      :option,
+      :template,
+      :company_template
     ])
 
     resolve_type(fn
@@ -468,6 +495,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Invoice{}, _ -> :invoice
       %ProductGroup{}, _ -> :product_group
       %Option{}, _ -> :option
+      %Template{}, _ -> :template
+      %CompanyTemplate{}, _ -> :company_template
     end)
   end
 
@@ -499,6 +528,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   enum :gender do
     value(:male, as: "MALE")
     value(:female, as: "FEMALE")
+  end
+
+  @desc "sorts the order from either ASC or DESC"
+  enum :company_template_status do
+    value(:active, as: "ACTIVE")
+    value(:inactive, as: "INACTIVE")
   end
 
   @desc "sorts the order from either ASC or DESC"
