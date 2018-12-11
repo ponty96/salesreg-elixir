@@ -53,8 +53,8 @@ defmodule SalesReg.Theme do
     Theme.add_template(params)
   end
 
-  def delete_template(%{template_id: template_id}) do
-    Theme.get_template(template_id)
-    |> Theme.delete_template()
+  def delete_template(template_id) do
+    template = Theme.get_template(template_id)
+    Repo.delete(template)
   end
 end
