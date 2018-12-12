@@ -17,7 +17,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ThemeResolver do
         %{company_id: company_id, template_id: template_id},
         _res
       ) do
-    Theme.set_company_template(company_id, ctemplate_id)
+    Theme.set_company_template(company_id, template_id)
   end
 
   defp pagination_args(args) do
