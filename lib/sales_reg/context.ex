@@ -24,6 +24,7 @@ defmodule SalesReg.Context do
             else
               Repo.get(unquote(module), id)
             end
+
           res
         end
 

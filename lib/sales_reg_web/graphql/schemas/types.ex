@@ -595,7 +595,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   input_object :option_value_input do
-    field(:name, non_null(:string))
+    field(:name, :string)
     field(:option_id, non_null(:uuid))
     field(:company_id, non_null(:uuid))
   end
