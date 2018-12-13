@@ -188,6 +188,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:facebook, :string)
     field(:snapchat, :string)
     field(:allows_marketing, :string)
+    
+    field :total_debt, :float do
+      resolve(fn _parent, %{source: contact} ->
+        {:ok, Order.contact_orders_debt(contact)}
+      end)
+    end
 
     field(:address, :location, resolve: dataloader(SalesReg.Business, :address))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
@@ -254,13 +260,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     
     field :amount, :float do
       resolve(fn _parent, %{source: sale} ->
-        {:ok, Order.calc_order_amount(sale, :sale)}
+        {:ok, Order.calc_order_amount(sale)}
       end)
     end
     
     field :amount_paid, :float do
       resolve(fn _parent, %{source: sale} ->
-        {:ok, Order.calc_amount_paid(sale, :sale)}
+        {:ok, Order.calc_order_amount_paid(sale)}
       end)
     end
     
@@ -373,13 +379,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     
     field :amount, :float do
       resolve(fn _parent, %{source: invoice} ->
-        {:ok, Order.calc_order_amount(invoice, :invoice)}
+        {:ok, Order.calc_order_amount(invoice)}
       end)
     end
     
     field :amount_paid, :float do
       resolve(fn _parent, %{source: invoice} ->
-        {:ok, Order.calc_amount_paid(invoice, :invoice)}
+        {:ok, Order.calc_order_amount_paid(invoice)}
       end)
     end
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
