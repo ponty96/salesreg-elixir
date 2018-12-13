@@ -2,14 +2,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   use SalesRegWeb, :context
 
   def upsert_purchase(%{purchase: params, purchase_id: id}, _res) do
-    # new_params = add_order_amount(params)
-
     Order.get_purchase(id)
     |> Order.update_purchase(params)
   end
 
   def upsert_purchase(%{purchase: params}, _res) do
-    # new_params = add_order_amount(params)
     Order.add_purchase(params)
   end
 
@@ -26,8 +23,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   end
 
   def upsert_sale(%{sale: params, sale_id: id}, _res) do
-    # new_params = add_order_amount(params)
-
     Order.get_sale(id)
     |> Order.update_sale(params)
   end
