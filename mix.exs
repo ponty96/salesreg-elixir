@@ -29,7 +29,9 @@ defmodule SalesReg.Mixfile do
         :ex_aws_s3,
         :uuid,
         :hackney,
-        :pdf_generator
+        :pdf_generator,
+        :ueberauth,
+        :ueberauth_identity
       ]
     ]
   end
@@ -45,6 +47,7 @@ defmodule SalesReg.Mixfile do
     [
       {:phoenix, "~> 1.3.2"},
       {:phoenix_pubsub, "~> 1.0"},
+      {:phoenix_html, "~> 2.10"},
       {:phoenix_ecto, "~> 4.0"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
@@ -69,7 +72,9 @@ defmodule SalesReg.Mixfile do
       {:jason, "~> 1.1"},
       {:arc, "~> 0.11.0"},
       {:pdf_generator, "~> 0.4.0"},
-      {:plug_cowboy, "~> 1.0"}
+      {:plug_cowboy, "~> 1.0"},
+      {:ueberauth, "~> 0.5"},
+      {:ueberauth_identity, "~> 0.2"}
     ]
   end
 
