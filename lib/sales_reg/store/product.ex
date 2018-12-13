@@ -48,17 +48,17 @@ defmodule SalesReg.Store.Product do
     :images,
     :is_featured,
     :is_top_rated_by_merchant,
-    :product_group_id
+    :name
   ]
 
   @required_fields [
-    :name,
     :price,
     :company_id,
     :user_id,
     :sku,
     :minimum_sku,
-    :featured_image
+    :featured_image,
+    :product_group_id
   ]
   @doc false
   def changeset(product, attrs) do

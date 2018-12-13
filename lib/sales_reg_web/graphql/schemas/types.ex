@@ -111,7 +111,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   object :product do
     field(:id, :uuid)
     field(:description, :string)
-    field(:name, :string)
+
+    field :name, :string do
+      resolve(fn _parent, %{source: product} ->
+        name = Store.get_product_name(product)
+        {:ok, name}
+      end)
+    end
+
     field(:sku, :string)
     field(:minimum_sku, :string)
     field(:cost_price, :string)
@@ -574,7 +581,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :product_input do
     field(:id, :uuid)
     field(:description, :string)
-    field(:name, non_null(:string))
+    field(:name, :string)
     field(:sku, non_null(:string))
     field(:minimum_sku, non_null(:string))
     field(:cost_price, :string)

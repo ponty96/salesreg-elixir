@@ -72,7 +72,7 @@ defmodule SalesReg.Store do
     |> Repo.all()
     |> Enum.map(fn [product, service] ->
       [
-        Map.put_new(product, :type, "Product"),
+        Map.put_new(%{product | name: get_product_name(product)}, :type, "Product"),
         Map.put_new(service, :type, "Service")
       ]
     end)
@@ -279,6 +279,21 @@ defmodule SalesReg.Store do
     case Repo.transaction(opts) do
       {:ok, %{update_product_grp: update_product_grp}} -> {:ok, update_product_grp}
       {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
+    end
+  end
+
+  # get product name
+  def get_product_name(product) do
+    product = Repo.preload(product, [:product_group, :option_values])
+
+    case product.option_values do
+      [] ->
+        product.product_group.title
+
+      _ ->
+        "#{product.product_group.title} (#{
+          Enum.map(product.option_values, &(&1.name || "?")) |> Enum.join(" ")
+        })"
     end
   end
 
