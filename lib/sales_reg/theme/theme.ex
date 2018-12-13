@@ -58,4 +58,11 @@ defmodule SalesReg.Theme do
     template = Theme.get_template(template_id)
     Repo.delete(template)
   end
+
+  def get_email_template_by_type(sale, type) do
+    CompanyEmailTemplate
+    |> where([c], c.company_id == ^sale.company_id)
+    |> where([c], c.type == ^type)
+    |> Repo.one()
+  end
 end

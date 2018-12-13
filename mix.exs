@@ -31,7 +31,8 @@ defmodule SalesReg.Mixfile do
         :hackney,
         :pdf_generator,
         :ueberauth,
-        :ueberauth_identity
+        :ueberauth_identity,
+        :bamboo
       ]
     ]
   end
@@ -74,7 +75,8 @@ defmodule SalesReg.Mixfile do
       {:pdf_generator, "~> 0.4.0"},
       {:plug_cowboy, "~> 1.0"},
       {:ueberauth, "~> 0.5"},
-      {:ueberauth_identity, "~> 0.2"}
+      {:ueberauth_identity, "~> 0.2"},
+      {:bamboo, "~> 1.1"}
     ]
   end
 
