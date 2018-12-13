@@ -2,10 +2,7 @@ defmodule SalesRegWeb.Authentication do
   @moduledoc """
      General Authentication service
   """
-
-  alias SalesReg.Accounts
-  alias SalesRegWeb.TokenImpl
-  alias SalesReg.Accounts.User
+  use SalesRegWeb, :context
 
   def login(user_params) do
     user = Accounts.get_user_by_email(String.downcase(user_params.email))
@@ -28,6 +25,13 @@ defmodule SalesRegWeb.Authentication do
         {:error, [%{key: "email", message: "Something went wrong. Try again!"}]}
     end
   end
+
+  def put_user_in_session(conn, user) do
+		conn
+		|> Conn.assign(:current_user, user)
+		|> Conn.put_session(:user_id, user.id)
+		|> Conn.configure_session(renew: true)
+	end
 
   # This function returns a new access token and refresh token if the access token has 
   # expired but the refresh token has not expired, else if both has expired, the user
