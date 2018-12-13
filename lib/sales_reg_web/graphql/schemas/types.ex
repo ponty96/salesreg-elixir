@@ -251,7 +251,19 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:status, :string)
     field(:payment_method, :string)
     field(:tax, :string)
-    field(:amount, :string)
+    
+    field :amount, :float do
+      resolve(fn _parent, %{source: sale} ->
+        {:ok, Order.calc_order_amount(sale, :sale)}
+      end)
+    end
+    
+    field :amount_paid, :float do
+      resolve(fn _parent, %{source: sale} ->
+        {:ok, Order.calc_amount_paid(sale, :sale)}
+      end)
+    end
+    
     field(:discount, :string)
     field(:type, :string)
     field(:inserted_at, :naive_datetime)
@@ -358,7 +370,18 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   object :invoice do
     field(:id, :uuid)
     field(:due_date, :string)
-
+    
+    field :amount, :float do
+      resolve(fn _parent, %{source: invoice} ->
+        {:ok, Order.calc_order_amount(invoice, :invoice)}
+      end)
+    end
+    
+    field :amount_paid, :float do
+      resolve(fn _parent, %{source: invoice} ->
+        {:ok, Order.calc_amount_paid(invoice, :invoice)}
+      end)
+    end
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))

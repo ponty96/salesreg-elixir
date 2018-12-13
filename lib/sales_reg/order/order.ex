@@ -264,6 +264,42 @@ defmodule SalesReg.Order do
     end
   end
 
+  def calc_order_amount(sale, :sale) do
+    sale = Repo.preload(sale, [:items])
+    Enum.map(sale.items, fn item ->
+      {quantity, _} = Float.parse(item.quantity)
+      {unit_price, _} = Float.parse(item.unit_price)
+      quantity * unit_price
+    end)
+    |> Enum.sum()
+  end
+
+  def calc_amount_paid(sale, :sale) do
+    sale = Repo.preload(sale, [invoice: :receipts])
+    Enum.map(sale.invoice.receipts, fn receipt ->
+      {amount_paid, _} = Float.parse(receipt.amount_paid)
+    end)
+    |> Enum.sum()
+  end
+
+  def calc_order_amount(invoice, :invoice) do
+    invoice = Repo.preload(invoice, [sale: :items])
+    Enum.map(invoice.sale.items, fn item ->
+      {quantity, _} = Float.parse(item.quantity)
+      {unit_price, _} = Float.parse(item.unit_price)
+      quantity * unit_price
+    end)
+    |> Enum.sum()
+  end
+
+  def calc_amount_paid(invoice, :invoice) do
+    invoice = Repo.preload(invoice, [:receipts])
+    Enum.map(invoice.receipts, fn receipt ->
+      {amount_paid, _} = Float.parse(receipt.amount_paid)
+    end)
+    |> Enum.sum()
+  end
+
   # Private Functions
   defp repo_transaction_resp(repo_transaction) do
     case repo_transaction do
