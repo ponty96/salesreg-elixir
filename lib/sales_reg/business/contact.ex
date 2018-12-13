@@ -75,7 +75,7 @@ defmodule SalesReg.Business.Contact do
   def delete_changeset(contact) do
     contact
     |> Repo.preload([:address, :phone])
-    |> cast(attrs,[])
+    |> cast(%{},[])
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
     |> cast_assoc(:address)
