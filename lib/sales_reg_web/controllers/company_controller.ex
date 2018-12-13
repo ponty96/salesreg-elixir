@@ -28,22 +28,5 @@ defmodule SalesRegWeb.CompanyController do
       {String.to_atom(key), val}
     end
   end
-
-	# def authenticate(%Ueberauth.Auth{provider: :identity} = auth) do
-  #   Repo.get_by(User, email: auth.uid)
-  # 	  |> authorize(auth)
-  # end
-
-  # defp authorize(nil,_auth) do
-  #   {:error, "Invalid username or password"}
-  # end
-
-  # defp authorize(user, auth) do
-  #   checkpw(auth.credentials.other.password, user.password_hash)
-  #   |> resolve_authorization(user)
-  # end
-
-  # defp resolve_authorization(false, _user), do: {:error, "Invalid username or password"}
-  # defp resolve_authorization(true, user), do: {:ok, user}
 end
   

@@ -77,8 +77,8 @@ config :ueberauth, Ueberauth,
         callback_methods: ["POST"],
         uid_field: :email,
         nickname_field: :email,
-        request_path: "/login/identity",
-        callback_path: "/login/identity/callback"
+        request_path: "/auth/identity",
+        callback_path: "/auth/identity/callback"
       ]
     }
   ]

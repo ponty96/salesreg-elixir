@@ -28,6 +28,15 @@ defmodule SalesRegWeb.Router do
     resources("/companies", CompanyController, only: [:new, :create])
   end
 
+  scope "/auth", SalesRegWeb do
+    pipe_through :browser
+
+    get "/identity", SessionController, :request
+    get "/identity/callback", SessionController, :callback
+    post "/identity/callback", SessionController, :callback
+    delete "/logout", SessionController, :delete
+  end
+
   pipeline :graphql do
     plug(SalesRegWeb.AuthPipeline)
     plug(SalesRegWeb.AbsintheContext)

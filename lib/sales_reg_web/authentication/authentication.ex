@@ -107,6 +107,11 @@ defmodule SalesRegWeb.Authentication do
     end
   end
 
+  def authenticate(%Ueberauth.Auth{provider: :identity} = auth) do
+    Accounts.get_user_by_email(auth.uid)
+  	|> authorize(auth)
+  end
+
   defp tokens_exist?(access_token, refresh_token) do
     case decode_and_verify(access_token, "access") do
       {:ok, access_claims} ->
@@ -132,4 +137,18 @@ defmodule SalesRegWeb.Authentication do
   defp check_password(user, password) do
     Comeonin.Bcrypt.checkpw(password, user.hashed_password)
   end
+
+  defp authorize(nil, _auth) do
+    {:error, "Invalid username or password"}
+  end
+
+  defp authorize(user, auth) do
+    check_password(user, auth.credentials.other.password)
+    |> resolve_authorization(user)
+  end
+
+  defp resolve_authorization(false, _user), do: {:error, "Invalid username or password"}
+  defp resolve_authorization(true, user), do: {:ok, user}
 end
+
+
