@@ -80,6 +80,7 @@ defmodule SalesReg.Business.Contact do
     |> assoc_constraint(:user)
     |> cast_assoc(:address)
     |> cast_assoc(:phone)
+    |> no_assoc_constraint(:sales, message: "This contact is still associated with sales")
   end
 
   def through_order_changeset(contact, attrs) do
