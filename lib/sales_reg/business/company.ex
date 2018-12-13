@@ -23,6 +23,8 @@ defmodule SalesReg.Business.Company do
     has_many(:invoices, SalesReg.Order.Invoice)
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
     has_one(:bank, SalesReg.Business.Bank, on_replace: :delete)
+    has_many(:sales, SalesReg.Order.Sale)
+    
     timestamps()
   end
 
