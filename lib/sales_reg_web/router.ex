@@ -7,6 +7,7 @@ defmodule SalesRegWeb.Router do
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
+    plug SalesRegWeb.Plug.AssignUser
   end
 
   pipeline :api do
@@ -17,6 +18,23 @@ defmodule SalesRegWeb.Router do
     pipe_through(:api)
 
     post("/upload", SalesRegWeb.ImageController, :upload_image)
+  end
+
+  scope "/", SalesRegWeb do
+    pipe_through(:browser)
+
+    get("/", PageController, :index)
+    resources("/users", UserController, only: [:new, :create])
+    resources("/companies", CompanyController, only: [:new, :create])
+  end
+
+  scope "/auth", SalesRegWeb do
+    pipe_through :browser
+
+    get "/identity", SessionController, :request
+    get "/identity/callback", SessionController, :callback
+    post "/identity/callback", SessionController, :callback
+    delete "/logout", SessionController, :delete
   end
 
   pipeline :graphql do

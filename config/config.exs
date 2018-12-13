@@ -71,6 +71,19 @@ config :pdf_generator,
   wkhtml_path: "/usr/local/bin/wkhtmltopdf",
   pdftk_path: "/path/to/pdftk"
 
+config :ueberauth, Ueberauth,
+  providers: [
+    identity: { Ueberauth.Strategy.Identity, [
+        callback_methods: ["POST"],
+        uid_field: :email,
+        nickname_field: :email,
+        request_path: "/auth/identity",
+        callback_path: "/auth/identity/callback"
+      ]
+    }
+  ]
+
+
 ###############################################################
 ### AWS (image upload functionality) config
 ###############################################################
