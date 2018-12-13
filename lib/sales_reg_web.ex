@@ -125,7 +125,8 @@ defmodule SalesRegWeb do
         TaskSupervisor,
         Theme,
         Theme.Template,
-        Theme.CompanyTemplate
+        Theme.CompanyTemplate,
+        Theme.CompanyEmailTemplate
       }
     end
   end

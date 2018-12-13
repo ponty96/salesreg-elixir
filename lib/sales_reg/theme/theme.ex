@@ -8,7 +8,8 @@ defmodule SalesReg.Theme do
 
   use SalesReg.Context, [
     Template,
-    CompanyTemplate
+    CompanyTemplate,
+    CompanyEmailTemplate
   ]
 
   def data do
