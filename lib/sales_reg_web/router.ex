@@ -23,10 +23,13 @@ defmodule SalesRegWeb.Router do
   scope "/", SalesRegWeb do
     pipe_through(:browser)
 
-    get("/", PageController, :index)
+    get "/", PageController, :index
+    get "/company", ThemeController, :index
     resources("/users", UserController, only: [:new, :create])
     resources("/companies", CompanyController, only: [:new, :create])
+   
   end
+
 
   scope "/auth", SalesRegWeb do
     pipe_through :browser
