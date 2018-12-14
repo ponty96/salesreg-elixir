@@ -141,6 +141,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+
+    field :total_quantity_sold, :integer do
+      resolve(fn _parent, %{source: product} ->
+        quantity_sold = Order.calc_product_total_quantity_sold(product.id)
+        {:ok, quantity_sold}
+      end)
+    end
   end
 
   connection(node_type: :product)
@@ -173,6 +180,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+
+    field :total_times_ordered, :integer do
+      resolve(fn _parent, %{source: service} ->
+        quantity_ordered = Order.calc_service_total_times_ordered(service.id)
+        {:ok, quantity_ordered}
+      end)
+    end
   end
 
   connection(node_type: :service)

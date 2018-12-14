@@ -212,6 +212,67 @@ defmodule SalesReg.Order do
     SalesReg.ImageUpload.store({path, resource.company})
   end
 
+  def calc_order_amount(%Sale{} = sale) do
+    sale = Repo.preload(sale, [:items])
+    calc_items_amount(sale.items)
+  end
+
+  def calc_order_amount(%Invoice{} = invoice) do
+    invoice = Repo.preload(invoice, sale: :items)
+    calc_items_amount(invoice.sale.items)
+  end
+
+  def calc_order_amount_paid(%Sale{} = sale) do
+    sale = Repo.preload(sale, invoice: :receipts)
+    calc_amount_paid(sale.invoice.receipts)
+  end
+
+  def calc_order_amount_paid(%Invoice{} = invoice) do
+    invoice = Repo.preload(invoice, [:receipts])
+    calc_amount_paid(invoice.receipts)
+  end
+
+  # TOD0, just fetch all orders associated with a contact id instead
+  def contact_orders_debt(contact) do
+    contact = Repo.preload(contact, company: :sales)
+
+    {amount_paid_list, orders_total_amount_list} =
+      Enum.filter(contact.company.sales, fn sale ->
+        sale.contact_id == contact.id
+      end)
+      |> Enum.map(fn sale ->
+        {calc_order_amount_paid(sale), calc_order_amount(sale)}
+      end)
+      |> Enum.unzip()
+
+    Enum.sum(orders_total_amount_list) - Enum.sum(amount_paid_list)
+  end
+
+  def calc_product_total_quantity_sold(product_id) do
+    Repo.all(
+      from(item in Item,
+        where: item.product_id == ^product_id,
+        preload: [:sale]
+      )
+    )
+    |> Enum.filter(&(&1.sale.status == "delivered"))
+    |> Enum.map(&String.to_integer(&1.quantity))
+    |> Enum.sum()
+  end
+
+  def calc_service_total_times_ordered(service_id) do
+    Repo.all(
+      from(item in Item,
+        where: item.service_id == ^service_id,
+        preload: [:sale]
+      )
+    )
+    |> Enum.filter(&(&1.sale.status == "delivered"))
+    |> Enum.map(&String.to_integer(&1.quantity))
+    |> Enum.sum()
+  end
+
+  # Private Functions
   defp insert_invoice(order) do
     add_invoice =
       order
@@ -249,42 +310,6 @@ defmodule SalesReg.Order do
     end
   end
 
-  def calc_order_amount(%Sale{} = sale) do
-    sale = Repo.preload(sale, [:items])
-    calc_items_amount(sale.items)
-  end
-
-  def calc_order_amount(%Invoice{} = invoice) do
-    invoice = Repo.preload(invoice, sale: :items)
-    calc_items_amount(invoice.sale.items)
-  end
-
-  def calc_order_amount_paid(%Sale{} = sale) do
-    sale = Repo.preload(sale, invoice: :receipts)
-    calc_amount_paid(sale.invoice.receipts)
-  end
-
-  def calc_order_amount_paid(%Invoice{} = invoice) do
-    invoice = Repo.preload(invoice, [:receipts])
-    calc_amount_paid(invoice.receipts)
-  end
-
-  def contact_orders_debt(contact) do
-    contact = Repo.preload(contact, company: :sales)
-
-    {amount_paid_list, orders_total_amount_list} =
-      Enum.filter(contact.company.sales, fn sale ->
-        sale.contact_id == contact.id
-      end)
-      |> Enum.map(fn sale ->
-        {calc_order_amount_paid(sale), calc_order_amount(sale)}
-      end)
-      |> Enum.unzip()
-
-    Enum.sum(orders_total_amount_list) - Enum.sum(amount_paid_list)
-  end
-
-  # Private Functions
   defp calc_items_amount(items) do
     Enum.map(items, fn item ->
       {quantity, _} = Float.parse(item.quantity)
