@@ -59,16 +59,23 @@ defmodule SalesReg.Store do
   def load_prod_and_serv(query) do
     query_regex = "%" <> query <> "%"
 
-    Product
-    |> join(:inner, [p], s in Service)
-    |> where([p, s], ilike(p.name, ^query_regex))
-    |> where([p, s], ilike(s.name, ^query_regex))
-    |> order_by([p, s], asc: [p.name, s.name])
-    |> select([p, s], [p, s])
+    ProductGroup
+    |> join(:inner, [pg], p in assoc(pg, :products))
+    |> preload([pg, p], [products: p])
+    |> join(:inner, [pg, p], s in Service)
+    |> where([pg, p, s], ilike(pg.title, ^query_regex))
+    |> where([pg, p, s], ilike(s.name, ^query_regex))
+    |> order_by([pg, p, s], asc: [pg.title, s.name])
+    |> select([pg, p, s], [pg, s])
     |> Repo.all()
-    |> Enum.map(fn [product, service] ->
+    |> Enum.map(fn [prod_group, service] ->
+      add_type_field = fn(products) ->
+        Enum.map(products, fn(prod) ->
+          Map.put_new(prod, :type, "Product")
+        end)
+      end
       [
-        Map.put_new(product, :type, "Product"),
+        add_type_field.(prod_group.products),
         Map.put_new(service, :type, "Service")
       ]
     end)
