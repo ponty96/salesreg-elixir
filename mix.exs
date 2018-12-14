@@ -69,7 +69,9 @@ defmodule SalesReg.Mixfile do
       {:jason, "~> 1.1"},
       {:arc, "~> 0.11.0"},
       {:pdf_generator, "~> 0.4.0"},
-      {:plug_cowboy, "~> 1.0"}
+      {:plug_cowboy, "~> 1.0"},
+      {:plug_attack, "~> 0.3.0"},
+      {:remote_ip, "~> 0.1.0"}
     ]
   end
 
