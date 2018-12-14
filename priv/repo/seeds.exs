@@ -71,13 +71,13 @@ branch =
 random_vendors = Enum.take_random(vendors, 8)
 random_customers = Enum.take_random(customers, 8)
 
-# Enum.map(random_customers, fn customer ->
-#   Seed.create_sales_order(company.id, user.id, customer.id, %{items: products, type: "product"})
-# end)
+# # Enum.map(random_customers, fn customer ->
+# #   Seed.create_sales_order(company.id, user.id, customer.id, %{items: products, type: "product"})
+# # end)
 
-Enum.map(random_customers, fn customer ->
-  Seed.create_sales_order(company.id, user.id, customer.id, %{items: services, type: "service"})
-end)
+# Enum.map(random_customers, fn customer ->
+#   Seed.create_sales_order(company.id, user.id, customer.id, %{items: services, type: "service"})
+# end)
 
 # Enum.map(random_customers, fn customer ->
 #   Seed.create_sales_order(company.id, user.id, customer.id, products, services)

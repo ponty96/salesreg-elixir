@@ -43,6 +43,12 @@ defmodule SalesReg.Business.Expense do
     |> validate_total_amount(expense)
   end
 
+  def delete_changeset(expense) do
+    expense
+    |> Repo.preload([:expense_items])
+    |> cast(%{}, [])
+  end
+
   defp validate_total_amount(changeset, expense) do
     total_amount =
       total_amount(expense, changeset)

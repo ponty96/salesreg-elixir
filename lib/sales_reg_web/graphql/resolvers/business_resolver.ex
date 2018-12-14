@@ -59,6 +59,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
     |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
+  def delete_expense(%{expense_id: expense_id}, _res) do
+    Business.get_expense(expense_id)
+    |> Business.delete_expense()
+  end
+
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
   end
