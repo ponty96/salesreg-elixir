@@ -96,3 +96,4 @@ end)
 # Seed.create_receipt(invoice.id, user.id, company.id)
 
 
+

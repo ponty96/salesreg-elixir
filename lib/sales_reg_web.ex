@@ -93,6 +93,7 @@ defmodule SalesRegWeb do
         Accounts,
         Accounts.User,
         Business,
+        Contact,
         Business.Company,
         Business.Branch,
         Business.Contact,
@@ -109,11 +110,13 @@ defmodule SalesRegWeb do
         Order,
         Order.Item,
         Order.Sale,
+        Order.Invoice,
+        Order.Receipt,
+        Order.Review,
+        Order.Star,
         Store.ProductGroup,
         Store.Option,
         Store.OptionValue,
-        Order.Invoice,
-        Order.Receipt,
         TaskSupervisor
       }
     end

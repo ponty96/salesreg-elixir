@@ -75,7 +75,7 @@ defmodule SalesReg.Business.Contact do
   def through_order_changeset(contact, attrs) do
     contact
     |> Repo.preload([:address, :phone])
-    |> cast(attrs, @required_fields -- [:gender])
+    |> cast(attrs, @required_fields)
     |> validate_required(@required_fields -- [:gender])
     |> validate_format(:email, ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/)
     |> validate_contact_type()

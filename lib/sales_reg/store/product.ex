@@ -23,6 +23,8 @@ defmodule SalesReg.Store.Product do
     belongs_to(:user, SalesReg.Accounts.User)
 
     has_many(:items, SalesReg.Order.Item)
+    has_many(:review, SalesReg.Order.Review)
+    has_many(:star, SalesReg.Order.Star)
 
     many_to_many(
       :categories,
@@ -82,7 +84,7 @@ defmodule SalesReg.Store.Product do
     |> Repo.preload(:categories)
     |> Repo.preload(:tags)
     |> Repo.preload(:items)
-    |> cast(%{}, @fields ++ @required_fields)
+    |> cast(%{}, [])
     |> no_assoc_constraint(:items, message: "This product is still associated with sales")
   end
 end

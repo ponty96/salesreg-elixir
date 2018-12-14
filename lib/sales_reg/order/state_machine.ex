@@ -25,20 +25,9 @@ defmodule SalesReg.Order.OrderStateMachine do
 
   # decrement inventory after a sales order has been processed
   def after_transition(%Sale{} = order, "processed") do
-    invoice_params = build_invoice_params(order)
+    # Write code to handle errors
     Store.update_product_inventory(:decrement, order.items)
-    add_invoice = Store.add_invoice(invoice_params)
-
-    case add_invoice do
-      {:ok, invoice} ->
-        Order.supervise_pdf_upload(invoice)
-        # Write code to handle errors
-        order
-
-      _ ->
-        # Write code to handle errors
-        order
-    end
+    order
   end
 
   # increment inventory after a recalled sale order
@@ -46,14 +35,5 @@ defmodule SalesReg.Order.OrderStateMachine do
     # Write code to handle errors
     Store.update_product_inventory(:increment, order.items)
     order
-  end
-
-  defp build_invoice_params(order) do
-    %{
-      due_date: order.date,
-      sale_id: order.id,
-      user_id: order.user_id,
-      company_id: order.company_id
-    }
   end
 end

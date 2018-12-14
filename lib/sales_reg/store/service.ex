@@ -58,7 +58,7 @@ defmodule SalesReg.Store.Service do
     |> Repo.preload(:categories)
     |> Repo.preload(:tags)
     |> Repo.preload(:items)
-    |> cast(%{}, @required_fields ++ @optional_fields)
+    |> cast(%{}, [])
     |> no_assoc_constraint(:items, message: "This service is still associated with sales")
   end
 end
