@@ -15,6 +15,7 @@ defmodule SalesReg.Business.Company do
     field(:description, :string)
     field(:logo, :string)
     field(:cover_photo, :string)
+    field(:slug, :string)
 
     belongs_to(:owner, SalesReg.Accounts.User)
     has_many(:branches, Branch)
@@ -27,7 +28,7 @@ defmodule SalesReg.Business.Company do
     timestamps()
   end
 
-  @required_fields [:title, :contact_email, :owner_id, :currency]
+  @required_fields [:title, :contact_email, :owner_id, :currency, :slug]
   @optional_fields [:about, :description, :logo]
 
   @doc false

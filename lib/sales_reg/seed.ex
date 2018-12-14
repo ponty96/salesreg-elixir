@@ -41,7 +41,8 @@ defmodule SalesReg.Seed do
       head_office: gen_location_params(),
       currency: "Naira(₦)",
       description: CompanyEn.bs(),
-      logo: Avatar.image_url()
+      logo: Avatar.image_url(),
+      slug: "Stacknbit"
     }
 
     Business.create_company(user_id, company_params)
@@ -280,7 +281,7 @@ defmodule SalesReg.Seed do
   def add_template() do
     params = %{
       "title" => "General Templates",
-      "slug" => "theme/template/general_template1",
+      "slug" => "template",
       "featured_image" => Avatar.image_url()
     }
 
