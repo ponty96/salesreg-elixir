@@ -265,6 +265,7 @@ defmodule SalesReg.Order do
     end
   end
 
+
   # Use this to persist receipt when the payment method is card
   def insert_receipt(sale, transaction_id, amount, :card) do
     sale = Repo.preload(sale, [:invoice])
@@ -291,8 +292,59 @@ defmodule SalesReg.Order do
   def get_receipt_by_transac_id(transaction_id) do
     Repo.get_by(Receipt, transaction_id: transaction_id)
   end
+  def calc_order_amount(%Sale{} = sale) do
+    sale = Repo.preload(sale, [:items])
+    calc_items_amount(sale.items)
+  end
+
+  def calc_order_amount(%Invoice{} = invoice) do
+    invoice = Repo.preload(invoice, [sale: :items])
+    calc_items_amount(invoice.sale.items)
+  end
+
+  def calc_order_amount_paid(%Sale{} = sale) do
+    sale = Repo.preload(sale, [invoice: :receipts])
+    calc_amount_paid(sale.invoice.receipts)
+  end
+
+  def calc_order_amount_paid(%Invoice{} = invoice) do
+    invoice = Repo.preload(invoice, [:receipts])
+    calc_amount_paid(invoice.receipts)
+  end
+
+  def contact_orders_debt(contact) do
+    contact = Repo.preload(contact, [company: :sales])
+    {amount_paid_list, orders_total_amount_list} = 
+      Enum.filter(contact.company.sales, fn sale ->
+        sale.contact_id == contact.id
+      end)
+      |> Enum.map(fn sale ->
+        {calc_order_amount_paid(sale), calc_order_amount(sale)}
+      end)
+      |> Enum.unzip()
+
+    Enum.sum(orders_total_amount_list) - Enum.sum(amount_paid_list)
+  end
 
   # Private Functions
+  defp calc_items_amount(items) do
+    Enum.map(items, fn item ->
+      {quantity, _} = Float.parse(item.quantity)
+      {unit_price, _} = Float.parse(item.unit_price)
+    
+      quantity * unit_price
+    end)
+    |> Enum.sum()
+  end
+
+  defp calc_amount_paid(receipts) do
+    Enum.map(receipts, fn receipt ->
+      {amount_paid, _} = Float.parse(receipt.amount_paid)
+      amount_paid
+    end)
+    |> Enum.sum()
+  end
+
   defp repo_transaction_resp(repo_transaction) do
     case repo_transaction do
       {:ok, %{insert_sale: sale}} -> {:ok, sale}
