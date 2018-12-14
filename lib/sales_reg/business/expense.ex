@@ -16,7 +16,11 @@ defmodule SalesReg.Business.Expense do
 
     belongs_to(:paid_by, SalesReg.Accounts.User, foreign_key: :paid_by_id)
     belongs_to(:company, Company)
-    has_many(:expense_items, SalesReg.Business.ExpenseItem, on_replace: :delete)
+
+    has_many(:expense_items, SalesReg.Business.ExpenseItem,
+      on_replace: :delete,
+      on_delete: :delete_all
+    )
 
     timestamps()
   end
