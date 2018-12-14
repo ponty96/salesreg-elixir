@@ -225,6 +225,13 @@ defmodule SalesReg.Order do
     SalesReg.ImageUpload.store({path, resource.company})
   end
 
+  def create_receipt(%{invoice_id: id, amount_paid: amount}) do
+    invoice = Order.get_invoice(id)
+    |> Repo.preload([:sale])
+
+    insert_receipt(invoice.sale, invoice, amount, :cash)
+  end
+
   defp insert_invoice(order) do
     add_invoice = 
       order
@@ -236,7 +243,7 @@ defmodule SalesReg.Order do
         invoice = Repo.preload(invoice, [:company, :user, sale: [items: [:product, :service]]])
         Order.supervise_pdf_upload(invoice)
         
-        {:ok, invoice}
+        add_invoice
       
       {:error, _reason} = error_tuple ->
         error_tuple
@@ -257,7 +264,7 @@ defmodule SalesReg.Order do
         receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product, :service]]])
         Order.supervise_pdf_upload(receipt)
 
-        {:ok, receipt}
+        add_receipt
 
       {:error, _reason} = error_tuple ->
         error_tuple

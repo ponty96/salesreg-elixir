@@ -75,6 +75,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     end
   end
 
+  def create_receipt(params, _res) do
+    Order.create_receipt(params)
+  end
+
   def delete_receipt(%{receipt_id: receipt_id}, _res) do
     Order.get_receipt(receipt_id)
     |> Order.delete_receipt()
