@@ -1,30 +1,6 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   use SalesRegWeb, :context
 
-  def upsert_purchase(%{purchase: params, purchase_id: id}, _res) do
-    # new_params = add_order_amount(params)
-
-    Order.get_purchase(id)
-    |> Order.update_purchase(params)
-  end
-
-  def upsert_purchase(%{purchase: params}, _res) do
-    # new_params = add_order_amount(params)
-    Order.add_purchase(params)
-  end
-
-  def list_company_purchases(%{company_id: company_id} = args, _res) do
-    {:ok, purchases} = Order.list_company_purchases(company_id)
-
-    purchases
-    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
-  end
-
-  def delete_purchase(%{purchase_id: purchase_id}, _res) do
-    purchase = Order.get_purchase(purchase_id)
-    Order.delete_purchase(purchase)
-  end
-
   def upsert_sale(%{sale: params, sale_id: id}, _res) do
     # new_params = add_order_amount(params)
 

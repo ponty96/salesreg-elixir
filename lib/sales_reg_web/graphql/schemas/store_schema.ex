@@ -125,6 +125,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       middleware(Authorize)
       resolve(&StoreResolver.delete_option/2)
     end
+
+    @desc """
+      mutation to restock products
+    """
+    field :restock_products, :mutation_response do
+      arg(:items, list_of(:restock_item_input))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.restock_products/2)
+    end
   end
 
   ### QUERIES

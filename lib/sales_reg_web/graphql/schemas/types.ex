@@ -219,27 +219,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
-    Purchase Order object type
-  """
-  object :purchase do
-    field(:id, :uuid)
-    field(:date, :string)
-    field(:payment_method, :string)
-    field(:purchasing_agent, :string)
-    field(:status, :string)
-    field(:amount, :string)
-    field(:inserted_at, :naive_datetime)
-    field(:updated_at, :naive_datetime)
-
-    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
-    field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
-    field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :items))
-    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-  end
-
-  connection(node_type: :purchase)
-
-  @desc """
     Item object type
   """
   object :item do
@@ -411,7 +390,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :contact,
       :phone,
       :location,
-      :purchase,
       :item,
       :sale,
       :expense,
@@ -433,7 +411,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Contact{}, _ -> :contact
       %Phone{}, _ -> :phone
       %Location{}, _ -> :location
-      %Purchase{}, _ -> :purchase
       %Item{}, _ -> :item
       %Sale{}, _ -> :sale
       %{user: %User{}}, _ -> :authorization
@@ -664,16 +641,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:address, :location_input)
   end
 
-  input_object :purchase_input do
-    field(:date, non_null(:string))
-    field(:payment_method, non_null(:payment_method))
-    field(:purchasing_agent, :string)
-    field(:items, non_null(list_of(:item_input)))
-
-    field(:user_id, non_null(:uuid))
-    field(:contact_id, non_null(:uuid))
-    field(:company_id, non_null(:uuid))
-    field(:amount, non_null(:string))
+  input_object :restock_item_input do
+    field(:product_id, :uuid)
+    field(:quantity, non_null(:string))
   end
 
   input_object :item_input do

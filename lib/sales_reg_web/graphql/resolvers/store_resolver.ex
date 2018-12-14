@@ -108,6 +108,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     {:ok, Store.load_prod_and_serv(query)}
   end
 
+  def restock_products(%{items: items}, _res) do
+    {:ok, Store.update_product_inventory(:increment, items)}
+  end
+
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
   end

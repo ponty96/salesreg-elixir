@@ -19,7 +19,6 @@ defmodule SalesReg.Business.Company do
     belongs_to(:owner, SalesReg.Accounts.User)
     has_many(:branches, Branch)
     has_many(:contacts, Contact)
-    has_many(:purchases, SalesReg.Order.Purchase)
     has_many(:invoices, SalesReg.Order.Invoice)
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
     has_one(:bank, SalesReg.Business.Bank, on_replace: :delete)
