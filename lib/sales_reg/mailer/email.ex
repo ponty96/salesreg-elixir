@@ -1,4 +1,4 @@
-defmodule SalesReg.Mailer do
+defmodule SalesReg.Email do
 	use SalesRegWeb, :context
 	import Bamboo.Email
 
@@ -8,8 +8,8 @@ defmodule SalesReg.Mailer do
 		sale
 		|> Theme.get_email_template_by_type(type)
 		|> transform_template(sale)
-		|> construct_email(sale)
-		|> send_mail()
+		|> construct_email(sale, type)
+		|> send_email()
 	end
 
 	def send_email(email_params) do
@@ -26,7 +26,7 @@ defmodule SalesReg.Mailer do
 		# DO SOMETHING
 	end
 
-	defp construct_email(html_body, sale) do
+	defp construct_email(html_body, sale, type) do
 		%{
 			to: sale.company.contact_email,
 			from: "support@yipcart.com",
@@ -38,17 +38,17 @@ defmodule SalesReg.Mailer do
 	defp gen_sub(type) do
 		case type do
 			"invoice_pre_due_date" ->
-				#Put subject here
+				:ok
 			"invoice_on_due_date" ->
-				#Put subject here
+				:ok
 			"invoice_post_due_date" ->
-				#Put subject here
+				:ok
 			"invoice_on_order" ->
-				#Put subject here
+				:ok
 			"order_receipt" ->
-				#Put subject here
+				:ok
 			_ -> 
-				# Put default message here
+				:ok
 		end
 	end
 end
