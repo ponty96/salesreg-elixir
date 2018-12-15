@@ -138,4 +138,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   def search_categories_by_title(%{company_id: company_id, query: query}, _res) do
     {:ok, SalesReg.Context.search_schema_by_field(Category, {query, company_id}, :title)}
   end
+
+  def search_products_by_name(%{company_id: company_id, query: query}, _res) do
+    {:ok, SalesReg.Context.search_schema_by_field(Product, {query, company_id}, :name)}
+  end
 end

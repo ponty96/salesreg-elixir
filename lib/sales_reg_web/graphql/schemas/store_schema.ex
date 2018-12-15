@@ -228,5 +228,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       middleware(Authorize)
       resolve(&StoreResolver.search_categories_by_title/2)
     end
+
+    @desc """
+     search for products by name
+    """
+    field :search_products_by_name, list_of(:product) do
+      arg(:query, non_null(:string))
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.search_products_by_name/2)
+    end
   end
 end
