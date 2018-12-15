@@ -670,7 +670,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :product_input do
     field(:id, :uuid)
     field(:description, :string)
-    field(:name, non_null(:string))
+    field(:name, :string)
     field(:sku, non_null(:string))
     field(:minimum_sku, non_null(:string))
     field(:cost_price, :string)
