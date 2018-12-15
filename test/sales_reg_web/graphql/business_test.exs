@@ -372,7 +372,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
             }
           ],
           paidById: "#{context.user.id}",
-          paymentMethod: CHEQUE,
+          paymentMethod: CARD,
           title: "update expense title",
           totalAmount: 50.0954
         }, expenseId: "#{expense.id}"
@@ -402,7 +402,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
 
       assert response["data"]["id"] == expense.id
       assert response["data"]["date"] == "11-9-2018"
-      assert response["data"]["paymentMethod"] == "cheque"
+      assert response["data"]["paymentMethod"] == "card"
       assert response["data"]["title"] == "update expense title"
       assert response["data"]["totalAmount"] == "50.0954"
       assert response["success"] == true

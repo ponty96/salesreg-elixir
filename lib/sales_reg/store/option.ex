@@ -16,7 +16,7 @@ defmodule SalesReg.Store.Option do
       on_replace: :delete
     )
 
-    has_many(:option_values, Store.OptionValue, on_replace: :delete)
+    has_many(:option_values, Store.OptionValue)
 
     timestamps()
   end
@@ -27,5 +27,14 @@ defmodule SalesReg.Store.Option do
     |> Repo.preload(:product_groups)
     |> cast(attrs, [:name, :company_id])
     |> validate_required([:name, :company_id])
+  end
+
+  @doc false
+  def delete_changeset(option) do
+    option
+    |> cast(%{}, [])
+    |> no_assoc_constraint(:option_values,
+      message: "This option is being used in several products or services"
+    )
   end
 end

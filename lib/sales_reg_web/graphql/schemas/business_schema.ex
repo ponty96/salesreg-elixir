@@ -69,6 +69,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       middleware(Authorize)
       resolve(&BusinessResolver.upsert_expense/2)
     end
+
+    @desc """
+      mutation to delete expense
+    """
+    field :delete_expense, :mutation_response do
+      arg(:expense_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&BusinessResolver.delete_expense/2)
+    end
   end
 
   ### QUERIES

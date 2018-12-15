@@ -22,8 +22,9 @@ defmodule SalesReg.Store.OptionValue do
   def changeset(option_values, attrs) do
     option_values
     |> cast(attrs, @fields)
-    |> validate_required(@fields)
+    |> validate_required(@fields -- [:name])
     |> assoc_constraint(:option)
     |> assoc_constraint(:product)
+    |> assoc_constraint(:company)
   end
 end
