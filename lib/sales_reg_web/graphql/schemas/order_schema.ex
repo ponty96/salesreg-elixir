@@ -113,5 +113,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       middleware(Authorize)
       resolve(&OrderResolver.list_company_sales/2)
     end
+
+    @desc """
+      query for all invoices of a company
+    """
+    connection field(:list_company_invoices, node_type: :invoice) do
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&OrderResolver.list_company_invoices/2)
+    end
   end
 end

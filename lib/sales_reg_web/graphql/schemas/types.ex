@@ -399,6 +399,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
   end
 
+  connection(node_type: :invoice)
+
   @desc """
     Review object type
   """

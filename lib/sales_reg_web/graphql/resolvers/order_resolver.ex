@@ -20,6 +20,13 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
+  def list_company_invoices(%{company_id: company_id} = args, _res) do
+    {:ok, invoices} = Order.list_company_invoices(company_id)
+
+    invoices
+    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+  end
+
   def delete_sale(%{sale_id: sale_id}, _res) do
     Order.get_sale(sale_id)
     |> Order.delete_sale()
