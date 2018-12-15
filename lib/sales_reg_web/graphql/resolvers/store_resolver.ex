@@ -112,7 +112,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     {:ok, Store.load_products(company_id, query)}
   end
   
-  def search_products_services_by_name(%{company_id: company_id, aquery: query}, _res) do
+  def search_products_services_by_name(%{company_id: company_id, query: query}, _res) do
     {:ok, Store.load_prod_and_serv(company_id, query)}
   end
 
