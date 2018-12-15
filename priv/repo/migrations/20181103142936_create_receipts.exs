@@ -9,6 +9,7 @@ defmodule SalesReg.Repo.Migrations.CreateReceipts do
       add(:payment_method, :string)
       add(:pdf_url, :string)
       add(:transaction_id, :integer)
+      add(:ref_id, :string)
 
       add(:invoice_id, references(:invoices, type: :binary_id))
       add(:user_id, references(:users, type: :binary_id))
