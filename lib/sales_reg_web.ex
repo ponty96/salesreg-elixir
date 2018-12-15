@@ -108,7 +108,6 @@ defmodule SalesRegWeb do
         Store.Category,
         Store.Tag,
         Order,
-        Order.Purchase,
         Order.Item,
         Order.Sale,
         Order.Invoice,

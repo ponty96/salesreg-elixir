@@ -9,7 +9,6 @@ defmodule SalesReg.Order do
   alias SalesReg.Order.OrderStateMachine
 
   use SalesReg.Context, [
-    Purchase,
     Sale,
     Invoice,
     Receipt,
@@ -30,20 +29,6 @@ defmodule SalesReg.Order do
 
   def preload_order(order) do
     Repo.preload(order, items: [:product, :service])
-  end
-
-  def update_status(:purchase, order_id, new_status) do
-    purchase_order = get_purchase(order_id) |> preload_order()
-    purchase_order = Map.put(purchase_order, :state, purchase_order.status)
-
-    case Machinery.transition_to(purchase_order, OrderStateMachine, new_status) do
-      {:ok, updated} ->
-        {:ok, updated}
-
-      {:error, error} ->
-        IO.inspect(error, label: "transition state error")
-        {:error, error}
-    end
   end
 
   def update_status(:sale, order_id, new_status) do
@@ -136,7 +121,9 @@ defmodule SalesReg.Order do
   end
 
   # Called when an unregistered company contact makes an order and pays some amount using cash
-  def create_sale(%{contact: contact_params, amount_paid: amount, payment_method: "cash"} = params) do
+  def create_sale(
+        %{contact: contact_params, amount_paid: amount, payment_method: "cash"} = params
+      ) do
     Multi.new()
     |> Multi.insert(:insert_contact, Contact.through_order_changeset(%Contact{}, contact_params))
     |> Multi.run(:insert_sale, fn _repo, %{insert_contact: contact} ->
@@ -200,14 +187,14 @@ defmodule SalesReg.Order do
   def supervise_pdf_upload(resource) do
     Task.Supervisor.start_child(TaskSupervisor, fn ->
       {:ok, filename} = Order.upload_pdf(resource)
-      
+
       case resource do
         %Receipt{} ->
           Order.update_receipt_details(filename, resource)
 
         %Invoice{} ->
           Order.update_invoice_details(filename, resource)
-        
+
         _ ->
           %{}
       end
@@ -234,7 +221,7 @@ defmodule SalesReg.Order do
 
   # Use this to persist invoice when the payment method is cash
   def insert_invoice(order) do
-    add_invoice = 
+    add_invoice =
       order
       |> build_invoice_params()
       |> Order.add_invoice()
@@ -243,9 +230,9 @@ defmodule SalesReg.Order do
       {:ok, invoice} ->
         invoice = Repo.preload(invoice, [:company, :user, sale: [items: [:product, :service]]])
         Order.supervise_pdf_upload(invoice)
-        
+
         add_invoice
-      
+
       {:error, _reason} = error_tuple ->
         error_tuple
     end
@@ -253,11 +240,9 @@ defmodule SalesReg.Order do
 
   # Use this to persist receipt when the payment method is cash
   def insert_receipt(sale, invoice, amount, :cash) do
-    add_receipt = 
+    add_receipt =
       %Receipt{}
-      |> Receipt.via_cash_changeset(
-        build_receipt_params(sale, invoice, amount)
-      )
+      |> Receipt.via_cash_changeset(build_receipt_params(sale, invoice, amount))
       |> Repo.insert()
 
     case add_receipt do
@@ -275,7 +260,7 @@ defmodule SalesReg.Order do
   # Use this to persist receipt when the payment method is card
   def insert_receipt(sale, transaction_id, amount, :card) do
     sale = Repo.preload(sale, [:invoice])
-    add_receipt = 
+    add_receipt =
       %Receipt{}
       |> Receipt.via_cash_changeset(
         build_receipt_params(sale, sale.invoice, amount)
@@ -294,7 +279,7 @@ defmodule SalesReg.Order do
         error_tuple
     end
   end
-  
+
   def get_receipt_by_transac_id(transaction_id) do
     Repo.get_by(Receipt, transaction_id: transaction_id)
   end
@@ -305,12 +290,12 @@ defmodule SalesReg.Order do
   end
 
   def calc_order_amount(%Invoice{} = invoice) do
-    invoice = Repo.preload(invoice, [sale: :items])
+    invoice = Repo.preload(invoice, sale: :items)
     calc_items_amount(invoice.sale.items)
   end
 
   def calc_order_amount_paid(%Sale{} = sale) do
-    sale = Repo.preload(sale, [invoice: :receipts])
+    sale = Repo.preload(sale, invoice: :receipts)
     calc_amount_paid(sale.invoice.receipts)
   end
 
@@ -319,9 +304,11 @@ defmodule SalesReg.Order do
     calc_amount_paid(invoice.receipts)
   end
 
+  # TOD0, just fetch all orders associated with a contact id instead
   def contact_orders_debt(contact) do
-    contact = Repo.preload(contact, [company: :sales])
-    {amount_paid_list, orders_total_amount_list} = 
+    contact = Repo.preload(contact, company: :sales)
+
+    {amount_paid_list, orders_total_amount_list} =
       Enum.filter(contact.company.sales, fn sale ->
         sale.contact_id == contact.id
       end)
@@ -333,12 +320,35 @@ defmodule SalesReg.Order do
     Enum.sum(orders_total_amount_list) - Enum.sum(amount_paid_list)
   end
 
-  # Private Functions
+  def calc_product_total_quantity_sold(product_id) do
+    Repo.all(
+      from(item in Item,
+        where: item.product_id == ^product_id,
+        preload: [:sale]
+      )
+    )
+    |> Enum.filter(&(&1.sale.status == "delivered"))
+    |> Enum.map(&String.to_integer(&1.quantity))
+    |> Enum.sum()
+  end
+
+  def calc_service_total_times_ordered(service_id) do
+    Repo.all(
+      from(item in Item,
+        where: item.service_id == ^service_id,
+        preload: [:sale]
+      )
+    )
+    |> Enum.filter(&(&1.sale.status == "delivered"))
+    |> Enum.map(&String.to_integer(&1.quantity))
+    |> Enum.sum()
+  end
+
   defp calc_items_amount(items) do
     Enum.map(items, fn item ->
       {quantity, _} = Float.parse(item.quantity)
       {unit_price, _} = Float.parse(item.unit_price)
-    
+
       quantity * unit_price
     end)
     |> Enum.sum()
@@ -370,6 +380,7 @@ defmodule SalesReg.Order do
 
   defp build_receipt_params(sale, invoice, amount) do
     current_date = Date.utc_today() |> Date.to_string()
+
     %{
       amount_paid: amount,
       time_paid: current_date,
@@ -393,7 +404,7 @@ defmodule SalesReg.Order do
     source = resource.__meta__.source
     schema = resource.__meta__.schema
     count = Enum.count(Repo.all(schema))
-    
+
     "#{String.replace(resource.company.title, " ", "-")}-#{source}-#{count}"
   end
 
@@ -401,8 +412,12 @@ defmodule SalesReg.Order do
     with sale <- get_sale(sale_id),
          true <- sale.contact_id == contact_id,
          {:ok, _item} <- find_in_items(sale.items, type, id) do
+      params = %{
+        "sale_id" => sale_id,
+        "contact_id" => contact_id,
+        "#{Atom.to_string(type)}_id" => id
+      }
 
-      params = %{"sale_id" => sale_id, "contact_id" => contact_id, "#{Atom.to_string(type)}_id" => id}
       callback.(params)
     else
       {:ok, "not found"} ->

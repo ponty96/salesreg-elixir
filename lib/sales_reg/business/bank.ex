@@ -26,4 +26,9 @@ defmodule SalesReg.Business.Bank do
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
   end
+
+  def delete_changeset(bank) do
+    bank
+    |> cast(%{}, [])
+  end
 end

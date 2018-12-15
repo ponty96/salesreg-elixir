@@ -187,24 +187,6 @@ defmodule SalesReg.Seed do
     end
   end
 
-  # PURCHASE ORDER SEED
-  def create_purchase_order(company_id, user_id, contact_id, products) do
-    order_items = order_items(products, "product")
-
-    params = %{
-      "date" => past_date(:recent),
-      "payment_method" => Enum.random(@payment_method),
-      "user_id" => user_id,
-      "company_id" => company_id,
-      "contact_id" => contact_id,
-      "items" => order_items,
-      "amount" => order_total_cost(order_items),
-      "status" => Enum.random(@seed_order_status)
-    }
-
-    SalesReg.Order.add_purchase(params)
-  end
-
   # SALES ORDER SEED
 
   def create_sales_order(company_id, user_id, contact_id, products, services) do
