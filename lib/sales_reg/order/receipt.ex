@@ -11,6 +11,7 @@ defmodule SalesReg.Order.Receipt do
     field(:payment_method, :string)
     field(:pdf_url, :string)
     field(:transaction_id, :integer)
+    field(:ref_id, :string)
 
     belongs_to(:invoice, SalesReg.Order.Invoice)
     belongs_to(:user, SalesReg.Accounts.User)
@@ -27,7 +28,8 @@ defmodule SalesReg.Order.Receipt do
     :invoice_id,
     :user_id,
     :company_id,
-    :sale_id
+    :sale_id,
+    :ref_id
   ]
   @optional_fields [:pdf_url, :transaction_id]
 

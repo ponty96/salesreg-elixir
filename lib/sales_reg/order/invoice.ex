@@ -8,6 +8,7 @@ defmodule SalesReg.Order.Invoice do
   schema "invoices" do
     field(:due_date, :string)
     field(:pdf_url, :string)
+    field(:ref_id, :string)
 
     has_many(:receipts, SalesReg.Order.Receipt)
     belongs_to(:sale, SalesReg.Order.Sale)
@@ -21,7 +22,8 @@ defmodule SalesReg.Order.Invoice do
     :due_date,
     :sale_id,
     :user_id,
-    :company_id
+    :company_id,
+    ref_id
   ]
   @optional_fields [:pdf_url]
 

@@ -13,6 +13,7 @@ defmodule SalesReg.Order.Sale do
     field(:payment_method, :string)
     field(:tax, :string)
     field(:discount, :string)
+    field(:ref_id, :string)
 
     field(:state, :string, virtual: true)
 
@@ -33,7 +34,8 @@ defmodule SalesReg.Order.Sale do
     :user_id,
     :contact_id,
     :company_id,
-    :date
+    :date,
+    :ref_id
   ]
   @optional_fields [:status, :tax, :discount]
 
@@ -66,5 +68,11 @@ defmodule SalesReg.Order.Sale do
     |> no_assoc_constraint(:items,
       message: "This sale is still associated with a product or service "
     )
+  end
+
+  def put_ref_id(changeset) do
+    sale_count = Enum.count(Repo.all(Sale))
+
+    
   end
 end
