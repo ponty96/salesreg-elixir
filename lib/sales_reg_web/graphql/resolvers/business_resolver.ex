@@ -52,7 +52,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
     Business.add_expense(new_params)
   end
 
-  def list_company_expenses(%{company_id: id} = args, _res) do
+  def company_expenses(%{company_id: id} = args, _res) do
     {:ok, expenses} = Business.list_company_expenses(id)
 
     expenses

@@ -63,7 +63,7 @@ defmodule SalesReg.Order.Purchase do
   def delete_changeset(purchase) do
     purchase
     |> Repo.preload(:items)
-    |> cast(%{}, @required_fields ++ @optional_fields)
+    |> cast(%{}, [])
     |> no_assoc_constraint(:items,
       message: "This purchase is still associated with a product or service "
     )

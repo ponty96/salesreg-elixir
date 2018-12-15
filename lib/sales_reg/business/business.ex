@@ -50,6 +50,10 @@ defmodule SalesReg.Business do
     update_branch(branch, branch_params)
   end
 
+  def change_company(%Company{} = company) do
+    Company.changeset(company, %{})
+  end
+
   ## CONTACTS
   def list_company_contacts(company_id, type) do
     {:ok,

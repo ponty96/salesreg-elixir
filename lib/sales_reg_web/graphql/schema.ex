@@ -17,6 +17,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
   import_types(__MODULE__.StoreSchema)
   import_types(__MODULE__.ContactSchema)
   import_types(__MODULE__.OrderSchema)
+  import_types(__MODULE__.ThemeSchema)
 
   query do
     import_fields(:single_user)
@@ -25,6 +26,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
     import_fields(:order_queries)
     import_fields(:expense_queries)
     import_fields(:bank_queries)
+    import_fields(:theme_queries)
   end
 
   mutation do
@@ -66,6 +68,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
     |> Dataloader.add_source(SalesReg.Accounts, SalesReg.Accounts.data())
     |> Dataloader.add_source(SalesReg.Order, SalesReg.Order.data())
     |> Dataloader.add_source(SalesReg.Store, SalesReg.Store.data())
+    |> Dataloader.add_source(SalesReg.Theme, SalesReg.Theme.data())
   end
 
   def context(ctx) do

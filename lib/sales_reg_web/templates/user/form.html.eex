@@ -1,0 +1,55 @@
+<%= form_for @changeset, @action, [as: :user], fn f -> %>
+  <%= if @changeset.action do %>
+    <div class="alert alert-danger">
+      <p>Oops, something went wrong! Please check the errors below.</p>
+    </div>
+  <% end %>
+  
+  <div class="form-group">
+    <%= label f, :date_of_birth, class: "control-label" %>
+    <%= text_input f, :date_of_birth, class: "form-control" %>
+    <%= error_tag f, :date_of_birth %>
+  </div>
+
+  <div class="form-group">
+    <%= label f, :email, class: "control-label" %>
+    <%= email_input f, :email, class: "form-control" %>
+    <%= error_tag f, :email %>
+  </div>
+
+  <div class="form-group">
+    <%= label f, :first_name, class: "control-label" %>
+    <%= text_input f, :first_name, class: "form-control" %>
+    <%= error_tag f, :first_name %>
+  </div>
+
+  <div class="form-group">
+    <%= label f, :male, class: "control-label" %>
+    <%= radio_button f, :gender, "Male", class: "form-control" %>
+    <%= label f, :female, class: "control-label" %>
+    <%= radio_button f, :gender, "Female", class: "form-control" %>
+    <%= error_tag f, :gender %>
+  </div>
+
+  <div class="form-group">
+    <%= label f, :last_name, class: "control-label" %>
+    <%= text_input f, :last_name, class: "form-control" %>
+    <%= error_tag f, :last_name %>
+  </div>
+
+  <div class="form-group">
+    <%= label f, :password, class: "control-label" %>
+    <%= password_input f, :password, class: "form-control" %>
+    <%= error_tag f, :password %>
+  </div>
+
+  <div class="form-group">
+    <%= label f, :password_confirmation, class: "control-label" %>
+    <%= password_input f, :password_confirmation, class: "form-control" %>
+    <%= error_tag f, :password_confirmation %>
+  </div>
+
+  <div class="form-group">
+    <%= submit "Submit", class: "btn btn-primary" %>
+  </div>
+<% end %>
