@@ -71,17 +71,13 @@ branch =
 random_vendors = Enum.take_random(vendors, 8)
 random_customers = Enum.take_random(customers, 8)
 
-# Enum.map(random_vendors, fn vendor ->
-#   Seed.create_purchase_order(company.id, user.id, vendor.id, products)
-# end)
+# # Enum.map(random_customers, fn customer ->
+# #   Seed.create_sales_order(company.id, user.id, customer.id, %{items: products, type: "product"})
+# # end)
 
 # Enum.map(random_customers, fn customer ->
-#   Seed.create_sales_order(company.id, user.id, customer.id, %{items: products, type: "product"})
+#   Seed.create_sales_order(company.id, user.id, customer.id, %{items: services, type: "service"})
 # end)
-
-Enum.map(random_customers, fn customer ->
-  Seed.create_sales_order(company.id, user.id, customer.id, %{items: services, type: "service"})
-end)
 
 # Enum.map(random_customers, fn customer ->
 #   Seed.create_sales_order(company.id, user.id, customer.id, products, services)
@@ -91,13 +87,13 @@ Enum.map(1..10, fn _index ->
   Seed.create_bank(company.id)
 end)
 
-sale_order =
-  SalesReg.Order.processed_sale_orders()
-  |> Enum.random()
+# sale_order =
+#   SalesReg.Order.processed_sale_orders()
+#   |> Enum.random()
 
-{:ok, invoice} = Seed.create_invoice(sale_order)
+# {:ok, invoice} = Seed.create_invoice(sale_order)
 
-Seed.create_receipt(invoice.id, user.id, company.id)
+# Seed.create_receipt(invoice.id, user.id, company.id)
 
 
 

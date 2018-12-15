@@ -103,13 +103,22 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     )
   end
 
+  connection(node_type: :option)
+
   @desc """
     Product object type
   """
   object :product do
     field(:id, :uuid)
     field(:description, :string)
-    field(:name, :string)
+
+    field :name, :string do
+      resolve(fn _parent, %{source: product} ->
+        name = Store.get_product_name(product)
+        {:ok, name}
+      end)
+    end
+
     field(:sku, :string)
     field(:minimum_sku, :string)
     field(:cost_price, :string)
@@ -132,6 +141,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+
+    field :total_quantity_sold, :integer do
+      resolve(fn _parent, %{source: product} ->
+        quantity_sold = Order.calc_product_total_quantity_sold(product.id)
+        {:ok, quantity_sold}
+      end)
+    end
   end
 
   connection(node_type: :product)
@@ -164,6 +180,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+
+    field :total_times_ordered, :integer do
+      resolve(fn _parent, %{source: service} ->
+        quantity_ordered = Order.calc_service_total_times_ordered(service.id)
+        {:ok, quantity_ordered}
+      end)
+    end
   end
 
   connection(node_type: :service)
@@ -188,7 +211,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:facebook, :string)
     field(:snapchat, :string)
     field(:allows_marketing, :string)
-    
+
     field :total_debt, :float do
       resolve(fn _parent, %{source: contact} ->
         {:ok, Order.contact_orders_debt(contact)}
@@ -216,27 +239,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
-    Purchase Order object type
-  """
-  object :purchase do
-    field(:id, :uuid)
-    field(:date, :string)
-    field(:payment_method, :string)
-    field(:purchasing_agent, :string)
-    field(:status, :string)
-    field(:amount, :string)
-    field(:inserted_at, :naive_datetime)
-    field(:updated_at, :naive_datetime)
-
-    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
-    field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
-    field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :items))
-    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-  end
-
-  connection(node_type: :purchase)
-
-  @desc """
     Item object type
   """
   object :item do
@@ -257,19 +259,19 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:status, :string)
     field(:payment_method, :string)
     field(:tax, :string)
-    
+
     field :amount, :float do
       resolve(fn _parent, %{source: sale} ->
         {:ok, Order.calc_order_amount(sale)}
       end)
     end
-    
+
     field :amount_paid, :float do
       resolve(fn _parent, %{source: sale} ->
         {:ok, Order.calc_order_amount_paid(sale)}
       end)
     end
-    
+
     field(:discount, :string)
     field(:type, :string)
     field(:inserted_at, :naive_datetime)
@@ -376,18 +378,19 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   object :invoice do
     field(:id, :uuid)
     field(:due_date, :string)
-    
+
     field :amount, :float do
       resolve(fn _parent, %{source: invoice} ->
         {:ok, Order.calc_order_amount(invoice)}
       end)
     end
-    
+
     field :amount_paid, :float do
       resolve(fn _parent, %{source: invoice} ->
         {:ok, Order.calc_order_amount_paid(invoice)}
       end)
     end
+
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
@@ -460,7 +463,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :contact,
       :phone,
       :location,
-      :purchase,
       :item,
       :sale,
       :expense,
@@ -484,7 +486,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Contact{}, _ -> :contact
       %Phone{}, _ -> :phone
       %Location{}, _ -> :location
-      %Purchase{}, _ -> :purchase
       %Item{}, _ -> :item
       %Sale{}, _ -> :sale
       %{user: %User{}}, _ -> :authorization
@@ -634,7 +635,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :product_input do
     field(:id, :uuid)
     field(:description, :string)
-    field(:name, non_null(:string))
+    field(:name, :string)
     field(:sku, non_null(:string))
     field(:minimum_sku, non_null(:string))
     field(:cost_price, :string)
@@ -648,12 +649,20 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:featured_image, non_null(:string))
     field(:images, list_of(:string))
 
+    field(:is_featured, :boolean)
+    field(:is_top_rated_by_merchant, :boolean)
+
     field(:option_values, list_of(:option_value_input), default_value: [])
   end
 
   input_object :option_value_input do
-    field(:name, non_null(:string))
+    field(:name, :string)
     field(:option_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
+  end
+
+  input_object :option_input do
+    field(:name, non_null(:string))
     field(:company_id, non_null(:uuid))
   end
 
@@ -669,6 +678,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:featured_image, non_null(:string))
     field(:images, list_of(:string))
+
+    field(:is_featured, :boolean)
+    field(:is_top_rated_by_merchant, :boolean)
   end
 
   input_object :contact_input do
@@ -706,16 +718,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:address, :location_input)
   end
 
-  input_object :purchase_input do
-    field(:date, non_null(:string))
-    field(:payment_method, non_null(:payment_method))
-    field(:purchasing_agent, :string)
-    field(:items, non_null(list_of(:item_input)))
-
-    field(:user_id, non_null(:uuid))
-    field(:contact_id, non_null(:uuid))
-    field(:company_id, non_null(:uuid))
-    field(:amount, non_null(:string))
+  input_object :restock_item_input do
+    field(:product_id, :uuid)
+    field(:quantity, non_null(:string))
   end
 
   input_object :item_input do
