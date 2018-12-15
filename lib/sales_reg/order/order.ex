@@ -201,15 +201,6 @@ defmodule SalesReg.Order do
     end)
   end
 
-  def preload_sale(sale) do
-    Repo.preload(sale, [:company, :invoice, :items])
-  end
-
-  defp build_resource_html(%Receipt{} = receipt) do
-    receipt = load_pdf_resource(receipt)
-    EEx.eval_file(@receipt_html_path, receipt: receipt)
-  end
-  
   def upload_pdf(resource) do
     uniq_name = gen_pdf_uniq_name(resource)
 
