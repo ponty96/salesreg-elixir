@@ -60,13 +60,36 @@ defmodule SalesReg.Store do
 
   def load_tags(_), do: []
 
-  def load_prod_and_serv(query) do
+  def load_products(company_id, query) do
+    query_regex = "%" <> query <> "%"
+    
+    ProductGroup
+    |> join(:inner, [pg], p in assoc(pg, :products))
+    |> preload([pg, p], [products: p])
+    |> where([pg, p], pg.company_id == ^company_id)
+    |> where([pg, p], ilike(pg.title, ^query_regex))
+    |> order_by([pg, p], asc: [pg.title])
+    |> select([pg, p], [pg])
+    |> Repo.all()
+    |> Enum.map(fn [prod_group] ->
+        add_type_field = fn(products) ->
+          Enum.map(products, fn(prod) ->
+            %{prod | name: get_product_name(prod)}
+          end)
+        end
+        add_type_field.(prod_group.products)
+      end)
+    |> List.flatten()
+  end
+
+  def load_prod_and_serv(company_id, query) do
     query_regex = "%" <> query <> "%"
 
     ProductGroup
     |> join(:inner, [pg], p in assoc(pg, :products))
     |> preload([pg, p], [products: p])
     |> join(:inner, [pg, p], s in Service)
+    |> where([pg, p, s], pg.company_id == ^company_id and s.company_id == ^company_id)
     |> where([pg, p, s], ilike(pg.title, ^query_regex))
     |> where([pg, p, s], ilike(s.name, ^query_regex))
     |> order_by([pg, p, s], asc: [pg.title, s.name])

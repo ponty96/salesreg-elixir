@@ -32,6 +32,7 @@ defmodule SalesReg.Context do
           res =
             unquote(module)
             |> Query.where(company_id: ^company_id)
+            |> Query.order_by([:updated_at])
             |> Repo.all()
 
           {:ok, res}
