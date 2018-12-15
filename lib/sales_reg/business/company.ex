@@ -15,6 +15,7 @@ defmodule SalesReg.Business.Company do
     field(:description, :string)
     field(:logo, :string)
     field(:cover_photo, :string)
+    field(:slug, :string)
 
     belongs_to(:owner, SalesReg.Accounts.User)
     has_many(:branches, Branch)
@@ -22,12 +23,13 @@ defmodule SalesReg.Business.Company do
     has_many(:invoices, SalesReg.Order.Invoice)
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
     has_one(:bank, SalesReg.Business.Bank, on_replace: :delete)
+    has_one(:company_template, SalesReg.Theme.CompanyTemplate)
     has_many(:sales, SalesReg.Order.Sale)
 
     timestamps()
   end
 
-  @required_fields [:title, :contact_email, :owner_id, :currency]
+  @required_fields [:title, :contact_email, :owner_id, :currency, :slug]
   @optional_fields [:about, :description, :logo]
 
   @doc false

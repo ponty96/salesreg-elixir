@@ -2,10 +2,7 @@ defmodule SalesRegWeb.Authentication do
   @moduledoc """
      General Authentication service
   """
-
-  alias SalesReg.Accounts
-  alias SalesRegWeb.TokenImpl
-  alias SalesReg.Accounts.User
+  use SalesRegWeb, :context
 
   def login(user_params) do
     user = Accounts.get_user_by_email(String.downcase(user_params.email))
@@ -28,6 +25,13 @@ defmodule SalesRegWeb.Authentication do
         {:error, [%{key: "email", message: "Something went wrong. Try again!"}]}
     end
   end
+
+  def put_user_in_session(conn, user) do
+		conn
+		|> Conn.assign(:current_user, user)
+		|> Conn.put_session(:user_id, user.id)
+		|> Conn.configure_session(renew: true)
+	end
 
   # This function returns a new access token and refresh token if the access token has 
   # expired but the refresh token has not expired, else if both has expired, the user
@@ -103,6 +107,11 @@ defmodule SalesRegWeb.Authentication do
     end
   end
 
+  def authenticate(%Ueberauth.Auth{provider: :identity} = auth) do
+    Accounts.get_user_by_email(auth.uid)
+  	|> authorize(auth)
+  end
+
   defp tokens_exist?(access_token, refresh_token) do
     case decode_and_verify(access_token, "access") do
       {:ok, access_claims} ->
@@ -128,4 +137,18 @@ defmodule SalesRegWeb.Authentication do
   defp check_password(user, password) do
     Comeonin.Bcrypt.checkpw(password, user.hashed_password)
   end
+
+  defp authorize(nil, _auth) do
+    {:error, "Invalid username or password"}
+  end
+
+  defp authorize(user, auth) do
+    check_password(user, auth.credentials.other.password)
+    |> resolve_authorization(user)
+  end
+
+  defp resolve_authorization(false, _user), do: {:error, "Invalid username or password"}
+  defp resolve_authorization(true, user), do: {:ok, user}
 end
+
+

@@ -7,6 +7,7 @@ defmodule SalesRegWeb.Router do
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
+    plug SalesRegWeb.Plug.AssignUser
   end
 
   # RemoteIp should always be the first in the pipeline
@@ -20,6 +21,26 @@ defmodule SalesRegWeb.Router do
     pipe_through(:api)
 
     post("/webhooks", HookController, :hook)
+  end
+
+  scope "/", SalesRegWeb do
+    pipe_through(:browser)
+
+    get "/", PageController, :index
+    get "/company", ThemeController, :index
+    resources("/users", UserController, only: [:new, :create])
+    resources("/companies", CompanyController, only: [:new, :create])
+   
+  end
+
+
+  scope "/auth", SalesRegWeb do
+    pipe_through :browser
+
+    get "/identity", SessionController, :request
+    get "/identity/callback", SessionController, :callback
+    post "/identity/callback", SessionController, :callback
+    delete "/logout", SessionController, :delete
   end
 
   pipeline :graphql do

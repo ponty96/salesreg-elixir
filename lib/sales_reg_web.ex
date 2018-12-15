@@ -34,6 +34,9 @@ defmodule SalesRegWeb do
 
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_flash: 2, view_module: 1]
+      
+      # Use all HTML functionality (forms, tags, etc)
+      use Phoenix.HTML
 
       import SalesRegWeb.Router.Helpers
       import SalesRegWeb.ErrorHelpers
@@ -66,7 +69,8 @@ defmodule SalesRegWeb do
       alias SalesReg.Seed
       alias SalesReg.Context
       alias SalesRegWeb.Authentication
-
+      alias Plug.Conn
+      alias SalesRegWeb.TokenImpl
       alias Ecto.Queryable
       SalesRegWeb.shared_aliases()
     end
@@ -117,7 +121,11 @@ defmodule SalesRegWeb do
         Store.ProductGroup,
         Store.Option,
         Store.OptionValue,
-        TaskSupervisor
+        TaskSupervisor,
+        Theme,
+        Theme.Template,
+        Theme.CompanyTemplate,
+        Theme.CompanyEmailTemplate
       }
     end
   end
