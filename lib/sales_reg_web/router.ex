@@ -7,13 +7,13 @@ defmodule SalesRegWeb.Router do
     plug(:fetch_flash)
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
-    plug SalesRegWeb.Plug.AssignUser
+    plug(SalesRegWeb.Plug.AssignUser)
   end
 
   # RemoteIp should always be the first in the pipeline
   pipeline :api do
-    plug RemoteIp
-    plug SalesRegWeb.PlugAttack
+    plug(RemoteIp)
+    plug(SalesRegWeb.PlugAttack)
     plug(:accepts, ["json"])
   end
 
@@ -26,21 +26,18 @@ defmodule SalesRegWeb.Router do
   scope "/", SalesRegWeb do
     pipe_through(:browser)
 
-    get "/", PageController, :index
-    get "/company", ThemeController, :index
+    get("/", ThemeController, :index)
     resources("/users", UserController, only: [:new, :create])
     resources("/companies", CompanyController, only: [:new, :create])
-   
   end
 
-
   scope "/auth", SalesRegWeb do
-    pipe_through :browser
+    pipe_through(:browser)
 
-    get "/identity", SessionController, :request
-    get "/identity/callback", SessionController, :callback
-    post "/identity/callback", SessionController, :callback
-    delete "/logout", SessionController, :delete
+    get("/identity", SessionController, :request)
+    get("/identity/callback", SessionController, :callback)
+    post("/identity/callback", SessionController, :callback)
+    delete("/logout", SessionController, :delete)
   end
 
   pipeline :graphql do
@@ -56,6 +53,6 @@ defmodule SalesRegWeb.Router do
 
   pipe_through([:api, :graphql])
   forward("/graphiql", Absinthe.Plug.GraphiQL, schema: SalesRegWeb.GraphQL.Schemas)
-  
+
   # graphiql endpoint
 end

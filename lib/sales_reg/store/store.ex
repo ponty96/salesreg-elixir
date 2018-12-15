@@ -65,7 +65,7 @@ defmodule SalesReg.Store do
 
     ProductGroup
     |> join(:inner, [pg], p in assoc(pg, :products))
-    |> preload([pg, p], [products: p])
+    |> preload([pg, p], products: p)
     |> join(:inner, [pg, p], s in Service)
     |> where([pg, p, s], ilike(pg.title, ^query_regex))
     |> where([pg, p, s], ilike(s.name, ^query_regex))
@@ -73,11 +73,12 @@ defmodule SalesReg.Store do
     |> select([pg, p, s], [pg, s])
     |> Repo.all()
     |> Enum.map(fn [prod_group, service] ->
-      add_type_field = fn(products) ->
-        Enum.map(products, fn(prod) ->
+      add_type_field = fn products ->
+        Enum.map(products, fn prod ->
           Map.put_new(%{prod | name: get_product_name(prod)}, :type, "Product")
         end)
       end
+
       [
         add_type_field.(prod_group.products),
         Map.put_new(service, :type, "Service")

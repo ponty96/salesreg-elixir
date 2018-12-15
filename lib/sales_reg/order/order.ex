@@ -213,8 +213,9 @@ defmodule SalesReg.Order do
   end
 
   def create_receipt(%{invoice_id: id, amount_paid: amount}) do
-    invoice = Order.get_invoice(id)
-    |> Repo.preload([:sale])
+    invoice =
+      Order.get_invoice(id)
+      |> Repo.preload([:sale])
 
     insert_receipt(invoice.sale, invoice, amount, :cash)
   end
@@ -260,6 +261,7 @@ defmodule SalesReg.Order do
   # Use this to persist receipt when the payment method is card
   def insert_receipt(sale, transaction_id, amount, :card) do
     sale = Repo.preload(sale, [:invoice])
+
     add_receipt =
       %Receipt{}
       |> Receipt.via_cash_changeset(

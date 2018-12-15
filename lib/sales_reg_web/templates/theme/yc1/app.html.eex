@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="Description" content="Segun Store, Type: Online merchant, Category: lorem">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="css/yc-1.template.css">
+
+	<!-- Fontawesome Icons -->
+	<link href="font-awesome.5.1/css/fontawesome.min.css" rel="stylesheet"/>
+	<link href="font-awesome.5.1/css/all.css" rel="stylesheet"/>
+
+	<title>Home</title>
+</head>
+<body>
+
+    <%= render @view_module, @view_template, assigns %>
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+<!-- Optional JavaScript -->
+<script>
+    (function($) {
+        $(document).ready(function() {
+            var $menuRevealBtn = $('#menu-reveal');
+            var $sideNav = $('#sr-sideNav--mobile');
+            var $sideNavMask = $('#sr-sideNav--mobile__mask');
+
+            $menuRevealBtn.on('click', function() {
+                $sideNav.addClass('visible');
+                $sideNavMask.addClass('visible');
+            });
+
+            $sideNavMask.on('click', function() {
+                $sideNav.removeClass('visible');
+                $sideNavMask.removeClass('visible');
+            });
+        });
+    })(jQuery)
+</script>
+</body>
+</html>

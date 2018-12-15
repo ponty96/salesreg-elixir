@@ -1,21 +1,4 @@
-<!doctype html>
-<html lang="en">
-<head>
-	<!-- Required meta tags -->
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="Description" content="Segun Store, Type: Online merchant, Category: lorem">
 
-	<!-- Bootstrap CSS -->
-	<link rel="stylesheet" href="assets/stylesheet/app.css">
-
-	<!-- Fontawesome Icons -->
-	<link href="assets/fonts/font-awesome.5.1/css/fontawesome.min.css" rel="stylesheet"/>
-	<link href="assets/fonts/font-awesome.5.1/css/all.css" rel="stylesheet"/>
-
-	<title>Home</title>
-</head>
-<body>
 
 <!-- Navbar Desktop -->
 <nav class="sr-nav sr-with-banner">
@@ -23,7 +6,7 @@
 		<div class="container">
 			<div class="sr-nav__logo">
 				<a href="index.html" style="height: 27px;">
-					<img src="assets/images/svg/ayonative_logo.svg" alt="logo"/>
+					<img src="images/svg/ayonative_logo.svg" alt="logo"/>
 				</a>
 			</div>
 			<ul class="sr-nav__links">
@@ -47,7 +30,7 @@
 <!-- Navbar Mobile -->
 <nav class="sr-nav--mobile">
 	<a href="index.html" class="sr-nav--mobile__link">
-		<img src="assets/images/svg/ayonative_logo.svg" alt="logo"/>
+		<img src="images/svg/ayonative_logo.svg" alt="logo"/>
 	</a>
 
 	<div class="d-flex align-items-center">
@@ -92,7 +75,7 @@
 	<div id="sr-sideNav--mobile__mask"></div>
 
 	<!-- Hero Banner -->
-	<section class="sr-hero__split sr-hero__mainBg" style="background-image: url('assets/images/Indigo0140.jpg')" itemscope itemtype="http://schema.org">
+	<section class="sr-hero__split sr-hero__mainBg" style="background-image: url('images/Indigo0140.jpg')" itemscope itemtype="http://schema.org">
 		<div class="container">
 			<div class="row">
 				<div class="col-md-6 sr-valign__middle">
@@ -119,7 +102,7 @@
 						<div class="srTitle2">
 							<a class="srFeedLink2" href="views/sr-product-detail.html" itemprop="url">
 								<div class="srPostPhoto2">
-									<img src="assets/images/Model-with-bag.jpg" alt="testing image" style="opacity: 1" itemprop="image"/>
+									<img src="images/Model-with-bag.jpg" alt="testing image" style="opacity: 1" itemprop="image"/>
 									<div class="srShare2">
 										<span><i class="fab fa-facebook-f"></i> </span>
 										<span><i class="fab fa-twitter"></i> </span>
@@ -154,7 +137,7 @@
 						<div class="srTitle2">
 							<a class="srFeedLink2" href="views/sr-product-detail.html" itemprop="url">
 								<div class="srPostPhoto2">
-									<img src="assets/images/Indigo0096.jpg" alt="testing image" style="opacity: 1" itemprop="image"/>
+									<img src="images/Indigo0096.jpg" alt="testing image" style="opacity: 1" itemprop="image"/>
 									<div class="srShare2">
 										<span><i class="fab fa-facebook-f"></i> </span>
 										<span><i class="fab fa-twitter"></i> </span>
@@ -189,7 +172,7 @@
 						<div class="srTitle2">
 							<a class="srFeedLink2" href="views/sr-product-detail.html" itemprop="url">
 								<div class="srPostPhoto2">
-									<img src="assets/images/cross-board.jpg" alt="testing image" style="opacity: 1" itemprop="image"/>
+									<img src="images/cross-board.jpg" alt="testing image" style="opacity: 1" itemprop="image"/>
 									<div class="srShare2">
 										<span><i class="fab fa-facebook-f"></i> </span>
 										<span><i class="fab fa-twitter"></i> </span>
@@ -224,7 +207,7 @@
 						<div class="srTitle2">
 							<a class="srFeedLink2" href="views/sr-product-detail.html" itemprop="url">
 								<div class="srPostPhoto2">
-									<img src="assets/images/Model-with-bag.jpg" alt="testing image" style="opacity: 1" itemprop="image"/>
+									<img src="images/Model-with-bag.jpg" alt="testing image" style="opacity: 1" itemprop="image"/>
 									<div class="srShare2">
 										<span><i class="fab fa-facebook-f"></i> </span>
 										<span><i class="fab fa-twitter"></i> </span>
@@ -268,7 +251,7 @@
 
 					<div class="sr-category--one sr-category--one-main-mb" itemscope itemtype="http://schema.org/Product">
 						<div style="width: 100%">
-							<a href="views/sr-store.html" style="background-image: url('assets/images/Model-with-bag.jpg'); background-position: 56% 48% !important;" class="sr-block sr-backgroundCover sr-category--one-image" itemprop="image" aria-label="image"></a>
+							<a href="views/sr-store.html" style="background-image: url('images/Model-with-bag.jpg'); background-position: 56% 48% !important;" class="sr-block sr-backgroundCover sr-category--one-image" itemprop="image" aria-label="image"></a>
 							<div class="sr-category--label">
 									<span class="sr-block">
 										<a href="views/sr-store.html" itemprop="url">
@@ -286,7 +269,7 @@
 						<div class="col-lg-12 col-md-6 col-12 p-2">
 							<div class="sr-category--one" itemscope itemtype="http://schema.org/Product">
 								<div style="width: 100%">
-									<a href="views/sr-store.html" style="background-image: url('assets/images/Indigo0096.jpg'); background-position: 56% 48% !important;" class="sr-block sr-backgroundCover sr-category--one-image sr-category--one-2" itemprop="image" aria-label="image"></a>
+									<a href="views/sr-store.html" style="background-image: url('images/Indigo0096.jpg'); background-position: 56% 48% !important;" class="sr-block sr-backgroundCover sr-category--one-image sr-category--one-2" itemprop="image" aria-label="image"></a>
 									<div class="sr-category--label">
 									<span class="sr-block">
 										<a href="views/sr-store.html" itemprop="url">
@@ -300,7 +283,7 @@
 						<div class="col-lg-12 col-md-6 col-12 p-2">
 							<div class="sr-category--one">
 								<div style="width: 100%">
-									<a href="views/sr-store.html" style="background-image: url('assets/images/Indigo0140.jpg'); background-position: 56% 48% !important;" class="sr-block sr-backgroundCover sr-category--one-image sr-category--one-2" itemscope itemtype="http://schema.org/Product" aria-label="image"></a>
+									<a href="views/sr-store.html" style="background-image: url('images/Indigo0140.jpg'); background-position: 56% 48% !important;" class="sr-block sr-backgroundCover sr-category--one-image sr-category--one-2" itemscope itemtype="http://schema.org/Product" aria-label="image"></a>
 									<div class="sr-category--label">
 									<span class="sr-block">
 										<a href="views/sr-store.html" itemprop="url">
@@ -317,7 +300,7 @@
 				<div class="col-lg-4 col-md-6 p-2">
 					<div class="sr-category--one">
 						<div style="width: 100%">
-							<a href="views/sr-store.html" style="background-image: url('assets/images/eye-glass.jpg'); background-position: 56% 48% !important;" class="sr-block sr-backgroundCover sr-category--one-image sr-category--one-2" itemscope itemtype="http://schema.org/Product" aria-label="image"></a>
+							<a href="views/sr-store.html" style="background-image: url('images/eye-glass.jpg'); background-position: 56% 48% !important;" class="sr-block sr-backgroundCover sr-category--one-image sr-category--one-2" itemscope itemtype="http://schema.org/Product" aria-label="image"></a>
 							<div class="sr-category--label">
 									<span class="sr-block">
 										<a href="views/sr-store.html" itemprop="url"><span itemprop="name">Lounge Jumpsuit</span></a>
@@ -330,7 +313,7 @@
 				<div class="col-lg-4 col-md-6 p-2">
 					<div class="sr-category--one">
 						<div style="width: 100%">
-							<a href="views/sr-store.html" style="background-image: url('assets/images/cross-board.jpg'); background-position: 56% 48% !important;" class="sr-block sr-backgroundCover sr-category--one-image sr-category--one-2" itemscope itemtype="http://schema.org/Product" aria-label="image"></a>
+							<a href="views/sr-store.html" style="background-image: url('images/cross-board.jpg'); background-position: 56% 48% !important;" class="sr-block sr-backgroundCover sr-category--one-image sr-category--one-2" itemscope itemtype="http://schema.org/Product" aria-label="image"></a>
 							<div class="sr-category--label">
 									<span class="sr-block">
 										<a href="views/sr-store.html" itemprop="url">
@@ -344,7 +327,7 @@
 				<div class="col-lg-4 p-2">
 					<div class="sr-category--one">
 						<div style="width: 100%">
-							<a href="views/sr-store.html" style="background-image: url('assets/images/Indigo0140.jpg'); background-position: 56% 48% !important;" class="sr-block sr-backgroundCover sr-category--one-image sr-category--one-2" itemscope itemtype="http://schema.org/Product" aria-label="image"></a>
+							<a href="views/sr-store.html" style="background-image: url('images/Indigo0140.jpg'); background-position: 56% 48% !important;" class="sr-block sr-backgroundCover sr-category--one-image sr-category--one-2" itemscope itemtype="http://schema.org/Product" aria-label="image"></a>
 							<div class="sr-category--label">
 									<span class="sr-block">
 										<a href="views/sr-store.html" itemprop="url">
@@ -365,7 +348,7 @@
 	<div class="container">
 		<div class="sr-footer__company">
 			<div class="sr-footer__logo">
-				<img src="assets/images/svg/ayonative_logo__white.svg" alt="image"/>
+				<img src="images/svg/ayonative_logo__white.svg" alt="image"/>
 			</div>
 			<div class="sr-footer__social">
 				<a href="https://www.youtube.com/" class="yt" aria-label="yipcart youtube social link">
@@ -487,31 +470,3 @@
 	</div>
 </div>
 
-<!-- Optional JavaScript -->
-
-<!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="assets/javascript/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
-<script src="assets/javascript/popper.min.js" crossorigin="anonymous"></script>
-<script src="assets/javascript/bootstrap.min.js" crossorigin="anonymous"></script>
-
-<script>
-    (function($) {
-        $(document).ready(function() {
-            var $menuRevealBtn = $('#menu-reveal');
-            var $sideNav = $('#sr-sideNav--mobile');
-            var $sideNavMask = $('#sr-sideNav--mobile__mask');
-
-            $menuRevealBtn.on('click', function() {
-                $sideNav.addClass('visible');
-                $sideNavMask.addClass('visible');
-            });
-
-            $sideNavMask.on('click', function() {
-                $sideNav.removeClass('visible');
-                $sideNavMask.removeClass('visible');
-            });
-        });
-    })(jQuery)
-</script>
-</body>
-</html>

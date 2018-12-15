@@ -1,4 +1,3 @@
 defmodule SalesRegWeb.UserView do
-	use SalesRegWeb, :view
+  use SalesRegWeb, :view
 end
-  

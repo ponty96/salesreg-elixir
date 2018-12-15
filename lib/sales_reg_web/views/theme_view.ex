@@ -1,5 +1,7 @@
-defmodule SalesRegWeb.ThemeView do
+defmodule SalesRegWeb.Theme do
   use SalesRegWeb, :view
-end
 
-  
+  defmodule Yc1View do
+    use SalesRegWeb, :view
+  end
+end

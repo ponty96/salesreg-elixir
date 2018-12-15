@@ -111,7 +111,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   def search_products_by_name(%{company_id: company_id, query: query}, _res) do
     {:ok, SalesReg.Context.search_schema_by_field(Product, {query, company_id}, :name)}
   end
-  
+
   def search_products_services_by_name(%{query: query}, _res) do
     {:ok, Store.load_prod_and_serv(query)}
   end
