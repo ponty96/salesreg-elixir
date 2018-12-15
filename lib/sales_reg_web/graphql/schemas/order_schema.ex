@@ -9,27 +9,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
   ### MUTATIONS
   object :order_mutations do
-    ### Purchase order mutations
-    @desc """
-    upsert purchase order
-    """
-    field :upsert_purchase_order, :mutation_response do
-      arg(:purchase, non_null(:purchase_input))
-      arg(:purchase_id, :uuid)
-
-      middleware(Authorize)
-      resolve(&OrderResolver.upsert_purchase/2)
-    end
-
-    @desc """
-      delete a purchase order
-    """
-    field :delete_purchase_order, :mutation_response do
-      arg(:purchase_id, non_null(:uuid))
-
-      resolve(&OrderResolver.delete_purchase/2)
-    end
-
     ### Sale order mutations
     @desc """
     upsert a sale order
@@ -103,6 +82,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
     end
 
     @desc """
+      create a receipt when payment is by cash
+    """
+    field :create_receipt, :mutation_response do
+      arg(:invoice_id, non_null(:uuid))
+      arg(:amount_paid, non_null(:string))
+
+      resolve(&OrderResolver.create_receipt/2)
+    end
+
+    @desc """
       mutation to delete receipt
     """
     field :delete_receipt, :mutation_response do
@@ -115,18 +104,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
   ### QUERIES
   object :order_queries do
-    ### Purchase order queries
-
-    @desc """
-      query for all purchases of a company
-    """
-    connection field(:list_company_purchases, node_type: :purchase) do
-      arg(:company_id, non_null(:uuid))
-
-      middleware(Authorize)
-      resolve(&OrderResolver.list_company_purchases/2)
-    end
-
     @desc """
       query for all sales of a company
     """

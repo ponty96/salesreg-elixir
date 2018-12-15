@@ -7,7 +7,6 @@ defmodule SalesReg.Repo.Migrations.CreateItem do
       add(:quantity, :string)
       add(:unit_price, :string)
 
-      add(:purchase_id, references(:purchases, on_delete: :nothing, type: :binary_id))
       add(:sale_id, references(:sales, on_delete: :nothing, type: :binary_id))
 
       add(:product_id, references(:products, on_delete: :nothing, type: :binary_id))
@@ -16,7 +15,6 @@ defmodule SalesReg.Repo.Migrations.CreateItem do
       timestamps()
     end
 
-    create(index(:items, [:purchase_id]))
     create(index(:items, [:sale_id]))
     create(index(:items, [:product_id]))
     create(index(:items, [:service_id]))

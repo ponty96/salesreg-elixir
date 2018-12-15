@@ -48,6 +48,8 @@ defmodule SalesReg.Store do
     all_categories(categories_ids)
   end
 
+  def load_categories(_), do: []
+
   def load_tags(%{"tags" => tag_names, "company_id" => company_id}) do
     gen_company_tags(tag_names, [], company_id)
   end
@@ -56,19 +58,28 @@ defmodule SalesReg.Store do
     gen_company_tags(tag_names, [], company_id)
   end
 
+  def load_tags(_), do: []
+
   def load_prod_and_serv(query) do
     query_regex = "%" <> query <> "%"
 
-    Product
-    |> join(:inner, [p], s in Service)
-    |> where([p, s], ilike(p.name, ^query_regex))
-    |> where([p, s], ilike(s.name, ^query_regex))
-    |> order_by([p, s], asc: [p.name, s.name])
-    |> select([p, s], [p, s])
+    ProductGroup
+    |> join(:inner, [pg], p in assoc(pg, :products))
+    |> preload([pg, p], [products: p])
+    |> join(:inner, [pg, p], s in Service)
+    |> where([pg, p, s], ilike(pg.title, ^query_regex))
+    |> where([pg, p, s], ilike(s.name, ^query_regex))
+    |> order_by([pg, p, s], asc: [pg.title, s.name])
+    |> select([pg, p, s], [pg, s])
     |> Repo.all()
-    |> Enum.map(fn [product, service] ->
+    |> Enum.map(fn [prod_group, service] ->
+      add_type_field = fn(products) ->
+        Enum.map(products, fn(prod) ->
+          Map.put_new(%{prod | name: get_product_name(prod)}, :type, "Product")
+        end)
+      end
       [
-        Map.put_new(product, :type, "Product"),
+        add_type_field.(prod_group.products),
         Map.put_new(service, :type, "Service")
       ]
     end)
@@ -235,7 +246,8 @@ defmodule SalesReg.Store do
   # update product group options -> use context
   def update_product_group_options(%{id: id, options: new_option_ids}) do
     # preload and get the current options associated with the product group
-    %ProductGroup{options: current_associated_options} = product_grp = get_product_grp(id)
+    %ProductGroup{options: current_associated_options, company_id: company_id} =
+      product_grp = get_product_grp(id)
 
     product_grp_params = %{
       "option_ids" => new_option_ids
@@ -247,6 +259,13 @@ defmodule SalesReg.Store do
       |> compare_and_get_disconnected_options(new_option_ids)
       |> option_values_of_disconnected_options()
 
+    # create new option values params based on option_ids
+    # list all product associated to product_group
+    new_option_values =
+      current_associated_options
+      |> compare_and_get_unique_new_options(new_option_ids)
+      |> build_option_values(company_id)
+
     opts =
       Multi.new()
       |> Multi.update(
@@ -255,9 +274,33 @@ defmodule SalesReg.Store do
       )
       |> Multi.delete_all(:delete_option_values, option_values_to_delete)
 
+      # add option_values to each of the products
+      # update all products
+      |> Multi.run(
+        :update_all_associated_product_option_values,
+        fn _repo, _multi ->
+          {:ok, update_product_group_associated_product_option_values(new_option_values, id)}
+        end
+      )
+
     case Repo.transaction(opts) do
       {:ok, %{update_product_grp: update_product_grp}} -> {:ok, update_product_grp}
       {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
+    end
+  end
+
+  # get product name
+  def get_product_name(product) do
+    product = Repo.preload(product, [:product_group, :option_values])
+
+    case product.option_values do
+      [] ->
+        product.product_group.title
+
+      _ ->
+        "#{product.product_group.title} (#{
+          Enum.map(product.option_values, &(&1.name || "?")) |> Enum.join(" ")
+        })"
     end
   end
 
@@ -401,6 +444,42 @@ defmodule SalesReg.Store do
   defp compare_and_get_disconnected_options(current_options_structs, new_options_ids) do
     options_ids = Enum.map(current_options_structs, & &1.id)
     MapSet.difference(MapSet.new(options_ids), MapSet.new(new_options_ids)) |> MapSet.to_list()
+  end
+
+  defp compare_and_get_unique_new_options(current_options_structs, new_options_ids) do
+    options_ids = Enum.map(current_options_structs, & &1.id)
+    MapSet.difference(MapSet.new(new_options_ids), MapSet.new(options_ids)) |> MapSet.to_list()
+  end
+
+  defp build_option_values(option_ids, company_id) do
+    Enum.map(option_ids, fn id ->
+      %{
+        option_id: id,
+        name: "",
+        company_id: company_id
+      }
+    end)
+  end
+
+  defp update_product_group_associated_product_option_values(new_option_values, product_group_id) do
+    Product
+    |> where([p], p.product_group_id == ^product_group_id)
+    |> preload([p], [:option_values])
+    |> Repo.all()
+    |> Enum.map(fn product ->
+      product_changeset =
+        Product.changeset(product, %{
+          option_values: parse_product_option_values(product.option_values, new_option_values)
+        })
+
+      Repo.update(product_changeset)
+    end)
+  end
+
+  defp parse_product_option_values(current_option_values, new_option_values) do
+    current_option_values
+    |> Enum.map(&%{name: &1.name, option_id: &1.option_id, company_id: &1.company_id})
+    |> Enum.concat(new_option_values)
   end
 
   defp option_values_of_disconnected_options(options_ids) do
