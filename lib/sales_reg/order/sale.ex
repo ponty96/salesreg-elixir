@@ -13,6 +13,7 @@ defmodule SalesReg.Order.Sale do
     field(:payment_method, :string)
     field(:tax, :string)
     field(:discount, :string)
+    field(:ref_id, :string)
 
     field(:state, :string, virtual: true)
 
@@ -33,15 +34,18 @@ defmodule SalesReg.Order.Sale do
     :user_id,
     :contact_id,
     :company_id,
-    :date
+    :date,
+    :ref_id
   ]
   @optional_fields [:status, :tax, :discount]
 
   @doc false
   def changeset(sale, attrs) do
+    new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
+
     sale
     |> Repo.preload([:items])
-    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> cast_assoc(:items)
     |> assoc_constraint(:company)

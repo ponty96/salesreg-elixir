@@ -11,6 +11,7 @@ defmodule SalesReg.Order.Receipt do
     field(:payment_method, :string)
     field(:pdf_url, :string)
     field(:transaction_id, :integer)
+    field(:ref_id, :string)
 
     belongs_to(:invoice, SalesReg.Order.Invoice)
     belongs_to(:user, SalesReg.Accounts.User)
@@ -27,19 +28,24 @@ defmodule SalesReg.Order.Receipt do
     :invoice_id,
     :user_id,
     :company_id,
-    :sale_id
+    :sale_id,
+    :ref_id
   ]
   @optional_fields [:pdf_url, :transaction_id]
 
   def changeset(receipt, attrs) do
+    new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Receipt, attrs)
+    
     receipt
-    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
   end
 
   def via_cash_changeset(receipt, attrs) do
+    new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Invoice, attrs)
+    
     receipt
-    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_inclusion(:payment_method, ["cash"], message: "The payment method must be cash")
   end

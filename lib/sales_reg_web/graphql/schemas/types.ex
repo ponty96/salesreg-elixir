@@ -260,6 +260,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:status, :string)
     field(:payment_method, :string)
     field(:tax, :string)
+    field(:ref_id, :string)
 
     field :amount, :float do
       resolve(fn _parent, %{source: sale} ->
@@ -379,6 +380,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   object :invoice do
     field(:id, :uuid)
     field(:due_date, :string)
+    field(:ref_id, :string)
 
     field :amount, :float do
       resolve(fn _parent, %{source: invoice} ->
@@ -396,6 +398,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
   end
+
+  connection(node_type: :invoice)
 
   @desc """
     Review object type
@@ -433,6 +437,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:payment_method, :payment_method)
     field(:pdf_url, :string)
     field(:reference_id, :string)
+    field(:ref_id, :string)
 
     field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
