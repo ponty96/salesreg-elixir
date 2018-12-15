@@ -23,13 +23,15 @@ defmodule SalesReg.Order.Invoice do
     :sale_id,
     :user_id,
     :company_id,
-    ref_id
+    :ref_id
   ]
   @optional_fields [:pdf_url]
 
   def changeset(invoice, attrs) do
+    new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Invoice, attrs)
+
     invoice
-    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:sale)
     |> assoc_constraint(:user)

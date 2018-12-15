@@ -34,14 +34,18 @@ defmodule SalesReg.Order.Receipt do
   @optional_fields [:pdf_url, :transaction_id]
 
   def changeset(receipt, attrs) do
+    new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Receipt, attrs)
+    
     receipt
-    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
   end
 
   def via_cash_changeset(receipt, attrs) do
+    new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Invoice, attrs)
+    
     receipt
-    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_inclusion(:payment_method, ["cash"], message: "The payment method must be cash")
   end

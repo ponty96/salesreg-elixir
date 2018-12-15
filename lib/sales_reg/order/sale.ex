@@ -41,9 +41,11 @@ defmodule SalesReg.Order.Sale do
 
   @doc false
   def changeset(sale, attrs) do
+    new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
+
     sale
     |> Repo.preload([:items])
-    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> cast_assoc(:items)
     |> assoc_constraint(:company)
@@ -68,11 +70,5 @@ defmodule SalesReg.Order.Sale do
     |> no_assoc_constraint(:items,
       message: "This sale is still associated with a product or service "
     )
-  end
-
-  def put_ref_id(changeset) do
-    sale_count = Enum.count(Repo.all(Sale))
-
-    
   end
 end

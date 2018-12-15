@@ -7,7 +7,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   end
 
   def upsert_sale(%{sale: params}, _res) do
-    Order.create_sale(params)
+    response = Order.create_sale(params)
+    IO.inspect response, label: "response"
+
+    response
   end
 
   def list_company_sales(%{company_id: company_id} = args, _res) do
