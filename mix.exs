@@ -76,7 +76,7 @@ defmodule SalesReg.Mixfile do
       {:plug_cowboy, "~> 1.0"},
       {:ueberauth, "~> 0.5"},
       {:ueberauth_identity, "~> 0.2"},
-      {:bamboo, "~> 1.1"}
+      {:bamboo, "~> 1.1"},
       {:plug_attack, "~> 0.3.0"},
       {:remote_ip, "~> 0.1.0"}
     ]

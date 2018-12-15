@@ -3,7 +3,7 @@ defmodule SalesReg.Email do
 	import Bamboo.Email
 
 	def send_email(sale, type) do
-		sale = Order.preload_sale(sale)
+		sale = Order.preload_order(sale)
 		
 		sale
 		|> Theme.get_email_template_by_type(type)
