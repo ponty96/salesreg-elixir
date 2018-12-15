@@ -10,14 +10,17 @@ defmodule SalesRegWeb.Router do
     plug SalesRegWeb.Plug.AssignUser
   end
 
+  # RemoteIp should always be the first in the pipeline
   pipeline :api do
+    plug RemoteIp
+    plug SalesRegWeb.PlugAttack
     plug(:accepts, ["json"])
   end
 
-  scope "/api/image" do
+  scope "/api/paystack", SalesRegWeb do
     pipe_through(:api)
 
-    post("/upload", SalesRegWeb.ImageController, :upload_image)
+    post("/webhooks", HookController, :hook)
   end
 
   scope "/", SalesRegWeb do
@@ -53,6 +56,6 @@ defmodule SalesRegWeb.Router do
 
   pipe_through([:api, :graphql])
   forward("/graphiql", Absinthe.Plug.GraphiQL, schema: SalesRegWeb.GraphQL.Schemas)
-
+  
   # graphiql endpoint
 end

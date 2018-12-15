@@ -99,40 +99,115 @@ defmodule SalesReg.Order do
   end
 
   def update_receipt_details(filename, %Receipt{} = receipt) do
-    company = load_pdf_resource(receipt).company
+    company = receipt.company
     url = SalesReg.ImageUpload.url({filename, company})
     __MODULE__.update_receipt(receipt, %{pdf_url: url})
   end
 
   def update_invoice_details(filename, %Invoice{} = invoice) do
-    company = load_pdf_resource(invoice).company
+    company = invoice.company
     url = SalesReg.ImageUpload.url({filename, company})
     __MODULE__.update_invoice(invoice, %{pdf_url: url})
   end
 
-  def upload_pdf(resource) do
-    preload_resource = load_pdf_resource(resource)
-    uniq_name = gen_pdf_uniq_name(preload_resource)
+  # Called when a registered company contact makes an order and pays some amount using cash
+  def create_sale(%{contact_id: _id, amount_paid: amount, payment_method: "cash"} = params) do
+    Multi.new()
+    |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
+    |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
+      insert_invoice(sale)
+    end)
+    |> Multi.run(:insert_receipt, fn _repo, %{insert_sale: sale, insert_invoice: invoice} ->
+      insert_receipt(sale, invoice, amount, :cash)
+    end)
+    |> Repo.transaction()
+    |> repo_transaction_resp()
+  end
 
-    {:ok, path} =
-      preload_resource
-      |> build_resource_html()
-      |> PdfGenerator.generate(filename: uniq_name)
+  # Called when a registered company contact makes an order without any initial cash payment
+  def create_sale(%{contact_id: _id, payment_method: "cash"} = params) do
+    Multi.new()
+    |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
+    |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
+      insert_invoice(sale)
+    end)
+    |> Repo.transaction()
+    |> repo_transaction_resp()
+  end
 
-    SalesReg.ImageUpload.store({path, preload_resource.company})
+  # Called when an unregistered company contact makes an order and pays some amount using cash
+  def create_sale(%{contact: contact_params, amount_paid: amount, payment_method: "cash"} = params) do
+    Multi.new()
+    |> Multi.insert(:insert_contact, Contact.through_order_changeset(%Contact{}, contact_params))
+    |> Multi.run(:insert_sale, fn _repo, %{insert_contact: contact} ->
+      params
+      |> Map.put_new(:contact_id, contact.id)
+      |> Order.add_sale()
+    end)
+    |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
+      insert_invoice(sale)
+    end)
+    |> Multi.run(:insert_receipt, fn _repo, %{insert_sale: sale, insert_invoice: invoice} ->
+      insert_receipt(sale, invoice, amount, :cash)
+    end)
+    |> Repo.transaction()
+    |> repo_transaction_resp()
+  end
+
+  # Called when an unregistered company contact makes an order without an initial cash payment
+  def create_sale(%{contact: contact_params, payment_method: "cash"} = params) do
+    Multi.new()
+    |> Multi.insert(:insert_contact, Contact.through_order_changeset(%Contact{}, contact_params))
+    |> Multi.run(:insert_sale, fn _repo, %{insert_contact: contact} ->
+      params
+      |> Map.put_new(:contact_id, contact.id)
+      |> Order.add_sale()
+    end)
+    |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
+      insert_invoice(sale)
+    end)
+    |> Repo.transaction()
+    |> repo_transaction_resp()
+  end
+
+  # Called when a registered company contact chooses to make payment for an order via card
+  def create_sale(%{contact_id: _id, payment_method: "card"} = params) do
+    Multi.new()
+    |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
+    |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
+      insert_invoice(sale)
+    end)
+    |> Repo.transaction()
+    |> repo_transaction_resp()
+  end
+
+  # Called when an unregistered company contact chooses to make payment for an order via card
+  def create_sale(%{contact: contact_params, payment_method: "card"} = params) do
+    Multi.new()
+    |> Multi.insert(:insert_contact, Contact.through_order_changeset(%Contact{}, contact_params))
+    |> Multi.run(:insert_sale, fn _repo, %{insert_contact: contact} ->
+      params
+      |> Map.put_new(:contact_id, contact.id)
+      |> Order.add_sale()
+    end)
+    |> Multi.run(:inser_invoice, fn _repo, %{insert_sale: sale} ->
+      insert_invoice(sale)
+    end)
+    |> Repo.transaction()
+    |> repo_transaction_resp()
   end
 
   def supervise_pdf_upload(resource) do
     Task.Supervisor.start_child(TaskSupervisor, fn ->
       {:ok, filename} = Order.upload_pdf(resource)
-
+      
       case resource do
         %Receipt{} ->
           Order.update_receipt_details(filename, resource)
 
         %Invoice{} ->
           Order.update_invoice_details(filename, resource)
-
+        
         _ ->
           %{}
       end
@@ -147,37 +222,181 @@ defmodule SalesReg.Order do
     receipt = load_pdf_resource(receipt)
     EEx.eval_file(@receipt_html_path, receipt: receipt)
   end
+  
+  def upload_pdf(resource) do
+    uniq_name = gen_pdf_uniq_name(resource)
+
+    {:ok, path} =
+      resource
+      |> build_resource_html()
+      |> PdfGenerator.generate(filename: uniq_name)
+
+    SalesReg.ImageUpload.store({path, resource.company})
+  end
+
+  # Use this to persist invoice when the payment method is cash
+  def insert_invoice(order) do
+    add_invoice = 
+      order
+      |> build_invoice_params()
+      |> Order.add_invoice()
+
+    case add_invoice do
+      {:ok, invoice} ->
+        invoice = Repo.preload(invoice, [:company, :user, sale: [items: [:product, :service]]])
+        Order.supervise_pdf_upload(invoice)
+        
+        {:ok, invoice}
+      
+      {:error, _reason} = error_tuple ->
+        error_tuple
+    end
+  end
+
+  # Use this to persist receipt when the payment method is cash
+  def insert_receipt(sale, invoice, amount, :cash) do
+    add_receipt = 
+      %Receipt{}
+      |> Receipt.via_cash_changeset(
+        build_receipt_params(sale, invoice, amount)
+      )
+      |> Repo.insert()
+
+    case add_receipt do
+      {:ok, receipt} ->
+        receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product, :service]]])
+        Order.supervise_pdf_upload(receipt)
+
+        {:ok, receipt}
+
+      {:error, _reason} = error_tuple ->
+        error_tuple
+    end
+  end
+
+
+  # Use this to persist receipt when the payment method is card
+  def insert_receipt(sale, transaction_id, amount, :card) do
+    sale = Repo.preload(sale, [:invoice])
+    add_receipt = 
+      %Receipt{}
+      |> Receipt.via_cash_changeset(
+        build_receipt_params(sale, sale.invoice, amount)
+        |> Map.put_new(:transaction_id, transaction_id)
+      )
+      |> Repo.insert()
+
+    case add_receipt do
+      {:ok, receipt} ->
+        receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product, :service]]])
+        Order.supervise_pdf_upload(receipt)
+
+        {:ok, receipt}
+
+      {:error, _reason} = error_tuple ->
+        error_tuple
+    end
+  end
+  
+  def get_receipt_by_transac_id(transaction_id) do
+    Repo.get_by(Receipt, transaction_id: transaction_id)
+  end
+  def calc_order_amount(%Sale{} = sale) do
+    sale = Repo.preload(sale, [:items])
+    calc_items_amount(sale.items)
+  end
+
+  def calc_order_amount(%Invoice{} = invoice) do
+    invoice = Repo.preload(invoice, [sale: :items])
+    calc_items_amount(invoice.sale.items)
+  end
+
+  def calc_order_amount_paid(%Sale{} = sale) do
+    sale = Repo.preload(sale, [invoice: :receipts])
+    calc_amount_paid(sale.invoice.receipts)
+  end
+
+  def calc_order_amount_paid(%Invoice{} = invoice) do
+    invoice = Repo.preload(invoice, [:receipts])
+    calc_amount_paid(invoice.receipts)
+  end
+
+  def contact_orders_debt(contact) do
+    contact = Repo.preload(contact, [company: :sales])
+    {amount_paid_list, orders_total_amount_list} = 
+      Enum.filter(contact.company.sales, fn sale ->
+        sale.contact_id == contact.id
+      end)
+      |> Enum.map(fn sale ->
+        {calc_order_amount_paid(sale), calc_order_amount(sale)}
+      end)
+      |> Enum.unzip()
+
+    Enum.sum(orders_total_amount_list) - Enum.sum(amount_paid_list)
+  end
+
+  # Private Functions
+  defp calc_items_amount(items) do
+    Enum.map(items, fn item ->
+      {quantity, _} = Float.parse(item.quantity)
+      {unit_price, _} = Float.parse(item.unit_price)
+    
+      quantity * unit_price
+    end)
+    |> Enum.sum()
+  end
+
+  defp calc_amount_paid(receipts) do
+    Enum.map(receipts, fn receipt ->
+      {amount_paid, _} = Float.parse(receipt.amount_paid)
+      amount_paid
+    end)
+    |> Enum.sum()
+  end
+
+  defp repo_transaction_resp(repo_transaction) do
+    case repo_transaction do
+      {:ok, %{insert_sale: sale}} -> {:ok, sale}
+      {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
+    end
+  end
+
+  defp build_invoice_params(order) do
+    %{
+      due_date: order.date,
+      sale_id: order.id,
+      user_id: order.user_id,
+      company_id: order.company_id
+    }
+  end
+
+  defp build_receipt_params(sale, invoice, amount) do
+    current_date = Date.utc_today() |> Date.to_string()
+    %{
+      amount_paid: amount,
+      time_paid: current_date,
+      payment_method: "cash",
+      invoice_id: invoice.id,
+      user_id: sale.user_id,
+      company_id: sale.company_id,
+      sale_id: sale.id
+    }
+  end
+
+  defp build_resource_html(%Receipt{} = receipt) do
+    EEx.eval_file(@receipt_html_path, receipt: receipt)
+  end
 
   defp build_resource_html(%Invoice{} = invoice) do
-    invoice = load_pdf_resource(invoice)
     EEx.eval_file(@invoice_html_path, invoice: invoice)
   end
 
   defp gen_pdf_uniq_name(resource) do
-    preload_resource = load_pdf_resource(resource)
-
-    case preload_resource do
-      %Receipt{} ->
-        count = Enum.count(Repo.all(Receipt))
-        "#{String.replace(preload_resource.company.title, " ", "-")}-receipt-#{count}"
-
-      %Invoice{} ->
-        count = Enum.count(Repo.all(Invoice))
-        "#{String.replace(preload_resource.company.title, " ", "-")}-invoice-#{count}"
-    end
-  end
-
-  defp load_pdf_resource(struct) do
-    case struct do
-      %Receipt{} ->
-        Repo.preload(struct, [:company, :user, sale: [items: [:product, :service]]])
-
-      %Invoice{} ->
-        Repo.preload(struct, [:company, :user, sale: [items: [:product, :service]]])
-
-      _ ->
-        %{}
-    end
+    source = resource.__meta__.source
+    schema = resource.__meta__.schema
+    count = Enum.count(Repo.all(schema))
+    
+    "#{String.replace(resource.company.title, " ", "-")}-#{source}-#{count}"
   end
 
   defp create_star_or_review(sale_id, contact_id, id, type, callback) do

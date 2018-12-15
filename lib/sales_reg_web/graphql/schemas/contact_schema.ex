@@ -43,5 +43,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.ContactSchema do
       middleware(Authorize)
       resolve(&ContactResolver.list_company_contacts/2)
     end
+
+    @desc """
+      query all customers of a company
+    """
+    field :company_customers, list_of(:contact) do
+      arg(:company_id, non_null(:uuid))
+      arg(:name, non_null(:string))
+
+      middleware(Authorize)
+      resolve(&ContactResolver.search_customers_by_name/2)
+    end
   end
 end

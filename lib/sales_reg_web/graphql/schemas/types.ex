@@ -189,6 +189,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:facebook, :string)
     field(:snapchat, :string)
     field(:allows_marketing, :string)
+    
+    field :total_debt, :float do
+      resolve(fn _parent, %{source: contact} ->
+        {:ok, Order.contact_orders_debt(contact)}
+      end)
+    end
 
     field(:address, :location, resolve: dataloader(SalesReg.Business, :address))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
@@ -252,7 +258,19 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:status, :string)
     field(:payment_method, :string)
     field(:tax, :string)
-    field(:amount, :string)
+    
+    field :amount, :float do
+      resolve(fn _parent, %{source: sale} ->
+        {:ok, Order.calc_order_amount(sale)}
+      end)
+    end
+    
+    field :amount_paid, :float do
+      resolve(fn _parent, %{source: sale} ->
+        {:ok, Order.calc_order_amount_paid(sale)}
+      end)
+    end
+    
     field(:discount, :string)
     field(:type, :string)
     field(:inserted_at, :naive_datetime)
@@ -263,6 +281,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :items))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
+    field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))
   end
 
   connection(node_type: :sale)
@@ -358,7 +377,18 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   object :invoice do
     field(:id, :uuid)
     field(:due_date, :string)
-
+    
+    field :amount, :float do
+      resolve(fn _parent, %{source: invoice} ->
+        {:ok, Order.calc_order_amount(invoice)}
+      end)
+    end
+    
+    field :amount_paid, :float do
+      resolve(fn _parent, %{source: invoice} ->
+        {:ok, Order.calc_order_amount_paid(invoice)}
+      end)
+    end
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
@@ -736,7 +766,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:payment_method, non_null(:payment_method))
     field(:tax, :string)
     field(:discount, :string)
-    field(:amount, non_null(:string))
+    field(:amount_paid, :string)
     field(:contact, :through_order_contact_input)
 
     field(:user_id, non_null(:uuid))
