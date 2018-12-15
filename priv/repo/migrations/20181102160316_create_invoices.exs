@@ -6,6 +6,7 @@ defmodule SalesReg.Repo.Migrations.CreateInvoices do
       add(:id, :binary_id, primary_key: true)
       add(:due_date, :string)
       add(:pdf_url, :string)
+      add(:ref_id, :string)
 
       add(:sale_id, references(:sales, type: :binary_id))
       add(:user_id, references(:users, type: :binary_id))

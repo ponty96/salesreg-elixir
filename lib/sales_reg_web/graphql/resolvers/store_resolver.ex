@@ -109,11 +109,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   end
 
   def search_products_by_name(%{company_id: company_id, query: query}, _res) do
-    {:ok, SalesReg.Context.search_schema_by_field(Product, {query, company_id}, :name)}
+    {:ok, Store.load_products(company_id, query)}
   end
 
-  def search_products_services_by_name(%{query: query}, _res) do
-    {:ok, Store.load_prod_and_serv(query)}
+  def search_products_services_by_name(%{company_id: company_id, query: query}, _res) do
+    {:ok, Store.load_prod_and_serv(company_id, query)}
   end
 
   def restock_products(%{items: items}, _res) do

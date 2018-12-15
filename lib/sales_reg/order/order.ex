@@ -346,6 +346,22 @@ defmodule SalesReg.Order do
     |> Enum.sum()
   end
 
+  def put_ref_id(schema, attrs) do
+    resources = from(
+      s in schema, 
+      order_by: s.inserted_at
+    )
+    |> Repo.all
+    
+    if Enum.count(resources) == 0 do
+      Map.put_new(attrs, :ref_id, "1")
+    else
+      last_resource_ref_id = List.last(resources).ref_id
+      ref_id = String.to_integer(last_resource_ref_id) + 1
+      Map.put_new(attrs, :ref_id, "#{ref_id}")
+    end
+  end
+
   defp calc_items_amount(items) do
     Enum.map(items, fn item ->
       {quantity, _} = Float.parse(item.quantity)
@@ -366,8 +382,11 @@ defmodule SalesReg.Order do
 
   defp repo_transaction_resp(repo_transaction) do
     case repo_transaction do
-      {:ok, %{insert_sale: sale}} -> {:ok, sale}
-      {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
+      {:ok, %{insert_sale: sale}} -> 
+        
+        {:ok, sale}
+      {:error, _failed_operation, _failed_value, changeset} -> 
+        {:error, changeset}
     end
   end
 

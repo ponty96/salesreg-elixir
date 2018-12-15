@@ -7,13 +7,23 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   end
 
   def upsert_sale(%{sale: params}, _res) do
-    Order.create_sale(params)
+    response = Order.create_sale(params)
+    IO.inspect response, label: "response"
+
+    response
   end
 
   def list_company_sales(%{company_id: company_id} = args, _res) do
     {:ok, sales} = Order.list_company_sales(company_id)
 
     sales
+    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+  end
+
+  def list_company_invoices(%{company_id: company_id} = args, _res) do
+    {:ok, invoices} = Order.list_company_invoices(company_id)
+
+    invoices
     |> Absinthe.Relay.Connection.from_list(pagination_args(args))
   end
 
