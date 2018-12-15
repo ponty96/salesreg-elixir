@@ -82,6 +82,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
     end
 
     @desc """
+      create a receipt when payment is by cash
+    """
+    field :create_receipt, :mutation_response do
+      arg(:invoice_id, non_null(:uuid))
+      arg(:amount_paid, non_null(:string))
+
+      resolve(&OrderResolver.create_receipt/2)
+    end
+
+    @desc """
       mutation to delete receipt
     """
     field :delete_receipt, :mutation_response do
