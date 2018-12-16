@@ -8,7 +8,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
 
   def upsert_sale(%{sale: params}, _res) do
     response = Order.create_sale(params)
-    IO.inspect response, label: "response"
+    IO.inspect(response, label: "response")
 
     response
   end

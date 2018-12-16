@@ -347,12 +347,13 @@ defmodule SalesReg.Order do
   end
 
   def put_ref_id(schema, attrs) do
-    resources = from(
-      s in schema, 
-      order_by: s.inserted_at
-    )
-    |> Repo.all
-    
+    resources =
+      from(
+        s in schema,
+        order_by: s.inserted_at
+      )
+      |> Repo.all()
+
     if Enum.count(resources) == 0 do
       Map.put_new(attrs, :ref_id, "1")
     else
@@ -382,10 +383,10 @@ defmodule SalesReg.Order do
 
   defp repo_transaction_resp(repo_transaction) do
     case repo_transaction do
-      {:ok, %{insert_sale: sale}} -> 
-        
+      {:ok, %{insert_sale: sale}} ->
         {:ok, sale}
-      {:error, _failed_operation, _failed_value, changeset} -> 
+
+      {:error, _failed_operation, _failed_value, changeset} ->
         {:error, changeset}
     end
   end
