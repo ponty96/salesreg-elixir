@@ -125,6 +125,12 @@ defmodule SalesReg.Business do
      |> Repo.all()}
   end
 
+  def get_company_by_slug(name) do
+    Company
+    |> Repo.get_by(slug: name)
+    |> Repo.preload([:company_template])
+  end
+
   def search_customers_by_name(%{company_id: company_id, name: name}) do
     Context.search_schema_by_field(Contact, {name, company_id}, :contact_name)
     |> Enum.filter(fn contact ->
