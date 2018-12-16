@@ -261,8 +261,8 @@ defmodule SalesReg.Seed do
 
   def add_template() do
     params = %{
-      "title" => "General Templates",
-      "slug" => "template",
+      "title" => "Default Templates",
+      "slug" => "yc1-template",
       "featured_image" => Avatar.image_url()
     }
 

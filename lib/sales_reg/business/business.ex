@@ -14,6 +14,8 @@ defmodule SalesReg.Business do
     Bank
   ]
 
+  @default_template_slug "yc1-template"
+
   def create_company(user_id, company_params) do
     company_params = Map.put(company_params, :owner_id, user_id)
 
@@ -24,7 +26,14 @@ defmodule SalesReg.Business do
            company_id: company.id
          },
          {:ok, _branch} <- add_branch(branch_params),
-         [{:ok, _option} | _t] <- Store.insert_default_options(company.id) do
+         [{:ok, _option} | _t] <- Store.insert_default_options(company.id),
+         template <- Theme.get_template_by_slug(@default_template_slug),
+         company_template_params <- %{
+           template_id: template.id,
+           company_id: company.id,
+           user_id: user_id
+         },
+         {:ok, company_template} <- Theme.add_company_template(company_template_params) do
       {:ok, company}
     else
       {:error, changeset} -> {:error, changeset}
@@ -128,7 +137,7 @@ defmodule SalesReg.Business do
   def get_company_by_slug(name) do
     Company
     |> Repo.get_by(slug: name)
-    |> Repo.preload([:company_template])
+    |> Repo.preload([:company_template, [company_template: :template]])
   end
 
   def search_customers_by_name(%{company_id: company_id, name: name}) do

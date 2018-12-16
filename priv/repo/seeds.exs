@@ -25,10 +25,10 @@ tags = [
   "#nofilter"
 ]
 
+
+{:ok, _template} = Seed.add_template()
 {:ok, user} = Seed.create_user()
 {:ok, company} = Seed.create_company(user.id)
-{:ok, template} = Seed.add_template()
-{:ok, company_template} = Seed.add_company_template(company.id, user.id, template.id)
 
 
 Enum.map(1..5, fn _index ->

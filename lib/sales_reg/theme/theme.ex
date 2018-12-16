@@ -65,4 +65,8 @@ defmodule SalesReg.Theme do
     |> where([c], c.type == ^type)
     |> Repo.one()
   end
+
+  def get_template_by_slug(slug) do
+    Repo.get_by(Template, slug: slug)
+  end
 end
