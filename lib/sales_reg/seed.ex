@@ -42,7 +42,7 @@ defmodule SalesReg.Seed do
       currency: "Naira(₦)",
       description: CompanyEn.bs(),
       logo: Avatar.image_url(),
-      slug: "Stacknbit"
+      slug: "stacknbit"
     }
 
     Business.create_company(user_id, company_params)
