@@ -43,6 +43,7 @@ defmodule SalesRegWeb.Endpoint do
     signing_salt: "1PjvV655"
   )
 
+  plug(SalesRegWeb.Plug.SubdomainHandler)
   plug(SalesRegWeb.Router)
 
   @doc """
