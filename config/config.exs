@@ -85,7 +85,7 @@ config :ueberauth, Ueberauth,
 
 config :sales_reg, SalesReg.Mailer,
   adapter: Bamboo.SendGridAdapter,
-  api_key: "my_api_key"
+  api_key: "some_api_key_here"
 
 ###############################################################
 ### AWS (image upload functionality) config
