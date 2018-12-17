@@ -78,7 +78,16 @@ defmodule SalesReg.Store do
     |> order_by([pg, p], asc: [pg.title])
     |> select([pg, p], [pg])
     |> Repo.all()
-
+    |> Enum.map(fn [prod_group] ->
+        add_type_field = fn(products) ->
+          Enum.map(products, fn(prod) ->
+            %{prod | name: get_product_name(prod)}
+            |> Map.put_new(:type, "Product")
+          end)
+        end
+        add_type_field.(prod_group.products)
+      end)
+    |> List.flatten()
   end
 
   def load_services(company_id, query) do
