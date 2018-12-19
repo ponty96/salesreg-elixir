@@ -236,13 +236,13 @@ defmodule SalesReg.Seed do
          order_items
        ) do
     params = %{
-      "date" => past_date(:recent),
-      "payment_method" => Enum.random(@payment_method),
-      "user_id" => user_id,
-      "company_id" => company_id,
-      "contact_id" => contact_id,
-      "items" => order_items,
-      "status" => Enum.random(@seed_order_status)
+      date: past_date(:recent),
+      payment_method: Enum.random(@payment_method),
+      user_id: user_id,
+      company_id: company_id,
+      contact_id: contact_id,
+      items: order_items,
+      status: Enum.random(@seed_order_status)
     }
 
     SalesReg.Order.add_sale(params)

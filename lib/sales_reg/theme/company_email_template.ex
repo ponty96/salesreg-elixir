@@ -21,8 +21,6 @@ defmodule SalesReg.Theme.CompanyEmailTemplate do
 			
 			belongs_to(:sale, SalesReg.Order.Sale)
       belongs_to(:company, SalesReg.Business.Company)
-     
-      timestamps()
     end
   
     @required_fields [

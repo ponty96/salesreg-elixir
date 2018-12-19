@@ -22,7 +22,7 @@ defmodule SalesReg.Business do
       "yc_email_reminder",
       "yc_email_restock",
       "yc_email_welcome_to_yc"
-    ]
+  ]
 
   def create_company(user_id, company_params) do
     company_params = Map.put(company_params, :owner_id, user_id)
@@ -35,30 +35,12 @@ defmodule SalesReg.Business do
          },
          {:ok, _branch} <- add_branch(branch_params),
          [{:ok, _option} | _t] <- Store.insert_default_options(company.id),
-         {_int, _result} <- insert_company_email_temps(company.id)
-         do
+         {_int, _result} <- insert_company_email_temps(company.id) do
+      
       {:ok, company}
     else
       {:error, changeset} -> {:error, changeset}
     end
-  end
-
-  def insert_company_email_temps(company_id) do
-    Enum.map(@types, fn(type) ->
-      %{
-        body: return_file_content(type),
-        type: type,
-        company_id: company_id
-      }
-    end)
-  end
-
-  defp return_file_content(type) do
-    {:ok, binary} = Path.expand(
-      "./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex"
-    )
-
-    binary
   end
 
   def update_company_details(id, company_params) do
@@ -171,5 +153,26 @@ defmodule SalesReg.Business do
     |> where([b], b.is_primary == true)
     |> Repo.one()
     |> Business.update_bank(attrs)
+  end
+
+  defp insert_company_email_temps(company_id) do
+    templates = Enum.map(@email_types, fn(type) ->
+      %{
+        body: return_file_content(type),
+        type: type,
+        company_id: company_id
+      }
+    end)
+    
+    Repo.insert_all(CompanyEmailTemplate, templates)
+  end
+
+  defp return_file_content(type) do
+    {:ok, binary} = Path.expand(
+      "./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex"
+    )
+    |> File.read()
+
+    binary
   end
 end

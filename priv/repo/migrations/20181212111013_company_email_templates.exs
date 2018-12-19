@@ -9,8 +9,6 @@ defmodule SalesReg.Repo.Migrations.CompanyEmailTemplates do
 
       add(:sale_id, references(:sales, type: :binary_id))
       add(:company_id, references(:companies, type: :binary_id))
-
-      timestamps()
     end
 
     create(index(:company_email_templates, [:sale_id], on_delete: :nothing, type: :binary_id))

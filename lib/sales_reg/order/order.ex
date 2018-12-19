@@ -28,7 +28,7 @@ defmodule SalesReg.Order do
   end
 
   def preload_order(order) do
-    Repo.preload(order, items: [:product, :service])
+    Repo.preload(order, [:company, items: [:product, :service]])
   end
 
   def update_status(:sale, order_id, new_status) do
