@@ -27,7 +27,7 @@
 																	<tbody>
 																	<tr>
 																		<td>
-																			<h1 style="margin: 0;font-size: 25px;padding: 25px 0;font-weight: 400">ABC Hot CakesABC Hot Cakes & Pastries</h1>
+																			<h1 style="margin: 0;font-size: 25px;padding: 25px 0;font-weight: 400"><%= sale.company.title %></h1>
 																		</td>
 																	</tr>
 																	</tbody>
@@ -36,14 +36,14 @@
 														</tr>
 
 														<tr>
-															<td align="left" valign="middle" style="padding: 0 50px;vertical-align: top;background: rgba(186,208,19,0.34);color: rgb(153,153,153);font-size: 12px;line-height: 16px;">
+															<td align="left" valign="middle" style="padding: 0 50px;vertical-align: top;background: rgba(255,216,92,0.64);color: rgb(153,153,153);font-size: 12px;line-height: 16px;">
 																<table>
 																	<tbody>
 																	<tr>
 																		<td style="padding: 15px 0;font-size: 20px">
 																			<span>Invoice:</span>
 																			<span>
-																				<strong>#8374839</strong>
+																				<strong><%= sale.invoice.ref_id %></strong>
 																			</span>
 																		</td>
 																	</tr>
@@ -58,14 +58,15 @@
 																	<tbody>
 																	<tr>
 																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89)">
-																			<p>Hi <span>Rita</span>,</p>
+																			<p>Dear <span><%= sale.contact.contact_name %></span>,</p>
 																			<p>I hope you are well,</p>
-																			<p>Please this is a quick reminder that <span style="color: red">N2,300.00</span> in respect of the above referenced invoice is due for payment on 23-04-2019</p>
-																			<a href="#" style="text-decoration: none!important;">
+																			<p>Please kindly note that we are yet to recieve <span style="color: red">N<%= SalesReg.Order.calc_pay_outstanding(sale) %></span> in respect of the above invoice, which was due for payment on 23-04-2019</p>
+																			<a href="<%= sale.invoice.pdf_url %>" style="text-decoration: none!important;">
 																				<span style="color:#127bcc">View Invoice</span>
 																			</a>
-																			<p>I would appreciate it if you can kindly confirm that everything is on track, for payment</p>
-																			<p>Best regards,<br>Kola.</p>
+																			<p>I would be really grateful if you would be so kind as to let us know when we should expect to recieve the payment</p>
+																			<p>We appreciate your prompt payment.</p>
+																			<p>Best regards,<br><%= sale.company.owner.first_name %></p>
 																		</td>
 																	</tr>
 																	</tbody>

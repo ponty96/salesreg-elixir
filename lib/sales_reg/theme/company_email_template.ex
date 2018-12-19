@@ -6,15 +6,17 @@ defmodule SalesReg.Theme.CompanyEmailTemplate do
     @foreign_key_type :binary_id
   
     @email_types [
-			"invoice_pre_due_date", 
-			"invoice_on_due_date", 
-			"invoice_post_due_date", 
-			"invoice_on_order",
-			"order_receipt"
+			"yc_email_before_due", 
+			"yc_email_early_due", 
+			"yc_email_late_overdue", 
+			"yc_email_received_order",
+      "yc_email_reminder",
+      "yc_email_restock",
+      "yc_email_welcome_to_yc"
 		]
 
     schema "company_email_templates" do
-      field(:message, :string)
+      field(:body, :string)
       field(:type,  :string)
 			
 			belongs_to(:sale, SalesReg.Order.Sale)
@@ -24,7 +26,7 @@ defmodule SalesReg.Theme.CompanyEmailTemplate do
     end
   
     @required_fields [
-      :message,
+      :body,
 			:type,
       :company_id
 		]

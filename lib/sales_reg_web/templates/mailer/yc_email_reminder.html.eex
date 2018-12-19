@@ -27,7 +27,7 @@
 																	<tbody>
 																	<tr>
 																		<td>
-																			<h1 style="margin: 0;font-size: 25px;padding: 25px 0;font-weight: 400">ABC Hot CakesABC Hot Cakes & Pastries</h1>
+																			<h1 style="margin: 0;font-size: 25px;padding: 25px 0;font-weight: 400"><%= sale.company.title %></h1>
 																		</td>
 																	</tr>
 																	</tbody>
@@ -36,12 +36,15 @@
 														</tr>
 
 														<tr>
-															<td align="left" valign="middle" style="padding: 0 50px;vertical-align: top;background: #f4f4f4;color: rgb(153,153,153);font-size: 12px;line-height: 16px;">
+															<td align="left" valign="middle" style="padding: 0 50px;vertical-align: top;background: rgba(186,208,19,0.34);color: rgb(153,153,153);font-size: 12px;line-height: 16px;">
 																<table>
 																	<tbody>
 																	<tr>
 																		<td style="padding: 15px 0;font-size: 20px">
-																			<span>Recieved Order:</span>
+																			<span>Invoice:</span>
+																			<span>
+																				<strong><%= sale.invoice.ref_id %></strong>
+																			</span>
 																		</td>
 																	</tr>
 																	</tbody>
@@ -55,14 +58,14 @@
 																	<tbody>
 																	<tr>
 																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89)">
-																			<p>Dear <span>Rita</span>,</p>
-																			<p>This is just a quick email to say we've received your order.</p>
-																			<p>As sonn as everything has been confirmed and ready for shipment, we will send you another email with your order details and any other information about your package</p>
-																			<p>Your shipping ETA is one working days from when you received this email. We'll follow up as quick as possible.</p>
-																			<p>In the meantime, if you have any questions, send us an email at <a href="mailto:example@yipcart.com" style="color: #3668D3">example@yipcart.com</a> and we'll be happy to help you.</p>
-																			<p>
-																				<span><a href="#" target="_blank" style="text-decoration: none;color: #3668D3">View order</a></span> or <span><a href="#" target="_blank" style="text-decoration: none;color: #3668D3">Visit our webstore</a></span>
-																			</p>
+																			<p>Hi <span><%= sale.contact.contact_name %></span>,</p>
+																			<p>I hope you are well,</p>
+																			<p>Please this is a quick reminder that <span style="color: red"><%= SalesReg.Order.calc_pay_outstanding(sale) %></span> in respect of the above referenced invoice is due for payment on <%= sale.invoice.due_date %></p>
+																			<a href="<%= sale.invoice.pdf_url %>" style="text-decoration: none!important;">
+																				<span style="color:#127bcc">View Invoice</span>
+																			</a>
+																			<p>I would appreciate it if you can kindly confirm that everything is on track, for payment</p>
+																			<p>Best regards,<br><%= sale.company.owner.first_name %>.</p>
 																		</td>
 																	</tr>
 																	</tbody>

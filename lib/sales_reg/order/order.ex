@@ -360,6 +360,10 @@ defmodule SalesReg.Order do
     end
   end
 
+  def calc_pay_outstanding(sale) do
+    calc_order_amount(sale) - calc_order_amount_paid(sale)
+  end
+
   defp calc_items_amount(items) do
     Enum.map(items, fn item ->
       {quantity, _} = Float.parse(item.quantity)

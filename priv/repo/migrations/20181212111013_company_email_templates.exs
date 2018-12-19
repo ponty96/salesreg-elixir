@@ -4,7 +4,7 @@ defmodule SalesReg.Repo.Migrations.CompanyEmailTemplates do
   def change do
     create table(:company_email_templates, primary_key: false) do
       add(:id, :binary_id, primary_key: true)
-      add(:message, :text)
+      add(:body, :text)
       add(:type, :string)
 
       add(:sale_id, references(:sales, type: :binary_id))
