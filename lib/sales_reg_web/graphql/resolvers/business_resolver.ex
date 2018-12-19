@@ -41,15 +41,12 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
   end
 
   def upsert_expense(%{expense: params, expense_id: id}, _res) do
-    new_params = put_items_amount(params)
-
     Business.get_expense(id)
-    |> Business.update_expense(new_params)
+    |> Business.update_expense_details(params)
   end
 
   def upsert_expense(%{expense: params}, _res) do
-    new_params = put_items_amount(params)
-    Business.add_expense(new_params)
+    Business.create_expense(params)
   end
 
   def company_expenses(%{company_id: id} = args, _res) do
@@ -66,20 +63,5 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
 
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
-  end
-
-  defp put_items_amount(params) do
-    total_amount =
-      params.expense_items
-      |> calc_expense_amount(0)
-
-    Map.put_new(params, :items_amount, total_amount)
-  end
-
-  defp calc_expense_amount([], 0), do: 0.0
-  defp calc_expense_amount([], acc), do: Float.round(acc, 2)
-
-  defp calc_expense_amount([h | t], acc) do
-    calc_expense_amount(t, acc + h.amount)
   end
 end

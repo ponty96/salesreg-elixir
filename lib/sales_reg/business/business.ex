@@ -132,7 +132,39 @@ defmodule SalesReg.Business do
     end)
   end
 
+  def create_expense(%{expense_items: _items} = params) do
+    put_items_amount(params)
+    Business.add_expense()
+  end
+
+  def create_expense(params) do
+    Business.add_expense(params)
+  end
+
+  def update_expense_details(expense, %{expense_items: _items} = params) do
+    Business.update_expense(expense, put_items_amount(params))
+  end
+
+  def update_expense_details(expense, params) do
+    Business.update_expense(expense, params)
+  end
+
   # Private Functions
+  defp put_items_amount(params) do
+    total_amount =
+      params.expense_items
+      |> calc_expense_amount(0)
+
+    Map.put_new(params, :items_amount, total_amount)
+  end
+
+  defp calc_expense_amount([], 0), do: 0.0
+  defp calc_expense_amount([], acc), do: Float.round(acc, 2)
+
+  defp calc_expense_amount([h | t], acc) do
+    calc_expense_amount(t, acc + h.amount)
+  end
+
   defp update_bank_field(company_id) do
     attrs = %{"is_primary" => false}
 

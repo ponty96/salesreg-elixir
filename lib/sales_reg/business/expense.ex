@@ -53,7 +53,9 @@ defmodule SalesReg.Business.Expense do
     |> cast(%{}, [])
   end
 
-  defp validate_total_amount(changeset, expense) do
+  defp validate_total_amount(
+    %Ecto.Changeset{changes: %{expense_items: _items}} = changeset, expense) do    
+    
     total_amount =
       total_amount(expense, changeset)
       |> Decimal.to_float()
@@ -85,6 +87,10 @@ defmodule SalesReg.Business.Expense do
       true ->
         changeset
     end
+  end
+
+  defp validate_total_amount(changeset, _expense) do
+    changeset
   end
 
   defp total_amount(expense, changeset) do
