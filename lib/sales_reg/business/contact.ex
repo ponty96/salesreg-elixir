@@ -32,6 +32,8 @@ defmodule SalesReg.Business.Contact do
     has_one(:address, SalesReg.Business.Location, on_replace: :delete)
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
 
+    has_many(:sales, SalesReg.Order.Sale)
+
     timestamps()
   end
 
@@ -75,7 +77,7 @@ defmodule SalesReg.Business.Contact do
   def delete_changeset(contact) do
     contact
     |> Repo.preload([:address, :phone])
-    |> cast(%{},[])
+    |> cast(%{}, [])
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
     |> cast_assoc(:address)
