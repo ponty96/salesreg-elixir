@@ -1,4 +1,3 @@
 defmodule SalesRegWeb.CompanyView do
-	use SalesRegWeb, :view
+  use SalesRegWeb, :view
 end
-  

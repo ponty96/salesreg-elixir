@@ -134,7 +134,7 @@ defmodule SalesReg.Business do
 
   def create_expense(%{expense_items: _items} = params) do
     put_items_amount(params)
-    Business.add_expense()
+    |> Business.add_expense()
   end
 
   def create_expense(params) do

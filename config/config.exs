@@ -73,14 +73,15 @@ config :pdf_generator,
 
 config :ueberauth, Ueberauth,
   providers: [
-    identity: { Ueberauth.Strategy.Identity, [
-        callback_methods: ["POST"],
-        uid_field: :email,
-        nickname_field: :email,
-        request_path: "/auth/identity",
-        callback_path: "/auth/identity/callback"
-      ]
-    }
+    identity:
+      {Ueberauth.Strategy.Identity,
+       [
+         callback_methods: ["POST"],
+         uid_field: :email,
+         nickname_field: :email,
+         request_path: "/auth/identity",
+         callback_path: "/auth/identity/callback"
+       ]}
   ]
 
 config :sales_reg, SalesReg.Mailer,

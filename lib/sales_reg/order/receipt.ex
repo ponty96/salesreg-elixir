@@ -35,7 +35,7 @@ defmodule SalesReg.Order.Receipt do
 
   def changeset(receipt, attrs) do
     new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Receipt, attrs)
-    
+
     receipt
     |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
@@ -43,7 +43,7 @@ defmodule SalesReg.Order.Receipt do
 
   def via_cash_changeset(receipt, attrs) do
     new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Invoice, attrs)
-    
+
     receipt
     |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
