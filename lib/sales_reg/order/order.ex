@@ -318,18 +318,26 @@ defmodule SalesReg.Order do
 
   # TOD0, just fetch all orders associated with a contact id instead
   def contact_orders_debt(contact) do
-    contact = Repo.preload(contact, company: :sales)
+    sales = all_sales_made_contact(contact.id)
 
     {amount_paid_list, orders_total_amount_list} =
-      Enum.filter(contact.company.sales, fn sale ->
-        sale.contact_id == contact.id
-      end)
+      sales
       |> Enum.map(fn sale ->
         {calc_order_amount_paid(sale), calc_order_amount(sale)}
       end)
       |> Enum.unzip()
 
     Enum.sum(orders_total_amount_list) - Enum.sum(amount_paid_list)
+  end
+
+  def contact_total_amount_paid(contact) do
+    sales = all_sales_made_contact(contact.id)
+
+    sales
+    |> Enum.map(fn sale ->
+      calc_order_amount_paid(sale)
+    end)
+    |> Enum.sum()
   end
 
   def calc_product_total_quantity_sold(product_id) do
@@ -476,5 +484,14 @@ defmodule SalesReg.Order do
 
   defp find_in_items(items, :service, service_id) do
     {:ok, Enum.find(items, "not found", fn item -> item.service_id == service_id end)}
+  end
+
+  defp all_sales_made_contact(contact_id) do
+    query =
+      from(s in Sale,
+        where: s.contact_id == ^contact_id
+      )
+
+    Repo.all(query)
   end
 end
