@@ -1,5 +1,5 @@
 defmodule MyApp do
   use Plug.Builder
-  
-  plug RemoteIp
+
+  plug(RemoteIp)
 end

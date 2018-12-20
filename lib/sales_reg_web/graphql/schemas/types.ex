@@ -219,6 +219,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       end)
     end
 
+    # total sales made by merchant to customer
+    field :total_amount_paid, :float do
+      resolve(fn _parent, %{source: contact} ->
+        {:ok, Order.contact_total_amount_paid(contact)}
+      end)
+    end
+
     field(:address, :location, resolve: dataloader(SalesReg.Business, :address))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
@@ -453,7 +460,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:title, :string)
     field(:slug, :string)
     field(:featured_image, :string)
-
   end
 
   connection(node_type: :template)

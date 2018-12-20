@@ -54,8 +54,9 @@ defmodule SalesReg.Business.Expense do
   end
 
   defp validate_total_amount(
-    %Ecto.Changeset{changes: %{expense_items: _items}} = changeset, expense) do    
-    
+         %Ecto.Changeset{changes: %{expense_items: _items}} = changeset,
+         expense
+       ) do
     total_amount =
       total_amount(expense, changeset)
       |> Decimal.to_float()
