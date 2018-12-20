@@ -29,7 +29,7 @@ defmodule SalesReg.Order.Invoice do
 
   def changeset(invoice, attrs) do
     new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Invoice, attrs)
-    
+
     invoice
     |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)

@@ -44,7 +44,8 @@ defmodule SalesReg.Seed do
        of Mobiles devices and related assessories of specific brands which 
        include Samsung, Apple, Sony, Tecno, Infinix and Nokia. It also provides
        numerous services",
-      logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTulsnrbHjdztPnDwdWzruyJ-p1gi7Mwf43hT7cC1oiwl1hU_h",
+      logo:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTulsnrbHjdztPnDwdWzruyJ-p1gi7Mwf43hT7cC1oiwl1hU_h",
       slug: "Sandbox"
     }
 
@@ -313,7 +314,7 @@ defmodule SalesReg.Seed do
 
   def add_product_without_variant(params, company_id, user_id) do
     {:ok, prod_grp} = insert_prod_grp(company_id)
-    
+
     params
     |> product_params(company_id, user_id, prod_grp.id)
     |> Map.put(:option_values, [])
@@ -370,7 +371,8 @@ defmodule SalesReg.Seed do
   end
 
   defp insert_prod_grp(company_id) do
-    IO.inspect company_id, label: "company_id"
+    IO.inspect(company_id, label: "company_id")
+
     params = %{
       "title" => "Mobile Devices and Assessories",
       "option_ids" => [],
@@ -378,7 +380,7 @@ defmodule SalesReg.Seed do
     }
 
     %ProductGroup{}
-    |>ProductGroup.changeset(params)
+    |> ProductGroup.changeset(params)
     |> Repo.insert()
   end
 

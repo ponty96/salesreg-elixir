@@ -453,7 +453,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:title, :string)
     field(:slug, :string)
     field(:featured_image, :string)
-
   end
 
   connection(node_type: :template)
