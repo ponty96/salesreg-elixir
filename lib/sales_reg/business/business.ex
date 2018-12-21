@@ -21,7 +21,8 @@ defmodule SalesReg.Business do
 			"yc_email_received_order",
       "yc_email_reminder",
       "yc_email_restock",
-      "yc_email_welcome_to_yc"
+      "yc_email_welcome_to_yc",
+      "yc_payment_received"
   ]
 
   def create_company(user_id, company_params) do
@@ -35,7 +36,8 @@ defmodule SalesReg.Business do
          },
          {:ok, _branch} <- add_branch(branch_params),
          [{:ok, _option} | _t] <- Store.insert_default_options(company.id),
-         {_int, _result} <- insert_company_email_temps(company.id) do
+         {_int, _result} <- insert_company_email_temps(company.id), 
+         %Bamboo.Email{} <- Email.send_email(company.id, "yc_email_welcome_to_yc") do
       
       {:ok, company}
     else

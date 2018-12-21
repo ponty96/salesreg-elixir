@@ -7,10 +7,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   end
 
   def upsert_sale(%{sale: params}, _res) do
-    response = Order.create_sale(params)
-    IO.inspect response, label: "response"
-
-    response
+    Order.create_sale(params)
   end
 
   def list_company_sales(%{company_id: company_id} = args, _res) do
@@ -57,6 +54,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     case create_receipt do
       {:ok, receipt} ->
         Order.supervise_pdf_upload(receipt)
+        sale = Order.preload_receipt(receipt).sale
+
+        receipt.company_id
+        |> Email.send_email("yc_payment_received", sale)
+        
         {:ok, receipt}
 
       {:error, reason} ->

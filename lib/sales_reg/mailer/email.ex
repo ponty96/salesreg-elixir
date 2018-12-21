@@ -31,12 +31,13 @@ defmodule SalesReg.Email do
 	end
 
 	defp transform_template(template, sale) do
+		IO.inspect template, label: "template"
 		EEx.eval_string(template.body, sale: sale)
 	end
 
-	defp construct_email(html_body, contact_email, type) do
+	defp construct_email(html_body, receipient, type) do
 		%{
-			to: contact_email,
+			to: receipient,
 			from: "opeyemi.badmos@yipcart.com",
 			subject: gen_sub(type),
 			html_body: html_body,
@@ -65,6 +66,9 @@ defmodule SalesReg.Email do
 	
 			"yc_email_welcome_to_yc" -> 
 				"Email Welcome To YC"
+
+			"yc_payment_received" ->
+				"Payment Received"
 
 			_ -> "No Subject"
 		end
