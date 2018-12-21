@@ -641,11 +641,11 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:about, :string)
     field(:contact_email, non_null(:string))
     field(:head_office, non_null(:location_input))
-    field(:currency, :string)
+    field(:currency, non_null(:string))
     field(:description, :string)
     field(:phone, :phone_input)
     field(:logo, :string)
-    field(:slug, :string)
+    field(:slug, non_null(:string))
   end
 
   input_object :branch_input do

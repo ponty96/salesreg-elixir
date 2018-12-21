@@ -78,7 +78,9 @@ defmodule SalesReg.Mixfile do
       {:ueberauth_identity, "~> 0.2"},
       {:bamboo, "~> 1.1"},
       {:plug_attack, "~> 0.3.0"},
-      {:remote_ip, "~> 0.1.0"}
+      {:remote_ip, "~> 0.1.0"},
+      {:quantum, "~> 2.3"},
+      {:timex, "~> 3.0"}
     ]
   end
 
