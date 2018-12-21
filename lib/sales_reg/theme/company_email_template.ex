@@ -36,7 +36,7 @@ defmodule SalesReg.Theme.CompanyEmailTemplate do
   
   def changeset(company_email_template, attrs) do
     company_email_template
-    |> cast(attrs, @required_fields)
+    |> cast(attrs, @required_fields ++ @optional_fields)
 		|> validate_required(@required_fields)
 		|> validate_inclusion(:type, @email_types)
 		|> unique_constraint(
