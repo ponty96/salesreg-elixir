@@ -39,9 +39,8 @@ defmodule SalesReg.Business.Company do
     |> change(attrs)
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> unique_constraint(:owner_id, message: "Sorry, but you already have a business with us")
+    |> foreign_key_constraint(:owner_id)
     |> cast_assoc(:phone)
     |> validate_required(@required_fields)
-
-    # |> cast_assoc(:branches)
   end
 end

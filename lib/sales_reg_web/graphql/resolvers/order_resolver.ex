@@ -54,6 +54,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     case create_receipt do
       {:ok, receipt} ->
         Order.supervise_pdf_upload(receipt)
+        sale = Order.preload_receipt(receipt).sale
+
+        receipt.company_id
+        |> Email.send_email("yc_payment_received", sale)
+        
         {:ok, receipt}
 
       {:error, reason} ->

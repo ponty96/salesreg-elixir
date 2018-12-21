@@ -2,8 +2,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
   use SalesRegWeb, :context
 
   def register_company(%{user: user_id, company: company_params}, _resolution) do
-    with {:ok, company} <- Business.create_company(user_id, company_params),
-         {:ok, _} <- Business.send_registration_email(user_id, company) do
+    with {:ok, company} <- Business.create_company(user_id, company_params) do
       {:ok, company}
     else
       {:error, changeset} -> {:error, changeset}
