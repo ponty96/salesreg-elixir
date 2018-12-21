@@ -251,8 +251,9 @@ defmodule SalesReg.Order do
   end
 
   def create_receipt(%{invoice_id: id, amount_paid: amount}) do
-    invoice = Order.get_invoice(id)
-    |> Repo.preload([:sale])
+    invoice =
+      Order.get_invoice(id)
+      |> Repo.preload([:sale])
 
     insert_receipt(invoice.sale, invoice, amount, :cash)
   end
@@ -305,6 +306,7 @@ defmodule SalesReg.Order do
   # Use this to persist receipt when the payment method is card
   def insert_receipt(sale, transaction_id, amount, :card) do
     sale = Repo.preload(sale, [:invoice])
+
     add_receipt =
       %Receipt{}
       |> Receipt.via_cash_changeset(
@@ -344,28 +346,46 @@ defmodule SalesReg.Order do
 
   def calc_order_amount_paid(%Sale{} = sale) do
     sale = Repo.preload(sale, invoice: :receipts)
-    calc_amount_paid(sale.invoice.receipts)
+
+    if sale.invoice.receipts do
+      calc_amount_paid(sale.invoice.receipts)
+    else
+      0
+    end
   end
 
   def calc_order_amount_paid(%Invoice{} = invoice) do
     invoice = Repo.preload(invoice, [:receipts])
-    calc_amount_paid(invoice.receipts)
+
+    if invoice.receipts do
+      calc_amount_paid(invoice.receipts)
+    else
+      0
+    end
   end
 
   # TOD0, just fetch all orders associated with a contact id instead
   def contact_orders_debt(contact) do
-    contact = Repo.preload(contact, company: :sales)
+    sales = all_sales_made_contact(contact.id)
 
     {amount_paid_list, orders_total_amount_list} =
-      Enum.filter(contact.company.sales, fn sale ->
-        sale.contact_id == contact.id
-      end)
+      sales
       |> Enum.map(fn sale ->
         {calc_order_amount_paid(sale), calc_order_amount(sale)}
       end)
       |> Enum.unzip()
 
     Enum.sum(orders_total_amount_list) - Enum.sum(amount_paid_list)
+  end
+
+  def contact_total_amount_paid(contact) do
+    sales = all_sales_made_contact(contact.id)
+
+    sales
+    |> Enum.map(fn sale ->
+      calc_order_amount_paid(sale)
+    end)
+    |> Enum.sum()
   end
 
   def calc_product_total_quantity_sold(product_id) do
@@ -393,12 +413,13 @@ defmodule SalesReg.Order do
   end
 
   def put_ref_id(schema, attrs) do
-    resources = from(
-      s in schema, 
-      order_by: s.inserted_at
-    )
-    |> Repo.all
-    
+    resources =
+      from(
+        s in schema,
+        order_by: s.inserted_at
+      )
+      |> Repo.all()
+
     if Enum.count(resources) == 0 do
       Map.put_new(attrs, :ref_id, "1")
     else
@@ -515,5 +536,14 @@ defmodule SalesReg.Order do
 
   defp find_in_items(items, :service, service_id) do
     {:ok, Enum.find(items, "not found", fn item -> item.service_id == service_id end)}
+  end
+
+  defp all_sales_made_contact(contact_id) do
+    query =
+      from(s in Sale,
+        where: s.contact_id == ^contact_id
+      )
+
+    Repo.all(query)
   end
 end

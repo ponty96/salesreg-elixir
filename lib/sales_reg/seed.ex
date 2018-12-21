@@ -21,11 +21,11 @@ defmodule SalesReg.Seed do
 
   def create_user() do
     user_params = %{
-      "date_of_birth" => past_date(:dob),
-      "email" => "someemail@gmail.com",
-      "first_name" => "Opeyemi",
-      "gender" => "MALE",
-      "last_name" => "Badmos",
+      "date_of_birth" => "15-08-1991",
+      "email" => "samson.oluwole@gmail.com",
+      "first_name" => "Samson",
+      "gender" => "Male",
+      "last_name" => "Oluwole",
       "password" => "asdfasdf",
       "password_confirmation" => "asdfasdf"
     }
@@ -35,14 +35,18 @@ defmodule SalesReg.Seed do
 
   def create_company(user_id) do
     company_params = %{
-      about: "Building software products",
-      contact_email: "someemail@gmail.com",
-      title: "Stacknbit Private Limited Company",
+      about: "Sales of Mobile Devices",
+      contact_email: "official.sandbox@gmail.com",
+      title: "Sandbox PLC",
       head_office: gen_location_params(),
-      currency: "Naira(₦)",
-      description: CompanyEn.bs(),
-      logo: Avatar.image_url(),
-      slug: "Stacknbit"
+      currency: "Naira",
+      description: "Sandbox is basically into sales
+       of Mobiles devices and related assessories of specific brands which 
+       include Samsung, Apple, Sony, Tecno, Infinix and Nokia. It also provides
+       numerous services",
+      logo:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTulsnrbHjdztPnDwdWzruyJ-p1gi7Mwf43hT7cC1oiwl1hU_h",
+      slug: "Sandbox"
     }
 
     Business.create_company(user_id, company_params)
@@ -68,15 +72,10 @@ defmodule SalesReg.Seed do
 
   def add_contact(user_id, company_id, type) do
     contact_params = %{
-      "image" => Avatar.image_url(),
-      "contact_name" => Name.En.name(),
-      "phone" => gen_phone_params(),
-      "email" => "someemail@gmail.com",
-      "address" => gen_location_params(),
-      "user_id" => "#{user_id}",
-      "company_id" => "#{company_id}",
-      "currency" => "#{Enum.random(@currency)}",
-      "birthday" => past_date(:dob),
+      "contact_name" => "Desmond",
+      "email" => "desmond1994@gmail.com",
+      "user_id" => user_id,
+      "company_id" => company_id,
       "marital_status" => "#{Enum.random(@marital_status)}",
       "marriage_anniversary" => past_date(:marr_anni),
       "gender" => Enum.random(@gender),
@@ -313,21 +312,15 @@ defmodule SalesReg.Seed do
       "http://shfcs.org/en/wp-content/uploads/2015/11/MedRes_Product-presentation-2.jpg"
   }
 
-  def add_product_without_variant(company, user) do
-    product =
-      company
-      |> valid_product_params(user)
-      |> Map.put(:option_values, [])
-      |> Map.put(:tags, [])
-      |> Map.put(:categories, [])
+  def add_product_without_variant(params, company_id, user_id) do
+    {:ok, prod_grp} = insert_prod_grp(company_id)
 
-    params = %{
-      product_group_title: CommerceEn.product_name(),
-      product: product,
-      company_id: company.id
-    }
-
-    Store.create_product(params)
+    params
+    |> product_params(company_id, user_id, prod_grp.id)
+    |> Map.put(:option_values, [])
+    |> Map.put(:tags, [])
+    |> Map.put(:categories, [])
+    |> Store.add_product()
   end
 
   def add_product_with_variant(company, user) do
@@ -347,6 +340,11 @@ defmodule SalesReg.Seed do
     }
 
     Store.create_product(params)
+  end
+
+  def add_service(param, company_id, user_id) do
+    service_params(param, company_id, user_id)
+    |> Store.add_service()
   end
 
   defp valid_product_params(company, user) do
@@ -370,5 +368,42 @@ defmodule SalesReg.Seed do
       end)
 
     options
+  end
+
+  defp insert_prod_grp(company_id) do
+    IO.inspect(company_id, label: "company_id")
+
+    params = %{
+      "title" => "Mobile Devices and Assessories",
+      "option_ids" => [],
+      "company_id" => company_id
+    }
+
+    %ProductGroup{}
+    |> ProductGroup.changeset(params)
+    |> Repo.insert()
+  end
+
+  defp product_params([price, sku, min_sku, feat_img, name], company_id, user_id, prod_grp_id) do
+    %{
+      price: price,
+      sku: sku,
+      company_id: company_id,
+      user_id: user_id,
+      minimum_sku: min_sku,
+      featured_image: feat_img,
+      name: name,
+      product_group_id: prod_grp_id
+    }
+  end
+
+  defp service_params([name, price, feat_img], company_id, user_id) do
+    %{
+      name: name,
+      price: price,
+      company_id: company_id,
+      user_id: user_id,
+      featured_image: feat_img
+    }
   end
 end

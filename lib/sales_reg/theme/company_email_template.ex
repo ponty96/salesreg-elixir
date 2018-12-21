@@ -45,4 +45,4 @@ defmodule SalesReg.Theme.CompanyEmailTemplate do
 			)
     end
   end
-  
+end

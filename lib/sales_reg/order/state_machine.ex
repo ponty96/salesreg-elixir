@@ -15,7 +15,7 @@ defmodule SalesReg.Order.OrderStateMachine do
     }
 
   def persist(%Sale{} = order, new_state) do
-    {:ok, order} = Order.update_sale(order, %{"status" => new_state})
+    {:ok, order} = Order.update_sale(order, %{status: new_state})
     Map.put(order, :state, new_state)
   end
 

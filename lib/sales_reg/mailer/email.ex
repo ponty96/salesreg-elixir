@@ -31,7 +31,6 @@ defmodule SalesReg.Email do
 	end
 
 	defp transform_template(template, sale) do
-		IO.inspect template, label: "template"
 		EEx.eval_string(template.body, sale: sale)
 	end
 

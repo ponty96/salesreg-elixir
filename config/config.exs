@@ -62,10 +62,10 @@ config :ex_aws,
 
 config :ex_aws, debug_requests: true
 
-config :plug, :statuses, %{
-  210 => "Image not uploaded",
-  209 => "Image successfully uploaded"
-}
+# config :plug, :statuses, %{
+#   210 => "Image not uploaded",
+#   209 => "Image successfully uploaded"
+# }
 
 config :pdf_generator,
   wkhtml_path: "/usr/local/bin/wkhtmltopdf",
@@ -73,14 +73,15 @@ config :pdf_generator,
 
 config :ueberauth, Ueberauth,
   providers: [
-    identity: { Ueberauth.Strategy.Identity, [
-        callback_methods: ["POST"],
-        uid_field: :email,
-        nickname_field: :email,
-        request_path: "/auth/identity",
-        callback_path: "/auth/identity/callback"
-      ]
-    }
+    identity:
+      {Ueberauth.Strategy.Identity,
+       [
+         callback_methods: ["POST"],
+         uid_field: :email,
+         nickname_field: :email,
+         request_path: "/auth/identity",
+         callback_path: "/auth/identity/callback"
+       ]}
   ]
 
 config :sales_reg, SalesReg.Mailer,
