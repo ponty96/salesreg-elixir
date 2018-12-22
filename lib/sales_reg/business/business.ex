@@ -176,7 +176,11 @@ defmodule SalesReg.Business do
   defp calc_expense_amount([], acc), do: Float.round(acc, 2)
 
   defp calc_expense_amount([h | t], acc) do
-    calc_expense_amount(t, acc + h.amount)
+    val = fn(amount) -> 
+      {float, _} = Float.parse(amount)
+      float
+    end
+    calc_expense_amount(t, acc + val.(h.amount))
   end
 
   defp update_bank_field(company_id) do
