@@ -810,7 +810,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   input_object :expense_item_input do
     field(:item_name, non_null(:string))
-    field(:amount, non_null(:float))
+    field(:amount, non_null(:string))
   end
 
   input_object :category_input do
