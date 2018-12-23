@@ -805,7 +805,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:expense_items, list_of(:expense_item_input))
     field(:paid_by_id, non_null(:uuid))
     field(:company_id, non_null(:uuid))
-    field(:total_amount, non_null(:float))
+    field(:total_amount, non_null(:string))
   end
 
   input_object :expense_item_input do
