@@ -100,7 +100,9 @@ defmodule SalesReg.Business.Expense do
         total_amount
 
       _ ->
-        expense.total_amount
+        {float, _} = Float.parse(expense.total_amount)
+        
+        float
         |> Float.round(2)
     end
   end
