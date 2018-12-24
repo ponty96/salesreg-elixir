@@ -14,6 +14,9 @@ defmodule SalesReg.Order.Star do
     belongs_to(:service, SalesReg.Store.Service)
     belongs_to(:contact, SalesReg.Business.Contact)
 
+    has_many(:reviews, SalesReg.Order.Review)
+    has_many(:stars, SalesReg.Order.Star)
+
     timestamps()
   end
 

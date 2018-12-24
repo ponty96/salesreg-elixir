@@ -66,6 +66,7 @@ defmodule SalesRegWeb.Plug.SubdomainHandler do
       company ->
         conn
         |> assign(:company_id, company.id)
+        |> assign(:company, company)
         |> assign(:company_template, company.company_template)
     end
   end

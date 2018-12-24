@@ -49,10 +49,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.delete_service(service)
   end
 
-  def list_featured_items(%{company_id: company_id}, _res) do
-    Store.list_featured_items(company_id)
-  end
-
   def delete_product(%{product_id: product_id}, _res) do
     product = Store.get_product(product_id)
     Store.delete_product(product)

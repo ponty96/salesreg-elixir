@@ -23,6 +23,7 @@ defmodule SalesRegWeb do
       import Plug.Conn
       import SalesRegWeb.Router.Helpers
       import SalesRegWeb.Gettext
+      SalesRegWeb.shared_aliases()
     end
   end
 
@@ -41,6 +42,7 @@ defmodule SalesRegWeb do
       import SalesRegWeb.Router.Helpers
       import SalesRegWeb.ErrorHelpers
       import SalesRegWeb.Gettext
+      SalesRegWeb.shared_aliases()
     end
   end
 

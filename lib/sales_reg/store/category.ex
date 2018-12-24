@@ -3,6 +3,7 @@ defmodule SalesReg.Store.Category do
   import Ecto.Changeset
 
   alias SalesReg.Store.{Product, Service}
+  @placeholder_image 'images/Indigo0140.jpg'
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -39,5 +40,12 @@ defmodule SalesReg.Store.Category do
   def delete_changeset(category) do
     category
     |> cast(%{}, [])
+  end
+
+  def category_image(%{products: [], services: []}), do: @placeholder_image
+
+  def category_image(%{products: products, services: services}) do
+    items = products ++ services
+    Enum.random(items).featured_image
   end
 end
