@@ -63,14 +63,15 @@ defmodule SalesReg.Store do
   def load_tags(_), do: []
 
   def load_prod_and_serv(company_id, query) do
-    query_regex = "%" <> query <> "%"
-    products = load_products(company_id, query_regex)
-    services = load_services(company_id, query_regex)
+    products = load_products(company_id, query)
+    services = load_services(company_id, query)
 
     Enum.shuffle(products ++ services)
   end
 
-  def load_products(company_id, query_regex) do
+  def load_products(company_id, query) do
+    query_regex = "%" <> query <> "%"
+
     ProductGroup
     |> join(:inner, [pg], p in assoc(pg, :products))
     |> preload([pg, p], products: p)
@@ -92,7 +93,9 @@ defmodule SalesReg.Store do
     |> List.flatten()
   end
 
-  def load_services(company_id, query_regex) do
+  def load_services(company_id, query) do
+    query_regex = "%" <> query <> "%"
+
     Service
     |> where([s], s.company_id == ^company_id)
     |> where([s], ilike(s.name, ^query_regex))

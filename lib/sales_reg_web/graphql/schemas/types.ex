@@ -219,6 +219,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       end)
     end
 
+    # total sales made by merchant to customer
+    field :total_amount_paid, :float do
+      resolve(fn _parent, %{source: contact} ->
+        {:ok, Order.contact_total_amount_paid(contact)}
+      end)
+    end
+
     field(:address, :location, resolve: dataloader(SalesReg.Business, :address))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
@@ -634,11 +641,11 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:about, :string)
     field(:contact_email, non_null(:string))
     field(:head_office, non_null(:location_input))
-    field(:currency, :string)
+    field(:currency, non_null(:string))
     field(:description, :string)
     field(:phone, :phone_input)
     field(:logo, :string)
-    field(:slug, :string)
+    field(:slug, non_null(:string))
   end
 
   input_object :branch_input do
@@ -795,15 +802,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:title, non_null(:string))
     field(:date, non_null(:string))
     field(:payment_method, non_null(:payment_method))
-    field(:expense_items, non_null(list_of(:expense_item_input)))
+    field(:expense_items, list_of(:expense_item_input))
     field(:paid_by_id, non_null(:uuid))
     field(:company_id, non_null(:uuid))
-    field(:total_amount, non_null(:float))
+    field(:total_amount, non_null(:string))
   end
 
   input_object :expense_item_input do
     field(:item_name, non_null(:string))
-    field(:amount, non_null(:float))
+    field(:amount, non_null(:string))
   end
 
   input_object :category_input do

@@ -47,7 +47,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
     """
     field :update_invoice, :mutation_response do
       arg(:invoice, non_null(:invoice_input))
-      arg(:id, non_null(:uuid))
+      arg(:invoice_id, non_null(:uuid))
 
       middleware(Authorize)
       resolve(&OrderResolver.update_invoice_due_date/2)

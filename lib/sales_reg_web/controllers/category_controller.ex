@@ -11,7 +11,8 @@ defmodule SalesRegWeb.CategoryController do
   end
 
   def show(%{assigns: %{company_id: company_id}} = conn, %{"id" => id}) do
-    category = Store.get_category(id, preload: [products: [:stars, :reviews], services: [:stars, :reviews]])
+    category =
+      Store.get_category(id, preload: [products: [:stars, :reviews], services: [:stars, :reviews]])
 
     conn
     |> render("category_show.html",

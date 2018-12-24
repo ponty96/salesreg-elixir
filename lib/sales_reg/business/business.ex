@@ -15,6 +15,16 @@ defmodule SalesReg.Business do
   ]
 
   @default_template_slug "yc1-template"
+  @email_types [
+    "yc_email_before_due",
+    "yc_email_early_due",
+    "yc_email_late_overdue",
+    "yc_email_received_order",
+    "yc_email_reminder",
+    "yc_email_restock",
+    "yc_email_welcome_to_yc",
+    "yc_payment_received"
+  ]
 
   def create_company(user_id, company_params) do
     company_params = Map.put(company_params, :owner_id, user_id)
@@ -33,7 +43,10 @@ defmodule SalesReg.Business do
            company_id: company.id,
            user_id: user_id
          },
-         {:ok, company_template} <- Theme.add_company_template(company_template_params) do
+         {:ok, company_template} <- Theme.add_company_template(company_template_params),
+         {_int, _result} <- insert_company_email_temps(company.id),
+         # TODO send email in task supervisor process
+         %Bamboo.Email{} <- Email.send_email(company.id, "yc_email_welcome_to_yc") do
       {:ok, company}
     else
       {:error, changeset} -> {:error, changeset}
@@ -147,7 +160,44 @@ defmodule SalesReg.Business do
     end)
   end
 
+  def create_expense(%{expense_items: _items} = params) do
+    put_items_amount(params)
+    |> Business.add_expense()
+  end
+
+  def create_expense(params) do
+    Business.add_expense(params)
+  end
+
+  def update_expense_details(expense, %{expense_items: _items} = params) do
+    Business.update_expense(expense, put_items_amount(params))
+  end
+
+  def update_expense_details(expense, params) do
+    Business.update_expense(expense, params)
+  end
+
   # Private Functions
+  defp put_items_amount(params) do
+    total_amount =
+      params.expense_items
+      |> calc_expense_amount(0)
+
+    Map.put_new(params, :items_amount, total_amount)
+  end
+
+  defp calc_expense_amount([], 0), do: 0.0
+  defp calc_expense_amount([], acc), do: Float.round(acc, 2)
+
+  defp calc_expense_amount([h | t], acc) do
+    val = fn amount ->
+      {float, _} = Float.parse(amount)
+      float
+    end
+
+    calc_expense_amount(t, acc + val.(h.amount))
+  end
+
   defp update_bank_field(company_id) do
     attrs = %{"is_primary" => false}
 
@@ -156,5 +206,26 @@ defmodule SalesReg.Business do
     |> where([b], b.is_primary == true)
     |> Repo.one()
     |> Business.update_bank(attrs)
+  end
+
+  def insert_company_email_temps(company_id) do
+    templates =
+      Enum.map(@email_types, fn type ->
+        %{
+          body: return_file_content(type),
+          type: type,
+          company_id: company_id
+        }
+      end)
+
+    Repo.insert_all(CompanyEmailTemplate, templates)
+  end
+
+  defp return_file_content(type) do
+    {:ok, binary} =
+      Path.expand("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
+      |> File.read()
+
+    binary
   end
 end

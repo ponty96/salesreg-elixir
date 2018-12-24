@@ -32,6 +32,8 @@ defmodule SalesReg.Business.Contact do
     has_one(:address, SalesReg.Business.Location, on_replace: :delete)
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
 
+    has_many(:sales, SalesReg.Order.Sale)
+
     timestamps()
   end
 

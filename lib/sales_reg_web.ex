@@ -127,7 +127,9 @@ defmodule SalesRegWeb do
         Theme,
         Theme.Template,
         Theme.CompanyTemplate,
-        Theme.CompanyEmailTemplate
+        Theme.CompanyEmailTemplate,
+        Email,
+        Mailer
       }
     end
   end

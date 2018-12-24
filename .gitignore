@@ -15,5 +15,10 @@ erl_crash.dump
 # variables.
 /config/*.secret.exs
 *.elixir_ls/*
+<<<<<<< HEAD
 node_modules
 *.DS_Store
+=======
+*.DS_Store
+node_modules
+>>>>>>> develop

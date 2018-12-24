@@ -28,7 +28,15 @@ defmodule SalesReg.Order do
   end
 
   def preload_order(order) do
-    Repo.preload(order, items: [:product, :service])
+    Repo.preload(order, [:invoice, :contact, company: [:owner], items: [:product, :service]])
+  end
+
+  def preload_invoice(invoice) do
+    Repo.preload(invoice, [:sale])
+  end
+
+  def preload_receipt(receipt) do
+    Repo.preload(receipt, [:sale])
   end
 
   def update_status(:sale, order_id, new_status) do
@@ -99,6 +107,11 @@ defmodule SalesReg.Order do
   def create_sale(%{contact_id: _id, amount_paid: amount, payment_method: "cash"} = params) do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
+    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
+      {:ok,
+       sale.company_id
+       |> Email.send_email("yc_email_received_order", sale)}
+    end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
@@ -113,6 +126,11 @@ defmodule SalesReg.Order do
   def create_sale(%{contact_id: _id, payment_method: "cash"} = params) do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
+    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
+      {:ok,
+       sale.company_id
+       |> Email.send_email("yc_email_received_order", sale)}
+    end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
@@ -130,6 +148,11 @@ defmodule SalesReg.Order do
       params
       |> Map.put_new(:contact_id, contact.id)
       |> Order.add_sale()
+    end)
+    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
+      {:ok,
+       sale.company_id
+       |> Email.send_email("yc_email_received_order", sale)}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -150,6 +173,11 @@ defmodule SalesReg.Order do
       |> Map.put_new(:contact_id, contact.id)
       |> Order.add_sale()
     end)
+    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
+      {:ok,
+       sale.company_id
+       |> Email.send_email("yc_email_received_order", sale)}
+    end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
@@ -161,6 +189,11 @@ defmodule SalesReg.Order do
   def create_sale(%{contact_id: _id, payment_method: "card"} = params) do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
+    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
+      {:ok,
+       sale.company_id
+       |> Email.send_email("yc_email_received_order", sale)}
+    end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
@@ -176,6 +209,11 @@ defmodule SalesReg.Order do
       params
       |> Map.put_new(:contact_id, contact.id)
       |> Order.add_sale()
+    end)
+    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
+      {:ok,
+       sale.company_id
+       |> Email.send_email("yc_email_received_order", sale)}
     end)
     |> Multi.run(:inser_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -231,6 +269,10 @@ defmodule SalesReg.Order do
       {:ok, invoice} ->
         invoice = Repo.preload(invoice, [:company, :user, sale: [items: [:product, :service]]])
         Order.supervise_pdf_upload(invoice)
+        sale = preload_invoice(invoice).sale
+
+        sale.company_id
+        |> Email.send_email("yc_email_before_due", sale)
 
         add_invoice
 
@@ -250,6 +292,9 @@ defmodule SalesReg.Order do
       {:ok, receipt} ->
         receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product, :service]]])
         Order.supervise_pdf_upload(receipt)
+
+        sale.company_id
+        |> Email.send_email("yc_payment_received", sale)
 
         add_receipt
 
@@ -275,6 +320,9 @@ defmodule SalesReg.Order do
         receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product, :service]]])
         Order.supervise_pdf_upload(receipt)
 
+        sale.company_id
+        |> Email.send_email("yc_payment_received", sale)
+
         {:ok, receipt}
 
       {:error, _reason} = error_tuple ->
@@ -298,28 +346,46 @@ defmodule SalesReg.Order do
 
   def calc_order_amount_paid(%Sale{} = sale) do
     sale = Repo.preload(sale, invoice: :receipts)
-    calc_amount_paid(sale.invoice.receipts)
+
+    if sale.invoice.receipts do
+      calc_amount_paid(sale.invoice.receipts)
+    else
+      0
+    end
   end
 
   def calc_order_amount_paid(%Invoice{} = invoice) do
     invoice = Repo.preload(invoice, [:receipts])
-    calc_amount_paid(invoice.receipts)
+
+    if invoice.receipts do
+      calc_amount_paid(invoice.receipts)
+    else
+      0
+    end
   end
 
   # TOD0, just fetch all orders associated with a contact id instead
   def contact_orders_debt(contact) do
-    contact = Repo.preload(contact, company: :sales)
+    sales = all_sales_made_contact(contact.id)
 
     {amount_paid_list, orders_total_amount_list} =
-      Enum.filter(contact.company.sales, fn sale ->
-        sale.contact_id == contact.id
-      end)
+      sales
       |> Enum.map(fn sale ->
         {calc_order_amount_paid(sale), calc_order_amount(sale)}
       end)
       |> Enum.unzip()
 
     Enum.sum(orders_total_amount_list) - Enum.sum(amount_paid_list)
+  end
+
+  def contact_total_amount_paid(contact) do
+    sales = all_sales_made_contact(contact.id)
+
+    sales
+    |> Enum.map(fn sale ->
+      calc_order_amount_paid(sale)
+    end)
+    |> Enum.sum()
   end
 
   def calc_product_total_quantity_sold(product_id) do
@@ -361,6 +427,10 @@ defmodule SalesReg.Order do
       ref_id = String.to_integer(last_resource_ref_id) + 1
       Map.put_new(attrs, :ref_id, "#{ref_id}")
     end
+  end
+
+  def calc_pay_outstanding(sale) do
+    calc_order_amount(sale) - calc_order_amount_paid(sale)
   end
 
   defp calc_items_amount(items) do
@@ -466,5 +536,14 @@ defmodule SalesReg.Order do
 
   defp find_in_items(items, :service, service_id) do
     {:ok, Enum.find(items, "not found", fn item -> item.service_id == service_id end)}
+  end
+
+  defp all_sales_made_contact(contact_id) do
+    query =
+      from(s in Sale,
+        where: s.contact_id == ^contact_id
+      )
+
+    Repo.all(query)
   end
 end
