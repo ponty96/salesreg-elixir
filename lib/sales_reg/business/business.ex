@@ -15,9 +15,9 @@ defmodule SalesReg.Business do
   ]
 
   @email_types [
-      "yc_email_before_due", 
-			"yc_email_early_due", 
-			"yc_email_late_overdue", 
+      "yc_email_before_due",
+			"yc_email_early_due",
+			"yc_email_late_overdue",
 			"yc_email_received_order",
       "yc_email_reminder",
       "yc_email_restock",
@@ -36,9 +36,9 @@ defmodule SalesReg.Business do
          },
          {:ok, _branch} <- add_branch(branch_params),
          [{:ok, _option} | _t] <- Store.insert_default_options(company.id),
-         {_int, _result} <- insert_company_email_temps(company.id), 
+         {_int, _result} <- insert_company_email_temps(company.id),
          %Bamboo.Email{} <- Email.send_email(company.id, "yc_email_welcome_to_yc") do
-      
+
       {:ok, company}
     else
       {:error, changeset} -> {:error, changeset}
@@ -176,7 +176,7 @@ defmodule SalesReg.Business do
   defp calc_expense_amount([], acc), do: Float.round(acc, 2)
 
   defp calc_expense_amount([h | t], acc) do
-    val = fn(amount) -> 
+    val = fn(amount) ->
       {float, _} = Float.parse(amount)
       float
     end
@@ -193,7 +193,7 @@ defmodule SalesReg.Business do
     |> Business.update_bank(attrs)
   end
 
-  defp insert_company_email_temps(company_id) do
+  def insert_company_email_temps(company_id) do
     templates = Enum.map(@email_types, fn(type) ->
       %{
         body: return_file_content(type),
@@ -201,7 +201,7 @@ defmodule SalesReg.Business do
         company_id: company_id
       }
     end)
-    
+
     Repo.insert_all(CompanyEmailTemplate, templates)
   end
 
