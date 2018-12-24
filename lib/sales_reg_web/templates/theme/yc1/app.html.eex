@@ -23,13 +23,13 @@
 	<div class="sr-nav__container">
 		<div class="container">
 			<div class="sr-nav__logo">
-				<a href="index.html" style="height: 27px;">
-					<img src="images/svg/ayonative_logo.svg" alt="logo"/>
+				<a href="/" style="height: auto;">
+    		<img src="<%= @company.logo %>" alt="logo" style="width: 100%; max-width: 10rem">
 				</a>
 			</div>
 			<ul class="sr-nav__links">
-				<li><a href="index.html">Home</a></li>
-				<li><a href="views/sr-category.html">Categories</a></li>
+				<li><%= link "Home", to: theme_path(@conn, :index) %></li>
+				<li><%= link "Categories", to: category_path(@conn, :index) %></li>
 				<li><a href="views/sr-store.html">Store</a></li>
 				<li><a href="views/sr-about.html">About</a></li>
 			</ul>
@@ -47,8 +47,8 @@
 
 <!-- Navbar Mobile -->
 <nav class="sr-nav--mobile">
-	<a href="index.html" class="sr-nav--mobile__link">
-		<img src="images/svg/ayonative_logo.svg" alt="logo"/>
+	<a href="/" class="sr-nav--mobile__link" style="height: auto;">
+		<img src="<%= @company.logo %>" alt="logo" style="width: 100%; max-width: 10rem">
 	</a>
 
 	<div class="d-flex align-items-center">
@@ -81,8 +81,8 @@
 	<div id="sr-sideNav--mobile">
 		<div class="sr-sideNav--mobile__wrapper">
 			<ul class="sr-sideNav--mobile__ul">
-				<li class="sr-sideNav--mobile__li"><a href="index.html">Home</a></li>
-				<li class="sr-sideNav--mobile__li"><a href="views/sr-category.html">Category</a></li>
+				<li class="sr-sideNav--mobile__li"><%= link "Home", to: theme_path(@conn, :index) %></li>
+				<li class="sr-sideNav--mobile__li"><%= link "Categories", to: category_path(@conn, :index) %></li>
 				<li class="sr-sideNav--mobile__li"><a href="views/sr-store.html">Store</a></li>
 				<li class="sr-sideNav--mobile__li"><a href="views/sr-about.html">About</a></li>
 			</ul>
@@ -91,8 +91,7 @@
 
 	<!-- Mobile Nav Mask -->
 	<div id="sr-sideNav--mobile__mask"></div>
-
-    <%= render @view_module, @view_template, assigns %>
+  <%= render @view_module, @view_template, assigns %>
 </main>
 
 <!-- Footer Links -->
