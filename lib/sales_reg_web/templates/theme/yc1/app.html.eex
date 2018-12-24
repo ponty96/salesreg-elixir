@@ -7,7 +7,7 @@
 	<meta name="Description" content="Segun Store, Type: Online merchant, Category: lorem">
 
 	<!-- Bootstrap CSS -->
-	<link rel="stylesheet" href="css/yc-1.template.css">
+	<link rel="stylesheet" href="<%= static_path(@conn, "/css/yc-1.template.css") %>">
 
 	<!-- Fontawesome Icons -->
 	<%# <link href="font-awesome.5.1/css/fontawesome.min.css" rel="stylesheet"/> %>
@@ -99,7 +99,7 @@
 	<div class="container">
 		<div class="sr-footer__company">
 			<div class="sr-footer__logo">
-				<img src="images/svg/ayonative_logo__white.svg" alt="image"/>
+				<img src="<%= @company.logo %>" alt="image"/>
 			</div>
 			<div class="sr-footer__social">
 				<a href="https://www.youtube.com/" class="yt" aria-label="yipcart youtube social link">
@@ -197,7 +197,7 @@
 			<div class="sr-footer__links">
 				<ul>
 					<li><span class="sr-footer__title">Category</span></li>
-                    <%= for category <- @categories do %>
+                    <%= for category <- @footer_categories do %>
                         <li><a href="#"><%= category.title %></a></li>
                     <% end %>
 				</ul>

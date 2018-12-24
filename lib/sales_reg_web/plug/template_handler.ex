@@ -4,6 +4,7 @@ defmodule SalesRegWeb.Plug.TemplateHandler do
   require Logger
   # Import convenience functions from controllers
   import Phoenix.Controller, only: [put_layout: 2, put_view: 2]
+  alias SalesReg.Store
 
   def init(default), do: default
 
@@ -13,13 +14,17 @@ defmodule SalesRegWeb.Plug.TemplateHandler do
   end
 
   defp fetch_and_add_view(
-         %Plug.Conn{assigns: %{company_template: %{template: %{slug: slug}}}} = conn
+         %Plug.Conn{
+           assigns: %{company_template: %{template: %{slug: slug}}, company_id: company_id}
+         } = conn
        ) do
     view = get_view(slug)
+    categories = Store.home_categories(company_id)
 
     conn
     |> put_layout({view, "app.html"})
     |> put_view(view)
+    |> assign(:footer_categories, categories)
   end
 
   defp get_view(slug) do

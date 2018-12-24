@@ -109,30 +109,6 @@ defmodule SalesReg.Store do
     list_featured_items(Product, company_id)
   end
 
-  def load_featured_services(company_id) do
-    list_featured_items(Service, company_id)
-  end
-
-  def home_categories(company_id) do
-    Repo.all(
-      from(c in Category,
-        where: c.company_id == ^company_id,
-        limit: 6,
-        preload: [:products, :services]
-      )
-    )
-  end
-  defp list_featured_items(schema, company_id) do
-    schema
-    |> where([p], p.company_id == ^company_id)
-    |> where([p], p.is_featured == true)
-    |> select([p], [p])
-    |> limit(10)
-    |> Repo.all()
-    |> Enum.map(&store_item_preloads(&1))
-    |> List.flatten()
-  end
-
   # def list_top_rated_items(company_id) do
   #   Product
   #   |> join(:inner, [p], s in Service)
@@ -339,6 +315,53 @@ defmodule SalesReg.Store do
           Enum.map(product.option_values, &(&1.name || "?")) |> Enum.join(" ")
         })"
     end
+  end
+
+  # WEBSTORE REQUIRED METHODS
+
+  def load_featured_services(company_id) do
+    list_featured_items(Service, company_id)
+  end
+
+  def home_categories(company_id) do
+    Repo.all(
+      from(c in Category,
+        where: c.company_id == ^company_id,
+        limit: 6,
+        preload: [:products, :services]
+      )
+    )
+  end
+
+  def paginated_categories(company_id) do
+    Repo.all(
+      from(c in Category,
+        where: c.company_id == ^company_id,
+        limit: 15,
+        preload: [:products, :services]
+      )
+    )
+  end
+
+  def category_prods_and_services(category_id) do
+    query =
+      from(p in Product,
+        where: p.category_id == ^category_id,
+        join: s in ^from(s in Service, where: s.category_id == ^category_id)
+      )
+
+    Repo.all(query)
+  end
+
+  defp list_featured_items(schema, company_id) do
+    schema
+    |> where([p], p.company_id == ^company_id)
+    |> where([p], p.is_featured == true)
+    |> select([p], [p])
+    |> limit(10)
+    |> Repo.all()
+    |> Enum.map(&store_item_preloads(&1))
+    |> List.flatten()
   end
 
   def calculate_store_item_stars(%{stars: []}), do: 0

@@ -30,6 +30,7 @@ defmodule SalesRegWeb.Router do
     get("/", ThemeController, :index)
     resources("/users", UserController, only: [:new, :create])
     resources("/companies", CompanyController, only: [:new, :create])
+    resources("/categories", CategoryController, only: [:index, :show])
   end
 
   scope "/auth", SalesRegWeb do
