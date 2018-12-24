@@ -24,7 +24,7 @@
 			<div class="sr1">
 				<ul itemscope itemtype="http://schema.org/BreadcrumbList" class="list-unstyled">
 					<%= for product <- @featured_products do %>
-						<%= render "_product_item.html", product: product, company: @company %>
+						<%= render "_product_item.html", product: product, company: @company, conn: @conn %>
 					<% end %>
 				</ul>
 			</div>
@@ -40,7 +40,7 @@
 			<div class="sr1">
 				<ul itemscope itemtype="http://schema.org/BreadcrumbList" class="list-unstyled">
 					<%= for service <- @featured_services do %>
-						<%= render "_service_item.html", service: service, company: @company %>
+						<%= render "_service_item.html", service: service, company: @company, conn: @conn %>
 					<% end %>
 				</ul>
 			</div>
@@ -54,25 +54,19 @@
 			<pre class="sr-sectionTitle" style="top:0; margin-left:0;">Category</pre>
 			<div class="row">
 				<div class="col-lg-6 p-2">
-					<%= render "_cat_main.html", category: Enum.at(@categories, 0) %>
+					<%= render "_cat_main.html", category: Enum.at(@categories, 0), conn: @conn %>
 				</div>
 
 				<div class="col-lg-6">
-				<% second_category = Enum.at(@categories, 1)%>
-				<% third_category = Enum.at(@categories, 2)%>
 					<div class="row">
-						<%= if second_category do %>
-							<%= render "_cat_sub.html", category: second_category, company: @company %>
-						<% end %>
-						<%= if third_category do %>
-							<%= render "_cat_sub.html", category: third_category, company: @company %>
-						<% end %>
+						<%= render "_cat_sub.html", category: Enum.at(@categories, 1), company: @company, conn: @conn %>
+						<%= render "_cat_sub.html", category: Enum.at(@categories, 2), company: @company, conn: @conn %>
 					</div>
 				</div>
 				<% remaning_categories = Enum.slice(@categories, 3, 3)%>
 
 					<%= for category <- remaning_categories do %>
-						<%= render "_cat_small.html", category: category, company: @company %>
+						<%= render "_cat_small.html", category: category, company: @company, conn: @conn %>
 					<% end %>
 			</div>
 		</div>
