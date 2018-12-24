@@ -1,0 +1,34 @@
+<li itemprop="itemListElement" itemscope
+					    itemtype="http://schema.org/ListItem">
+						<div class="srTitle2">
+							<a class="srFeedLink2" href="views/sr-product-detail.html" itemprop="url">
+								<div class="srPostPhoto2">
+									<img src="<%= @product.featured_image %>" alt="testing image" style="opacity: 1" itemprop="image"/>
+                  <%# TODO - implement link sharing %>
+									<%# <div class="srShare2">
+										<span><i class="fab fa-facebook-f"></i> </span>
+										<span><i class="fab fa-twitter"></i> </span>
+										<span><i class="fab fa-instagram"></i> </span>
+									</div> %>
+								</div>
+							</a>
+							<div class="srPostMeta2">
+								<a href="views/sr-product-detail.html" class="srPostInfo2">
+									<h3 class="srProductTitle" itemprop="name"><%= @product.name %></h3>
+									<h3 class="srProductPrice" itemprop="productPrice"><%= @company.currency %> <%= @product.price%></h3>
+								</a>
+
+								<div class="srDetails2" itemprop="aggregateRating"
+								     itemscope itemtype="http://schema.org/AggregateRating">
+									<div class="srRating">
+										<div class="srRatingItem">
+											<% stars = Store.calculate_store_item_stars(@product) %>
+											<%= render_stars(stars) %>
+										</div>
+										<div class="srRatingCount" itemprop="reviewCount">(<%= 					Enum.count(@product.reviews)%>)
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>

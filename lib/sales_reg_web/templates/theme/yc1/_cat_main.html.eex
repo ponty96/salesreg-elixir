@@ -1,0 +1,12 @@
+<div class="sr-category--one sr-category--one-main-mb" itemscope itemtype="http://schema.org/Product">
+						<div style="width: 100%">
+							<a href="views/sr-store.html" style="background-image: url('<%= Store.category_image(@category) %>'); background-position: 56% 48% !important;" class="sr-block sr-backgroundCover sr-category--one-image" itemprop="image" aria-label="image"></a>
+							<div class="sr-category--label">
+									<span class="sr-block">
+										<a href="views/sr-store.html" itemprop="url">
+											<span itemprop="name"><%= @category.title %></span>
+										</a>
+									</span>
+							</div>
+						</div>
+					</div>
