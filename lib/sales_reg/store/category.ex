@@ -3,7 +3,7 @@ defmodule SalesReg.Store.Category do
   import Ecto.Changeset
 
   alias SalesReg.Store.{Product, Service}
-  @placeholder_image 'images/Indigo0140.jpg'
+  @placeholder_image 'images/yipcart-item-category.png'
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
