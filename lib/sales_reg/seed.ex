@@ -46,7 +46,7 @@ defmodule SalesReg.Seed do
        numerous services",
       logo:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTulsnrbHjdztPnDwdWzruyJ-p1gi7Mwf43hT7cC1oiwl1hU_h",
-      slug: "Sandbox"
+      slug: "sandbox"
     }
 
     Business.create_company(user_id, company_params)
