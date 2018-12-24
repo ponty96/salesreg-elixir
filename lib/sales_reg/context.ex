@@ -66,12 +66,23 @@ defmodule SalesReg.Context do
           end
         end
 
+        def unquote(String.to_atom("all_#{schema}"))() do
+          module = unquote(module)
+          if module do
+            module
+            |> Repo.all()
+          else
+            raise "expected #{unquote(module)}"
+          end
+        end
+
         Module.make_overridable(__MODULE__, [
           {String.to_atom("get_#{schema}"), 2},
           {String.to_atom("update_#{schema}"), 2},
           {String.to_atom("list_company_#{schema}s"), 1},
           {String.to_atom("add_#{schema}"), 1},
-          {String.to_atom("delete_#{schema}"), 1}
+          {String.to_atom("delete_#{schema}"), 1},
+          {String.to_atom("all_#{schema}"), 0}
         ])
       end
     end

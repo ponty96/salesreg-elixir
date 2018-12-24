@@ -28,7 +28,15 @@ defmodule SalesReg.Order do
   end
 
   def preload_order(order) do
-    Repo.preload(order, items: [:product, :service])
+    Repo.preload(order, [:invoice, :contact, company: [:owner], items: [:product, :service]])
+  end
+
+  def preload_invoice(invoice) do
+    Repo.preload(invoice, [:sale])
+  end
+
+  def preload_receipt(receipt) do
+    Repo.preload(receipt, [:sale])
   end
 
   def update_status(:sale, order_id, new_status) do
@@ -99,6 +107,11 @@ defmodule SalesReg.Order do
   def create_sale(%{contact_id: _id, amount_paid: amount, payment_method: "cash"} = params) do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
+    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
+        {:ok, 
+          sale.company_id
+          |> Email.send_email("yc_email_received_order", sale)}
+    end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
@@ -113,6 +126,11 @@ defmodule SalesReg.Order do
   def create_sale(%{contact_id: _id, payment_method: "cash"} = params) do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
+    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
+        {:ok, 
+          sale.company_id
+          |> Email.send_email("yc_email_received_order", sale)}
+    end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
@@ -130,6 +148,11 @@ defmodule SalesReg.Order do
       params
       |> Map.put_new(:contact_id, contact.id)
       |> Order.add_sale()
+    end)
+    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
+        {:ok, 
+          sale.company_id
+          |> Email.send_email("yc_email_received_order", sale)}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -150,6 +173,11 @@ defmodule SalesReg.Order do
       |> Map.put_new(:contact_id, contact.id)
       |> Order.add_sale()
     end)
+    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
+        {:ok, 
+          sale.company_id
+          |> Email.send_email("yc_email_received_order", sale)}
+    end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
@@ -161,6 +189,11 @@ defmodule SalesReg.Order do
   def create_sale(%{contact_id: _id, payment_method: "card"} = params) do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
+    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
+        {:ok, 
+          sale.company_id
+          |> Email.send_email("yc_email_received_order", sale)}
+    end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
@@ -176,6 +209,11 @@ defmodule SalesReg.Order do
       params
       |> Map.put_new(:contact_id, contact.id)
       |> Order.add_sale()
+    end)
+    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
+        {:ok, 
+          sale.company_id
+          |> Email.send_email("yc_email_received_order", sale)}
     end)
     |> Multi.run(:inser_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -231,6 +269,10 @@ defmodule SalesReg.Order do
       {:ok, invoice} ->
         invoice = Repo.preload(invoice, [:company, :user, sale: [items: [:product, :service]]])
         Order.supervise_pdf_upload(invoice)
+        sale = preload_invoice(invoice).sale
+        
+        sale.company_id
+        |> Email.send_email("yc_email_before_due", sale)
 
         add_invoice
 
@@ -250,6 +292,9 @@ defmodule SalesReg.Order do
       {:ok, receipt} ->
         receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product, :service]]])
         Order.supervise_pdf_upload(receipt)
+
+        sale.company_id
+        |> Email.send_email("yc_payment_received", sale)
 
         add_receipt
 
@@ -274,6 +319,9 @@ defmodule SalesReg.Order do
       {:ok, receipt} ->
         receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product, :service]]])
         Order.supervise_pdf_upload(receipt)
+
+        sale.company_id
+        |> Email.send_email("yc_payment_received", sale)
 
         {:ok, receipt}
 
@@ -381,6 +429,10 @@ defmodule SalesReg.Order do
     end
   end
 
+  def calc_pay_outstanding(sale) do
+    calc_order_amount(sale) - calc_order_amount_paid(sale)
+  end
+
   defp calc_items_amount(items) do
     Enum.map(items, fn item ->
       {quantity, _} = Float.parse(item.quantity)
@@ -401,10 +453,10 @@ defmodule SalesReg.Order do
 
   defp repo_transaction_resp(repo_transaction) do
     case repo_transaction do
-      {:ok, %{insert_sale: sale}} ->
+      {:ok, %{insert_sale: sale}} -> 
         {:ok, sale}
-
-      {:error, _failed_operation, _failed_value, changeset} ->
+      
+      {:error, _failed_operation, _failed_value, changeset} -> 
         {:error, changeset}
     end
   end

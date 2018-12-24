@@ -641,11 +641,11 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:about, :string)
     field(:contact_email, non_null(:string))
     field(:head_office, non_null(:location_input))
-    field(:currency, :string)
+    field(:currency, non_null(:string))
     field(:description, :string)
     field(:phone, :phone_input)
     field(:logo, :string)
-    field(:slug, :string)
+    field(:slug, non_null(:string))
   end
 
   input_object :branch_input do
@@ -805,12 +805,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:expense_items, list_of(:expense_item_input))
     field(:paid_by_id, non_null(:uuid))
     field(:company_id, non_null(:uuid))
-    field(:total_amount, non_null(:float))
+    field(:total_amount, non_null(:string))
   end
 
   input_object :expense_item_input do
     field(:item_name, non_null(:string))
-    field(:amount, non_null(:float))
+    field(:amount, non_null(:string))
   end
 
   input_object :category_input do
