@@ -1,22 +1,22 @@
 <li itemprop="itemListElement" itemscope
 					    itemtype="http://schema.org/ListItem">
 						<div class="srTitle2">
-							<a class="srFeedLink2" href="views/sr-product-detail.html" itemprop="url">
+							<%=  link to: store_path(@conn, :show_product, @product), class: "srFeedLink2", itemprop: "url" do %>
 								<div class="srPostPhoto2">
 									<img src="<%= @product.featured_image %>" alt="testing image" style="opacity: 1" itemprop="image"/>
                   <%# TODO - implement link sharing %>
-									<%# <div class="srShare2">
+									<div class="srShare2">
 										<span><i class="fab fa-facebook-f"></i> </span>
 										<span><i class="fab fa-twitter"></i> </span>
 										<span><i class="fab fa-instagram"></i> </span>
-									</div> %>
+									</div>
 								</div>
-							</a>
+							<% end %>
 							<div class="srPostMeta2">
-								<a href="views/sr-product-detail.html" class="srPostInfo2">
+								<%=  link to: store_path(@conn, :show_product, @product), class: "srPostInfo2" do %>
 									<h3 class="srProductTitle" itemprop="name"><%= @product.name %></h3>
 									<h3 class="srProductPrice" itemprop="productPrice"><%= @company.currency %> <%= @product.price%></h3>
-								</a>
+								<% end %>
 
 								<div class="srDetails2" itemprop="aggregateRating"
 								     itemscope itemtype="http://schema.org/AggregateRating">

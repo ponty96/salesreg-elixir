@@ -31,6 +31,10 @@ defmodule SalesRegWeb.Router do
     resources("/users", UserController, only: [:new, :create])
     resources("/companies", CompanyController, only: [:new, :create])
     resources("/categories", CategoryController, only: [:index, :show])
+    get("/products",  StoreController, :index_products)
+    get("/products/:id",  StoreController, :show_product)
+    get("/services",  StoreController, :index_services)
+    get("/services/:id",  StoreController, :show_service)
   end
 
   scope "/auth", SalesRegWeb do

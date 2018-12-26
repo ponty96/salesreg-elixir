@@ -1,0 +1,471 @@
+	<!-- Product Details -->
+	<section class="sr-product__detail">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-8">
+					<div class="sr-product__contentMain">
+						<div class="sr-product__imageDescMain">
+							<div class="sr-product__imgDesc">
+								<div class="srFeedLink2">
+									<div class="srPostPhoto2">
+										<img src="<%= @product.featured_image %>" alt="testing image" style="opacity: 1"/>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Mobile View only -->
+						<div class="sr-product__contentMobile">
+							<div class="sr-product__title">
+								<h1 class="sr-product__detail__title">
+                <%= @product.name %>
+                </h1>
+							</div>
+
+							<div class="sr-product__quantity">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="sr-product__contentMobile--variant__spacing">
+											<div class="sr-labelled__labelWrapper">
+												<div class="sr-label">
+													<label class="sr-label__text">Product quantity</label>
+												</div>
+											</div>
+											<div class="sr-textField">
+												<input class="sr-textField__input" type="number" value="1">
+												<div class="sr-textField__backDrop"></div>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-md-6">
+										<div class="sr-product__contentMobile--variant__spacing">
+											<div class="sr-labelled__labelWrapper">
+												<div class="sr-label">
+													<label for="Select20" class="sr-label__text">Color</label>
+												</div>
+											</div>
+											<div class="sr-select">
+												<select class="sr-select__input" aria-invalid="false">
+													<option value="today">Blue</option>
+													<option value="yesterday">Yellow</option>
+													<option value="lastWeek">Black</option>
+												</select>
+												<div class="sr-select__content" aria-hidden="true">
+													<span class="sr-select__selectedOption">Selected</span>
+													<span class="sr-select__icon">
+														<span class="sr-icon">
+															<svg class="sr-icon__svg" viewBox="0 0 20 20" focusable="false" aria-hidden="true"><path d="M13 8l-3-3-3 3h6zm-.1 4L10 14.9 7.1 12h5.8z" fill-rule="evenodd">
+															</path>
+															</svg>
+														</span>
+													</span>
+												</div>
+												<div class="sr-select__backdrop"></div>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-md-6">
+										<div class="sr-product__contentMobile--variant__spacing">
+											<div class="sr-labelled__labelWrapper">
+												<div class="sr-label">
+													<label for="Select20" class="sr-label__text">Select size</label>
+												</div>
+											</div>
+											<div class="sr-select">
+												<select class="sr-select__input" aria-invalid="false">
+													<option value="today">M</option>
+													<option value="yesterday">L</option>
+													<option value="lastWeek">XL</option>
+													<option value="lastWeek">XXL</option>
+												</select>
+												<div class="sr-select__content" aria-hidden="true">
+													<span class="sr-select__selectedOption">Selected</span>
+													<span class="sr-select__icon">
+														<span class="sr-icon">
+															<svg class="sr-icon__svg" viewBox="0 0 20 20" focusable="false" aria-hidden="true"><path d="M13 8l-3-3-3 3h6zm-.1 4L10 14.9 7.1 12h5.8z" fill-rule="evenodd">
+															</path>
+															</svg>
+														</span>
+													</span>
+												</div>
+												<div class="sr-select__backdrop"></div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="sr-product__meta">
+								<div class="sr-product__metaItem">
+									<p>Availability:<span>In stock</span></p>
+								</div>
+								<div class="sr-product__metaItem list">
+									<p>Tag:<span>Macbook</span><span>Macbook</span></p>
+								</div>
+							</div>
+
+							<div class="sr-product__share">
+								<button>share <i class="fa fa-share"></i></button>
+							</div>
+						</div>
+
+						<!-- Product Description -->
+						<div class="sr-product__description">
+							<pre class="sr-sectionTitle" style="top:0; margin-left:0;">Product Details</pre>
+							<div class="sr-product__descriptionCont open">
+								<p><%= @product.description %></p>
+							</div>
+							<div class="btn">
+								<div class="sr-readMore__btn">Read more</div>
+							</div>
+						</div>
+
+						<div class="sr-product__review">
+							<pre class="sr-sectionTitle" style="top:0; margin-left:0;">Ratings & Reviews</pre>
+							<div class="sr-product__reviewHeader">
+								<div class="sr-product__rating">
+									<div class="srRating">
+										<div class="srRatingItem">
+											<% stars = Store.calculate_store_item_stars(@product) %>
+											<%= render_stars(stars) %>
+										</div>
+										<div class="srRatingCount font-weight-bold">(<%= stars %>)</div>
+									</div>
+								</div>
+								<div class="srRatingCount font-weight-bold"><%= Enum.count(@product.reviews)%> Reviews</div>
+							</div>
+							<div class="sr-product__reviewWrapper">
+								<ul class="sr-product__reviewItem">
+                  <%= for review <- @product.reviews do %>
+                    <%= render "_review_item.html", review: review %>
+                  <% end %>
+								</ul>
+							</div>
+							<div class="sr-product__reviewMore">
+								<button>Load More</button>
+								<!--<button><span>Write A Review</span><span><i class="fa fa-arrow-right"></i> </span></button>-->
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-lg-4">
+					<div class="sr-product__contentSticky">
+						<div class="sr-product__content">
+							<div class="sr-product__breadcrumb">
+								<span>Store</span>
+								<span>category</span>
+							</div>
+
+							<div class="sr-product__title">
+								<h1 class="sr-product__detail__title"><%= @product.name %></h1>
+							</div>
+
+							<div class="sr-product__rating">
+								<div class="srRating">
+									<div class="srRatingItem">
+										<% stars = Store.calculate_store_item_stars(@product) %>
+										<%= render_stars(stars) %>
+									</div>
+									<div class="srRatingCount font-weight-bold">(<%= stars %>)</div>
+								</div>
+							</div>
+
+							<div class="sr-product__price">
+								<h1 class="sr-product__price-font"><%= @company.currency %> <%= @product.price  %></h1>
+							</div>
+
+							<div class="sr-product__quantity">
+								<div class="row">
+									<div class="col-lg-6">
+										<div class="mb-3">
+											<div class="sr-labelled__labelWrapper">
+												<div class="sr-label">
+													<label id="TextField1Label" class="sr-label__text">Quantity</label>
+												</div>
+											</div>
+											<div class="sr-textField">
+												<input class="sr-textField__input" type="number" value="1" aria-label="Quantity">
+												<div class="sr-textField__backDrop"></div>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-lg-6">
+										<div class="mb-3">
+											<div class="sr-labelled__labelWrapper">
+												<div class="sr-label">
+													<label for="Select20" class="sr-label__text">Color</label>
+												</div>
+											</div>
+											<div class="sr-select">
+												<select class="sr-select__input" aria-label="select option">
+													<option value="today" aria-label="Blue">Blue</option>
+													<option value="yesterday" aria-label="Yellow">Yellow</option>
+													<option value="lastWeek" aria-label="Black">Black</option>
+												</select>
+												<div class="sr-select__content" aria-hidden="true">
+													<span class="sr-select__selectedOption">Selected</span>
+													<span class="sr-select__icon">
+														<span class="sr-icon">
+															<svg class="sr-icon__svg" viewBox="0 0 20 20" focusable="false" aria-hidden="true"><path d="M13 8l-3-3-3 3h6zm-.1 4L10 14.9 7.1 12h5.8z" fill-rule="evenodd">
+															</path>
+															</svg>
+														</span>
+													</span>
+												</div>
+												<div class="sr-select__backdrop"></div>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-lg-6">
+										<div class="mb-3">
+											<div class="sr-labelled__labelWrapper">
+												<div class="sr-label">
+													<label id="Select20Label" for="Select20" class="sr-label__text">Size</label>
+												</div>
+											</div>
+											<div class="sr-select">
+												<select id="Select20" class="sr-select__input" aria-label="select size">
+													<option value="today" aria-label="M">M</option>
+													<option value="yesterday" aria-label="L">L</option>
+													<option value="lastWeek" aria-label="XL">XL</option>
+													<option value="lastWeek" aria-label="XXL">XXL</option>
+												</select>
+												<div class="sr-select__content" aria-hidden="true">
+													<span class="sr-select__selectedOption">Selected</span>
+													<span class="sr-select__icon">
+														<span class="sr-icon">
+															<svg class="sr-icon__svg" viewBox="0 0 20 20" focusable="false" aria-hidden="true"><path d="M13 8l-3-3-3 3h6zm-.1 4L10 14.9 7.1 12h5.8z" fill-rule="evenodd">
+															</path>
+															</svg>
+														</span>
+													</span>
+												</div>
+												<div class="sr-select__backdrop"></div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="sr-product__meta">
+								<div class="sr-product__metaItem">
+									<p>Availability:<span>In stock</span></p>
+								</div>
+								<div class="sr-product__metaItem list">
+									<p>Tag:<span>Macbook</span><span>Macbook</span></p>
+								</div>
+							</div>
+
+							<div class=" sr-product__addToCart__button">
+								<button class="sr-button shadow-none" onclick="location.href='sr-cart.html'"><span>Add to cart</span><span><i
+									class="fa fa-arrow-right"></i> </span></button>
+								<button><i class="fa fa-bookmark"></i></button>
+							</div>
+
+							<div class="sr-product__share">
+								<button>share <i class="fa fa-share-alt-square"></i></button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<section class="sr-product--mobileCheckout">
+		<div class="container">
+			<div class="sr-product--mobileCheckout__wrapper">
+				<div class="sr-product--mobile__wrapper1">
+					<div class="sr-product--mmobile__table">
+						<div class="sr-product--mobile__price">
+							<div class="sr-product--mobile__overflowWrap">
+								<div class="sr-product--mobile__lineHeight">
+									<div class="sr-product--mobile__inline">
+										<span>$2,343.99</span>
+									</div>
+								</div>
+								<div class="srRatingMobileCheckout">
+									<div class="srRatingItemMobileCheckout">
+										<span><i class="fa fa-star srRatingIcon"></i> </span>
+										<span><i class="fa fa-star srRatingIcon"></i> </span>
+										<span><i class="fa fa-star srRatingIcon"></i> </span>
+										<span><i class="fa fa-star srRatingEmpty"></i> </span>
+										<span><i class="fa fa-star srRatingEmpty"></i> </span>
+									</div>
+									<div class="srRatingCount">(4.5)</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="sr-product--mobile__button">
+							<div style="margin-left: 8px;">
+								<div class="sr-product--mobile__buttonWrapper">
+									<button type="submit" aria-busy="false">
+											<span>
+												<div class="sr-checkoutButtonMobile">Add to Cart</div>
+											</span>
+									</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Related Product -->
+	<section class="sr-related__post">
+		<div class="container">
+			<pre class="sr-sectionTitle" style="top:0; margin-left:0;">Related Post</pre>
+			<div class="sr1">
+				<ul itemscope itemtype="http://schema.org/BreadcrumbList" class="list-unstyled">
+					<li itemprop="itemListElement" itemscope
+					    itemtype="http://schema.org/ListItem">
+						<div class="srTitle2">
+							<a class="srFeedLink2" href="sr-product-detail.html" itemprop="url">
+								<div class="srPostPhoto2">
+									<img src="/images/Model-with-bag.jpg" alt="testing image" style="opacity: 1" itemprop="image"/>
+									<div class="srShare2">
+										<span><i class="fab fa-facebook-f"></i> </span>
+										<span><i class="fab fa-twitter"></i> </span>
+										<span><i class="fab fa-instagram"></i> </span>
+									</div>
+								</div>
+							</a>
+							<div class="srPostMeta2">
+								<a href="sr-product-detail.html" class="srPostInfo2">
+									<h3 class="srProductTitle" itemprop="name">Testing for muzil style of grid listing to know which to choose from at the end</h3>
+									<h3 class="srProductPrice">$20.99</h3>
+								</a>
+
+								<div class="srDetails2" itemprop="aggregateRating"
+								     itemscope itemtype="http://schema.org/AggregateRating">
+									<div class="srRating">
+										<div class="srRatingItem">
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingIcon"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingIcon"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingIcon"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingEmpty"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingEmpty"></i> </span>
+										</div>
+										<div class="srRatingCount" itemprop="reviewCount">(30)</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li itemprop="itemListElement" itemscope
+					    itemtype="http://schema.org/ListItem">
+						<div class="srTitle2">
+							<a class="srFeedLink2" href="sr-product-detail.html" itemprop="url">
+								<div class="srPostPhoto2">
+									<img src="/images/Indigo0096.jpg" alt="testing image" style="opacity: 1" itemprop="image"/>
+									<div class="srShare2">
+										<span><i class="fab fa-facebook-f"></i> </span>
+										<span><i class="fab fa-twitter"></i> </span>
+										<span><i class="fab fa-instagram"></i> </span>
+									</div>
+								</div>
+							</a>
+							<div class="srPostMeta2">
+								<a href="sr-product-detail.html" class="srPostInfo2">
+									<h3 class="srProductTitle" itemprop="name">Testing for muzil style of grid listing to know which to choose from at the end</h3>
+									<h3 class="srProductPrice">$20.99</h3>
+								</a>
+
+								<div class="srDetails2" itemprop="aggregateRating"
+								     itemscope itemtype="http://schema.org/AggregateRating">
+									<div class="srRating">
+										<div class="srRatingItem">
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingIcon"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingIcon"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingIcon"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingEmpty"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingEmpty"></i> </span>
+										</div>
+										<div class="srRatingCount" itemprop="reviewCount">(30)</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li itemprop="itemListElement" itemscope
+					    itemtype="http://schema.org/ListItem">
+						<div class="srTitle2">
+							<a class="srFeedLink2" href="sr-product-detail.html" itemprop="url">
+								<div class="srPostPhoto2">
+									<img src="/images/cross-board.jpg" alt="testing image" style="opacity: 1" itemprop="image"/>
+									<div class="srShare2">
+										<span><i class="fab fa-facebook-f"></i> </span>
+										<span><i class="fab fa-twitter"></i> </span>
+										<span><i class="fab fa-instagram"></i> </span>
+									</div>
+								</div>
+							</a>
+							<div class="srPostMeta2">
+								<a href="sr-product-detail.html" class="srPostInfo2">
+									<h3 class="srProductTitle" itemprop="name">Testing for muzil style of grid listing to know which to choose from at the end</h3>
+									<h3 class="srProductPrice">$20.99</h3>
+								</a>
+
+								<div class="srDetails2" itemprop="aggregateRating"
+								     itemscope itemtype="http://schema.org/AggregateRating">
+									<div class="srRating">
+										<div class="srRatingItem">
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingIcon"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingIcon"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingIcon"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingEmpty"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingEmpty"></i> </span>
+										</div>
+										<div class="srRatingCount" itemprop="reviewCount">(30)</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+					<li itemprop="itemListElement" itemscope
+					    itemtype="http://schema.org/ListItem">
+						<div class="srTitle2">
+							<a class="srFeedLink2" href="sr-product-detail.html" itemprop="url">
+								<div class="srPostPhoto2">
+									<img src="/images/Model-with-bag.jpg" alt="testing image" style="opacity: 1" itemprop="image"/>
+									<div class="srShare2">
+										<span><i class="fab fa-facebook-f"></i> </span>
+										<span><i class="fab fa-twitter"></i> </span>
+										<span><i class="fab fa-instagram"></i> </span>
+									</div>
+								</div>
+							</a>
+							<div class="srPostMeta2">
+								<a href="sr-product-detail.html" class="srPostInfo2">
+									<h3 class="srProductTitle" itemprop="name">Testing for muzil style of grid listing to know which to choose from at the end</h3>
+									<h3 class="srProductPrice">$20.99</h3>
+								</a>
+
+								<div class="srDetails2" itemprop="aggregateRating"
+								     itemscope itemtype="http://schema.org/AggregateRating">
+									<div class="srRating">
+										<div class="srRatingItem">
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingIcon"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingIcon"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingIcon"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingEmpty"></i> </span>
+											<span itemprop="ratingValue"><i class="fa fa-star srRatingEmpty"></i> </span>
+										</div>
+										<div class="srRatingCount" itemprop="reviewCount">(30)</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</section>

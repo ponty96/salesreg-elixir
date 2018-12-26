@@ -15,9 +15,18 @@ defmodule SalesRegWeb.Theme do
     Enum.concat(starred, unstarred)
   end
 
+  def parse_review_name(text) do
+    if String.length(text) > 20 do
+      "#{String.slice(text, 0..20)} ..."
+    else
+      text
+    end
+  end
+
   defmodule Yc1View do
     use SalesRegWeb, :view
 
     defdelegate render_stars(count), to: SalesRegWeb.Theme
+    defdelegate parse_review_name(text), to: SalesRegWeb.Theme
   end
 end
