@@ -28,10 +28,11 @@ defmodule SalesReg.Tasks do
 		|> send_mul_email("yc_email_late_overdue")
 	end
 
+	### Private Functions
 	defp send_mul_email(invoices, type) do
 		Enum.map(invoices, fn(invoice) ->
 				invoice = Order.preload_invoice(invoice)
-				Email.send_email(invoice.company_id, type, invoice.sale)
+				Email.send_email(type, invoice.sale)
 		end)
 	end
 

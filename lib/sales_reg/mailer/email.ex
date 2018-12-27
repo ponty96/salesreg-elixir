@@ -2,22 +2,22 @@ defmodule SalesReg.Email do
 	use SalesRegWeb, :context
 	import Bamboo.Email
 
-	def send_email(company_id, type) do
-		send_email(company_id, type, %Sale{})
+	def send_email(%Company{} = company, type, binary) do
+		binary
+		|> transform_template(company)
+		|> construct_email(company, type)
+		|> send_email()
 	end
 
-	def send_email(company_id, type, sale) do
+	def send_email(%Sale{} = sale, type) do
 		sale = Order.preload_order(sale)
-		company = 
-			sale.company || 
-			Business.get_company(company_id)
+		company = sale.company
 		
-		company_id
+		company.id
 		|> Theme.get_email_template_by_type(type)
 		|> transform_template(sale)
-		|> construct_email(company.contact_email, type)
+		|> construct_email(sale, type)
 		|> send_email()
-		|> Mailer.deliver_later()
 	end
 
 	def send_email(email_params) do
@@ -25,19 +25,32 @@ defmodule SalesReg.Email do
 			from:  email_params.from,
       to: email_params.to,
       subject: email_params.subject,
-			html_body: email_params.html_body,
+			html_body: email_params.html_body
 		)
 		|> Mailer.deliver_later()
 	end
 
-	defp transform_template(template, sale) do
+	defp transform_template(template, %Sale{} = sale) do
 		EEx.eval_string(template.body, sale: sale)
 	end
 
-	defp construct_email(html_body, receipient, type) do
+	defp transform_template(binary, %Company{} = company) do
+		EEx.eval_string(binary, company: company)
+	end
+	
+	defp construct_email(html_body, %Company{} = company, type) do
 		%{
-			to: receipient,
+			to: company.contact_email,
 			from: "opeyemi.badmos@yipcart.com",
+			subject: gen_sub(type),
+			html_body: html_body,
+		}
+	end
+
+	defp construct_email(html_body, %Sale{} = sale, type) do
+		%{
+			to: sale.contact.email,
+			from: sale.company.contact_email, 
 			subject: gen_sub(type),
 			html_body: html_body,
 		}

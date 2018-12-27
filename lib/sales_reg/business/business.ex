@@ -20,8 +20,6 @@ defmodule SalesReg.Business do
 			"yc_email_late_overdue", 
 			"yc_email_received_order",
       "yc_email_reminder",
-      "yc_email_restock",
-      "yc_email_welcome_to_yc",
       "yc_payment_received"
   ]
 
@@ -37,7 +35,7 @@ defmodule SalesReg.Business do
          {:ok, _branch} <- add_branch(branch_params),
          [{:ok, _option} | _t] <- Store.insert_default_options(company.id),
          {_int, _result} <- insert_company_email_temps(company.id), 
-         %Bamboo.Email{} <- Email.send_email(company.id, "yc_email_welcome_to_yc") do
+         %Bamboo.Email{} <- send_email(company, "yc_email_welcome_to_yc") do
       
       {:ok, company}
     else
@@ -203,6 +201,11 @@ defmodule SalesReg.Business do
     end)
     
     Repo.insert_all(CompanyEmailTemplate, templates)
+  end
+
+  defp send_email(company, type) do
+    binary = return_file_content(type)
+    Email.send_email(company, type, binary)
   end
 
   defp return_file_content(type) do
