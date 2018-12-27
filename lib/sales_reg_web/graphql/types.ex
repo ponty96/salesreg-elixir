@@ -1,4 +1,4 @@
-defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
+defmodule SalesRegWeb.GraphQL.DataTypes do
   @moduledoc """
   	Module contains all GraphQL Object Types
   """
@@ -140,6 +140,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:product_group, :product_group, resolve: dataloader(SalesReg.Store, :product_group))
 
+    field(:reviews, list_of(:review), resolve: dataloader(SalesReg.Order, :reviews))
+    field(:stars, list_of(:star), resolve: dataloader(SalesReg.Order, :stars))
+
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
 
@@ -181,6 +184,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+
+    field(:reviews, list_of(:review), resolve: dataloader(SalesReg.Order, :reviews))
+    field(:stars, list_of(:star), resolve: dataloader(SalesReg.Order, :stars))
 
     field :total_times_ordered, :integer do
       resolve(fn _parent, %{source: service} ->
@@ -365,6 +371,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       list_of(:service),
       resolve: dataloader(SalesReg.Business, :services)
     )
+
+    field :image, :string do
+      resolve(fn _parent, %{source: category} ->
+        {:ok, Store.category_image(category)}
+      end)
+    end
   end
 
   connection(node_type: :category)
@@ -869,5 +881,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :update_phone_input do
     field(:id, non_null(:uuid))
     field(:number, non_null(:string))
+  end
+
+  ###
+  # DATA SPECIFIC TO THE WEBSOTE
+  ##
+  object :home_data do
+    field(:categories, list_of(:category))
+    field(:featured_products, list_of(:product))
+    field(:featured_services, list_of(:service))
+    field(:company, :company)
   end
 end

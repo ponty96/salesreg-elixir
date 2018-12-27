@@ -108,10 +108,6 @@ defmodule SalesReg.Store do
     end)
   end
 
-  def load_featured_products(company_id) do
-    list_featured_items(Product, company_id)
-  end
-
   # def list_top_rated_items(company_id) do
   #   Product
   #   |> join(:inner, [p], s in Service)
@@ -321,6 +317,9 @@ defmodule SalesReg.Store do
   end
 
   # WEBSTORE REQUIRED METHODS
+  def load_featured_products(company_id) do
+    list_featured_items(Product, company_id)
+  end
 
   def load_featured_services(company_id) do
     list_featured_items(Service, company_id)
