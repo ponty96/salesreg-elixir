@@ -2,7 +2,7 @@ defmodule SalesRegWeb.SessionController do
   use SalesRegWeb, :controller
   use SalesRegWeb, :context
 
-  plug(Ueberauth)
+  plug Ueberauth
   alias Ueberauth.Strategy.Helpers
 
   def request(conn, _params) do
@@ -10,16 +10,12 @@ defmodule SalesRegWeb.SessionController do
   end
 
   def callback(%{assigns: %{ueberauth_failure: _fails}} = conn, _params) do
-    IO.puts("this is the context")
-
     conn
     |> put_flash(:error, "Failed to authenticate.")
     |> redirect(to: "/")
   end
 
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
-    IO.puts("this is the context")
-
     case Authentication.authenticate(auth) do
       {:ok, user} ->
         conn
