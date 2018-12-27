@@ -36,12 +36,15 @@
 														</tr>
 
 														<tr>
-															<td align="left" valign="middle" style="padding: 0 50px;vertical-align: top;background: #f4f4f4;color: rgb(153,153,153);font-size: 12px;line-height: 16px;">
+															<td align="left" valign="middle" style="padding: 0 50px;vertical-align: top;background: #FFEFD7;color: rgb(153,153,153);font-size: 12px;line-height: 16px;">
 																<table>
 																	<tbody>
 																	<tr>
 																		<td style="padding: 15px 0;font-size: 20px">
-																			<span>Recieved Order:</span>
+																			<span>ORDER:</span>
+																			<span>
+																				<strong>#<%= sale.ref_id %></strong>
+																			</span>
 																		</td>
 																	</tr>
 																	</tbody>
@@ -54,15 +57,13 @@
 																<table>
 																	<tbody>
 																	<tr>
-																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89)">
-																			<p>Dear <span><%= sale.contact.contact_name %></span>,</p>
-																			<p>This is just a quick email to say we've received your order.</p>
-																			<p>As soon as everything has been confirmed and ready for shipment, we will send you another email with your order details and any other information about your package</p>
-																			<p>Your shipping ETA is one working days from when you received this email. We'll follow up as quick as possible.</p>
-																			<p>In the meantime, if you have any questions, send us an email at <a href="mailto:<%= sale.company.contact_email %>" style="color: #3668D3"><<%= sale.company.contact_email %>/a> and we'll be happy to help you.</p>
-																			<p>
-																				<span><a href="#" target="_blank" style="text-decoration: none;color: #3668D3">View order</a></span> or <span><a href="#" target="_blank" style="text-decoration: none;color: #3668D3">Visit our webstore</a></span>
-																			</p>
+																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89);line-height: 1.4;font-size: 16px">
+																			<p>Hi <span><%= sale.contact.contact_name %></span>,</p>
+																			<p>We are please to notify you that your order as referenced above has being processed for delivery and will be sent to you shortly.</p>
+																			<p>In the meantime, if you have any questions send us an email at <a href="mailto:example@yipcart.com" style="color:#127bcc">example@yipcart.com</a> and we will be happy to help you.</p>
+																			<a href="#" style="text-decoration: none!important;"><span style="color:#127bcc">View your order</span></a> or <a href="#" style="text-decoration: none!important;"><span style="color:#127bcc">visit our store</span></a>
+																			<p>Thanks for choosing <%= sale.company.title %></p>
+																			<p>Best regards,<br><%= sale.company.owner.first_name %>.</p>
 																		</td>
 																	</tr>
 																	</tbody>
