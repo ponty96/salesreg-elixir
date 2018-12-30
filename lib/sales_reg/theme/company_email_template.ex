@@ -11,8 +11,6 @@ defmodule SalesReg.Theme.CompanyEmailTemplate do
     "yc_email_late_overdue",
     "yc_email_received_order",
     "yc_email_reminder",
-    "yc_email_restock",
-    "yc_email_welcome_to_yc",
     "yc_payment_received"
   ]
 

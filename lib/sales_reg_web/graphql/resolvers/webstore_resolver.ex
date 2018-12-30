@@ -13,4 +13,33 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
 
     {:ok, home_data}
   end
+
+  def product_page_query(%{id: id}, resolution) do
+    company = resolution.context.company
+    %{product_group: product_group} = Store.get_product(id, preload: [:product_group])
+
+    page_data = %{
+      product_group: product_group,
+      company: company,
+      related_products: []
+    }
+
+    {:ok, page_data}
+  end
+
+  def service_page_query(%{id: id}, resolution) do
+    company = resolution.context.company
+    service = Store.get_service(id)
+
+    page_data = %{
+      service: service,
+      company: company,
+      related_services: []
+    }
+
+    {:ok, page_data}
+  end
+
+  def category_page_query(%{id: id}, resolution) do
+  end
 end

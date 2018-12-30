@@ -16,14 +16,12 @@ defmodule SalesReg.Business do
 
   @default_template_slug "yc1-template"
   @email_types [
-    "yc_email_before_due",
-    "yc_email_early_due",
-    "yc_email_late_overdue",
-    "yc_email_received_order",
-    "yc_email_reminder",
-    "yc_email_restock",
-    "yc_email_welcome_to_yc",
-    "yc_payment_received"
+      "yc_email_before_due",
+			"yc_email_early_due",
+			"yc_email_late_overdue",
+			"yc_email_received_order",
+      "yc_email_reminder",
+      "yc_payment_received"
   ]
 
   def create_company(user_id, company_params) do
@@ -46,7 +44,7 @@ defmodule SalesReg.Business do
          {:ok, company_template} <- Theme.add_company_template(company_template_params),
          {_int, _result} <- insert_company_email_temps(company.id),
          # TODO send email in task supervisor process
-         %Bamboo.Email{} <- Email.send_email(company.id, "yc_email_welcome_to_yc") do
+         %Bamboo.Email{} <- send_email(company.id, "yc_email_welcome_to_yc") do
       {:ok, company}
     else
       {:error, changeset} -> {:error, changeset}
@@ -219,6 +217,11 @@ defmodule SalesReg.Business do
       end)
 
     Repo.insert_all(CompanyEmailTemplate, templates)
+  end
+
+  defp send_email(company, type) do
+    binary = return_file_content(type)
+    Email.send_email(company, type, binary)
   end
 
   defp return_file_content(type) do

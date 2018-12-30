@@ -892,4 +892,23 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:featured_services, list_of(:service))
     field(:company, :company)
   end
+
+  object :product_page do
+    field(:product_group, :product_group)
+    field(:related_products, list_of(:product))
+    field(:company, :company)
+  end
+
+  object :service_page do
+    field(:service, :service)
+    field(:related_services, list_of(:service))
+    field(:company, :company)
+  end
+
+  object :category_page do
+    field(:category, :category)
+    field(:related_services, list_of(:service))
+    field(:related_products, list_of(:product))
+    field(:company, :company)
+  end
 end
