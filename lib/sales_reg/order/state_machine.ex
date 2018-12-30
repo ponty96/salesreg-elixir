@@ -1,6 +1,5 @@
 defmodule SalesReg.Order.OrderStateMachine do
-  alias SalesReg.Order.{Sale}
-  alias SalesReg.{Order, Store}
+  use SalesRegWeb, :context
 
   use Machinery,
     # The first state declared will be considered
@@ -34,6 +33,27 @@ defmodule SalesReg.Order.OrderStateMachine do
   def after_transition(%Sale{} = order, "recalled") do
     # Write code to handle errors
     Store.update_product_inventory(:increment, order.items)
+    order
+  end
+
+  # send email when order is pending
+  def after_transition(%Sale{} = order, "pending") do
+    # Write code to handle errors
+    Email.send_email(order, "yc_email_pending_order")
+    order
+  end
+
+  # send email to customer when sale order is delivering
+  def after_transition(%Sale{} = order, "delivering") do
+    # Write code to handle errors
+    Email.send_email(order, "yc_email_delivering_order")
+    order
+  end
+
+  # send email to customer when order is delivered
+  def after_transition(%Sale{} = order, "delivered") do
+    # Write code to handle errors
+    Email.send_email(order, "yc_email_delivered_order")
     order
   end
 end

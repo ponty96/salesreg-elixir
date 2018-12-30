@@ -29,8 +29,8 @@ defmodule SalesReg.Business.Contact do
     belongs_to(:company, Company)
     belongs_to(:user, SalesReg.Accounts.User)
 
-    has_one(:address, SalesReg.Business.Location, on_replace: :delete)
-    has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
+    has_one(:address, SalesReg.Business.Location, on_replace: :delete, on_delete: :delete_all)
+    has_one(:phone, SalesReg.Business.Phone, on_replace: :delete, on_delete: :delete_all)
 
     has_many(:sales, SalesReg.Order.Sale)
 
@@ -78,10 +78,6 @@ defmodule SalesReg.Business.Contact do
     contact
     |> Repo.preload([:address, :phone])
     |> cast(%{}, [])
-    |> assoc_constraint(:company)
-    |> assoc_constraint(:user)
-    |> cast_assoc(:address)
-    |> cast_assoc(:phone)
     |> no_assoc_constraint(:sales, message: "This contact is still associated with sales")
   end
 

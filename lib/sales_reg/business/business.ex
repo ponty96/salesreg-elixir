@@ -20,7 +20,11 @@ defmodule SalesReg.Business do
 			"yc_email_late_overdue",
 			"yc_email_received_order",
       "yc_email_reminder",
-      "yc_payment_received"
+      "yc_payment_received",
+      "yc_email_delivered_order",
+      "yc_email_delivering_order",
+      "yc_email_pending_delivery",
+      "yc_email_pending_order"
   ]
 
   def create_company(user_id, company_params) do
@@ -75,7 +79,8 @@ defmodule SalesReg.Business do
          where: ct.company_id == ^company_id and ct.type == ^type,
          order_by: [desc: ct.updated_at]
        )
-     )}
+     )
+    }
   end
 
   def data do

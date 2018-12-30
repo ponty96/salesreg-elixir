@@ -102,6 +102,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
     """
     connection field(:company_expenses, node_type: :expense) do
       arg(:company_id, non_null(:uuid))
+      arg(:query, non_null(:string))
 
       middleware(Authorize)
       resolve(&BusinessResolver.company_expenses/2)
