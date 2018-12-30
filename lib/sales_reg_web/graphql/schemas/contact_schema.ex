@@ -39,6 +39,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.ContactSchema do
     connection field(:company_contacts, node_type: :contact) do
       arg(:company_id, non_null(:uuid))
       arg(:type, non_null(:string))
+      arg(:query, :string)
 
       middleware(Authorize)
       resolve(&ContactResolver.list_company_contacts/2)
