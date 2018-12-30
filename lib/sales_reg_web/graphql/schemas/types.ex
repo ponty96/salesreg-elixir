@@ -564,7 +564,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:type, :string)
     field(:sku, :string)
   end
-
+  
   @desc "sorts the order from either ASC or DESC"
   enum :gender do
     value(:male, as: "MALE")

@@ -144,9 +144,10 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     """
     connection field(:list_company_products, node_type: :product) do
       arg(:company_id, non_null(:uuid))
+      arg(:query, non_null(:string))
 
       middleware(Authorize)
-      resolve(&StoreResolver.list_company_products/2)
+      resolve(&StoreResolver.search_company_products/2)
     end
 
     @desc """
@@ -154,9 +155,10 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     """
     connection field(:list_company_services, node_type: :service) do
       arg(:company_id, non_null(:uuid))
+      arg(:query, non_null(:string))
 
       middleware(Authorize)
-      resolve(&StoreResolver.list_company_services/2)
+      resolve(&StoreResolver.search_company_services/2)
     end
 
     @desc """
@@ -164,19 +166,21 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     """
     connection field(:list_company_categories, node_type: :category) do
       arg(:company_id, non_null(:uuid))
+      arg(:query, non_null(:string))
 
       middleware(Authorize)
-      resolve(&StoreResolver.list_company_categories/2)
+      resolve(&StoreResolver.search_company_categories/2)
     end
 
     @desc """
-      query for all company product / service categories
+      query for all company options
     """
     connection field(:list_company_options, node_type: :option) do
       arg(:company_id, non_null(:uuid))
+      arg(:query, non_null(:string))
 
       middleware(Authorize)
-      resolve(&StoreResolver.list_company_options/2)
+      resolve(&StoreResolver.search_company_options/2)
     end
 
     @desc """
