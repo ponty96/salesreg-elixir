@@ -90,8 +90,19 @@ defmodule SalesReg.Email do
       "yc_payment_received" ->
         "Payment Received"
 
-      _ ->
-        "No Subject"
-    end
-  end
+			"yc_email_delivered_order" ->
+				"Delivered Order"
+
+			"yc_email_delivering_order" ->
+				"Delivering Order"
+
+			"yc_email_pending_delivery" ->
+				"Pending Delivery"
+
+			"yc_email_pending_order" ->
+				"Pending Order"
+
+			_ -> "No Subject"
+		end
+	end
 end

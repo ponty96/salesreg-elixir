@@ -11,8 +11,12 @@ defmodule SalesReg.Theme.CompanyEmailTemplate do
     "yc_email_late_overdue",
     "yc_email_received_order",
     "yc_email_reminder",
-    "yc_payment_received"
-  ]
+    "yc_payment_received",
+    "yc_email_delivered_order",
+    "yc_email_delivering_order",
+    "yc_email_pending_delivery",
+    "yc_email_pending_order"
+	]
 
   schema "company_email_templates" do
     field(:body, :string)

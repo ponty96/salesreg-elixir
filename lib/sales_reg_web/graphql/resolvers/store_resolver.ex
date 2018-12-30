@@ -64,32 +64,20 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.delete_option(option)
   end
 
-  def list_company_services(%{company_id: company_id} = args, _res) do
-    {:ok, services} = Store.list_company_services(company_id)
-
-    services
-    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+  def search_company_services(%{company_id: id, query: query} = args, _res) do
+    Store.search_company_services(id, query, :name, pagination_args(args))
   end
 
-  def list_company_products(%{company_id: company_id} = args, _res) do
-    {:ok, products} = Store.list_company_products(company_id)
-
-    products
-    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+  def search_company_products(%{company_id: id, query: query} = args, _res) do
+    Store.search_company_products(id, query, :name, pagination_args(args))
   end
 
-  def list_company_categories(%{company_id: company_id} = args, _res) do
-    {:ok, categories} = Store.list_company_categorys(company_id)
-
-    categories
-    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+  def search_company_categories(%{company_id: id, query: query} = args, _res) do
+    Store.search_company_categorys(id, query, :title, pagination_args(args))
   end
 
-  def list_company_options(%{company_id: company_id} = args, _res) do
-    {:ok, option} = Store.list_company_options(company_id)
-
-    option
-    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+  def search_company_options(%{company_id: id, query: query} = args, _res) do
+    Store.search_company_options(id, query, :name, pagination_args(args))
   end
 
   def search_product_groups_by_title(%{company_id: company_id, query: query}, _res) do

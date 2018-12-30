@@ -11,17 +11,13 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   end
 
   def list_company_sales(%{company_id: company_id} = args, _res) do
-    {:ok, sales} = Order.list_company_sales(company_id)
-
-    sales
-    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+    company_id
+    |> Order.paginated_list_company_sales(pagination_args(args))
   end
 
   def list_company_invoices(%{company_id: company_id} = args, _res) do
-    {:ok, invoices} = Order.list_company_invoices(company_id)
-
-    invoices
-    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+    company_id
+    |> Order.paginated_list_company_invoices(pagination_args(args))
   end
 
   def delete_sale(%{sale_id: sale_id}, _res) do

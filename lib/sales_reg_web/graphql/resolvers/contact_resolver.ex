@@ -18,11 +18,18 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ContactResolver do
   end
 
   # QUERIES
-  def list_company_contacts(%{company_id: company_id, type: type} = args, _res) do
-    {:ok, contacts} = Business.list_company_contacts(company_id, type)
+  def list_company_contacts(%{company_id: id, query: query, type: type} = args, _res) do
+    {:ok, %{edges: edges} = result} = 
+      Business.search_company_contacts(id, query, :contact_name, pagination_args(args))
 
-    contacts
-    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+
+    {:ok,
+      %{result |
+        edges: Enum.filter(edges,
+          &(&1.node.type == type)
+        )
+      }
+    }
   end
 
   def search_customers_by_name(params, _res) do
