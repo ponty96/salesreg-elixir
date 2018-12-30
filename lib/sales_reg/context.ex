@@ -48,11 +48,10 @@ defmodule SalesReg.Context do
         def unquote(String.to_atom("search_company_#{schema}s"))(company_id, query, field, args) do
           query_regex = "%" <> query <> "%"
 
-          res = 
-            unquote(module)
-            |> where(company_id: ^company_id)
-            |> where([s], ilike(field(s, ^field), ^query_regex))
-            |> order_by(
+          unquote(module)
+          |> where(company_id: ^company_id)
+          |> where([s], ilike(field(s, ^field), ^query_regex))
+          |> order_by(
               [s],
               fragment(
                 "ts_rank(to_tsvector(?), plainto_tsquery(?)) DESC",
@@ -60,7 +59,7 @@ defmodule SalesReg.Context do
                 ^query
               )
             )
-            |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
+          |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
         end
 
         def unquote(String.to_atom("add_#{schema}"))(%{} = params) do

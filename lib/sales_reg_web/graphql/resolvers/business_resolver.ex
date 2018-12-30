@@ -58,8 +58,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
   end
 
   def company_expenses(%{company_id: id, query: query} = args, _res) do
-    {:ok, 
-      Business.search_company_expenses(id, query, :title, pagination_args(args))}
+    Business.search_company_expenses(id, query, :title, pagination_args(args))
   end
 
   def delete_expense(%{expense_id: expense_id}, _res) do
