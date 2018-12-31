@@ -52,24 +52,6 @@ defmodule SalesReg.Seed do
     Business.create_company(user_id, company_params)
   end
 
-  def add_service(user_id, company_id, categories, tags) do
-    service_params = %{
-      "description" => "Our service is #{CompanyEn.bs()}",
-      "name" => "#{CompanyEn.bs()} Service",
-      "price" => "#{Enum.random([10_000, 50_000, 150_000])}",
-      "user_id" => "#{user_id}",
-      "company_id" => "#{company_id}",
-      "categories" => categories,
-      "tags" => tags,
-      "images" => [Avatar.image_url()],
-      "featured_image" => Avatar.image_url(),
-      "is_featured" => true,
-      "is_top_rated_by_merchant" => true
-    }
-
-    Store.add_service(service_params)
-  end
-
   def add_contact(user_id, company_id, type) do
     contact_params = %{
       "contact_name" => "Desmond",
@@ -312,14 +294,13 @@ defmodule SalesReg.Seed do
       "http://shfcs.org/en/wp-content/uploads/2015/11/MedRes_Product-presentation-2.jpg"
   }
 
-  def add_product_without_variant(params, company_id, user_id) do
+  def add_product_without_variant(params, company_id, user_id, categories) do
     {:ok, prod_grp} = insert_prod_grp(company_id)
 
     params
-    |> product_params(company_id, user_id, prod_grp.id)
+    |> product_params(company_id, user_id, prod_grp.id, categories)
     |> Map.put(:option_values, [])
     |> Map.put(:tags, [])
-    |> Map.put(:categories, [])
     |> Store.add_product()
   end
 
@@ -342,8 +323,8 @@ defmodule SalesReg.Seed do
     Store.create_product(params)
   end
 
-  def add_service(param, company_id, user_id) do
-    service_params(param, company_id, user_id)
+  def add_service(param, company_id, user_id, categories) do
+    service_params(param, company_id, user_id, categories)
     |> Store.add_service()
   end
 
@@ -382,7 +363,13 @@ defmodule SalesReg.Seed do
     |> Repo.insert()
   end
 
-  defp product_params([price, sku, min_sku, feat_img, name], company_id, user_id, prod_grp_id) do
+  defp product_params(
+         [price, sku, min_sku, feat_img, name],
+         company_id,
+         user_id,
+         prod_grp_id,
+         categories
+       ) do
     %{
       price: price,
       sku: sku,
@@ -391,17 +378,19 @@ defmodule SalesReg.Seed do
       minimum_sku: min_sku,
       featured_image: feat_img,
       name: name,
-      product_group_id: prod_grp_id
+      product_group_id: prod_grp_id,
+      categories: categories
     }
   end
 
-  defp service_params([name, price, feat_img], company_id, user_id) do
+  defp service_params([name, price, feat_img], company_id, user_id, categories) do
     %{
       name: name,
       price: price,
       company_id: company_id,
       user_id: user_id,
-      featured_image: feat_img
+      featured_image: feat_img,
+      categories: categories
     }
   end
 end
