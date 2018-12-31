@@ -16,7 +16,7 @@ defmodule SalesReg.Theme.CompanyEmailTemplate do
     "yc_email_delivering_order",
     "yc_email_pending_delivery",
     "yc_email_pending_order"
-	]
+  ]
 
   schema "company_email_templates" do
     field(:body, :string)

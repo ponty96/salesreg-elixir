@@ -52,13 +52,13 @@ defmodule SalesReg.Context do
           |> where(company_id: ^company_id)
           |> where([s], ilike(field(s, ^field), ^query_regex))
           |> order_by(
-              [s],
-              fragment(
-                "ts_rank(to_tsvector(?), plainto_tsquery(?)) DESC",
-                field(s, ^field),
-                ^query
-              )
+            [s],
+            fragment(
+              "ts_rank(to_tsvector(?), plainto_tsquery(?)) DESC",
+              field(s, ^field),
+              ^query
             )
+          )
           |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
         end
 

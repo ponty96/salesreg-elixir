@@ -108,8 +108,7 @@ defmodule SalesReg.Order do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-        {:ok,
-          Email.send_email(sale, "yc_email_received_order")}
+      {:ok, Email.send_email(sale, "yc_email_received_order")}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -126,8 +125,7 @@ defmodule SalesReg.Order do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-        {:ok,
-          Email.send_email(sale, "yc_email_received_order")}
+      {:ok, Email.send_email(sale, "yc_email_received_order")}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -148,8 +146,7 @@ defmodule SalesReg.Order do
       |> Order.add_sale()
     end)
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-        {:ok,
-          Email.send_email(sale, "yc_email_received_order")}
+      {:ok, Email.send_email(sale, "yc_email_received_order")}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -171,8 +168,7 @@ defmodule SalesReg.Order do
       |> Order.add_sale()
     end)
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-        {:ok,
-          Email.send_email(sale, "yc_email_received_order")}
+      {:ok, Email.send_email(sale, "yc_email_received_order")}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -186,8 +182,7 @@ defmodule SalesReg.Order do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-        {:ok,
-          Email.send_email(sale, "yc_email_received_order")}
+      {:ok, Email.send_email(sale, "yc_email_received_order")}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -206,8 +201,7 @@ defmodule SalesReg.Order do
       |> Order.add_sale()
     end)
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-        {:ok,
-          Email.send_email(sale, "yc_email_received_order")}
+      {:ok, Email.send_email(sale, "yc_email_received_order")}
     end)
     |> Multi.run(:inser_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -445,7 +439,6 @@ defmodule SalesReg.Order do
   defp repo_transaction_resp(repo_transaction) do
     case repo_transaction do
       {:ok, %{insert_sale: sale}} ->
-
         {:ok, sale}
 
       {:error, _failed_operation, _failed_value, changeset} ->

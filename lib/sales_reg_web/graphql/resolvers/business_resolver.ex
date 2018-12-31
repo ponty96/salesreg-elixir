@@ -33,19 +33,19 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
   end
 
   def list_company_banks(%{company_id: id} = args, _res) do
-    {:ok, paginated_result} = 
-      Business.paginated_list_company_banks(id, pagination_args(args))
-    
+    {:ok, paginated_result} = Business.paginated_list_company_banks(id, pagination_args(args))
+
     %{edges: edges} = paginated_result
-    
-    {:ok, 
-      %{
-        paginated_result |
-        edges: Enum.sort(edges, 
-          &(&1.node.is_primary >= &2.node.is_primary)
-        )
-      }
-    }
+
+    {:ok,
+     %{
+       paginated_result
+       | edges:
+           Enum.sort(
+             edges,
+             &(&1.node.is_primary >= &2.node.is_primary)
+           )
+     }}
   end
 
   def upsert_expense(%{expense: params, expense_id: id}, _res) do
