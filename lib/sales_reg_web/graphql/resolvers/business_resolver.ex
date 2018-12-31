@@ -33,10 +33,19 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
   end
 
   def list_company_banks(%{company_id: id} = args, _res) do
-    Business.list_company_banks(id)
-    |> elem(1)
-    |> Enum.sort(&(&1.is_primary >= &2.is_primary))
-    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+    {:ok, paginated_result} = 
+      Business.paginated_list_company_banks(id, pagination_args(args))
+    
+    %{edges: edges} = paginated_result
+    
+    {:ok, 
+      %{
+        paginated_result |
+        edges: Enum.sort(edges, 
+          &(&1.node.is_primary >= &2.node.is_primary)
+        )
+      }
+    }
   end
 
   def upsert_expense(%{expense: params, expense_id: id}, _res) do
@@ -48,11 +57,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
     Business.create_expense(params)
   end
 
-  def company_expenses(%{company_id: id} = args, _res) do
-    {:ok, expenses} = Business.list_company_expenses(id)
-
-    expenses
-    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+  def company_expenses(%{company_id: id, query: query} = args, _res) do
+    Business.search_company_expenses(id, query, :title, pagination_args(args))
   end
 
   def delete_expense(%{expense_id: expense_id}, _res) do

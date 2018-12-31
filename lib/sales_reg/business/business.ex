@@ -79,7 +79,8 @@ defmodule SalesReg.Business do
          where: ct.company_id == ^company_id and ct.type == ^type,
          order_by: [desc: ct.updated_at]
        )
-     )}
+     )
+    }
   end
 
   def data do
