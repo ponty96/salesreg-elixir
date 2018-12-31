@@ -22,7 +22,7 @@ defmodule SalesReg.Seed do
   def create_user() do
     user_params = %{
       "date_of_birth" => "15-08-1991",
-      "email" => "samson.oluwole@gmail.com",
+      "email" => "ayo.aregbede@gmail.com",
       "first_name" => "Samson",
       "gender" => "Male",
       "last_name" => "Oluwole",
@@ -36,7 +36,7 @@ defmodule SalesReg.Seed do
   def create_company(user_id) do
     company_params = %{
       about: "Sales of Mobile Devices",
-      contact_email: "official.sandbox@gmail.com",
+      contact_email: "ayo.aregbede@yipcart.com",
       title: "Sandbox PLC",
       head_office: gen_location_params(),
       currency: "NGN",
@@ -371,8 +371,6 @@ defmodule SalesReg.Seed do
   end
 
   defp insert_prod_grp(company_id) do
-    IO.inspect(company_id, label: "company_id")
-
     params = %{
       "title" => "Mobile Devices and Assessories",
       "option_ids" => [],

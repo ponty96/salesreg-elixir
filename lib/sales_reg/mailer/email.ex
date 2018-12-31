@@ -20,14 +20,6 @@ defmodule SalesReg.Email do
 		|> send_email()
 	end
 
-    company_id
-    |> Theme.get_email_template_by_type(type)
-    |> transform_template(sale)
-    |> construct_email(company.contact_email, type)
-    |> send_email()
-    |> Mailer.deliver_later()
-  end
-
   def send_email(email_params) do
     new_email(
       from: email_params.from,
@@ -49,7 +41,7 @@ defmodule SalesReg.Email do
 	defp construct_email(html_body, %Company{} = company, type) do
 		%{
 			to: company.contact_email,
-			from: "opeyemi.badmos@yipcart.com",
+			from: "hello@yipcart.com",
 			subject: gen_sub(type),
 			html_body: html_body,
 		}

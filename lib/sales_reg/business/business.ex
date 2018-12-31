@@ -48,7 +48,7 @@ defmodule SalesReg.Business do
          {:ok, company_template} <- Theme.add_company_template(company_template_params),
          {_int, _result} <- insert_company_email_temps(company.id),
          # TODO send email in task supervisor process
-         %Bamboo.Email{} <- send_email(company.id, "yc_email_welcome_to_yc") do
+         %Bamboo.Email{} <- send_email(company, "yc_email_welcome_to_yc") do
       {:ok, company}
     else
       {:error, changeset} -> {:error, changeset}
