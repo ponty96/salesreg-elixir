@@ -3,6 +3,8 @@ defmodule SalesReg.Store.Category do
   import Ecto.Changeset
 
   alias SalesReg.Store.{Product, Service}
+  alias SalesReg.Repo
+
   @placeholder_image 'http://app.yipcart.com/images/yipcart-item-category.png'
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -42,9 +44,12 @@ defmodule SalesReg.Store.Category do
     |> cast(%{}, [])
   end
 
-  def category_image(%{products: [], services: []}), do: @placeholder_image
+  def category_image(category),
+    do: get_category_image(Repo.preload(category, [:products, :services]))
 
-  def category_image(%{products: products, services: services}) do
+  defp get_category_image(%{products: [], services: []}), do: @placeholder_image
+
+  defp get_category_image(%{products: products, services: services}) do
     items = products ++ services
     Enum.random(items).featured_image
   end
