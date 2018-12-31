@@ -94,7 +94,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
-      resolve(&BusinessResolver.list_company_expenses/2)
+      resolve(&BusinessResolver.company_expenses/2)
     end
   end
 end
