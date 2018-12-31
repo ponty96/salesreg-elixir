@@ -261,12 +261,12 @@ defmodule SalesReg.Order do
 
     case add_receipt do
       {:ok, receipt} ->
-        receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product]]])
+        receipt = Repo.preload(receipt, [:company, :invoice, :user, sale: [items: [:product]]])
         Order.supervise_pdf_upload(receipt)
 
         Email.send_email(sale, "yc_payment_received")
 
-        add_receipt
+        {:ok, receipt.invoice}
 
       {:error, _reason} = error_tuple ->
         error_tuple
@@ -287,12 +287,12 @@ defmodule SalesReg.Order do
 
     case add_receipt do
       {:ok, receipt} ->
-        receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product]]])
+        receipt = Repo.preload(receipt, [:company, :invoice, :user, sale: [items: [:product]]])
         Order.supervise_pdf_upload(receipt)
 
         Email.send_email(sale, "yc_payment_received")
 
-        {:ok, receipt}
+        {:ok, receipt.invoice}
 
       {:error, _reason} = error_tuple ->
         error_tuple
