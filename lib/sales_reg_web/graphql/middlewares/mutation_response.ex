@@ -1,13 +1,13 @@
 defmodule SalesRegWeb.GraphQL.MiddleWares.MutationResponse do
   @moduledoc false
-  alias Ecto.Changeset
+
   @behaviour Absinthe.Middleware
 
   def call(%{value: %{errors: errors}} = res, _) do
     parse_errors(errors, res)
   end
 
-  def call(%{errors: [%{key: key, message: message}] = errors} = res, _) do
+  def call(%{errors: [%{key: _key, message: _message}] = errors} = res, _) do
     parse_errors(errors, res)
   end
 

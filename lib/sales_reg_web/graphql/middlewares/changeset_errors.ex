@@ -35,21 +35,7 @@ defmodule SalesRegWeb.GraphQL.MiddleWares.ChangesetErrors do
     |> check_values(value)
   end
 
-  def check_values(key, value) do
-    case Enum.any?(value, &is_binary(&1)) do
-      true ->
-        %{key: camelize(Atom.to_string(key)), message: value}
-
-      _ ->
-        value
-        |> Enum.filter(&(map_size(&1) >= 1))
-        |> Enum.map(&Map.to_list(&1))
-        |> List.flatten()
-        |> Enum.map(fn {key, value} -> %{key: camelize(Atom.to_string(key)), message: value} end)
-    end
-  end
-
-  def serialize_error(key, value) when is_map(value) do
+  def serialize_error(_key, value) when is_map(value) do
     value
     |> Map.to_list()
     |> Enum.map(fn {assoc_key, value} ->
@@ -62,6 +48,20 @@ defmodule SalesRegWeb.GraphQL.MiddleWares.ChangesetErrors do
 
   def serialize_error(key, value) do
     %{key: key, message: value}
+  end
+
+  def check_values(key, value) do
+    case Enum.any?(value, &is_binary(&1)) do
+      true ->
+        %{key: camelize(Atom.to_string(key)), message: value}
+
+      _ ->
+        value
+        |> Enum.filter(&(map_size(&1) >= 1))
+        |> Enum.map(&Map.to_list(&1))
+        |> List.flatten()
+        |> Enum.map(fn {key, value} -> %{key: camelize(Atom.to_string(key)), message: value} end)
+    end
   end
 
   @spec format_error(Changeset.error()) :: String.t()
