@@ -59,25 +59,25 @@ defmodule SalesReg.Email do
 	defp gen_sub(type) do
 		case type do
 			"yc_email_before_due" ->
-				"Email Before Due Date"
+				"New Invoice Created"
 			
 			"yc_email_early_due" ->
-				"Email Early Due Date"
+				"Order Payment reminder"
 			
 			"yc_email_late_overdue" ->
-				"Email Received Overdue"
+				"Order Payement Overdue"
 			
 			"yc_email_received_order" ->
-				"Email Received Order"
+				"Received Order"
 			
 			"yc_email_reminder" ->
-				"Email Reminder"
+				"Payment Reminder"
 		
 			"yc_email_restock" -> 
-				"Email Restock"
+				"Restock"
 	
 			"yc_email_welcome_to_yc" -> 
-				"Email Welcome To YC"
+				"Welcome To YipCart"
 
 			"yc_payment_received" ->
 				"Payment Received"
