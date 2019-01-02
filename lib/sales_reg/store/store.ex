@@ -92,12 +92,14 @@ defmodule SalesReg.Store do
   end
 
   def load_products(company_id, query, args) do
+    IO.puts "this is the context in which itooj"
     query_regex = "%" <> query <> "%"
 
     from(p in Product,
         join: pg in ProductGroup,
-        on: pg.company_id == ^company_id,
+        on: p.product_group_id == pg.id,
         where: ilike(pg.title, ^query_regex),
+        where: p.company_id == ^company_id,
         select: p
     )
     |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
