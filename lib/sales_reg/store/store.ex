@@ -91,6 +91,18 @@ defmodule SalesReg.Store do
     |> List.flatten()
   end
 
+  def load_products(company_id, query, args) do
+    query_regex = "%" <> query <> "%"
+
+    from(p in Product,
+        join: pg in ProductGroup,
+        on: pg.company_id == ^company_id,
+        where: ilike(pg.title, ^query_regex),
+        select: p
+    )
+    |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
+  end
+
   def load_services(company_id, query) do
     query_regex = "%" <> query <> "%"
 

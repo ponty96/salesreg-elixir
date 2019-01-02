@@ -73,7 +73,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   end
 
   def search_company_products(%{company_id: id, query: query} = args, _res) do
-    Store.search_company_products(id, query, :name, pagination_args(args))
+    Store.load_products(id, query, pagination_args(args))
   end
 
   def search_company_categories(%{company_id: id, query: query} = args, _res) do
