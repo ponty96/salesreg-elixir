@@ -32,7 +32,9 @@ defmodule SalesReg.Mixfile do
         :pdf_generator,
         :ueberauth,
         :ueberauth_identity,
-        :bamboo
+        :bamboo,
+        :scrivener_ecto,
+        :ecto_sql
       ]
     ]
   end
@@ -80,7 +82,8 @@ defmodule SalesReg.Mixfile do
       {:plug_attack, "~> 0.3.0"},
       {:remote_ip, "~> 0.1.0"},
       {:quantum, "~> 2.3"},
-      {:timex, "~> 3.0"}
+      {:timex, "~> 3.0"},
+      {:scrivener_ecto, "~> 2.0"}
     ]
   end
 
