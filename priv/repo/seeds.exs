@@ -68,8 +68,14 @@ real_product_params = [
 # {:ok, template} = Seed.add_template()
 # {:ok, company_template} = Seed.add_company_template(company.id, user.id, template.id)
 
+categories =
+  Enum.map(1..25, fn _index ->
+    {:ok, category} = Seed.add_category(company.id, user.id)
+    category.id
+  end)
+
 products = Enum.map(real_product_params, fn(params) ->
-  {:ok, product} = Seed.add_product_without_variant(params, company.id, user.id)
+  {:ok, product} = Seed.add_product_without_variant(params, company.id, user.id, Enum.take_random(categories, 4))
   product
 end)
 
@@ -77,15 +83,9 @@ end)
 #   Seed.add_product_with_variant(company, user)
 # end)
 
-# categories =
-#   Enum.map(1..25, fn _index ->
-#     {:ok, category} = Seed.add_category(company.id, user.id)
-#     category.id
-#   end)
-
 services =
   Enum.map(real_service_params, fn(params) ->
-    {:ok, service} = Seed.add_service(params, company.id, user.id)
+    {:ok, service} = Seed.add_service(params, company.id, user.id, Enum.take_random(categories, 4))
     service
   end)
 
