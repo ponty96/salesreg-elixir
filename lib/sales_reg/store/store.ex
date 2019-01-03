@@ -7,7 +7,6 @@ defmodule SalesReg.Store do
 
   use SalesReg.Context, [
     Product,
-    Service,
     Category,
     Tag,
     ProductGroup,
@@ -60,13 +59,6 @@ defmodule SalesReg.Store do
 
   def load_tags(_), do: []
 
-  def load_prod_and_serv(company_id, query) do
-    products = load_products(company_id, query)
-    services = load_services(company_id, query)
-
-    Enum.shuffle(products ++ services)
-  end
-
   def load_products(company_id, query) do
     query_regex = "%" <> query <> "%"
 
@@ -95,47 +87,31 @@ defmodule SalesReg.Store do
     query_regex = "%" <> query <> "%"
 
     from(p in Product,
-        join: pg in ProductGroup,
-        on: p.product_group_id == pg.id,
-        where: ilike(pg.title, ^query_regex),
-        where: p.company_id == ^company_id,
-        select: p
+      join: pg in ProductGroup,
+      on: p.product_group_id == pg.id,
+      where: ilike(pg.title, ^query_regex),
+      where: p.company_id == ^company_id,
+      select: p
     )
     |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
   end
 
-  def load_services(company_id, query) do
-    query_regex = "%" <> query <> "%"
-
-    Service
-    |> where([s], s.company_id == ^company_id)
-    |> where([s], ilike(s.name, ^query_regex))
-    |> order_by([s], asc: [s.name])
-    |> select([s], [s])
-    |> Repo.all()
-    |> List.flatten()
-    |> Enum.map(fn service ->
-      Map.put_new(service, :type, "Service")
-    end)
-  end
-
   def list_featured_items(company_id) do
     Product
-    |> join(:inner, [p], s in Service)
-    |> where([p, s], p.is_featured == true and s.is_featured == true)
-    |> where([p, s], p.company_id == ^company_id and s.company_id == ^company_id)
-    |> select([p, s], {p.name, s.name, p.is_top_rated_by_merchant, s.is_top_rated_by_merchant})
-    |> order_by([p, s], asc: p.is_featured, asc: s.is_featured)
+    |> join(:inner, [p])
+    |> where([p], p.is_featured == true)
+    |> where([p], p.company_id == ^company_id)
+    |> select([p], {p.name, p.is_top_rated_by_merchant})
+    |> order_by([], asc: p.is_featured)
     |> Repo.all()
   end
 
   def list_top_rated_items(company_id) do
     Product
-    |> join(:inner, [p], s in Service)
-    |> where([p, s], p.is_top_rated_by_merchant == true and s.is_top_rated_by_merchant == true)
-    |> where([p, s], p.company_id == ^company_id and s.company_id == ^company_id)
-    |> select([p, s], {p.name, s.name, p.is_top_rated_by_merchant, s.is_top_rated_by_merchant})
-    |> order_by([p, s], asc: p.is_top_rated_by_merchant, asc: s.is_top_rated_by_merchant)
+    |> where([p], p.is_top_rated_by_merchant == true)
+    |> where([p], p.company_id == ^company_id)
+    |> select([p], {p.name, p.is_top_rated_by_merchant})
+    |> order_by([p], asc: p.is_top_rated_by_merchant)
     |> Repo.all()
   end
 
