@@ -130,7 +130,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     end
 
     @desc """
-      query for all company product / service categories
+      query for all company product categories
     """
     connection field(:list_company_categories, node_type: :category) do
       arg(:company_id, non_null(:uuid))

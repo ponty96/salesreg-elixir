@@ -41,7 +41,7 @@ defmodule SalesReg.Seed do
       head_office: gen_location_params(),
       currency: "Naira",
       description: "Sandbox is basically into sales
-       of Mobiles devices and related assessories of specific brands which 
+       of Mobiles devices and related assessories of specific brands which
        include Samsung, Apple, Sony, Tecno, Infinix and Nokia. It also provides
        numerous services",
       logo:
@@ -50,24 +50,6 @@ defmodule SalesReg.Seed do
     }
 
     Business.create_company(user_id, company_params)
-  end
-
-  def add_service(user_id, company_id, categories, tags) do
-    service_params = %{
-      "description" => "Our service is #{CompanyEn.bs()}",
-      "name" => "#{CompanyEn.bs()} Service",
-      "price" => "#{Enum.random([10_000, 50_000, 150_000])}",
-      "user_id" => "#{user_id}",
-      "company_id" => "#{company_id}",
-      "categories" => categories,
-      "tags" => tags,
-      "images" => [Avatar.image_url()],
-      "featured_image" => Avatar.image_url(),
-      "is_featured" => true,
-      "is_top_rated_by_merchant" => true
-    }
-
-    Store.add_service(service_params)
   end
 
   def add_contact(user_id, company_id, type) do
@@ -189,19 +171,6 @@ defmodule SalesReg.Seed do
   end
 
   # SALES ORDER SEED
-
-  def create_sales_order(company_id, user_id, contact_id, products, services) do
-    order_items =
-      Enum.concat(
-        order_items(Enum.take_random(products, 4), "product"),
-        order_items(Enum.take_random(services, 3), "service")
-      )
-
-    create_sales_order(
-      %{company_id: company_id, user_id: user_id, contact_id: contact_id},
-      order_items
-    )
-  end
 
   def create_sales_order(company_id, user_id, contact_id, %{items: items, type: type}) do
     order_items = order_items(items, type)
@@ -342,11 +311,6 @@ defmodule SalesReg.Seed do
     Store.create_product(params)
   end
 
-  def add_service(param, company_id, user_id) do
-    service_params(param, company_id, user_id)
-    |> Store.add_service()
-  end
-
   defp valid_product_params(company, user) do
     @valid_product_params
     |> Map.put(:company_id, company.id)
@@ -394,16 +358,6 @@ defmodule SalesReg.Seed do
       featured_image: feat_img,
       name: name,
       product_group_id: prod_grp_id
-    }
-  end
-
-  defp service_params([name, price, feat_img], company_id, user_id) do
-    %{
-      name: name,
-      price: price,
-      company_id: company_id,
-      user_id: user_id,
-      featured_image: feat_img
     }
   end
 end

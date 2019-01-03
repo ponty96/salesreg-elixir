@@ -34,7 +34,7 @@ defmodule SalesReg.Store.Option do
     option
     |> cast(%{}, [])
     |> no_assoc_constraint(:option_values,
-      message: "This option is being used in several products or services"
+      message: "This option is being used in at least one products"
     )
   end
 end

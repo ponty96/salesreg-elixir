@@ -98,11 +98,10 @@ defmodule SalesReg.Store do
 
   def list_featured_items(company_id) do
     Product
-    |> join(:inner, [p])
     |> where([p], p.is_featured == true)
     |> where([p], p.company_id == ^company_id)
     |> select([p], {p.name, p.is_top_rated_by_merchant})
-    |> order_by([], asc: p.is_featured)
+    |> order_by([p], asc: p.is_featured)
     |> Repo.all()
   end
 
