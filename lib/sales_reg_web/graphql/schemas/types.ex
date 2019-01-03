@@ -165,34 +165,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
-    Service object type
-  """
-  object :service do
-    field(:id, :uuid)
-    field(:description, :string)
-    field(:name, :string)
-    field(:price, :string)
-    field(:featured_image, :string)
-    field(:images, list_of(:string))
-    field(:is_featured, :boolean)
-    field(:is_top_rated_by_merchant, :boolean)
-    field(:categories, list_of(:category), resolve: dataloader(SalesReg.Store, :categories))
-    field(:tags, list_of(:tag), resolve: dataloader(SalesReg.Store, :tags))
-
-    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
-
-    field :total_times_ordered, :integer do
-      resolve(fn _parent, %{source: service} ->
-        quantity_ordered = Order.calc_service_total_times_ordered(service.id)
-        {:ok, quantity_ordered}
-      end)
-    end
-  end
-
-  connection(node_type: :service)
-
-  @desc """
     Contact object type
   """
   object :contact do
@@ -255,7 +227,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:unit_price, :string)
 
     field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
-    field(:service, :service, resolve: dataloader(SalesReg.Store, :service))
   end
 
   @desc """
@@ -359,12 +330,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       list_of(:product),
       resolve: dataloader(SalesReg.Business, :products)
     )
-
-    field(
-      :services,
-      list_of(:service),
-      resolve: dataloader(SalesReg.Business, :services)
-    )
   end
 
   connection(node_type: :category)
@@ -417,7 +382,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
     field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
-    field(:service, :service, resolve: dataloader(SalesReg.Store, :service))
     field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
   end
 
@@ -430,7 +394,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
     field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
-    field(:service, :service, resolve: dataloader(SalesReg.Store, :service))
     field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
   end
 
@@ -494,7 +457,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :company,
       :branch,
       :product,
-      :service,
       :contact,
       :phone,
       :location,
@@ -519,7 +481,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Company{}, _ -> :company
       %Branch{}, _ -> :branch
       %Product{}, _ -> :product
-      %Service{}, _ -> :service
       %Contact{}, _ -> :contact
       %Phone{}, _ -> :phone
       %Location{}, _ -> :location
@@ -553,18 +514,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:user, non_null(:user))
   end
 
-  @desc """
-    Product or Service search response
-  """
-  object :search_response do
-    field(:id, non_null(:uuid))
-    field(:name, non_null(:string))
-    field(:price, :string)
-    field(:cost_price, :string)
-    field(:type, :string)
-    field(:sku, :string)
-  end
-  
   @desc "sorts the order from either ASC or DESC"
   enum :gender do
     value(:male, as: "MALE")
@@ -712,23 +661,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company_id, non_null(:uuid))
   end
 
-  input_object :service_input do
-    field(:description, :string)
-    field(:name, non_null(:string))
-    field(:price, :string)
-
-    field(:company_id, non_null(:uuid))
-    field(:user_id, non_null(:uuid))
-    field(:categories, list_of(:uuid), default_value: [])
-    field(:tags, list_of(:string), default_value: [])
-
-    field(:featured_image, non_null(:string))
-    field(:images, list_of(:string))
-
-    field(:is_featured, :boolean)
-    field(:is_top_rated_by_merchant, :boolean)
-  end
-
   input_object :contact_input do
     field(:image, :string)
     field(:contact_name, non_null(:string))
@@ -771,7 +703,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
 
   input_object :item_input do
     field(:product_id, :uuid)
-    field(:service_id, :uuid)
     field(:quantity, non_null(:string))
     field(:unit_price, non_null(:string))
   end
@@ -827,7 +758,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :review_input do
     field(:text, non_null(:string))
     field(:product_id, :uuid)
-    field(:service_id, :uuid)
     field(:contact_id, non_null(:uuid))
     field(:sale_id, non_null(:uuid))
   end
@@ -835,7 +765,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :star_input do
     field(:value, non_null(:integer))
     field(:product_id, :uuid)
-    field(:service_id, :uuid)
     field(:contact_id, non_null(:uuid))
     field(:sale_id, non_null(:uuid))
   end
