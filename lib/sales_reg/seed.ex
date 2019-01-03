@@ -379,7 +379,8 @@ defmodule SalesReg.Seed do
       featured_image: feat_img,
       name: name,
       product_group_id: prod_grp_id,
-      categories: categories
+      categories: categories,
+      images: Enum.map(1..8, fn _index -> Avatar.image_url() end)
     }
   end
 
@@ -390,7 +391,8 @@ defmodule SalesReg.Seed do
       company_id: company_id,
       user_id: user_id,
       featured_image: feat_img,
-      categories: categories
+      categories: categories,
+      images: Enum.map(1..8, fn _index -> Avatar.image_url() end)
     }
   end
 end
