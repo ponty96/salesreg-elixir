@@ -1,6 +1,11 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
   use SalesRegWeb, :context
 
+  def company_details(_params, resolution) do
+    company = resolution.context.company
+    {:ok, company}
+  end
+
   def home_page_query(params, resolution) do
     company = resolution.context.company
 
@@ -14,32 +19,58 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
     {:ok, home_data}
   end
 
-  def product_page_query(%{id: id}, resolution) do
-    company = resolution.context.company
+  def product_page_query(%{id: id}, _resolution) do
     %{product_group: product_group} = Store.get_product(id, preload: [:product_group])
 
-    page_data = %{
-      product_group: product_group,
-      company: company,
-      related_products: []
-    }
-
-    {:ok, page_data}
+    {:ok, product_group}
   end
 
-  def service_page_query(%{id: id}, resolution) do
-    company = resolution.context.company
+  def service_page_query(%{id: id}, _resolution) do
     service = Store.get_service(id)
-
-    page_data = %{
-      service: service,
-      company: company,
-      related_services: []
-    }
-
-    {:ok, page_data}
+    {:ok, service}
   end
 
-  def category_page_query(%{id: id}, resolution) do
+  def category_page_query(%{id: id, product_page: p_page, service_page: s_page}, _resolution) do
+    {%{entries: products}, product_page} =
+      Store.category_products(id, p_page) |> Map.split([:entries])
+
+    {%{entries: services}, service_page} =
+      Store.category_services(id, s_page) |> Map.split([:entries])
+
+    {:ok,
+     %{
+       category: Store.get_category(id),
+       products: products,
+       product_page: product_page,
+       services: services,
+       service_page: service_page
+     }}
+  end
+
+  def categories_page_query(%{query: query} = args, resolution) do
+    company = resolution.context.company
+    Store.search_company_categorys(company.id, query, :title, pagination_args(args))
+  end
+
+  def store_page_query(%{product_page: p_page, service_page: s_page}, resolution) do
+    company = resolution.context.company
+
+    {%{entries: products}, product_page} =
+      Store.filter_webstore_products(company.id, %{page: p_page}) |> Map.split([:entries])
+
+    {%{entries: services}, service_page} =
+      Store.filter_webstore_services(company.id, %{page: s_page}) |> Map.split([:entries])
+
+    {:ok,
+     %{
+       products: products,
+       product_page: product_page,
+       services: services,
+       service_page: service_page
+     }}
+  end
+
+  defp pagination_args(args) do
+    Map.take(args, [:first, :after, :last, :before])
   end
 end

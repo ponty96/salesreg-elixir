@@ -16,6 +16,8 @@ defmodule SalesReg.Store do
     Invoice
   ]
 
+  alias Ecto.UUID
+
   defdelegate category_image(category), to: Category
 
   def data do
@@ -329,7 +331,7 @@ defmodule SalesReg.Store do
     Repo.all(
       from(c in Category,
         where: c.company_id == ^company_id,
-        limit: 6,
+        limit: 10,
         preload: [:products, :services]
       )
     )
@@ -345,14 +347,42 @@ defmodule SalesReg.Store do
     )
   end
 
-  def category_prods_and_services(category_id) do
+  def category_products(category_id, page) do
+    {:ok, category_id} = UUID.dump(category_id)
+
     query =
       from(p in Product,
-        where: p.category_id == ^category_id,
-        join: s in ^from(s in Service, where: s.category_id == ^category_id)
+        join: pc in "products_categories",
+        on: pc.category_id == ^category_id,
+        where: pc.product_id == p.id,
+        select: p
       )
 
-    Repo.all(query)
+    Repo.paginate(query, page: page)
+  end
+
+  def category_services(category_id, page) do
+    {:ok, category_id} = UUID.dump(category_id)
+
+    query =
+      from(s in Service,
+        join: sc in "services_categories",
+        on: sc.category_id == ^category_id,
+        where: sc.service_id == s.id,
+        select: s
+      )
+
+    Repo.paginate(query, page: page)
+  end
+
+  def filter_webstore_services(company_id, filter_params) do
+    from(s in Service, where: s.company_id == ^company_id, select: s)
+    |> Repo.paginate(page: Map.get(filter_params, :page))
+  end
+
+  def filter_webstore_products(company_id, filter_params) do
+    from(p in Product, where: p.company_id == ^company_id, select: p)
+    |> Repo.paginate(page: Map.get(filter_params, :page))
   end
 
   defp list_featured_items(schema, company_id) do
