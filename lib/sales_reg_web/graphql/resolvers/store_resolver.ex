@@ -2,15 +2,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   use SalesRegWeb, :context
   require SalesReg.Context
 
-  def upsert_service(%{service: params, service_id: id}, _res) do
-    Store.get_service(id)
-    |> Store.update_service(params)
-  end
-
-  def upsert_service(%{service: params}, _res) do
-    Store.add_service(params)
-  end
-
   def create_product(%{params: params}, _res) do
     Store.create_product(params)
   end
@@ -44,11 +35,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.add_option(params)
   end
 
-  def delete_service(%{service_id: service_id}, _res) do
-    service = Store.get_service(service_id)
-    Store.delete_service(service)
-  end
-
   def list_featured_items(%{company_id: company_id}, _res) do
     Store.list_featured_items(company_id)
   end
@@ -66,11 +52,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   def delete_option(%{option_id: option_id}, _res) do
     option = Store.get_option(option_id)
     Store.delete_option(option)
-  end
-
-  def search_company_services(%{company_id: id, query: query} = args, _res) do
-    [company_id: id]
-    |> Store.search_company_services(query, :name, pagination_args(args))
   end
 
   def search_company_products(%{company_id: id, query: query} = args, _res) do
@@ -101,10 +82,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
 
   def search_products_by_name(%{company_id: company_id, query: query}, _res) do
     {:ok, Store.load_products(company_id, query)}
-  end
-
-  def search_products_services_by_name(%{company_id: company_id, query: query}, _res) do
-    {:ok, Store.load_prod_and_serv(company_id, query)}
   end
 
   def restock_products(%{items: items}, _res) do
