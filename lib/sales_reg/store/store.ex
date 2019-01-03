@@ -92,7 +92,6 @@ defmodule SalesReg.Store do
   end
 
   def load_products(company_id, query, args) do
-    IO.puts "this is the context in which itooj"
     query_regex = "%" <> query <> "%"
 
     from(p in Product,
