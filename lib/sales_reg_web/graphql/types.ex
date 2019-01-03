@@ -389,6 +389,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:name, :string)
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:products, list_of(:product), resolve: dataloader(SalesReg.Store, :products))
+    field(:services, list_of(:service), resolve: dataloader(SalesReg.Store, :services))
   end
 
   connection(node_type: :tag)
@@ -576,7 +578,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:type, :string)
     field(:sku, :string)
   end
-  
+
   @desc "sorts the order from either ASC or DESC"
   enum :gender do
     value(:male, as: "MALE")
@@ -893,22 +895,25 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:company, :company)
   end
 
-  object :product_page do
-    field(:product_group, :product_group)
-    field(:related_products, list_of(:product))
-    field(:company, :company)
-  end
-
-  object :service_page do
-    field(:service, :service)
-    field(:related_services, list_of(:service))
-    field(:company, :company)
-  end
-
   object :category_page do
     field(:category, :category)
-    field(:related_services, list_of(:service))
-    field(:related_products, list_of(:product))
-    field(:company, :company)
+    field(:products, list_of(:product))
+    field(:services, list_of(:service))
+    field(:service_page, :pagination_meta)
+    field(:product_page, :pagination_meta)
+  end
+
+  object :store_page do
+    field(:products, list_of(:product))
+    field(:services, list_of(:service))
+    field(:service_page, :pagination_meta)
+    field(:product_page, :pagination_meta)
+  end
+
+  object :pagination_meta do
+    field(:total_pages, :integer)
+    field(:page_number, :integer)
+    field(:page_size, :integer)
+    field(:total_entries, :integer)
   end
 end
