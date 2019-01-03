@@ -34,7 +34,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
 
   def list_company_banks(%{company_id: id} = args, _res) do
     {:ok, paginated_result} = 
-      Business.paginated_list_company_banks(id, pagination_args(args))
+      [company_id: id]
+      |> Business.paginated_list_company_banks(pagination_args(args))
     
     %{edges: edges} = paginated_result
     
@@ -58,7 +59,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
   end
 
   def company_expenses(%{company_id: id, query: query} = args, _res) do
-    Business.search_company_expenses(id, query, :title, pagination_args(args))
+    [company_id: id]
+    |> Business.search_company_expenses(query, :title, pagination_args(args))
   end
 
   def delete_expense(%{expense_id: expense_id}, _res) do

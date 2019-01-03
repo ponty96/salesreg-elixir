@@ -68,9 +68,6 @@ defmodule SalesReg.Business.Expense do
       |> Float.round(2)
 
     cond do
-      items_amount == 0 ->
-        changeset
-
       items_amount < total_amount ->
         add_error(
           changeset,
@@ -95,15 +92,13 @@ defmodule SalesReg.Business.Expense do
   end
 
   defp total_amount(expense, changeset) do
+    IO.inspect changeset, label: "changeset"
     case changeset do
       %{changes: %{total_amount: total_amount}} ->
         total_amount
 
       _ ->
-        {float, _} = Float.parse(expense.total_amount)
-        
-        float
-        |> Float.round(2)
+        expense.total_amount
     end
   end
 end
