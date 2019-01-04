@@ -1,9 +1,9 @@
-<div> 
+<div>
   <span><h3>Hello <%= invoice.user.first_name %></h3></span>
   <span><p>Here is the invoice to the other you made</p></span>
-  <span><p>Created on the <%= NaiveDateTime.to_date(invoice.inserted_at) %></p></span> 
+  <span><p>Created on the <%= NaiveDateTime.to_date(invoice.inserted_at) %></p></span>
 </div>
-<hr/> 
+<hr/>
 <div>
   <h2>You ordered for this items</h2>
   <table>
@@ -16,14 +16,11 @@
       	<%= if item.product_id do %>
 					<td><%= item.product.name %></td>
 					<td><%= item.quantity %></td>
-				<% else %>
-					<td><%= item.service.name %></td>
-					<td><%= item.quantity %></td>
 				<% end %>
 			<% end %>
 		</tr>
 	</table>
-	<hr/> 
+	<hr/>
 	<ul>
 		<li>Payment Due Date: <%= invoice.due_date %></li>
 	</ul>
