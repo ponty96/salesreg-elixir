@@ -94,6 +94,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   object :option do
     field(:id, :uuid)
     field(:name, :string)
+    field(:is_visual, :string)
 
     field(:option_values, list_of(:option_value),
       resolve: dataloader(SalesReg.Store, :option_values)
@@ -668,6 +669,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
   input_object :option_input do
     field(:name, non_null(:string))
+    field(:is_visual, :string)
     field(:company_id, non_null(:uuid))
   end
 
