@@ -54,17 +54,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     end
 
     @desc """
-    upsert a service in a company's store
-    """
-    field :upsert_service, :mutation_response do
-      arg(:service, non_null(:service_input))
-      arg(:service_id, :uuid)
-
-      middleware(Authorize)
-      resolve(&StoreResolver.upsert_service/2)
-    end
-
-    @desc """
     upsert a category in a company's store
     """
     field :upsert_category, :mutation_response do
@@ -94,16 +83,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
 
       middleware(Authorize)
       resolve(&StoreResolver.delete_product/2)
-    end
-
-    @desc """
-      mutation to delete service
-    """
-    field :delete_service, :mutation_response do
-      arg(:service_id, non_null(:uuid))
-
-      middleware(Authorize)
-      resolve(&StoreResolver.delete_service/2)
     end
 
     @desc """
@@ -151,18 +130,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     end
 
     @desc """
-      query for all services in a company's store
-    """
-    connection field(:list_company_services, node_type: :service) do
-      arg(:company_id, non_null(:uuid))
-      arg(:query, non_null(:string))
-
-      middleware(Authorize)
-      resolve(&StoreResolver.search_company_services/2)
-    end
-
-    @desc """
-      query for all company product / service categories
+      query for all company product categories
     """
     connection field(:list_company_categories, node_type: :category) do
       arg(:company_id, non_null(:uuid))
@@ -181,17 +149,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
 
       middleware(Authorize)
       resolve(&StoreResolver.search_company_options/2)
-    end
-
-    @desc """
-      search for products and services by name
-    """
-    field :search_products_and_services_by_name, list_of(:search_response) do
-      arg(:query, non_null(:string))
-      arg(:company_id, non_null(:uuid))
-
-      middleware(Authorize)
-      resolve(&StoreResolver.search_products_services_by_name/2)
     end
 
     @desc """

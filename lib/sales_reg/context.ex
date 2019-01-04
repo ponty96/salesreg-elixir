@@ -38,18 +38,18 @@ defmodule SalesReg.Context do
           {:ok, res}
         end
 
-        def unquote(String.to_atom("paginated_list_company_#{schema}s"))(company_id, args) do
+        def unquote(String.to_atom("paginated_list_company_#{schema}s"))(clauses, args) do
           unquote(module)
-          |> Query.where(company_id: ^company_id)
+          |> Query.where(^clauses)
           |> Query.order_by(:updated_at)
           |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
         end
 
-        def unquote(String.to_atom("search_company_#{schema}s"))(company_id, query, field, args) do
+        def unquote(String.to_atom("search_company_#{schema}s"))(clauses, query, field, args) do
           query_regex = "%" <> query <> "%"
 
           unquote(module)
-          |> where(company_id: ^company_id)
+          |> where(^clauses)
           |> where([s], ilike(field(s, ^field), ^query_regex))
           |> order_by(
             [s],

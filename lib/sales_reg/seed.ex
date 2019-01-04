@@ -172,19 +172,6 @@ defmodule SalesReg.Seed do
 
   # SALES ORDER SEED
 
-  def create_sales_order(company_id, user_id, contact_id, products, services) do
-    order_items =
-      Enum.concat(
-        order_items(Enum.take_random(products, 4), "product"),
-        order_items(Enum.take_random(services, 3), "service")
-      )
-
-    create_sales_order(
-      %{company_id: company_id, user_id: user_id, contact_id: contact_id},
-      order_items
-    )
-  end
-
   def create_sales_order(company_id, user_id, contact_id, %{items: items, type: type}) do
     order_items = order_items(items, type)
 
@@ -323,11 +310,6 @@ defmodule SalesReg.Seed do
     Store.create_product(params)
   end
 
-  def add_service(param, company_id, user_id, categories) do
-    service_params(param, company_id, user_id, categories)
-    |> Store.add_service()
-  end
-
   defp valid_product_params(company, user) do
     @valid_product_params
     |> Map.put(:company_id, company.id)
@@ -379,18 +361,6 @@ defmodule SalesReg.Seed do
       featured_image: feat_img,
       name: name,
       product_group_id: prod_grp_id,
-      categories: categories,
-      images: Enum.map(1..8, fn _index -> Avatar.image_url() end)
-    }
-  end
-
-  defp service_params([name, price, feat_img], company_id, user_id, categories) do
-    %{
-      name: name,
-      price: price,
-      company_id: company_id,
-      user_id: user_id,
-      featured_image: feat_img,
       categories: categories,
       images: Enum.map(1..8, fn _index -> Avatar.image_url() end)
     }

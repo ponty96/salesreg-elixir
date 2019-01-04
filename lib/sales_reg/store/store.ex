@@ -7,7 +7,6 @@ defmodule SalesReg.Store do
 
   use SalesReg.Context, [
     Product,
-    Service,
     Category,
     Tag,
     ProductGroup,
@@ -64,13 +63,6 @@ defmodule SalesReg.Store do
 
   def load_tags(_), do: []
 
-  def load_prod_and_serv(company_id, query) do
-    products = load_products(company_id, query)
-    services = load_services(company_id, query)
-
-    Enum.shuffle(products ++ services)
-  end
-
   def load_products(company_id, query) do
     query_regex = "%" <> query <> "%"
 
@@ -95,30 +87,18 @@ defmodule SalesReg.Store do
     |> List.flatten()
   end
 
-  def load_services(company_id, query) do
+  def load_products(company_id, query, args) do
     query_regex = "%" <> query <> "%"
 
-    Service
-    |> where([s], s.company_id == ^company_id)
-    |> where([s], ilike(s.name, ^query_regex))
-    |> order_by([s], asc: [s.name])
-    |> select([s], [s])
-    |> Repo.all()
-    |> List.flatten()
-    |> Enum.map(fn service ->
-      Map.put_new(service, :type, "Service")
-    end)
+    from(p in Product,
+      join: pg in ProductGroup,
+      on: p.product_group_id == pg.id,
+      where: ilike(pg.title, ^query_regex),
+      where: p.company_id == ^company_id,
+      select: p
+    )
+    |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
   end
-
-  # def list_top_rated_items(company_id) do
-  #   Product
-  #   |> join(:inner, [p], s in Service)
-  #   |> where([p, s], p.is_top_rated_by_merchant == true and s.is_top_rated_by_merchant == true)
-  #   |> where([p, s], p.company_id == ^company_id and s.company_id == ^company_id)
-  #   |> select([p, s], {p.name, s.name, p.is_top_rated_by_merchant, s.is_top_rated_by_merchant})
-  #   |> order_by([p, s], asc: p.is_top_rated_by_merchant, asc: s.is_top_rated_by_merchant)
-  #   |> Repo.all()
-  # end
 
   # PRODUCT INVENTORY
   def update_product_inventory(:increment, order_items) when is_list(order_items) do
@@ -323,16 +303,12 @@ defmodule SalesReg.Store do
     list_featured_items(Product, company_id)
   end
 
-  def load_featured_services(company_id) do
-    list_featured_items(Service, company_id)
-  end
-
   def home_categories(company_id) do
     Repo.all(
       from(c in Category,
         where: c.company_id == ^company_id,
         limit: 10,
-        preload: [:products, :services]
+        preload: [:products]
       )
     )
   end
@@ -342,7 +318,7 @@ defmodule SalesReg.Store do
       from(c in Category,
         where: c.company_id == ^company_id,
         limit: 15,
-        preload: [:products, :services]
+        preload: [:products]
       )
     )
   end
@@ -361,25 +337,6 @@ defmodule SalesReg.Store do
     Repo.paginate(query, page: page)
   end
 
-  def category_services(category_id, page) do
-    {:ok, category_id} = UUID.dump(category_id)
-
-    query =
-      from(s in Service,
-        join: sc in "services_categories",
-        on: sc.category_id == ^category_id,
-        where: sc.service_id == s.id,
-        select: s
-      )
-
-    Repo.paginate(query, page: page)
-  end
-
-  def filter_webstore_services(company_id, filter_params) do
-    from(s in Service, where: s.company_id == ^company_id, select: s)
-    |> Repo.paginate(page: Map.get(filter_params, :page))
-  end
-
   def filter_webstore_products(company_id, filter_params) do
     from(p in Product, where: p.company_id == ^company_id, select: p)
     |> Repo.paginate(page: Map.get(filter_params, :page))
@@ -394,6 +351,15 @@ defmodule SalesReg.Store do
     |> Repo.all()
     |> Enum.map(&store_item_preloads(&1))
     |> List.flatten()
+  end
+
+  def list_top_rated_items(company_id) do
+    Product
+    |> where([p], p.is_top_rated_by_merchant == true)
+    |> where([p], p.company_id == ^company_id)
+    |> select([p], {p.name, p.is_top_rated_by_merchant})
+    |> order_by([p], asc: p.is_top_rated_by_merchant)
+    |> Repo.all()
   end
 
   def calculate_store_item_stars(%{stars: []}), do: 0

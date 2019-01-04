@@ -28,11 +28,11 @@ defmodule SalesReg.Order do
   end
 
   def preload_order(order) do
-    Repo.preload(order, [:invoice, :contact, company: [:owner], items: [:product, :service]])
+    Repo.preload(order, [:invoice, :contact, company: [:owner], items: [:product]])
   end
 
   def preload_invoice(invoice) do
-    Repo.preload(invoice, [:company, :user, sale: [items: [:product, :service]]])
+    Repo.preload(invoice, [:company, :user, sale: [items: [:product]]])
   end
 
   def preload_receipt(receipt) do
@@ -67,26 +67,10 @@ defmodule SalesReg.Order do
     end)
   end
 
-  def create_review(
-        %{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id} = params
-      ) do
-    create_star_or_review(sale_id, contact_id, service_id, :service, fn params ->
-      Order.add_review(params)
-    end)
-  end
-
   def create_star(
         %{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id} = params
       ) do
     create_star_or_review(sale_id, contact_id, product_id, :product, fn params ->
-      Order.add_star(params)
-    end)
-  end
-
-  def create_star(
-        %{"sale_id" => sale_id, "contact_id" => contact_id, "service_id" => service_id} = params
-      ) do
-    create_star_or_review(sale_id, contact_id, service_id, :service, fn params ->
       Order.add_star(params)
     end)
   end
@@ -277,7 +261,7 @@ defmodule SalesReg.Order do
 
     case add_receipt do
       {:ok, receipt} ->
-        receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product, :service]]])
+        receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product]]])
         Order.supervise_pdf_upload(receipt)
 
         Email.send_email(sale, "yc_payment_received")
@@ -303,7 +287,7 @@ defmodule SalesReg.Order do
 
     case add_receipt do
       {:ok, receipt} ->
-        receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product, :service]]])
+        receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product]]])
         Order.supervise_pdf_upload(receipt)
 
         Email.send_email(sale, "yc_payment_received")
@@ -377,18 +361,6 @@ defmodule SalesReg.Order do
     Repo.all(
       from(item in Item,
         where: item.product_id == ^product_id,
-        preload: [:sale]
-      )
-    )
-    |> Enum.filter(&(&1.sale.status == "delivered"))
-    |> Enum.map(&String.to_integer(&1.quantity))
-    |> Enum.sum()
-  end
-
-  def calc_service_total_times_ordered(service_id) do
-    Repo.all(
-      from(item in Item,
-        where: item.service_id == ^service_id,
         preload: [:sale]
       )
     )
@@ -517,10 +489,6 @@ defmodule SalesReg.Order do
 
   defp find_in_items(items, :product, product_id) do
     {:ok, Enum.find(items, "not found", fn item -> item.product_id == product_id end)}
-  end
-
-  defp find_in_items(items, :service, service_id) do
-    {:ok, Enum.find(items, "not found", fn item -> item.service_id == service_id end)}
   end
 
   defp all_sales_made_contact(contact_id) do

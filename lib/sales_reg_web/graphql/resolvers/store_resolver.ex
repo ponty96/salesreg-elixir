@@ -2,15 +2,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   use SalesRegWeb, :context
   require SalesReg.Context
 
-  def upsert_service(%{service: params, service_id: id}, _res) do
-    Store.get_service(id)
-    |> Store.update_service(params)
-  end
-
-  def upsert_service(%{service: params}, _res) do
-    Store.add_service(params)
-  end
-
   def create_product(%{params: params}, _res) do
     Store.create_product(params)
   end
@@ -44,11 +35,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.add_option(params)
   end
 
-  def delete_service(%{service_id: service_id}, _res) do
-    service = Store.get_service(service_id)
-    Store.delete_service(service)
-  end
-
   def delete_product(%{product_id: product_id}, _res) do
     product = Store.get_product(product_id)
     Store.delete_product(product)
@@ -64,20 +50,18 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.delete_option(option)
   end
 
-  def search_company_services(%{company_id: id, query: query} = args, _res) do
-    Store.search_company_services(id, query, :name, pagination_args(args))
-  end
-
   def search_company_products(%{company_id: id, query: query} = args, _res) do
-    Store.search_company_products(id, query, :name, pagination_args(args))
+    Store.load_products(id, query, pagination_args(args))
   end
 
   def search_company_categories(%{company_id: id, query: query} = args, _res) do
-    Store.search_company_categorys(id, query, :title, pagination_args(args))
+    [company_id: id]
+    |> Store.search_company_categorys(query, :title, pagination_args(args))
   end
 
   def search_company_options(%{company_id: id, query: query} = args, _res) do
-    Store.search_company_options(id, query, :name, pagination_args(args))
+    [company_id: id]
+    |> Store.search_company_options(query, :name, pagination_args(args))
   end
 
   def search_product_groups_by_title(%{company_id: company_id, query: query}, _res) do
@@ -94,10 +78,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
 
   def search_products_by_name(%{company_id: company_id, query: query}, _res) do
     {:ok, Store.load_products(company_id, query)}
-  end
-
-  def search_products_services_by_name(%{company_id: company_id, query: query}, _res) do
-    {:ok, Store.load_prod_and_serv(company_id, query)}
   end
 
   def restock_products(%{items: items}, _res) do

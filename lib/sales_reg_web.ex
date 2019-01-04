@@ -110,7 +110,6 @@ defmodule SalesRegWeb do
         Business.ExpenseItem,
         Store,
         Store.Product,
-        Store.Service,
         Store.Category,
         Store.Tag,
         Order,

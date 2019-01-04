@@ -10,13 +10,11 @@ defmodule SalesReg.Repo.Migrations.CreateItem do
       add(:sale_id, references(:sales, on_delete: :nothing, type: :binary_id))
 
       add(:product_id, references(:products, on_delete: :nothing, type: :binary_id))
-      add(:service_id, references(:services, on_delete: :nothing, type: :binary_id))
 
       timestamps()
     end
 
     create(index(:items, [:sale_id]))
     create(index(:items, [:product_id]))
-    create(index(:items, [:service_id]))
   end
 end

@@ -2,7 +2,7 @@ defmodule SalesReg.Store.Category do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias SalesReg.Store.{Product, Service}
+  alias SalesReg.Store.Product
   alias SalesReg.Repo
 
   @placeholder_image 'http://app.yipcart.com/images/yipcart-item-category.png'
@@ -17,7 +17,6 @@ defmodule SalesReg.Store.Category do
     belongs_to(:user, SalesReg.Accounts.User)
 
     many_to_many(:products, Product, join_through: "products_categories")
-    many_to_many(:services, Service, join_through: "services_categories")
     timestamps()
   end
 
@@ -45,12 +44,11 @@ defmodule SalesReg.Store.Category do
   end
 
   def category_image(category),
-    do: get_category_image(Repo.preload(category, [:products, :services]))
+    do: get_category_image(Repo.preload(category, [:products]))
 
-  defp get_category_image(%{products: [], services: []}), do: @placeholder_image
+  defp get_category_image(%{products: []}), do: @placeholder_image
 
-  defp get_category_image(%{products: products, services: services}) do
-    items = products ++ services
-    Enum.random(items).featured_image
+  defp get_category_image(%{products: products}) do
+    Enum.random(products).featured_image
   end
 end
