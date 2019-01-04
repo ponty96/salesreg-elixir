@@ -2,7 +2,7 @@ defmodule SalesRegWeb.SessionController do
   use SalesRegWeb, :controller
   use SalesRegWeb, :context
 
-  plug Ueberauth
+  plug(Ueberauth)
   alias Ueberauth.Strategy.Helpers
 
   def request(conn, _params) do

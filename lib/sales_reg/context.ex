@@ -52,13 +52,13 @@ defmodule SalesReg.Context do
           |> where(^clauses)
           |> where([s], ilike(field(s, ^field), ^query_regex))
           |> order_by(
-              [s],
-              fragment(
-                "ts_rank(to_tsvector(?), plainto_tsquery(?)) DESC",
-                field(s, ^field),
-                ^query
-              )
+            [s],
+            fragment(
+              "ts_rank(to_tsvector(?), plainto_tsquery(?)) DESC",
+              field(s, ^field),
+              ^query
             )
+          )
           |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
         end
 
@@ -92,6 +92,7 @@ defmodule SalesReg.Context do
 
         def unquote(String.to_atom("all_#{schema}"))() do
           module = unquote(module)
+
           if module do
             module
             |> Repo.all()

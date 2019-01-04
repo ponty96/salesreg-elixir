@@ -68,7 +68,7 @@ defmodule SalesReg.Order.Sale do
     |> Repo.preload(:items)
     |> cast(%{}, [])
     |> no_assoc_constraint(:items,
-      message: "This sale is still associated with a product or service "
+      message: "This sale is still associated with a product"
     )
   end
 end

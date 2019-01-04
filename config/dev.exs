@@ -45,5 +45,4 @@ config :sales_reg, SalesReg.Repo,
   hostname: "localhost",
   pool_size: 10
 
-config :sales_reg, SalesReg.Mailer, 
-  sandbox: true
+config :sales_reg, SalesReg.Mailer, sandbox: true

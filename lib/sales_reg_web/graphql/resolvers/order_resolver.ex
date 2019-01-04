@@ -54,7 +54,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
 
         receipt.company_id
         |> Email.send_email("yc_payment_received", sale)
-        
+
         {:ok, receipt}
 
       {:error, reason} ->
