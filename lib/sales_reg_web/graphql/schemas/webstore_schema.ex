@@ -22,28 +22,21 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
       resolve(&WebStoreResolver.product_page_query/2)
     end
 
-    field :service_page_query, :service do
-      arg(:id, :uuid)
-      resolve(&WebStoreResolver.service_page_query/2)
-    end
-
     field :category_page_query, :category_page do
       arg(:id, non_null(:uuid))
-      arg(:service_page, :string)
       arg(:product_page, :string)
 
       resolve(&WebStoreResolver.category_page_query/2)
     end
 
     field :store_page_query, :store_page do
-      arg(:service_page, :string)
       arg(:product_page, :string)
 
       resolve(&WebStoreResolver.store_page_query/2)
     end
 
     @desc """
-      query for all company product / service categories
+      query for all company product categories
     """
     connection field(:categories_page_query, node_type: :category) do
       arg(:query, :string)

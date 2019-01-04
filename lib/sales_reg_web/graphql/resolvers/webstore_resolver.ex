@@ -12,7 +12,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
     home_data = %{
       categories: Store.home_categories(company.id),
       featured_products: Store.load_featured_products(company.id),
-      featured_services: Store.load_featured_services(company.id),
       company: company
     }
 
@@ -25,25 +24,15 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
     {:ok, product_group}
   end
 
-  def service_page_query(%{id: id}, _resolution) do
-    service = Store.get_service(id)
-    {:ok, service}
-  end
-
-  def category_page_query(%{id: id, product_page: p_page, service_page: s_page}, _resolution) do
+  def category_page_query(%{id: id, product_page: p_page}, _resolution) do
     {%{entries: products}, product_page} =
       Store.category_products(id, p_page) |> Map.split([:entries])
-
-    {%{entries: services}, service_page} =
-      Store.category_services(id, s_page) |> Map.split([:entries])
 
     {:ok,
      %{
        category: Store.get_category(id),
        products: products,
-       product_page: product_page,
-       services: services,
-       service_page: service_page
+       product_page: product_page
      }}
   end
 
@@ -52,21 +41,16 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
     Store.search_company_categorys(company.id, query, :title, pagination_args(args))
   end
 
-  def store_page_query(%{product_page: p_page, service_page: s_page}, resolution) do
+  def store_page_query(%{product_page: p_page}, resolution) do
     company = resolution.context.company
 
     {%{entries: products}, product_page} =
       Store.filter_webstore_products(company.id, %{page: p_page}) |> Map.split([:entries])
 
-    {%{entries: services}, service_page} =
-      Store.filter_webstore_services(company.id, %{page: s_page}) |> Map.split([:entries])
-
     {:ok,
      %{
        products: products,
-       product_page: product_page,
-       services: services,
-       service_page: service_page
+       product_page: product_page
      }}
   end
 

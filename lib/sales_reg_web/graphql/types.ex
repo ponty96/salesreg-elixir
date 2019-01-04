@@ -333,6 +333,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       list_of(:product),
       resolve: dataloader(SalesReg.Business, :products)
     )
+
     field :image, :string do
       resolve(fn _parent, %{source: category} ->
         {:ok, Store.category_image(category)}
@@ -351,7 +352,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:products, list_of(:product), resolve: dataloader(SalesReg.Store, :products))
-    field(:services, list_of(:service), resolve: dataloader(SalesReg.Store, :services))
   end
 
   connection(node_type: :tag)
@@ -816,22 +816,17 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   object :home_data do
     field(:categories, list_of(:category))
     field(:featured_products, list_of(:product))
-    field(:featured_services, list_of(:service))
     field(:company, :company)
   end
 
   object :category_page do
     field(:category, :category)
     field(:products, list_of(:product))
-    field(:services, list_of(:service))
-    field(:service_page, :pagination_meta)
     field(:product_page, :pagination_meta)
   end
 
   object :store_page do
     field(:products, list_of(:product))
-    field(:services, list_of(:service))
-    field(:service_page, :pagination_meta)
     field(:product_page, :pagination_meta)
   end
 
