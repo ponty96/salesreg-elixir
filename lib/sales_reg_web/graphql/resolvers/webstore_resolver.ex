@@ -38,7 +38,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
 
   def categories_page_query(%{query: query} = args, resolution) do
     company = resolution.context.company
-    Store.search_company_categorys(company.id, query, :title, pagination_args(args))
+    Store.search_company_categorys([company_id: company.id], query, :title, pagination_args(args))
   end
 
   def store_page_query(%{product_page: p_page}, resolution) do
