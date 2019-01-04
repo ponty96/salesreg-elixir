@@ -26,7 +26,7 @@ defmodule SalesReg.Store do
   def insert_default_options(company_id) do
     [
       %{name: "Size", company_id: company_id},
-      %{name: "Color", company_id: company_id},
+      %{name: "Color", company_id: company_id, is_visual: "yes"},
       %{name: "Weight", company_id: company_id},
       %{name: "Height", company_id: company_id}
     ]

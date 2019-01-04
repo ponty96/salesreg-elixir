@@ -9,6 +9,7 @@ defmodule SalesReg.Store.Option do
   @foreign_key_type :binary_id
   schema "options" do
     field(:name, :string)
+    field(:is_visual, :string, default: "no")
     belongs_to(:company, SalesReg.Business.Company)
 
     many_to_many(:product_groups, Store.ProductGroup,
@@ -25,7 +26,7 @@ defmodule SalesReg.Store.Option do
   def changeset(option, attrs) do
     option
     |> Repo.preload(:product_groups)
-    |> cast(attrs, [:name, :company_id])
+    |> cast(attrs, [:name, :company_id, :is_visual])
     |> validate_required([:name, :company_id])
   end
 
