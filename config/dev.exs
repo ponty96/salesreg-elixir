@@ -46,3 +46,23 @@ config :sales_reg, SalesReg.Repo,
   pool_size: 10
 
 config :sales_reg, SalesReg.Mailer, sandbox: true
+
+config :cors_plug,
+  origins: [~r/http?.*yipcartlocal.com\d?\.com$/],
+  max_age: 86400,
+  methods: ["GET", "POST", "OPTIONS"],
+  headers: [
+    "Authorization",
+    "Content-Type",
+    "Accept",
+    "Origin",
+    "User-Agent",
+    "DNT",
+    "Cache-Control",
+    "X-Mx-ReqToken",
+    "Keep-Alive",
+    "X-Requested-With",
+    "If-Modified-Since",
+    "X-CSRF-Token",
+    "request-endpoint"
+  ]

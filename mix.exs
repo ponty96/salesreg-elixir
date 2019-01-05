@@ -83,7 +83,8 @@ defmodule SalesReg.Mixfile do
       {:remote_ip, "~> 0.1.0"},
       {:quantum, "~> 2.3"},
       {:timex, "~> 3.0"},
-      {:scrivener_ecto, "~> 2.0"}
+      {:scrivener_ecto, "~> 2.0"},
+      {:cors_plug, "~> 2.0"}
     ]
   end
 
