@@ -10,20 +10,17 @@ defmodule SalesReg.Order.Item do
 
     belongs_to(:sale, SalesReg.Order.Sale)
     belongs_to(:product, SalesReg.Store.Product)
-    belongs_to(:service, SalesReg.Store.Service)
 
     timestamps()
   end
 
-  @required_fields [:quantity, :unit_price]
-  @optional_fields [:product_id, :service_id]
+  @required_fields [:quantity, :unit_price, :product_id]
 
   @doc false
   def changeset(item, attrs) do
     item
-    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:product)
-    |> assoc_constraint(:service)
   end
 end

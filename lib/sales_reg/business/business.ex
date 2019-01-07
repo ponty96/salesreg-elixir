@@ -15,16 +15,16 @@ defmodule SalesReg.Business do
   ]
 
   @email_types [
-      "yc_email_before_due",
-			"yc_email_early_due",
-			"yc_email_late_overdue",
-			"yc_email_received_order",
-      "yc_email_reminder",
-      "yc_payment_received",
-      "yc_email_delivered_order",
-      "yc_email_delivering_order",
-      "yc_email_pending_delivery",
-      "yc_email_pending_order"
+    "yc_email_before_due",
+    "yc_email_early_due",
+    "yc_email_late_overdue",
+    "yc_email_received_order",
+    "yc_email_reminder",
+    "yc_payment_received",
+    "yc_email_delivered_order",
+    "yc_email_delivering_order",
+    "yc_email_pending_delivery",
+    "yc_email_pending_order"
   ]
 
   def create_company(user_id, company_params) do
@@ -38,9 +38,8 @@ defmodule SalesReg.Business do
          },
          {:ok, _branch} <- add_branch(branch_params),
          [{:ok, _option} | _t] <- Store.insert_default_options(company.id),
-         {_int, _result} <- insert_company_email_temps(company.id), 
+         {_int, _result} <- insert_company_email_temps(company.id),
          %Bamboo.Email{} <- send_email(company, "yc_email_welcome_to_yc") do
-      
       {:ok, company}
     else
       {:error, changeset} -> {:error, changeset}
@@ -79,8 +78,7 @@ defmodule SalesReg.Business do
          where: ct.company_id == ^company_id and ct.type == ^type,
          order_by: [desc: ct.updated_at]
        )
-     )
-    }
+     )}
   end
 
   def data do
@@ -179,10 +177,11 @@ defmodule SalesReg.Business do
   defp calc_expense_amount([], acc), do: Float.round(acc, 2)
 
   defp calc_expense_amount([h | t], acc) do
-    val = fn(amount) ->
+    val = fn amount ->
       {float, _} = Float.parse(amount)
       float
     end
+
     calc_expense_amount(t, acc + val.(h.amount))
   end
 
@@ -197,13 +196,14 @@ defmodule SalesReg.Business do
   end
 
   def insert_company_email_temps(company_id) do
-    templates = Enum.map(@email_types, fn(type) ->
-      %{
-        body: return_file_content(type),
-        type: type,
-        company_id: company_id
-      }
-    end)
+    templates =
+      Enum.map(@email_types, fn type ->
+        %{
+          body: return_file_content(type),
+          type: type,
+          company_id: company_id
+        }
+      end)
 
     Repo.insert_all(CompanyEmailTemplate, templates)
   end
@@ -214,10 +214,9 @@ defmodule SalesReg.Business do
   end
 
   defp return_file_content(type) do
-    {:ok, binary} = Path.expand(
-      "./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex"
-    )
-    |> File.read()
+    {:ok, binary} =
+      Path.expand("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
+      |> File.read()
 
     binary
   end

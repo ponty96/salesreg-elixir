@@ -11,12 +11,12 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   end
 
   def list_company_sales(%{company_id: company_id} = args, _res) do
-    company_id
+    [company_id: company_id]
     |> Order.paginated_list_company_sales(pagination_args(args))
   end
 
   def list_company_invoices(%{company_id: company_id} = args, _res) do
-    company_id
+    [company_id: company_id]
     |> Order.paginated_list_company_invoices(pagination_args(args))
   end
 
@@ -54,7 +54,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
 
         receipt.company_id
         |> Email.send_email("yc_payment_received", sale)
-        
+
         {:ok, receipt}
 
       {:error, reason} ->
