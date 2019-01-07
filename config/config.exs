@@ -92,14 +92,12 @@ config :sales_reg, SalesReg.Scheduler,
   jobs: [
     mail_on_order_due_date: [
       schedule: "@daily",
-      task: {SalesReg.Tasks, :mail_on_order_due_date, []},
+      task: {SalesReg.Tasks, :mail_on_order_due_date, []}
     ],
-
     mail_before_order_due_date: [
       schedule: "@daily",
       task: {SalesReg.Tasks, :mail_before_order_due_date, []}
     ],
-
     mail_after_order_overdue: [
       schedule: "@daily",
       task: {SalesReg.Tasks, :mail_after_order_overdue, []}
