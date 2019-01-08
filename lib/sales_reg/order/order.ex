@@ -13,7 +13,8 @@ defmodule SalesReg.Order do
     Invoice,
     Receipt,
     Review,
-    Star
+    Star,
+    Activity
   ]
 
   @receipt_html_path "lib/sales_reg_web/templates/mailer/receipt.html.eex"
@@ -37,6 +38,10 @@ defmodule SalesReg.Order do
 
   def preload_receipt(receipt) do
     Repo.preload(receipt, [:sale])
+  end
+
+  def preload_activity(activity) do
+    Repo.preload(activity, [:invoice])
   end
 
   def update_status(:sale, order_id, new_status) do
@@ -100,6 +105,9 @@ defmodule SalesReg.Order do
     |> Multi.run(:insert_receipt, fn _repo, %{insert_sale: sale, insert_invoice: invoice} ->
       insert_receipt(sale, invoice, amount, :cash)
     end)
+    |> Multi.run(:insert_activities, fn _repo, %{insert_receipt: receipt} ->
+      create_activities(receipt)
+    end)
     |> Repo.transaction()
     |> repo_transaction_resp()
   end
@@ -137,6 +145,9 @@ defmodule SalesReg.Order do
     end)
     |> Multi.run(:insert_receipt, fn _repo, %{insert_sale: sale, insert_invoice: invoice} ->
       insert_receipt(sale, invoice, amount, :cash)
+    end)
+    |> Multi.run(:insert_activities, fn _repo, %{insert_receipt: receipt} ->
+      create_activities(receipt)
     end)
     |> Repo.transaction()
     |> repo_transaction_resp()
@@ -262,10 +273,10 @@ defmodule SalesReg.Order do
     case add_receipt do
       {:ok, receipt} ->
         receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product]]])
+        
         Order.supervise_pdf_upload(receipt)
-
         Email.send_email(sale, "yc_payment_received")
-
+        
         add_receipt
 
       {:error, _reason} = error_tuple ->
@@ -288,8 +299,8 @@ defmodule SalesReg.Order do
     case add_receipt do
       {:ok, receipt} ->
         receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product]]])
+        
         Order.supervise_pdf_upload(receipt)
-
         Email.send_email(sale, "yc_payment_received")
 
         {:ok, receipt}
@@ -297,6 +308,41 @@ defmodule SalesReg.Order do
       {:error, _reason} = error_tuple ->
         error_tuple
     end
+  end
+
+  def create_activities(receipt) do
+    receipt = preload_receipt(receipt)
+    create_activity(
+      "payment", 
+      receipt.amount_paid,
+      receipt.invoice_id,
+      receipt.sale.contact_id,
+      receipt.company_id
+    )
+
+    if calc_pay_outstanding(receipt.sale) == 0 do
+      create_activity(
+        "closed_order",
+        "#{calc_order_amount(receipt.sale)}",
+        receipt.invoice_id,
+        receipt.sale.contact_id,
+        receipt.company_id
+      )
+    end
+
+    {:ok, "Activities created"}
+  end
+
+  def create_activity(type, amount, invoice_id, contact_id, company_id) do
+    attrs = %{
+      type: type,
+      amount: amount,
+      invoice_id: invoice_id,
+      contact_id: contact_id,
+      company_id: company_id
+    }
+
+    Order.add_activity(attrs)
   end
 
   def get_receipt_by_transac_id(transaction_id) do
@@ -388,6 +434,15 @@ defmodule SalesReg.Order do
 
   def calc_pay_outstanding(sale) do
     calc_order_amount(sale) - calc_order_amount_paid(sale)
+  end
+
+  def list_company_activities(company_id, contact_id, args) do
+    from(ac in Activity,
+      where: ac.company_id == ^company_id,
+      where: ac.contact_id == ^contact_id,
+      select: ac
+    )
+    |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
   end
 
   defp calc_items_amount(items) do
