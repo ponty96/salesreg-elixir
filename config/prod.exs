@@ -33,3 +33,13 @@ config :sales_reg, SalesReg.Repo,
   url: System.get_env("DATABASE_URL"),
   pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
   ssl: true
+
+config :sentry,
+  dsn: "https://afb233fc159a11e9857a4201c0a8d02a@sentry.io/salesreg-elixir",
+  environment_name: Mix.env(),
+  enable_source_code_context: true,
+  root_source_code_path: File.cwd!,
+  tags: %{
+    env: "production"
+  },
+  included_environments: [:prod]
