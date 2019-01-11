@@ -35,11 +35,13 @@ config :sales_reg, SalesReg.Repo,
   ssl: true
 
 config :sentry,
-  dsn: "https://afb233fc159a11e9857a4201c0a8d02a@sentry.io/salesreg-elixir",
+  dsn: "https://450c8312e5094c859c0ff835ce5234d4@sentry.io/1369497",
   environment_name: Mix.env(),
   enable_source_code_context: true,
   root_source_code_path: File.cwd!,
   tags: %{
     env: "production"
   },
-  included_environments: [:prod]
+  included_environments: [:prod],
+  use_error_logger: true
+
