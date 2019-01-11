@@ -11,23 +11,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
   object :order_mutations do
     ### Sale order mutations
     @desc """
-    upsert a sale order
+    create a sale order
     """
     field :upsert_sale_order, :mutation_response do
       arg(:sale, non_null(:sale_input))
-      arg(:sale_id, :uuid)
 
       middleware(Authorize)
-      resolve(&OrderResolver.upsert_sale/2)
-    end
-
-    @desc """
-    delete a sale order
-    """
-    field :delete_sale_order, :mutation_response do
-      arg(:sale_id, non_null(:uuid))
-
-      resolve(&OrderResolver.delete_sale/2)
+      resolve(&OrderResolver.create_sale/2)
     end
 
     @desc """
@@ -73,15 +63,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
     ### Receipt mutations
     @desc """
-    upsert a receipt
-    """
-    field :upsert_receipt, :mutation_response do
-      arg(:receipt, non_null(:receipt_input))
-
-      resolve(&OrderResolver.upsert_receipt/2)
-    end
-
-    @desc """
       create a receipt when payment is by cash
     """
     field :create_receipt, :mutation_response do
@@ -89,16 +70,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       arg(:amount_paid, non_null(:string))
 
       resolve(&OrderResolver.create_receipt/2)
-    end
-
-    @desc """
-      mutation to delete receipt
-    """
-    field :delete_receipt, :mutation_response do
-      arg(:receipt_id, non_null(:uuid))
-
-      middleware(Authorize)
-      resolve(&OrderResolver.delete_receipt/2)
     end
   end
 
