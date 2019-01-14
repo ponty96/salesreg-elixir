@@ -108,7 +108,6 @@ defmodule SalesRegWeb do
         Business.ExpenseItem,
         Store,
         Store.Product,
-        Store.Service,
         Store.Category,
         Store.Tag,
         Order,
@@ -125,7 +124,7 @@ defmodule SalesRegWeb do
         Theme,
         Theme.Template,
         Theme.CompanyTemplate,
-        Theme.CompanyEmailTemplate, 
+        Theme.CompanyEmailTemplate,
         Email,
         Mailer
       }

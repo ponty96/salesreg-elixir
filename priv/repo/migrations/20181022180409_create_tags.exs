@@ -16,14 +16,10 @@ defmodule SalesReg.Repo.Migrations.CreateTags do
       add(:tag_id, references(:tags, type: :binary_id, on_delete: :delete_all))
     end
 
-    create table(:services_tags, primary_key: false) do
-      add(:service_id, references(:services, type: :binary_id, on_delete: :delete_all))
-      add(:tag_id, references(:tags, type: :binary_id, on_delete: :delete_all))
-    end
+
 
     create(index(:tags, [:company_id]))
 
     create(unique_index(:products_tags, [:product_id, :tag_id]))
-    create(unique_index(:services_tags, [:service_id, :tag_id]))
   end
 end

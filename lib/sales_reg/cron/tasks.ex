@@ -1,5 +1,5 @@
 defmodule SalesReg.Tasks do
-	use SalesRegWeb, :context
+  use SalesRegWeb, :context
 
 	# sends emails on the day orders are due for payment
 	def mail_on_order_due_date() do
@@ -49,7 +49,7 @@ defmodule SalesReg.Tasks do
 		end)
 	end
 
-	defp now() do
-		DateTime.to_naive(Timex.now())
-	end
+  defp now() do
+    DateTime.to_naive(Timex.now())
+  end
 end

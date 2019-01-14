@@ -8,7 +8,6 @@ defmodule SalesReg.Repo.Migrations.CreateReview do
 
       add(:sale_id, references(:sales, type: :binary_id))
       add(:product_id, references(:products, type: :binary_id))
-      add(:service_id, references(:services, type: :binary_id))
       add(:contact_id, references(:contacts, type: :binary_id))
 
       timestamps()
@@ -17,6 +16,5 @@ defmodule SalesReg.Repo.Migrations.CreateReview do
     create(index(:review, [:sale_id], on_delete: :nothing, type: :binary_id))
     create(index(:review, [:contact_id], on_delete: :nothing, type: :binary_id))
     create(index(:review, [:product_id], on_delete: :nothing, type: :binary_id))
-    create(index(:review, [:service_id], on_delete: :nothing, type: :binary_id))
   end
 end

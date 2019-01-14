@@ -43,24 +43,6 @@ real_product_params = [
     ["91000", "1242", "332", "https://www-konga-com-res.cloudinary.com/w_auto,f_auto,fl_lossy,dpr_auto,q_auto/media/catalog/product/B/U/142283_1544365503.jpg", "Tecno Camon S Pro Bordeaux"]
   ]
 
-  real_service_params = [
-    ["Fumigation and Pest Service", "6000", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/410582/S234x146/SERVICE-Chogon-Facilities-Services---LS403.jpg?1543762261"],
-    ["Complete Car Wash | Home or Office", "4000", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/410508/S234x146/c700x420.jpg?1543513084"],
-    ["Professional Logo Design", "10000", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/410397/S234x146/115371_4664345_779240_image.jpg?1543310073"],
-    ["Teeth Polishing", "7000", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/410458/S234x146/Teeth-1.jpg?1543431924"],
-    ["Teeth Replacement", "10000", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/410439/S234x146/Dental-Care.jpg?1543333885"],
-    ["Xmas Spa Treat", "12000", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/410512/S234x146/Spakools-Spa-1.jpg?1543513846"],
-    ["Building Your Leadership Skills", "15000", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/410323/S234x146/thth.png?1543239464"],
-    ["Digital Marketing", "50000", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/410249/S234x146/img_20170608_162058.jpg?1543220242"],
-    ["Microsoft Excel Training", "25000", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/410507/S234x146/excel-Training.png?1543512846"],
-    ["Professional Web Development", "300000", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/409833/S234x146/Webp.net-resizeimage.jpg?1542740066"],
-    ["Human Resource Management", "30000", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/409824/S234x146/HRM-Dashboa.jpg?1542739116"],
-    ["Online HSE Training", "60000", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/410451/S234x146/RISKID-event-SHE.jpg?1543397362"],
-    ["Emotional Intelligence", "38000", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/410324/S234x146/success-ei.jpg?1543239597"],
-    ["Buld SMS", "1,500", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/410252/S234x146/bulksms_2.png?1543220922"],
-    ["Quality Assurance and Quality Control", "40000", "https://s3.amazonaws.com/www.dealdey.com/system/deals/listing_images/410250/S234x146/qaqc_pix_DEALDEY.jpg?1543220485"]
-  ]
-
 
 {:ok, user} = Seed.create_user()
 {:ok, company} = Seed.create_company(user.id)
@@ -82,11 +64,6 @@ end)
 #     category.id
 #   end)
 
-services =
-  Enum.map(real_service_params, fn(params) ->
-    {:ok, service} = Seed.add_service(params, company.id, user.id)
-    service
-  end)
 
 {:ok, customer} = Seed.add_contact(user.id, company.id, "customer")
 
@@ -117,7 +94,6 @@ services =
 
 Seed.create_sales_order(company.id, user.id, customer.id, %{items: products, type: "product"})
 
-Seed.create_sales_order(company.id, user.id, customer.id, %{items: services, type: "service"})
 
 # Enum.map(random_customers, fn customer ->
 #   Seed.create_sales_order(company.id, user.id, customer.id, products, services)

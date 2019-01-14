@@ -16,7 +16,6 @@ defmodule SalesReg.Application do
       # Start your own worker by calling: SalesReg.Worker.start_link(arg1, arg2, arg3)
       # worker(SalesReg.Worker, [arg1, arg2, arg3]),
       worker(Guardian.DB.Token.SweeperServer, []),
-      
       worker(SalesReg.Scheduler, [])
     ]
 

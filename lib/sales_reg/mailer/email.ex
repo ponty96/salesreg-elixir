@@ -1,28 +1,28 @@
 defmodule SalesReg.Email do
-	use SalesRegWeb, :context
-	import Bamboo.Email
+  use SalesRegWeb, :context
+  import Bamboo.Email
 
-	def send_email(%Company{} = company, type, binary) do
-		binary
-		|> transform_template(company)
-		|> construct_email(company, type)
-		|> send_email()
-	end
+  def send_email(%Company{} = company, type, binary) do
+    binary
+    |> transform_template(company)
+    |> construct_email(company, type)
+    |> send_email()
+  end
 
-	def send_email(%Sale{} = sale, type) do
-		sale = Order.preload_order(sale)
-		company = sale.company
-		
-		company.id
-		|> Theme.get_email_template_by_type(type)
-		|> transform_template(sale)
-		|> construct_email(sale, type)
-		|> send_email()
-	end
+  def send_email(%Sale{} = sale, type) do
+    sale = Order.preload_order(sale)
+    company = sale.company
 
-	def send_email(email_params) do
-		new_email(
-			from:  email_params.from,
+    company.id
+    |> Theme.get_email_template_by_type(type)
+    |> transform_template(sale)
+    |> construct_email(sale, type)
+    |> send_email()
+  end
+
+  def send_email(email_params) do
+    new_email(
+      from: email_params.from,
       to: email_params.to,
       subject: email_params.subject,
 			html_body: email_params.html_body
