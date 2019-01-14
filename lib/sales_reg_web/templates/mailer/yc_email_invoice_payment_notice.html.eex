@@ -1,0 +1,207 @@
+<div style="font-family:'Roboto',sans-serif;color:#000000;height:100%!important;Margin:0!important;padding:0!important;width:100%!important;background:#ffffff">
+	<span style="display:none!important;font-size:0!important;line-height:0!important">Email Description</span>
+	<table width="100%" align="center" border="0" cellspacing="0" cellpadding="0" style="border:0;font-family:'Roboto',sans-serif;color:#000000;height:100%!important;Margin:0!important;padding:0!important;width:100%!important;background:#f8f8f9">
+		<tbody>
+		<tr>
+			<td align="center" valign="top" style="padding-top: 30px">
+
+				<table width="100%" align="center" border="0" cellspacing="0" cellpadding="0" style="border:0;width:100%;Margin:0;padding:0;clear:both">
+					<tbody>
+					<tr>
+						<td align="center" valign="middle">
+							<table align="center" valign="middle" border="0" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border: 1px solid rgb(236,236,236);width:100%;max-width:650px;Margin:0 auto" width="100%">
+								<tbody>
+								<tr>
+									<td>
+										<table style="border-collapse: collapse" align="center" valign="top" border="0" cellpadding="0" cellspacing="0">
+											<tbody>
+											<tr>
+												<td>
+													<table align="center" valign="top" border="0" cellpadding="0" cellspacing="0">
+														<tbody>
+
+														<tr>
+															<td align="left" valign="middle" style="padding: 0 50px;vertical-align: top;background: rgb(54,104,211);font-size: 12px;line-height: 16px;">
+																<table>
+																	<tbody>
+																	<tr>
+																		<td style="width: 100%">
+																			<h1 style="display: inline-flex; color: rgb(255,255,255);margin: 0;font-size: 25px;padding: 35px 0;font-weight: 400">Invoice payment notice:</h1>
+																			<h1 style="display: inline-flex; color: rgb(255,255,255);margin: 0;font-size: 25px;padding: 35px 0;font-weight: 400">#1234</h1>
+																		</td>
+																	</tr>
+																	</tbody>
+																</table>
+															</td>
+														</tr>
+
+														<tr>
+															<td align="left" valign="middle" style="padding: 0 50px;vertical-align: top;background: #ffffff;font-size: 12px;line-height: 16px;">
+																<table>
+																	<tbody>
+																	<tr>
+																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89);line-height: 1.4;font-size: 16px">
+																			<p>Hey Mayafriq,</p>
+																			<p>This is to inform you that the payment has been effected for the above referenced invoice.</p>
+																			<p><strong>Invoice ID:</strong> <span>1234</span></p>
+																			<p><strong>Customer:</strong> <span>Rita Jordan</span></p>
+																			<p><strong>Amount Due:</strong> <span>N20,000.00</span></p>
+																			<p><strong>Paid:</strong> <span style="color: green">N10,000.00</span></p>
+																			<p><strong>Balance Due:</strong> <span style="color: red">N10,000.00</span></p>
+																			<p><strong>Date Due:</strong> <span>20-03-2019</span></p>
+																			<p><strong>Time:</strong> <span>2:08PM</span></p>
+																			<p>Best regards,<br>YipCart team.</p>
+																		</td>
+																	</tr>
+																	</tbody>
+																</table>
+															</td>
+														</tr>
+
+														</tbody>
+													</table>
+												</td>
+											</tr>
+											</tbody>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td style="height:50px" height="50">&nbsp;</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+
+				<table cellspacing="0" cellpadding="0" style="border:0;width:100%;max-width:640px;background:#f8f8f9;text-align:center" width="100%" align="center">
+					<tbody>
+					<tr>
+						<td colspan="3" style="font-size:1px;height:30px" height="30">&nbsp;</td>
+					</tr>
+
+					<tr>
+						<td style="font-size:1px;height:0;width:45px" height="0" width="45">&nbsp;</td>
+
+						<td>
+							<table cellspacing="0" cellpadding="0" style="border:0;width:100%" width="100%">
+								<tbody>
+								<!-- Footer Logo -->
+								<tr>
+									<td>
+										<center>
+											<a href="https://yipcart.com" target="_blank">
+												<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/sm-yipcart-logo.svg" width="114" height="40" alt="YipCart" class="CToWUd">
+											</a>
+										</center>
+									</td>
+								</tr>
+								<!-- Footer Logo Ends-->
+
+								<tr>
+									<td colspan="3" style="font-size:1px;height:10px" height="10">&nbsp;</td>
+								</tr>
+
+								<!-- Footer Yipcart intro -->
+								<tr>
+									<td>
+										<h2 style="color: rgb(85,85,85);font-size:15px!important;font-weight:400;line-height:1.4em;text-align:center" align="center">The product and service eco-system that streamline the sales, ordering, and communication processes.</h2>
+									</td>
+								</tr>
+								<!-- Footer Yipcart intro Ends -->
+
+								<tr>
+									<td colspan="3" style="font-size:1px;height:20px" height="30">&nbsp;</td>
+								</tr>
+
+								<tr>
+									<td>
+										<table cellspacing="0" cellpadding="0" style="border:0;text-align:center" align="center">
+											<tbody>
+
+											<tr>
+												<td colspan="5"></td>
+												<h3 style="font-size:14px!important;font-family:'Roboto',sans-serif;text-align:center;font-weight:400;color:#737881" align="center">FOLLOW US</h3></td>
+											</tr>
+
+											<tr>
+												<td colspan="5" style="font-size:1px;width:32px;height:10px" height="10" width="32">&nbsp;</td>
+											</tr>
+
+											<!-- Social Medias -->
+											<tr>
+												<td>
+													<a href="#" target="_blank">
+														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/facebook-footer-icon.png" width="50" height="50" alt="Facebook Logo">
+													</a>
+												</td>
+
+												<td style="font-size:1px;width:32px;height:30px" height="30" width="32">&nbsp;</td>
+
+												<td></td>
+
+												<td>
+													<a href="#" target="_blank">
+														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/twitter-footer-icon.png" width="50" height="50" alt="Twitter Logo">
+													</a>
+												</td>
+
+												<td style="font-size:1px;width:32px;height:30px" height="30" width="32">&nbsp;</td>
+
+												<td>
+													<a href="#" target="_blank">
+														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/linkedin-footer-icon.png" width="50" height="50" alt="LinkedIn Logo">
+													</a>
+												</td>
+											</tr>
+											<!-- Social Medias Ends-->
+
+											</tbody>
+										</table>
+									</td>
+								</tr>
+
+								<tr>
+									<td colspan="3" style="font-size:1px;height:50px" height="50">&nbsp;</td>
+								</tr>
+								<tr>
+									<td style="font-size:14px!important;color:#737881;font-weight:400;text-align:center" align="center">YipCart, Road Y, Off O”dola Ave, Oba-Ile, Ondo, NG</td>
+								</tr>
+								<tr>
+									<td style="height:0;font-size:14px!important;color:#737881;font-weight:300;text-align:center" height="0" align="center">&nbsp;</td>
+								</tr>
+								<tr>
+									<td>
+										<table cellspacing="0" cellpadding="0" style="border:0;width:100%" width="100%">
+											<tbody>
+											<tr style="display: flex;align-items: center;justify-content: center;">
+												<td style="display:inline-flex;text-align:center" align="center">
+													<a href="#" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">VISIT&nbsp;YIPCART.COM</a>
+													<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/vertical-line-footer-icon.png" width="34" height="24" style="vertical-align:bottom;">
+													<a href="#" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">UNSUBSCRIBE</a>
+												</td>
+											</tr>
+											</tbody>
+										</table>
+									</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+
+						<td style="font-size:1px;height:0;width:45px" height="0" width="45">&nbsp;</td>
+					</tr>
+
+					<tr>
+						<td colspan="3" style="font-size:1px;height:40px" height="90">&nbsp;</td>
+					</tr>
+					</tbody>
+				</table>
+
+			</td>
+		</tr>
+		</tbody>
+	</table>
+</div>
