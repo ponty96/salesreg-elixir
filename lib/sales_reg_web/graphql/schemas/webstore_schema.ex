@@ -5,6 +5,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
   alias SalesRegWeb.GraphQL.Resolvers.WebStoreResolver
+  alias SalesRegWeb.GraphQL.Resolvers.StoreResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
 
   # WEBSTORE HOME PAGE
@@ -33,6 +34,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
       arg(:product_page, :string)
 
       resolve(&WebStoreResolver.store_page_query/2)
+    end
+
+    field :get_product, :product do
+      arg(:id, :uuid)
+
+      resolve(&StoreResolver.get_product/2)
     end
 
     @desc """

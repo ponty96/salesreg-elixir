@@ -15,6 +15,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.update_product_group_options(params)
   end
 
+  def get_product(%{id: id}, _res) do
+    {:ok, Store.get_product(id)}
+  end
+
   # category
   def upsert_category(%{category: params, category_id: id}, _res) do
     Store.get_category(id)
