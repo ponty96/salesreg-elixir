@@ -93,7 +93,7 @@
 									<td>
 										<center>
 											<a href="https://yipcart.com" target="_blank">
-												<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/sm-yipcart-logo.svg" width="114" height="40" alt="YipCart" class="CToWUd">
+												<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/yipcart-logo.png" width="114" height="40" alt="YipCart" class="CToWUd">
 											</a>
 										</center>
 									</td>
@@ -122,7 +122,7 @@
 											<tbody>
 
 											<tr>
-												<td colspan="5"></td>
+												<td colspan="3"></td>
 												<h3 style="font-size:14px!important;font-family:'Roboto',sans-serif;text-align:center;font-weight:400;color:#737881" align="center">FOLLOW US</h3></td>
 											</tr>
 
@@ -133,7 +133,7 @@
 											<!-- Social Medias -->
 											<tr>
 												<td>
-													<a href="#" target="_blank">
+													<a href="https://facebook.com/yipcarthq" target="_blank">
 														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/facebook-footer-icon.png" width="50" height="50" alt="Facebook Logo">
 													</a>
 												</td>
@@ -143,7 +143,7 @@
 												<td></td>
 
 												<td>
-													<a href="#" target="_blank">
+													<a href="https://twitter.com/yipcarthq" target="_blank">
 														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/twitter-footer-icon.png" width="50" height="50" alt="Twitter Logo">
 													</a>
 												</td>
@@ -152,7 +152,7 @@
 
 												<td>
 													<a href="#" target="_blank">
-														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/linkedin-footer-icon.png" width="50" height="50" alt="LinkedIn Logo">
+														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/instagram.png" width="50" height="50" alt="Instagram Logo">
 													</a>
 												</td>
 											</tr>
@@ -177,8 +177,8 @@
 										<table cellspacing="0" cellpadding="0" style="border:0;width:100%" width="100%">
 											<tbody>
 											<tr style="display: flex;align-items: center;justify-content: center;">
-												<td style="display:inline-flex;text-align:center" align="center">
-													<a href="#" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">VISIT&nbsp;YIPCART.COM</a>
+												<td style="display:inline-flex;text-align:center;margin:0 auto" align="center">
+													<a href="https://www.yipcart.com" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">VISIT&nbsp;YIPCART.COM</a>
 													<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/vertical-line-footer-icon.png" width="34" height="24" style="vertical-align:bottom;">
 													<a href="#" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">UNSUBSCRIBE</a>
 												</td>
