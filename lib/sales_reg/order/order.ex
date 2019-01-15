@@ -65,18 +65,27 @@ defmodule SalesReg.Order do
   end
 
   def create_review(
-        %{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id} = params
+        %{
+          sale_id: _sale_id, 
+          contact_id: _contact_id, 
+          product_id: _product_id,
+          text: text
+        } = params
       ) do
-    create_star_or_review(sale_id, contact_id, product_id, :product, fn params ->
-      Order.add_review(params)
+    create_star_or_review(params, fn attrs ->
+      Order.add_review(attrs)
     end)
   end
 
   def create_star(
-        %{"sale_id" => sale_id, "contact_id" => contact_id, "product_id" => product_id} = params
+        %{
+          sale_id: _sale_id, 
+          contact_id: _contact_id, 
+          product_id: _product_id
+        } = params
       ) do
-    create_star_or_review(sale_id, contact_id, product_id, :product, fn params ->
-      Order.add_star(params)
+    create_star_or_review(params, fn attrs ->
+      Order.add_star(attrs)
     end)
   end
 
@@ -176,14 +185,28 @@ defmodule SalesReg.Order do
   def create_sale(%{contact_id: _id, payment_method: "card"} = params) do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
-    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      {:ok, Email.send_email(sale, "yc_email_received_order")}
+    |> sale_multi_transac()
+  end
+
+  # Called when a registered company contact chooses to make a payment for an order via card (get contact by email)
+  def create_sale(%{contact_email: email, payment_method: "card"} = params) do
+    Multi.new()
+    |> Multi.run(:get_contact, fn _repo, %{} ->
+      contact = Business.get_contact_by_email(email)
+      case contact do
+        %Contact{} ->
+          {:ok, contact}
+
+        _ -> 
+          {:error, "Contact not found"}
+      end
     end)
-    |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
-      insert_invoice(sale)
+    |> Multi.run(:insert_sale, fn _repo, %{get_contact: contact} ->
+      params 
+      |> Map.put_new(:contact_id, contact.id)
+      |> Order.add_sale()
     end)
-    |> Repo.transaction()
-    |> repo_transaction_resp()
+    |> sale_multi_transac()
   end
 
   # Called when an unregistered company contact chooses to make payment for an order via card
@@ -195,10 +218,15 @@ defmodule SalesReg.Order do
       |> Map.put_new(:contact_id, contact.id)
       |> Order.add_sale()
     end)
+    |> sale_multi_transac()
+  end
+
+  def sale_multi_transac(multi) do
+    multi
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
       {:ok, Email.send_email(sale, "yc_email_received_order")}
     end)
-    |> Multi.run(:inser_invoice, fn _repo, %{insert_sale: sale} ->
+    |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
     |> Repo.transaction()
@@ -272,12 +300,12 @@ defmodule SalesReg.Order do
 
     case add_receipt do
       {:ok, receipt} ->
-        receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product]]])
-        
+        receipt = Repo.preload(receipt, [:company, :invoice, :user, sale: [items: [:product]]])
+
         Order.supervise_pdf_upload(receipt)
         Email.send_email(sale, "yc_payment_received")
-        
-        add_receipt
+
+        {:ok, receipt.invoice}
 
       {:error, _reason} = error_tuple ->
         error_tuple
@@ -298,12 +326,12 @@ defmodule SalesReg.Order do
 
     case add_receipt do
       {:ok, receipt} ->
-        receipt = Repo.preload(receipt, [:company, :user, sale: [items: [:product]]])
-        
+        receipt = Repo.preload(receipt, [:company, :invoice, :user, sale: [items: [:product]]])
+
         Order.supervise_pdf_upload(receipt)
         Email.send_email(sale, "yc_payment_received")
 
-        {:ok, receipt}
+        {:ok, receipt.invoice}
 
       {:error, _reason} = error_tuple ->
         error_tuple
@@ -468,6 +496,9 @@ defmodule SalesReg.Order do
       {:ok, %{insert_sale: sale}} ->
         {:ok, sale}
 
+      {:error, :get_contact, value, _map} ->
+        {:error, value}
+
       {:error, _failed_operation, _failed_value, changeset} ->
         {:error, changeset}
     end
@@ -512,15 +543,10 @@ defmodule SalesReg.Order do
     "#{String.replace(resource.company.title, " ", "-")}-#{source}-#{count}"
   end
 
-  defp create_star_or_review(sale_id, contact_id, id, type, callback) do
-    with sale <- get_sale(sale_id),
-         true <- sale.contact_id == contact_id,
-         {:ok, _item} <- find_in_items(sale.items, type, id) do
-      params = %{
-        "sale_id" => sale_id,
-        "contact_id" => contact_id,
-        "#{Atom.to_string(type)}_id" => id
-      }
+  defp create_star_or_review(params, callback) do
+    with sale <- get_sale(params.sale_id),
+         true <- sale.contact_id == params.contact_id,
+         {:ok, _item} <- find_in_items(preload_order(sale).items, params.product_id) do
 
       callback.(params)
     else
@@ -528,8 +554,8 @@ defmodule SalesReg.Order do
         {:error,
          [
            %{
-             key: "#{Atom.to_string(type)}_id",
-             message: "#{Atom.to_string(type)} not found in sales item"
+             key: "Product_id",
+             message: "Product not found in sales item"
            }
          ]}
 
@@ -542,7 +568,7 @@ defmodule SalesReg.Order do
     end
   end
 
-  defp find_in_items(items, :product, product_id) do
+  defp find_in_items(items, product_id) do
     {:ok, Enum.find(items, "not found", fn item -> item.product_id == product_id end)}
   end
 
