@@ -174,14 +174,28 @@ defmodule SalesReg.Order do
   def create_sale(%{contact_id: _id, payment_method: "card"} = params) do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
-    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      {:ok, Email.send_email(sale, "yc_email_received_order")}
+    |> sale_multi_transac()
+  end
+
+  # Called when a registered company contact chooses to make a payment for an order via card (get contact by email)
+  def create_sale(%{contact_email: email, payment_method: "card"} = params) do
+    Multi.new()
+    |> Multi.run(:get_contact, fn _repo, %{} ->
+      contact = Business.get_contact_by_email(email)
+      case contact do
+        %Contact{} ->
+          {:ok, contact}
+
+        _ -> 
+          {:error, "Contact not found"}
+      end
     end)
-    |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
-      insert_invoice(sale)
+    |> Multi.run(:insert_sale, fn _repo, %{get_contact: contact} ->
+      params 
+      |> Map.put_new(:contact_id, contact.id)
+      |> Order.add_sale()
     end)
-    |> Repo.transaction()
-    |> repo_transaction_resp()
+    |> sale_multi_transac()
   end
 
   # Called when an unregistered company contact chooses to make payment for an order via card
@@ -193,10 +207,15 @@ defmodule SalesReg.Order do
       |> Map.put_new(:contact_id, contact.id)
       |> Order.add_sale()
     end)
+    |> sale_multi_transac()
+  end
+
+  def sale_multi_transac(multi) do
+    multi
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
       {:ok, Email.send_email(sale, "yc_email_received_order")}
     end)
-    |> Multi.run(:inser_invoice, fn _repo, %{insert_sale: sale} ->
+    |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
     |> Repo.transaction()
@@ -421,6 +440,9 @@ defmodule SalesReg.Order do
     case repo_transaction do
       {:ok, %{insert_sale: sale}} ->
         {:ok, sale}
+
+      {:error, :get_contact, value, _map} ->
+        {:error, value}
 
       {:error, _failed_operation, _failed_value, changeset} ->
         {:error, changeset}
