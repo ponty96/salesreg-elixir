@@ -717,6 +717,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:discount, :string)
     field(:amount_paid, :string)
     field(:contact, :through_order_contact_input)
+    field(:contact_email, :string)
 
     field(:user_id, non_null(:uuid))
     field(:contact_id, :uuid)
