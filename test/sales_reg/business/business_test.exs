@@ -131,64 +131,6 @@ defmodule SalesReg.BusinessTest do
     end
   end
 
-  describe "employees" do
-    alias SalesReg.Business.Employee
-
-    @valid_attrs %{}
-    @update_attrs %{}
-    @invalid_attrs %{}
-
-    def employee_fixture(attrs \\ %{}) do
-      {:ok, employee} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Business.create_employee()
-
-      employee
-    end
-
-    test "list_employees/0 returns all employees" do
-      employee = employee_fixture()
-      assert Business.list_employees() == [employee]
-    end
-
-    test "get_employee!/1 returns the employee with given id" do
-      employee = employee_fixture()
-      assert Business.get_employee!(employee.id) == employee
-    end
-
-    # test "create_employee/1 with valid data creates a employee" do
-    #   assert {:ok, %Employee{} = employee} = Business.create_employee(@valid_attrs)
-    # end
-
-    test "create_employee/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Business.create_employee(@invalid_attrs)
-    end
-
-    test "update_employee/2 with valid data updates the employee" do
-      employee = employee_fixture()
-      assert {:ok, employee} = Business.update_employee(employee, @update_attrs)
-      assert %Employee{} = employee
-    end
-
-    test "update_employee/2 with invalid data returns error changeset" do
-      employee = employee_fixture()
-      assert {:error, %Ecto.Changeset{}} = Business.update_employee(employee, @invalid_attrs)
-      assert employee == Business.get_employee!(employee.id)
-    end
-
-    test "delete_employee/1 deletes the employee" do
-      employee = employee_fixture()
-      assert {:ok, %Employee{}} = Business.delete_employee(employee)
-      assert_raise Ecto.NoResultsError, fn -> Business.get_employee!(employee.id) end
-    end
-
-    test "change_employee/1 returns a employee changeset" do
-      employee = employee_fixture()
-      assert %Ecto.Changeset{} = Business.change_employee(employee)
-    end
-  end
-
   describe "locations" do
     alias SalesReg.Business.Location
 
