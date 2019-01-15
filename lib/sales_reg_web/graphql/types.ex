@@ -49,6 +49,12 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
+
+    field :home_categories, list_of(:category) do
+      resolve(fn _parent, %{source: company} ->
+        {:ok, Store.home_categories(company.id)}
+      end)
+    end
   end
 
   @desc """

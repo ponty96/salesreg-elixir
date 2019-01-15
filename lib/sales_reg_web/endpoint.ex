@@ -44,7 +44,7 @@ defmodule SalesRegWeb.Endpoint do
   )
 
   plug(SalesRegWeb.Plug.SubdomainHandler)
-  plug CORSPlug
+  plug(CORSPlug)
   plug(SalesRegWeb.Router)
 
   @doc """
