@@ -14,7 +14,7 @@ defmodule SalesReg.Seed do
   @banks ["076", "011", "063", "058"]
   @likes ["honesty", "integrity", "principled"]
   @dislikes ["lies", "pride", "laziness"]
-  @payment_method ["cash", "POS", "cheque", "direct transfer"]
+  @payment_method ["cash", "card"]
   @seed_order_status ["pending", "processed", "delivering"]
   @gender ["MALE", "FEMALE"]
   @company_template_status ["active", "inactive"]
@@ -172,12 +172,14 @@ defmodule SalesReg.Seed do
 
   # SALES ORDER SEED
 
-  def create_sales_order(company_id, user_id, contact_id, %{items: items, type: type}) do
-    order_items = order_items(items, type)
-
+  def create_sales_order(company_id, user_id, contact_id, items) do
     create_sales_order(
-      %{company_id: company_id, user_id: user_id, contact_id: contact_id},
-      order_items
+      %{
+        company_id: company_id, 
+        user_id: user_id, 
+        contact_id: contact_id,
+        items: items
+      }
     )
   end
 
@@ -199,17 +201,14 @@ defmodule SalesReg.Seed do
     |> Store.add_tag()
   end
 
-  defp create_sales_order(
-         %{company_id: company_id, user_id: user_id, contact_id: contact_id},
-         order_items
-       ) do
+  defp create_sales_order(params) do
     params = %{
       date: past_date(:recent),
       payment_method: Enum.random(@payment_method),
-      user_id: user_id,
-      company_id: company_id,
-      contact_id: contact_id,
-      items: order_items,
+      user_id: params.user_id,
+      company_id: params.company_id,
+      contact_id: params.contact_id,
+      items: params.items,
       status: Enum.random(@seed_order_status)
     }
 
@@ -250,10 +249,10 @@ defmodule SalesReg.Seed do
 
   defp order_items(items, type) do
     Enum.map(items, fn item ->
-      unit_price = Map.get(item, :price) || Map.get(item, :price)
+      unit_price = Map.get(item, :price)
 
       %{
-        "quantity" => "#{Enum.random(0..20)}",
+        "quantity" => "3",
         "unit_price" => unit_price,
         "#{type}_id" => item.id
       }
@@ -335,8 +334,6 @@ defmodule SalesReg.Seed do
   end
 
   defp insert_prod_grp(company_id) do
-    IO.inspect(company_id, label: "company_id")
-
     params = %{
       "title" => "Mobile Devices and Assessories",
       "option_ids" => [],

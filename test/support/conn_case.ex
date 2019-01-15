@@ -63,7 +63,8 @@ defmodule SalesRegWeb.ConnCase do
     currency: "Euro",
     phone: %{
       number: "+2348131900893"
-    }
+    },
+    slug: "nickname of the company"
   }
 
   # this is called for all tests

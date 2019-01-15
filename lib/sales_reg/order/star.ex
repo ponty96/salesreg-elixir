@@ -23,5 +23,6 @@ defmodule SalesReg.Order.Star do
     |> Repo.preload([:sale, :contact])
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
+    |> validate_inclusion(:value, 0..5)
   end
 end
