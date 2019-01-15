@@ -27,7 +27,7 @@
 																	<tr>
 																		<td style="width: 100%">
 																			<h1 style="display: inline-flex; color: rgb(255,255,255);margin: 0;font-size: 25px;padding: 35px 0;font-weight: 400">Order notification:</h1>
-																			<h1 style="display: inline-flex; color: rgb(255,255,255);margin: 0;font-size: 25px;padding: 35px 0;font-weight: 400">#1234</h1>
+																			<h1 style="display: inline-flex; color: rgb(255,255,255);margin: 0;font-size: 25px;padding: 35px 0;font-weight: 400">#<%= sale.ref_id %></h1>
 																		</td>
 																	</tr>
 																	</tbody>
@@ -41,15 +41,15 @@
 																	<tbody>
 																	<tr>
 																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89);line-height: 1.4;font-size: 16px">
-																			<p>Hey Mayafriq,</p>
+																			<p>Hey <%= sale.company.title %>,</p>
 																			<p>This is to inform you that an order with the above referenced number has been purchased from your store.</p>
-																			<p><strong>Order ID:</strong> <span>1234</span></p>
-																			<p><strong>Customer:</strong> <span>Rita Jordan</span></p>
+																			<p><strong>Order ID:</strong> <span><%= sale.ref_id %></span></p>
+																			<p><strong>Customer:</strong> <span><%= sale.contact.contact_name %></span></p>
 																			<p><strong>Channel:</strong> <span>Webstore</span></p>
-																			<p><strong>Amount:</strong> <span style="color: green">N20,000.00</span></p>
+																			<p><strong>Amount:</strong> <span style="color: green">N<%= SalesReg.Order.calc_order_amount(sale) %></span></p>
 																			<p><strong>Status:</strong> <span>Pending</span></p>
-																			<p><strong>Date:</strong> <span>20-03-2019</span></p>
-																			<p><strong>Time:</strong> <span>2:08PM</span></p>
+																			<p><strong>Date:</strong> <span><%= Date.to_string(sale.inserted_at) %></span></p>
+																			<p><strong>Time:</strong> <span><%= Time.to_string(NaiveDateTime.to_time(sale.inserted_at)) %></span></p>
 																			<p>Best regards,<br>YipCart team.</p>
 																		</td>
 																	</tr>

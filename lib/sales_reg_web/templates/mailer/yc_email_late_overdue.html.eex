@@ -64,7 +64,7 @@
 																			<a href="<%= sale.invoice.pdf_url %>" style="text-decoration: none!important;">
 																				<span style="color:#127bcc">View Invoice</span>
 																			</a>
-																			<p>This invoice has been due for over <%= Date.diff(Timex.now(), sale.invoice.due_date) %> days running, and it is making our business operation difficult.</p>
+																			<p>This invoice has been due for over <%= Date.diff(Timex.now(), SalesReg.Mailer(sale.invoice.due_date)) %> days running, and it is making our business operation difficult.</p>
 																			<p>Please do let us know when payment will be made as a matter of urgency.</p>
 																			<p>Best regards,<br><%= sale.company.owner.first_name %>.</p>
 																		</td>

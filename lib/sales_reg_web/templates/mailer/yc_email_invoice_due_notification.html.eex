@@ -27,7 +27,7 @@
 																	<tr>
 																		<td style="width: 100%">
 																			<h1 style="display: inline-flex; color: rgb(255,255,255);margin: 0;font-size: 25px;padding: 35px 0;font-weight: 400">Invoice due notification:</h1>
-																			<h1 style="display: inline-flex; color: rgb(255,255,255);margin: 0;font-size: 25px;padding: 35px 0;font-weight: 400">#1234</h1>
+																			<h1 style="display: inline-flex; color: rgb(255,255,255);margin: 0;font-size: 25px;padding: 35px 0;font-weight: 400"><%= sale.invoice.ref_id %></h1>
 																		</td>
 																	</tr>
 																	</tbody>
@@ -41,12 +41,12 @@
 																	<tbody>
 																	<tr>
 																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89);line-height: 1.4;font-size: 16px">
-																			<p>Hey Mayafriq,</p>
+																			<p>Hey <%= sale.company.title %>,</p>
 																			<p>This is to inform you that the above referenced invoice is due for payment and the customer has been notified.</p>
-																			<p><strong>Invoice ID:</strong> <span>1234</span></p>
-																			<p><strong>Customer:</strong> <span>Rita Jordan</span></p>
-																			<p><strong>Amount Due:</strong> <span style="color: red">N20,000.00</span></p>
-																			<p><strong>Date Due:</strong> <span>20-03-2019</span></p>
+																			<p><strong>Invoice ID:</strong> <span><%= sale.invoice.ref_id %></span></p>
+																			<p><strong>Customer:</strong> <span><%= sale.contact.contact_name %></span></p>
+																			<p><strong>Amount Due:</strong> <span style="color: red">N<%= SalesReg.Order.calc_pay_outstanding(sale) %></span></p>
+																			<p><strong>Date Due:</strong> <span><%= sale.invoice.due_date %>/span></p>
 																			<p>Best regards,<br>YipCart team.</p>
 																		</td>
 																	</tr>

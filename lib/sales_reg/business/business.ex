@@ -164,6 +164,11 @@ defmodule SalesReg.Business do
     Business.update_expense(expense, params)
   end
 
+  def send_email(resource, type) do
+    binary = return_file_content(type)
+    Email.send_email(resource, type, binary)
+  end
+
   # Private Functions
   defp put_items_amount(params) do
     total_amount =
@@ -206,11 +211,6 @@ defmodule SalesReg.Business do
       end)
 
     Repo.insert_all(CompanyEmailTemplate, templates)
-  end
-
-  defp send_email(company, type) do
-    binary = return_file_content(type)
-    Email.send_email(company, type, binary)
   end
 
   defp return_file_content(type) do
