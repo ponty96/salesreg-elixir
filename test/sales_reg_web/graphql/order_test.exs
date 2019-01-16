@@ -167,11 +167,12 @@ defmodule SalesRegWeb.GraphqlOrderTest do
     |> Map.put_new(:items, items)
   end
 
-  def review_variables(review_params, sale, product, contact) do
+  def review_variables(review_params, sale, product, contact, company) do
     review_params
     |> Map.put_new(:sale_id, sale.id)
     |> Map.put_new(:product_id, product.id)
     |> Map.put_new(:contact_id, contact.id)
+    |> Map.put_new(:company_id, company.id)
   end
 
   describe "Order Tests" do
@@ -257,7 +258,7 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       {:ok, sale_order} = Seed.create_sales_order(company.id, user.id, contact.id, items)
 
       variables = %{
-        review: review_variables(%{text: "this is a text"}, sale_order, product, contact)
+        review: review_variables(%{text: "this is a text"}, sale_order, product, contact, company)
       }
 
       res =
@@ -285,7 +286,7 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       {:ok, sale_order} = Seed.create_sales_order(company.id, user.id, contact.id, items)
 
       variables = %{
-        star: review_variables(%{value: 4}, sale_order, product, contact)
+        star: review_variables(%{value: 4}, sale_order, product, contact, company)
       }
 
       res =
