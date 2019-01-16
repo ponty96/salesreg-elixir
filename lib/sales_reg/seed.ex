@@ -47,6 +47,10 @@ defmodule SalesReg.Seed do
       logo:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTulsnrbHjdztPnDwdWzruyJ-p1gi7Mwf43hT7cC1oiwl1hU_h",
       slug: "Sandbox"
+      facebook: "http://facebook.com/officialsandbox"
+      instagram: "http://instagram.com/officialsandbox"
+      twitter: "http://twitter.com/officialsandbox"
+      linkedin: "http://linkedin.com/officialsandbox"
     }
 
     Business.create_company(user_id, company_params)

@@ -11,7 +11,8 @@ defmodule SalesReg.Business do
     Company,
     Branch,
     Expense,
-    Bank
+    Bank,
+    LegalDocument
   ]
 
   @email_types [

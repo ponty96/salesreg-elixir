@@ -44,6 +44,10 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:logo, :string)
     field(:cover_photo, :string)
     field(:slug, :string)
+    field(:facebook, :string)
+    field(:instagram, :string)
+    field(:twitter, :string)
+    field(:linkedin, :string)
 
     field(:branches, list_of(:branch), resolve: dataloader(SalesReg.Business, :branches))
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
@@ -445,6 +449,18 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    LegalDocument object type
+  """
+  object :legal_document do
+    field(:id, :uuid)
+    field(:type, :string)
+    field(:content, :string)
+    field(:pdf_url, :string)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+  end
+
+  @desc """
     Activity object type
   """
   object :activity do
@@ -499,7 +515,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       :option,
       :template,
       :company_template,
-      :activity
+      :activity,
+      :legal_document
     ])
 
     resolve_type(fn
@@ -526,6 +543,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       %Template{}, _ -> :template
       %CompanyTemplate{}, _ -> :company_template
       %Activity{}, _ -> :activity
+      %LegalDocument{}, _ -> :legal_document
     end)
   end
 
@@ -622,6 +640,10 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:phone, :phone_input)
     field(:logo, :string)
     field(:slug, non_null(:string))
+    field(:facebook, :string)
+    field(:instagram, :string)
+    field(:twitter, :string)
+    field(:linkedin, :string)
   end
 
   input_object :branch_input do

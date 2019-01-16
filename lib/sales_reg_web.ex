@@ -106,6 +106,7 @@ defmodule SalesRegWeb do
         Business.Bank,
         Business.Expense,
         Business.ExpenseItem,
+        Business.LegalDocument,
         Store,
         Store.Product,
         Store.Category,
