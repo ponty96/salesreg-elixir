@@ -81,6 +81,20 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
     end
   end
 
+  #Legal_document mutation
+  object :legal_document_mutation do
+    @desc """
+      upsert a legal document
+    """
+    field :upsert_legal_document, :mutation_response do
+      arg(:legal_document, non_null(:legal_document_input))
+      arg(:legal_document_id, :uuid)
+
+      middleware(Authorize)
+      resolve(&BusinessResolver.upsert_legal_document/2)
+    end
+  end
+
   ### QUERIES
   # Bank Queries
   object :bank_queries do

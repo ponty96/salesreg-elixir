@@ -69,6 +69,16 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
     |> Business.delete_expense()
   end
 
+  def upsert_legal_document(%{legal_document: params, legal_document_id: id}, _res) do
+    Business.get_legal_document(id)
+    |> Business.update_legal_document(params)
+  end
+
+  def upsert_legal_document(%{legal_document: params}, _res) do
+    params
+    |> Business.legal_document()
+  end
+
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
   end

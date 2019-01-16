@@ -58,6 +58,19 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
+    Legal_document type
+  """
+  object :legal_document do
+    field(:id, :uuid)
+    field(:name, :string)
+    field(:type, :string)
+    field(:content, :string)
+    field(:pdf_url, :string)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+  end 
+
+  @desc """
     Branch object type
   """
   object :branch do
@@ -572,6 +585,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc "sorts the order from either ASC or DESC"
+  enum :legal_document_type do
+    value(:policy, as: "policy")
+    value(:terms, as: "terms")
+    value(:information, as: "information")
+  end
+
+  @desc "sorts the order from either ASC or DESC"
   enum :order_status do
     value(:pending, as: "pending")
     value(:processed, as: "processed")
@@ -644,6 +664,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:instagram, :string)
     field(:twitter, :string)
     field(:linkedin, :string)
+  end
+
+  input_object :legal_document_input do
+    field(:name, non_null(:string))
+    field(:type, non_null(:string))
+    field(:content, non_null(:string))
+    field(:pdf_url, :string)
+    field(:company_id, non_null(:string))
   end
 
   input_object :branch_input do
