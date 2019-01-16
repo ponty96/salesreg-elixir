@@ -94,5 +94,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       middleware(Authorize)
       resolve(&OrderResolver.list_company_invoices/2)
     end
+
+    @desc """
+      query for all activities of a company contact
+    """
+    connection field(:list_contact_activities, node_type: :activity) do
+      arg(:company_id, non_null(:uuid))
+      arg(:contact_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&OrderResolver.list_company_activities/2)
+    end
   end
 end
