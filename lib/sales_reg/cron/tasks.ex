@@ -41,6 +41,7 @@ defmodule SalesReg.Tasks do
 		|> send_mul_email("yc_email_late_overdue")
 	end
 
+	# create activities when order is due 
   def create_activity_when_order_due() do
     Order.all_invoice()
     |> Enum.filter(fn invoice ->
