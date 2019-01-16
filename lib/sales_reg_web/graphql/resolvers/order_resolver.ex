@@ -1,12 +1,7 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   use SalesRegWeb, :context
-
-  def upsert_sale(%{sale: params, sale_id: id}, _res) do
-    Order.get_sale(id)
-    |> Order.update_sale(params)
-  end
-
-  def upsert_sale(%{sale: params}, _res) do
+  
+  def create_sale(%{sale: params}, _res) do
     Order.create_sale(params)
   end
 
@@ -18,11 +13,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   def list_company_invoices(%{company_id: company_id} = args, _res) do
     [company_id: company_id]
     |> Order.paginated_list_company_invoices(pagination_args(args))
-  end
-
-  def delete_sale(%{sale_id: sale_id}, _res) do
-    Order.get_sale(sale_id)
-    |> Order.delete_sale()
   end
 
   def update_order_status(%{status: status, id: id, order_type: order_type}, _res) do
