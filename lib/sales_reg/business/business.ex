@@ -90,6 +90,10 @@ defmodule SalesReg.Business do
      )}
   end
 
+  def get_contact_by_email(email) do
+    Repo.get_by(Contact, email: email)
+  end
+
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
   end

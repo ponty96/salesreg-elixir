@@ -457,6 +457,26 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   @desc """
+    Activity object type
+  """
+  object :activity do
+    field(:id, :uuid)
+    field(:type, :string)
+    field(:amount, :string)
+
+    field(:inserted_at, :naive_datetime)
+
+    field :ref_id, :string do
+      resolve(fn _parent, %{source: activity} ->
+        {:ok,
+          Order.preload_activity(activity).invoice.ref_id}
+      end)
+    end
+  end
+
+  connection(node_type: :activity)
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -490,7 +510,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       :product_group,
       :option,
       :template,
-      :company_template
+      :company_template,
+      :activity
     ])
 
     resolve_type(fn
@@ -516,6 +537,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       %Option{}, _ -> :option
       %Template{}, _ -> :template
       %CompanyTemplate{}, _ -> :company_template
+      %Activity{}, _ -> :activity
     end)
   end
 
@@ -733,6 +755,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:discount, :string)
     field(:amount_paid, :string)
     field(:contact, :through_order_contact_input)
+    field(:contact_email, :string)
 
     field(:user_id, non_null(:uuid))
     field(:contact_id, :uuid)

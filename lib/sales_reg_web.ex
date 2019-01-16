@@ -119,6 +119,7 @@ defmodule SalesRegWeb do
         Order.Receipt,
         Order.Review,
         Order.Star,
+        Order.Activity,
         Store.ProductGroup,
         Store.Option,
         Store.OptionValue,

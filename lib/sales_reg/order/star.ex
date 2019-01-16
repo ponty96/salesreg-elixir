@@ -13,9 +13,6 @@ defmodule SalesReg.Order.Star do
     belongs_to(:product, SalesReg.Store.Product)
     belongs_to(:contact, SalesReg.Business.Contact)
 
-    has_many(:reviews, SalesReg.Order.Review)
-    has_many(:stars, SalesReg.Order.Star)
-
     timestamps()
   end
 
@@ -26,5 +23,6 @@ defmodule SalesReg.Order.Star do
     |> Repo.preload([:sale, :contact])
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
+    |> validate_inclusion(:value, 0..5)
   end
 end

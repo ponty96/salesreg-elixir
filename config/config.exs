@@ -98,9 +98,17 @@ config :sales_reg, SalesReg.Scheduler,
       schedule: "@daily",
       task: {SalesReg.Tasks, :mail_before_order_due_date, []}
     ],
+    mail_after_order_due_date: [
+      schedule: "@daily",
+      task: {SalesReg.Tasks, :mail_after_order_due_date, []}
+    ],
     mail_after_order_overdue: [
       schedule: "@daily",
       task: {SalesReg.Tasks, :mail_after_order_overdue, []}
+    ],
+    create_activity_when_order_due: [
+      schedule: "@daily",
+      task: {SalesReg.Tasks, :create_activity_when_order_due, []}
     ]
   ]
 
