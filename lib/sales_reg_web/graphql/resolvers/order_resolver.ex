@@ -61,6 +61,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     |> Order.delete_receipt()
   end
 
+  def list_company_activities(params, _res) do
+    params.company_id
+    |> Order.list_company_activities(params.contact_id, pagination_args(params))
+  end
+
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
   end
