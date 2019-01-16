@@ -49,6 +49,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
+    field(:review, :review, resolve: dataloader(SalesReg.Order, :review))
+    field(:star, :star, resolve: dataloader(SalesReg.Order, :star))
   end
 
   @desc """
@@ -384,6 +386,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
     field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
     field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
 
   @desc """
@@ -396,6 +399,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
     field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
     field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
 
   @desc """
@@ -785,6 +789,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:product_id, :uuid)
     field(:contact_id, non_null(:uuid))
     field(:sale_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
   end
 
   input_object :star_input do
@@ -792,6 +797,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:product_id, :uuid)
     field(:contact_id, non_null(:uuid))
     field(:sale_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
   end
 
   input_object :receipt_input do
