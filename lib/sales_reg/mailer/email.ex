@@ -54,9 +54,9 @@ defmodule SalesReg.Email do
 	defp construct_email(html_body, %Company{} = company, type) do
 		%{
 			to: company.contact_email,
-			from: "opeyemi.badmos@yipcart.com",
+			from: "hello@yipcart.com",
 			subject: gen_sub(type),
-			html_body: html_body,
+			html_body: html_body
 		}
 	end
 
