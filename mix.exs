@@ -32,7 +32,8 @@ defmodule SalesReg.Mixfile do
         :pdf_generator,
         :ueberauth,
         :ueberauth_identity,
-        :bamboo
+        :bamboo,
+        :sentry
       ]
     ]
   end
@@ -80,7 +81,8 @@ defmodule SalesReg.Mixfile do
       {:plug_attack, "~> 0.3.0"},
       {:remote_ip, "~> 0.1.0"},
       {:quantum, "~> 2.3"},
-      {:timex, "~> 3.0"}
+      {:timex, "~> 3.0"},
+      {:sentry, "~> 6.4"}
     ]
   end
 
@@ -94,7 +96,8 @@ defmodule SalesReg.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test"],
+      sentry_recompile: ["deps.compile sentry --force", "compile"]
     ]
   end
 end
