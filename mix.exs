@@ -33,12 +33,9 @@ defmodule SalesReg.Mixfile do
         :ueberauth,
         :ueberauth_identity,
         :bamboo,
-<<<<<<< HEAD
         :scrivener_ecto,
-        :ecto_sql
-=======
+        :ecto_sql,
         :sentry
->>>>>>> b2eac6cbe24b7724c8012d5c493d6528ff07b72d
       ]
     ]
   end
