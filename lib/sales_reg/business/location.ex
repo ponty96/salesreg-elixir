@@ -17,6 +17,7 @@ defmodule SalesReg.Business.Location do
     belongs_to(:branch, SalesReg.Business.Branch)
     belongs_to(:contact, SalesReg.Business.Contact, foreign_key: :contact_id)
     belongs_to(:user, SalesReg.Accounts.User)
+    belongs_to(:sale, SalesReg.Order.Sale)
 
     timestamps()
   end

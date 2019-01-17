@@ -18,9 +18,10 @@ defmodule SalesReg.Order.Sale do
     field(:state, :string, virtual: true)
 
     has_one(:invoice, SalesReg.Order.Invoice)
+    has_one(:location, SalesReg.Business.Location)
     has_many(:items, SalesReg.Order.Item, on_replace: :delete)
-    has_many(:review, SalesReg.Order.Review)
-    has_many(:star, SalesReg.Order.Star)
+    has_many(:reviews, SalesReg.Order.Review)
+    has_many(:stars, SalesReg.Order.Star)
 
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:contact, SalesReg.Business.Contact)
@@ -48,6 +49,7 @@ defmodule SalesReg.Order.Sale do
     |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> cast_assoc(:items)
+    |> cast_assoc(:location)
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
     |> assoc_constraint(:contact)
