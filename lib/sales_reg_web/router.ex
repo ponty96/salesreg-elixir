@@ -1,5 +1,7 @@
 defmodule SalesRegWeb.Router do
   use SalesRegWeb, :router
+  use Plug.ErrorHandler
+  use Sentry.Plug
 
   pipeline :browser do
     plug(:accepts, ["html"])
