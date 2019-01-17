@@ -31,6 +31,27 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       middleware(Authorize)
       resolve(&BusinessResolver.update_company/2)
     end
+
+    @desc """
+    update company cover photo
+    """
+    field :update_company_cover_photo, :mutation_response do
+      arg(:cover_photo, non_null(:cover_photo_input))
+      
+      middleware(Authorize)
+      resolve(&BusinessResolver.update_company_cover_photo/2)
+    end
+
+    @desc """
+      upsert a legal document
+    """
+    field :upsert_legal_document, :mutation_response do
+      arg(:legal_document, non_null(:legal_document_input))
+      arg(:legal_document_id, :uuid)
+
+      middleware(Authorize)
+      resolve(&BusinessResolver.upsert_legal_document/2)
+    end
   end
 
   # Bank Mutations
@@ -78,20 +99,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
 
       middleware(Authorize)
       resolve(&BusinessResolver.delete_expense/2)
-    end
-  end
-
-  #Legal_document mutation
-  object :legal_document_mutation do
-    @desc """
-      upsert a legal document
-    """
-    field :upsert_legal_document, :mutation_response do
-      arg(:legal_document, non_null(:legal_document_input))
-      arg(:legal_document_id, :uuid)
-
-      middleware(Authorize)
-      resolve(&BusinessResolver.upsert_legal_document/2)
     end
   end
 

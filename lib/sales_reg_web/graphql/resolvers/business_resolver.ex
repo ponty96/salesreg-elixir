@@ -76,7 +76,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
 
   def upsert_legal_document(%{legal_document: params}, _res) do
     params
-    |> Business.legal_document()
+    |> Business.add_legal_document()
+  end
+
+  def update_company_cover_photo(%{cover_photo: params}, _res) do
+    Business.update_company_cover_photo(params)
   end
 
   defp pagination_args(args) do

@@ -58,7 +58,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
-    Legal_document type
+    Legal_document object type
   """
   object :legal_document do
     field(:id, :uuid)
@@ -68,7 +68,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:pdf_url, :string)
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-  end 
+  end  
 
   @desc """
     Branch object type
@@ -462,18 +462,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   end
 
   @desc """
-    LegalDocument object type
-  """
-  object :legal_document do
-    field(:id, :uuid)
-    field(:type, :string)
-    field(:content, :string)
-    field(:pdf_url, :string)
-
-    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-  end
-
-  @desc """
     Activity object type
   """
   object :activity do
@@ -860,6 +848,11 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:reference_id, :string)
   end
 
+  input_object :cover_photo_input do
+    field(:company_id, :uuid)
+    field(:cover_photo, non_null(:string))
+  end
+
   #########################################################
   # These are used only at the point of updating the
   # ID has to be supplied except for parent input objects
@@ -880,4 +873,5 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:id, non_null(:uuid))
     field(:number, non_null(:string))
   end
+
 end

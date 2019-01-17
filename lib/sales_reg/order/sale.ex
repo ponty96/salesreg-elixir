@@ -41,7 +41,6 @@ defmodule SalesReg.Order.Sale do
 
   @doc false
   def changeset(sale, attrs) do
-    IO.inspect attrs, label: "attrs"
     new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
 
     sale

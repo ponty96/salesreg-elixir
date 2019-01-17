@@ -46,10 +46,10 @@ defmodule SalesReg.Seed do
        numerous services",
       logo:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTulsnrbHjdztPnDwdWzruyJ-p1gi7Mwf43hT7cC1oiwl1hU_h",
-      slug: "Sandbox"
-      facebook: "http://facebook.com/officialsandbox"
-      instagram: "http://instagram.com/officialsandbox"
-      twitter: "http://twitter.com/officialsandbox"
+      slug: "Sandbox",
+      facebook: "http://facebook.com/officialsandbox",
+      instagram: "http://instagram.com/officialsandbox",
+      twitter: "http://twitter.com/officialsandbox",
       linkedin: "http://linkedin.com/officialsandbox"
     }
 
@@ -177,6 +177,7 @@ defmodule SalesReg.Seed do
   # SALES ORDER SEED
 
   def create_sales_order(company_id, user_id, contact_id, items) do
+    IO.inspect items, label: "This is the Items"
     create_sales_order(
       %{
         company_id: company_id, 

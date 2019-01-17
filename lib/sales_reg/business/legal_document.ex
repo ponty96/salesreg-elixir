@@ -23,8 +23,8 @@ defmodule SalesReg.Business.LegalDocument do
 
   def changeset(legal_document, attrs) do
     legal_document
-    |> cast(attrs, @required_field ++ @optional_fields)
+    |> cast(attrs, @required_field ++ @optional_field)
     |> validate_required(@required_field)
-    |> validate_inclusion(:status, @company_template_status)
+    |> validate_inclusion(:type, @legal_document_type)
   end
 end
