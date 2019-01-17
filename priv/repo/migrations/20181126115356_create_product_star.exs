@@ -2,7 +2,7 @@ defmodule SalesReg.Repo.Migrations.CreateProductStar do
   use Ecto.Migration
 
   def change do
-    create table(:star, primary_key: false) do
+    create table(:stars, primary_key: false) do
       add(:id, :binary_id, primary_key: true)
       add(:value, :integer)
 
@@ -14,9 +14,9 @@ defmodule SalesReg.Repo.Migrations.CreateProductStar do
       timestamps()
     end
 
-    create(index(:star, [:sale_id], on_delete: :nothing, type: :binary_id))
-    create(index(:star, [:contact_id], on_delete: :nothing, type: :binary_id))
-    create(index(:star, [:product_id], on_delete: :nothing, type: :binary_id))
-    create(index(:star, [:company_id], on_delete: :nothing, type: :binary_id))
+    create(index(:stars, [:sale_id], on_delete: :nothing, type: :binary_id))
+    create(index(:stars, [:contact_id], on_delete: :nothing, type: :binary_id))
+    create(index(:stars, [:product_id], on_delete: :nothing, type: :binary_id))
+    create(index(:stars, [:company_id], on_delete: :nothing, type: :binary_id))
   end
 end
