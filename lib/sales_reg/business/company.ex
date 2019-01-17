@@ -29,9 +29,9 @@ defmodule SalesReg.Business.Company do
     has_one(:bank, SalesReg.Business.Bank, on_replace: :delete)
     has_one(:company_template, SalesReg.Theme.CompanyTemplate)
     has_many(:sales, SalesReg.Order.Sale)
-    has_many(:review, SalesReg.Order.Review)
-    has_many(:star, SalesReg.Order.Star)
-    has_many(:legal_document, SalesReg.Business.LegalDocument)
+    has_many(:reviews, SalesReg.Order.Review)
+    has_many(:stars, SalesReg.Order.Star)
+    has_many(:legal_documents, SalesReg.Business.LegalDocument)
 
     timestamps()
   end
