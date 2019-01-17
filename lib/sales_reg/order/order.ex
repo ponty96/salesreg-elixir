@@ -200,37 +200,35 @@ defmodule SalesReg.Order do
     |> sale_multi_transac()
   end
 
-  # Called when a registered company contact chooses to make a payment for an order via card (get contact by email)
-  def create_sale(%{contact_email: email, payment_method: "card"} = params) do
-    Multi.new()
-    |> Multi.run(:get_contact, fn _repo, %{} ->
-      contact = Business.get_contact_by_email(email)
-      case contact do
-        %Contact{} ->
-          {:ok, contact}
-
-        _ -> 
-          {:error, "Contact not found"}
-      end
-    end)
-    |> Multi.run(:insert_sale, fn _repo, %{get_contact: contact} ->
-      params 
-      |> Map.put_new(:contact_id, contact.id)
-      |> Order.add_sale()
-    end)
-    |> sale_multi_transac()
-  end
-
   # Called when an unregistered company contact chooses to make payment for an order via card
   def create_sale(%{contact: contact_params, payment_method: "card"} = params) do
     Multi.new()
-    |> Multi.insert(:insert_contact, Contact.through_order_changeset(%Contact{}, contact_params))
+    |> Multi.run(:insert_contact, fn _repo, %{} ->
+        create_contact_if_not_exist(contact_params)
+    end)
     |> Multi.run(:insert_sale, fn _repo, %{insert_contact: contact} ->
       params
       |> Map.put_new(:contact_id, contact.id)
       |> Order.add_sale()
     end)
     |> sale_multi_transac()
+  end
+
+  def create_contact_if_not_exist(params) do
+    contact = Business.get_contact_by_email(params.email)
+    
+    case contact do
+      %Contact{} ->
+        contact
+
+      _ ->
+        {:ok, contact} = 
+          %Contact{}
+          |> Contact.through_order_changeset(params)
+          |> Repo.insert()
+        
+        contact
+    end
   end
 
   def sale_multi_transac(multi) do
