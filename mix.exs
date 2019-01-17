@@ -33,8 +33,12 @@ defmodule SalesReg.Mixfile do
         :ueberauth,
         :ueberauth_identity,
         :bamboo,
+<<<<<<< HEAD
         :scrivener_ecto,
         :ecto_sql
+=======
+        :sentry
+>>>>>>> b2eac6cbe24b7724c8012d5c493d6528ff07b72d
       ]
     ]
   end
@@ -84,7 +88,8 @@ defmodule SalesReg.Mixfile do
       {:quantum, "~> 2.3"},
       {:timex, "~> 3.0"},
       {:scrivener_ecto, "~> 2.0"},
-      {:cors_plug, "~> 2.0"}
+      {:cors_plug, "~> 2.0"},
+      {:sentry, "~> 6.4"}
     ]
   end
 
@@ -98,7 +103,8 @@ defmodule SalesReg.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.create --quiet", "ecto.migrate", "test"]
+      test: ["ecto.create --quiet", "ecto.migrate", "test"],
+      sentry_recompile: ["deps.compile sentry --force", "compile"]
     ]
   end
 end

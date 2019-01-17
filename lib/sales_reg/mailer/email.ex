@@ -9,6 +9,15 @@ defmodule SalesReg.Email do
     |> send_email()
   end
 
+  def send_email(%Sale{} = sale, type, binary) do
+    sale = Order.preload_order(sale)
+
+    binary
+    |> transform_template(sale)
+    |> construct_email(sale, type)
+    |> send_email()
+  end
+
   def send_email(%Sale{} = sale, type) do
     sale = Order.preload_order(sale)
     company = sale.company
@@ -30,20 +39,24 @@ defmodule SalesReg.Email do
 		|> Mailer.deliver_later()
 	end
 
-	defp transform_template(template, %Sale{} = sale) do
+	defp transform_template(template, %Sale{} = sale) when is_map(template) do
 		EEx.eval_string(template.body, sale: sale)
-	end
+  end
+
+  defp transform_template(binary, %Sale{} = sale) when is_binary(binary) do
+		EEx.eval_string(binary, sale: Order.preload_order(sale))
+  end
 
 	defp transform_template(binary, %Company{} = company) do
 		EEx.eval_string(binary, company: company)
-	end
+  end
 
 	defp construct_email(html_body, %Company{} = company, type) do
 		%{
 			to: company.contact_email,
 			from: "hello@yipcart.com",
 			subject: gen_sub(type),
-			html_body: html_body,
+			html_body: html_body
 		}
 	end
 
@@ -92,7 +105,16 @@ defmodule SalesReg.Email do
 				"Pending Delivery"
 
 			"yc_email_pending_order" ->
-				"Pending Order"
+        "Pending Order"
+
+      "yc_email_invoice_payment_notice" ->
+        "Order Payment"
+
+      "yc_email_order_notification" ->
+        "New Order"
+
+      "yc_email_invoice_due_notification" ->
+        "Due Order"
 
 			_ -> "No Subject"
 		end
