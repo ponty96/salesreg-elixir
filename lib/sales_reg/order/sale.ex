@@ -19,8 +19,8 @@ defmodule SalesReg.Order.Sale do
 
     has_one(:invoice, SalesReg.Order.Invoice)
     has_many(:items, SalesReg.Order.Item, on_replace: :delete)
-    has_many(:review, SalesReg.Order.Review)
-    has_many(:star, SalesReg.Order.Star)
+    has_many(:reviews, SalesReg.Order.Review)
+    has_many(:stars, SalesReg.Order.Star)
 
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:contact, SalesReg.Business.Contact)
