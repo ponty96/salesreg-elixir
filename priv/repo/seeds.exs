@@ -43,10 +43,10 @@ real_product_params = [
     ["91000", "1242", "332", "https://www-konga-com-res.cloudinary.com/w_auto,f_auto,fl_lossy,dpr_auto,q_auto/media/catalog/product/B/U/142283_1544365503.jpg", "Tecno Camon S Pro Bordeaux"]
   ]
 
-
+ 
 {:ok, user} = Seed.create_user()
 {:ok, company} = Seed.create_company(user.id)
-# {:ok, template} = Seed.add_template()
+# {:ok, template} = Seed.add_template(
 # {:ok, company_template} = Seed.add_company_template(company.id, user.id, template.id)
 
 products = Enum.map(real_product_params, fn(params) ->

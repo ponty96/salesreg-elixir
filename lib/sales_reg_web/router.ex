@@ -54,7 +54,7 @@ defmodule SalesRegWeb.Router do
     forward("/", Absinthe.Plug, schema: SalesRegWeb.GraphQL.Schemas)
   end
 
-  if Mix.env() == :dev do
+  if Mix.env() == :dev or Mix.env() == :test do
     pipe_through([:api, :graphql])
     forward("/graphiql", Absinthe.Plug.GraphiQL, schema: SalesRegWeb.GraphQL.Schemas)
   end
