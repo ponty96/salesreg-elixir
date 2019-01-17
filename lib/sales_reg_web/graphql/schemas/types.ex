@@ -49,8 +49,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
-    field(:review, :review, resolve: dataloader(SalesReg.Order, :review))
-    field(:star, :star, resolve: dataloader(SalesReg.Order, :star))
+    field(:reviews, :review, resolve: dataloader(SalesReg.Order, :review))
+    field(:stars, :star, resolve: dataloader(SalesReg.Order, :star))
   end
 
   @desc """
