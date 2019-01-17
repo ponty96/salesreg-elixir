@@ -1,5 +1,4 @@
 <div style="font-family:'Roboto',sans-serif;color:#000000;height:100%!important;Margin:0!important;padding:0!important;width:100%!important;background:#ffffff">
-
 	<span style="display:none!important;font-size:0!important;line-height:0!important">Email Description</span>
 	<table width="100%" align="center" border="0" cellspacing="0" cellpadding="0" style="border:0;font-family:'Roboto',sans-serif;color:#000000;height:100%!important;Margin:0!important;padding:0!important;width:100%!important;background:#f8f8f9">
 		<tbody>
@@ -22,26 +21,13 @@
 														<tbody>
 
 														<tr>
-															<td align="left" valign="middle" style="padding: 0 50px;vertical-align: top;background: rgb(255,255,255);color: rgb(153,153,153);font-size: 12px;line-height: 16px;">
+															<td align="left" valign="middle" style="padding: 0 50px;vertical-align: top;background: rgb(54,104,211);font-size: 12px;line-height: 16px;">
 																<table>
 																	<tbody>
 																	<tr>
-																		<td>
-																			<h1 style="margin: 0;font-size: 25px;padding: 25px 0;font-weight: 400"><%= sale.company.title %></h1>
-																		</td>
-																	</tr>
-																	</tbody>
-																</table>
-															</td>
-														</tr>
-
-														<tr>
-															<td align="left" valign="middle" style="padding: 0 50px;vertical-align: top;background: #f4f4f4;color: rgb(153,153,153);font-size: 12px;line-height: 16px;">
-																<table>
-																	<tbody>
-																	<tr>
-																		<td style="padding: 15px 0;font-size: 20px">
-																			<span>Recieved Order:</span>
+																		<td style="width: 100%">
+																			<h1 style="display: inline-flex; color: rgb(255,255,255);margin: 0;font-size: 25px;padding: 35px 0;font-weight: 400">Invoice due notification:</h1>
+																			<h1 style="display: inline-flex; color: rgb(255,255,255);margin: 0;font-size: 25px;padding: 35px 0;font-weight: 400"><%= sale.invoice.ref_id %></h1>
 																		</td>
 																	</tr>
 																	</tbody>
@@ -54,15 +40,14 @@
 																<table>
 																	<tbody>
 																	<tr>
-																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89)">
-																			<p>Dear <span><%= sale.contact.contact_name %></span>,</p>
-																			<p>This is just a quick email to say we've received your order.</p>
-																			<p>As soon as everything has been confirmed and ready for shipment, we will send you another email with your order details and any other information about your package</p>
-																			<p>Your shipping ETA is one working days from when you received this email. We'll follow up as quick as possible.</p>
-																			<p>In the meantime, if you have any questions, send us an email at <a href="mailto:<%= sale.company.contact_email %>" style="color: #3668D3"><<%= sale.company.contact_email %>/a> and we'll be happy to help you.</p>
-																			<p>
-																				<span><a href="#" target="_blank" style="text-decoration: none;color: #3668D3">View order</a></span> or <span><a href="#" target="_blank" style="text-decoration: none;color: #3668D3">Visit our webstore</a></span>
-																			</p>
+																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89);line-height: 1.4;font-size: 16px">
+																			<p>Hey <%= sale.company.title %>,</p>
+																			<p>This is to inform you that the above referenced invoice is due for payment and the customer has been notified.</p>
+																			<p><strong>Invoice ID:</strong> <span><%= sale.invoice.ref_id %></span></p>
+																			<p><strong>Customer:</strong> <span><%= sale.contact.contact_name %></span></p>
+																			<p><strong>Amount Due:</strong> <span style="color: red">N<%= SalesReg.Order.calc_pay_outstanding(sale) %></span></p>
+																			<p><strong>Date Due:</strong> <span><%= sale.invoice.due_date %>/span></p>
+																			<p>Best regards,<br>YipCart team.</p>
 																		</td>
 																	</tr>
 																	</tbody>
