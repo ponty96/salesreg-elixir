@@ -50,7 +50,7 @@ defmodule SalesReg.Seed do
       facebook: "http://facebook.com/officialsandbox",
       instagram: "http://instagram.com/officialsandbox",
       twitter: "http://twitter.com/officialsandbox",
-      linkedIn: "http://linkedIn.com/officialsandbox"
+      linkedin: "http://linkedin.com/officialsandbox"
     }
 
     Business.create_company(user_id, company_params)

@@ -6,7 +6,7 @@ defmodule SalesReg.Repo.Migrations.AddFieldsToCompany do
       add(:facebook, :string)
       add(:twitter, :string)
       add(:instagram, :string)
-      add(:linkedIn, :string)
+      add(:linkedin, :string)
     end
   end
 end

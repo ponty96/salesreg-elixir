@@ -47,7 +47,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:facebook, :string)
     field(:instagram, :string)
     field(:twitter, :string)
-    field(:linkedIn, :string)
+    field(:linkedin, :string)
 
     field(:branches, list_of(:branch), resolve: dataloader(SalesReg.Business, :branches))
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
@@ -651,12 +651,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:facebook, :string)
     field(:instagram, :string)
     field(:twitter, :string)
-    field(:linkedIn, :string)
+    field(:linkedin, :string)
   end
 
   input_object :legal_document_input do
     field(:name, non_null(:string))
-    field(:type, non_null(:string))
+    field(:type, non_null(:legal_document_type))
     field(:content, (:string))
     field(:pdf_url, :string)
     field(:company_id, non_null(:string))

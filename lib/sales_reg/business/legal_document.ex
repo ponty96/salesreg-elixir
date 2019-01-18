@@ -7,9 +7,9 @@ defmodule SalesReg.Business.LegalDocument do
 
   @legal_document_type ["policy", "terms", "information"]
 
-  schema "legal_documents"do
+  schema "legal_documents" do
     field(:name, :string)
-    field(:type, :legal_document_type)
+    field(:type, :string)
     field(:content, :string)
     field(:pdf_url, :string)
 
