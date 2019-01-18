@@ -19,7 +19,7 @@ defmodule SalesReg.Business.Company do
     field(:facebook, :string)
     field(:twitter, :string)
     field(:instagram, :string)
-    field(:linkedin, :string)
+    field(:linkedIn, :string)
 
     belongs_to(:owner, SalesReg.Accounts.User)
     has_many(:branches, Branch)
@@ -37,7 +37,7 @@ defmodule SalesReg.Business.Company do
   end
 
   @required_fields [:title, :contact_email, :owner_id, :currency, :slug]
-  @optional_fields [:about, :description, :logo, :facebook, :twitter, :instagram, :linkedin]
+  @optional_fields [:about, :description, :logo, :facebook, :twitter, :instagram, :linkedIn]
 
   @doc false
   def changeset(company, attrs) do
