@@ -204,7 +204,7 @@ defmodule SalesReg.Order do
   def create_sale(%{contact: contact_params, payment_method: "card"} = params) do
     Multi.new()
     |> Multi.run(:insert_contact, fn _repo, %{} ->
-        create_contact_if_not_exist(contact_params)
+      create_contact_if_not_exist(contact_params)
     end)
     |> Multi.run(:insert_sale, fn _repo, %{insert_contact: contact} ->
       params
@@ -219,7 +219,7 @@ defmodule SalesReg.Order do
 
     case contact do
       %Contact{} ->
-        contact
+        {:ok, contact}
 
       _ ->
         {:ok, contact} =
@@ -227,7 +227,7 @@ defmodule SalesReg.Order do
           |> Contact.through_order_changeset(params)
           |> Repo.insert()
 
-        contact
+        {:ok, contact}
     end
   end
 
@@ -361,6 +361,7 @@ defmodule SalesReg.Order do
 
   def create_activities(receipt) do
     receipt = preload_receipt(receipt)
+
     create_activity(
       "payment",
       receipt.amount_paid,
@@ -568,7 +569,6 @@ defmodule SalesReg.Order do
     with sale <- get_sale(params.sale_id),
          true <- sale.contact_id == params.contact_id,
          {:ok, _item} <- find_in_items(preload_order(sale).items, params.product_id) do
-
       callback.(params)
     else
       {:ok, "not found"} ->

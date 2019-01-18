@@ -49,7 +49,7 @@ config :sales_reg, SalesReg.Mailer, sandbox: true
 
 config :cors_plug,
   origins: [~r/http?.*yipcartlocal.com\d?\.com$/],
-  max_age: 86400,
+  max_age: 8_666_400,
   methods: ["GET", "POST", "OPTIONS"],
   headers: [
     "Authorization",
@@ -64,5 +64,6 @@ config :cors_plug,
     "X-Requested-With",
     "If-Modified-Since",
     "X-CSRF-Token",
+    "Access-Control-Allow-Origin",
     "request-endpoint"
   ]

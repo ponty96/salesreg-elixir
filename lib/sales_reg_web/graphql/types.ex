@@ -468,8 +468,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
     field :ref_id, :string do
       resolve(fn _parent, %{source: activity} ->
-        {:ok,
-          Order.preload_activity(activity).invoice.ref_id}
+        {:ok, Order.preload_activity(activity).invoice.ref_id}
       end)
     end
   end
@@ -866,5 +865,17 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:page_number, :integer)
     field(:page_size, :integer)
     field(:total_entries, :integer)
+  end
+
+  input_object :webstore_create_sale_input do
+    field(:date, non_null(:string))
+    field(:items, non_null(list_of(:item_input)))
+    field(:contact, :webstore_sale_contact_input)
+  end
+
+  input_object :webstore_sale_contact_input do
+    field(:contact_name, non_null(:string))
+    field(:email, non_null(:string))
+    field(:address, :location_input)
   end
 end

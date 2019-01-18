@@ -51,4 +51,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
       resolve(&WebStoreResolver.categories_page_query/2)
     end
   end
+
+  object :web_store_mutations do
+    @desc """
+    mutation for customer to create sales order
+    """
+    field :webstore_create_sale, :mutation_response do
+      arg(:sale, non_null(:webstore_create_sale_input))
+
+      resolve(&WebStoreResolver.create_sale_order/2)
+    end
+  end
 end

@@ -173,14 +173,12 @@ defmodule SalesReg.Seed do
   # SALES ORDER SEED
 
   def create_sales_order(company_id, user_id, contact_id, items) do
-    create_sales_order(
-      %{
-        company_id: company_id,
-        user_id: user_id,
-        contact_id: contact_id,
-        items: items
-      }
-    )
+    create_sales_order(%{
+      company_id: company_id,
+      user_id: user_id,
+      contact_id: contact_id,
+      items: items
+    })
   end
 
   def add_category(company_id, user_id) do

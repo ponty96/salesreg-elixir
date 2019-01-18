@@ -133,11 +133,13 @@ defmodule SalesRegWeb.GraphqlOrderTest do
   """
 
   @product_params [
-    "35000", "2312", "500", 
+    "35000",
+    "2312",
+    "500",
     "https://www-konga-com-res.cloudinary.com/w_auto,f_auto,fl_lossy,dpr_auto,q_auto/media/catalog/product/W/M/118566_1520434157.jpg",
-     "Tecno Camon CX"
+    "Tecno Camon CX"
   ]
-  
+
   @valid_sales_order_params %{
     amount_paid: "390.0",
     date: "2019-01-30",
@@ -154,11 +156,12 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       unit_price: "60"
     }
   ]
-  
+
   def sales_order_variables(sale_params, company, user, product, contact) do
-    items = Enum.map(@valid_items_params, fn item ->
-      Map.put_new(item, :product_id, product.id)
-    end)
+    items =
+      Enum.map(@valid_items_params, fn item ->
+        Map.put_new(item, :product_id, product.id)
+      end)
 
     sale_params
     |> Map.put_new(:company_id, company.id)
@@ -184,11 +187,10 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       {:ok, product} = Seed.add_product_without_variant(@product_params, company.id, user.id)
       {:ok, contact} = Seed.add_contact(user.id, company.id, "customer")
 
-      #<-------------------------------------Create Sale Order-------------------------------->
-      variables = 
-        %{sale: 
-          sales_order_variables(@valid_sales_order_params, company, user, product, contact)
-        }
+      # <-------------------------------------Create Sale Order-------------------------------->
+      variables = %{
+        sale: sales_order_variables(@valid_sales_order_params, company, user, product, contact)
+      }
 
       res =
         conn
@@ -207,15 +209,17 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       assert data["status"] == "pending"
       assert length(company_sales) == 1
 
-      #<-------------------------------------Update Sale Order Status-------------------------------->
+      # <-------------------------------------Update Sale Order Status-------------------------------->
       res =
         conn
-        |> post("/graphiql", 
+        |> post(
+          "/graphiql",
           Helpers.query_skeleton(
-            @update_sale_order_status_query, %{status: "PROCESSED", id: data["id"], orderType: "sale"}
+            @update_sale_order_status_query,
+            %{status: "PROCESSED", id: data["id"], orderType: "sale"}
           )
         )
-      
+
       response = json_response(res, 200)["data"]["updateOrderStatus"]
       data = response["data"]
 
@@ -223,15 +227,17 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       assert response["fieldErrors"] == []
       assert data["status"] == "processed"
 
-      #<-------------------------------------Update Invoice Due Date-------------------------------->
+      # <-------------------------------------Update Invoice Due Date-------------------------------->
       sale = Order.get_sale(data["id"])
       invoice = Order.preload_order(sale).invoice
-      
+
       res =
         conn
-        |> post("/graphiql", 
+        |> post(
+          "/graphiql",
           Helpers.query_skeleton(
-            @update_invoice_due_date_query, %{invoice: %{dueDate: "2020-20-20"}, invoiceId: invoice.id}
+            @update_invoice_due_date_query,
+            %{invoice: %{dueDate: "2020-20-20"}, invoiceId: invoice.id}
           )
         )
 
@@ -243,16 +249,16 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       assert data["dueDate"] == "2020-20-20"
     end
 
-
     # tests that a product review was successfully added
     @tag order: "add_product_review"
     test "tests adding of product review", %{company: company, user: user, conn: conn} do
       {:ok, product} = Seed.add_product_without_variant(@product_params, company.id, user.id)
       {:ok, contact} = Seed.add_contact(user.id, company.id, "customer")
 
-      items = Enum.map(@valid_items_params, fn item ->
-        Map.put_new(item, :product_id, product.id)
-      end)
+      items =
+        Enum.map(@valid_items_params, fn item ->
+          Map.put_new(item, :product_id, product.id)
+        end)
 
       {:ok, sale_order} = Seed.create_sales_order(company.id, user.id, contact.id, items)
 
@@ -266,7 +272,7 @@ defmodule SalesRegWeb.GraphqlOrderTest do
 
       response = json_response(res, 200)["data"]["addReview"]
       data = response["data"]
-      
+
       assert response["success"] == true
       assert response["fieldErrors"] == []
       assert data["text"] == "this is a text"
@@ -278,9 +284,10 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       {:ok, product} = Seed.add_product_without_variant(@product_params, company.id, user.id)
       {:ok, contact} = Seed.add_contact(user.id, company.id, "customer")
 
-      items = Enum.map(@valid_items_params, fn item ->
-        Map.put_new(item, :product_id, product.id)
-      end)
+      items =
+        Enum.map(@valid_items_params, fn item ->
+          Map.put_new(item, :product_id, product.id)
+        end)
 
       {:ok, sale_order} = Seed.create_sales_order(company.id, user.id, contact.id, items)
 
@@ -294,7 +301,7 @@ defmodule SalesRegWeb.GraphqlOrderTest do
 
       response = json_response(res, 200)["data"]["addStar"]
       data = response["data"]
-      
+
       assert response["success"] == true
       assert response["fieldErrors"] == []
       assert data["value"] == 4
@@ -306,15 +313,17 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       {:ok, product} = Seed.add_product_without_variant(@product_params, company.id, user.id)
       {:ok, contact} = Seed.add_contact(user.id, company.id, "customer")
 
-      items = Enum.map(@valid_items_params, fn item ->
-        Map.put_new(item, :product_id, product.id)
-      end)
+      items =
+        Enum.map(@valid_items_params, fn item ->
+          Map.put_new(item, :product_id, product.id)
+        end)
 
       {:ok, sale_order} = Seed.create_sales_order(company.id, user.id, contact.id, items)
       {:ok, invoice} = Order.insert_invoice(sale_order)
 
       variables = %{
-        invoiceId: invoice.id, amountPaid: "100"
+        invoiceId: invoice.id,
+        amountPaid: "100"
       }
 
       res =
@@ -323,7 +332,7 @@ defmodule SalesRegWeb.GraphqlOrderTest do
 
       response = json_response(res, 200)["data"]["createReceipt"]
       data = response["data"]
-      
+
       assert response["success"] == true
       assert response["fieldErrors"] == []
       assert data["amountPaid"] == "100"

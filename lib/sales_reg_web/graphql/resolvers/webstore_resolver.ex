@@ -54,6 +54,26 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
      }}
   end
 
+  def create_sale_order(%{sale: sale_params}, resolution) do
+    company = resolution.context.company
+
+    contact =
+      sale_params
+      |> Map.get(:contact)
+      |> Map.put(:type, "customer")
+      |> Map.put(:company_id, company.id)
+      |> Map.put(:user_id, company.owner_id)
+
+    sale_params =
+      sale_params
+      |> Map.put(:company_id, company.id)
+      |> Map.put(:user_id, company.owner_id)
+      |> Map.put(:payment_method, "card")
+      |> Map.put(:contact, contact)
+
+    Order.create_sale(sale_params)
+  end
+
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
   end
