@@ -657,7 +657,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :legal_document_input do
     field(:name, non_null(:string))
     field(:type, non_null(:string))
-    field(:content, non_null(:string))
+    field(:content, (:string))
     field(:pdf_url, :string)
     field(:company_id, non_null(:string))
   end

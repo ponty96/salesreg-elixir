@@ -18,8 +18,8 @@ defmodule SalesReg.Business.LegalDocument do
     timestamps()
   end
 
-  @required_field [:name, :type, :content, :company_id]
-  @optional_field [:pdf_url]
+  @required_field [:name, :type, :company_id]
+  @optional_field [:pdf_url, :content]
 
   def changeset(legal_document, attrs) do
     legal_document

@@ -169,20 +169,6 @@ defmodule SalesReg.Business do
     Business.update_expense(expense, params)
   end
 
-  #def get_legal_document(id) do
-  #  LegalDocument
-  #  |> where([l], l.id == ^id )
-  #  |> Repo.one()
-  #end
-
-  #def update_legal_document(%{legal_document: _legal_document} = params) do
-  #  Repo.update(params)
-  #end
-
-  #def add_legal_document(params) do
-   # Repo.insert(params) 
-  #end
-
   def update_company_cover_photo(%{cover_photo: _cover_photo, company_id: id} = params) do
     Business.get_company(id)
     |> Business.update_company(params)
