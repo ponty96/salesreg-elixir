@@ -7758,13 +7758,12 @@ input[type=text], [type=email], [type=password], textarea {
     padding-top: 250px; }
 
 .sr-hero__split__about {
-  height: auto;
-  min-height: 20rem;
+  height: 256px;
   background-size: cover;
   position: relative; }
-  @media (min-width: 576px) {
+  @media (min-width: 992px) {
     .sr-hero__split__about {
-      min-height: 35rem; } }
+      height: 300px; } }
 
 .sr-hero__split__store {
   height: auto;
@@ -8199,10 +8198,12 @@ input[type=text], [type=email], [type=password], textarea {
         color: #3c3f40;
         line-height: 1.6em; }
     .sr-product__detail .sr-product__contentMobile .sr-product__contentMobile--variant__spacing {
-      margin-bottom: 2rem; }
-      @media (max-width: 767.98px) {
+      display: block;
+      margin-bottom: 1rem; }
+      @media (min-width: 768px) {
         .sr-product__detail .sr-product__contentMobile .sr-product__contentMobile--variant__spacing {
-          margin-bottom: 1rem; } }
+          display: none;
+          margin-bottom: 2rem; } }
     .sr-product__detail .sr-product__contentMobile .sr-product__rating {
       display: block;
       padding: 0 0 1rem;
@@ -9371,6 +9372,9 @@ a {
 .sr-block {
   display: block !important; }
 
+.sr-store {
+  margin-top: 8rem; }
+
 .sr-store__filter {
   position: relative; }
   .sr-store__filter .btn-group .btn-primary {
@@ -9383,7 +9387,6 @@ a {
     background-color: #366ad3;
     color: #fff; }
   .sr-store__filter .sr-filter-item {
-    margin-top: 2rem;
     /* :checked */
     /* Icon */ }
     .sr-store__filter .sr-filter-item .sr-filter-btn {
@@ -10145,3 +10148,4 @@ a {
   clear: both;
   visibility: hidden; }
 
+/*# sourceMappingURL=app.css.map */
