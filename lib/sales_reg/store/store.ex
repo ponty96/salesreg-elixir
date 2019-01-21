@@ -96,6 +96,63 @@ defmodule SalesReg.Store do
     |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
   end
 
+  def load_related_products(company_id, product_id, limit \\ 12, offset \\ 0) do
+    {:ok, company_id} = Ecto.UUID.dump(company_id)
+    {:ok, product_id} = Ecto.UUID.dump(product_id)
+    params = [company_id, product_id, product_id, limit, offset]
+    
+    query = """
+      SELECT  *
+      FROM    products AS prods
+      WHERE   prods.company_id = $1::uuid
+      AND  
+        ARRAY(
+          SELECT  tags.name
+          FROM    tags tags
+          JOIN    products_tags
+          ON      products_tags.tag_id  = tags.id
+          WHERE   products_tags.product_id = $2::uuid
+        )
+        &&
+        ARRAY(
+          SELECT  tags.name
+          FROM    tags tags
+          JOIN    products_tags
+          ON      products_tags.tag_id = tags.id
+          WHERE   products_tags.product_id = prods.id
+        )
+
+      ORDER BY (
+        array_length(
+          ARRAY(
+            SELECT UNNEST(
+              ARRAY(
+                SELECT  tags.name
+                FROM    tags tags
+                JOIN    products_tags
+                ON      products_tags.tag_id  = tags.id
+                WHERE   products_tags.product_id = $3::uuid
+              )
+            )
+            INTERSECT
+            SELECT UNNEST(
+              ARRAY(
+                SELECT  tags.name
+                FROM    tags tags
+                JOIN    products_tags
+                ON      products_tags.tag_id = tags.id
+                WHERE   products_tags.product_id = prods.id
+              )
+            )
+          ), 1) 
+        ) DESC
+      LIMIT   $4::int
+      OFFSET  $5::int
+    """
+    
+    Repo.execute_and_load(query, params, Product)
+  end
+
   def list_featured_items(company_id) do
     Product
     |> where([p], p.is_featured == true)
