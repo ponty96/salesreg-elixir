@@ -321,7 +321,7 @@ defmodule SalesReg.Order do
         Map.put_new(sale, :amount, amount)
         |> __MODULE__.send_email("yc_email_invoice_payment_notice")
 
-        {:ok, receipt.invoice}
+        {:ok, receipt}
 
       {:error, _reason} = error_tuple ->
         error_tuple
@@ -350,7 +350,7 @@ defmodule SalesReg.Order do
         Map.put_new(sale, :amount, amount)
         |> __MODULE__.send_email("yc_email_invoice_payment_notice")
 
-        {:ok, receipt.invoice}
+        {:ok, receipt}
 
       {:error, _reason} = error_tuple ->
         error_tuple
