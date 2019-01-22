@@ -45,7 +45,7 @@ defmodule SalesReg.Order.Sale do
     new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
 
     sale
-    |> Repo.preload([:items])
+    |> Repo.preload([:items, :location])
     |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> cast_assoc(:items)
