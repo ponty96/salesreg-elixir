@@ -52,7 +52,18 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       middleware(Authorize)
       resolve(&BusinessResolver.upsert_legal_document/2)
     end
+
+    @desc """
+      delete a legal document
+    """
+    field :delete_legal_document, :mutation_response do
+      arg(:legal_document_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&BusinessResolver.delete_legal_document/2)
+    end
   end
+
 
   # Bank Mutations
   object :bank_mutations do

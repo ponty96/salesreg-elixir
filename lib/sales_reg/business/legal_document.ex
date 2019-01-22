@@ -27,4 +27,9 @@ defmodule SalesReg.Business.LegalDocument do
     |> validate_required(@required_field)
     |> validate_inclusion(:type, @legal_document_type)
   end
+
+  def delete_changeset(legal_document) do
+    legal_document
+    |> cast(%{}, [])
+  end
 end
