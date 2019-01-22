@@ -42,12 +42,13 @@ defmodule SalesReg.Business.Company do
   @doc false
   def changeset(company, attrs) do
     company
-    |> Repo.preload([:phone, :bank])
+    |> Repo.preload([:phone, :bank, :legal_documents])
     |> change(attrs)
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> unique_constraint(:owner_id, message: "Sorry, but you already have a business with us")
     |> foreign_key_constraint(:owner_id)
     |> cast_assoc(:phone)
+    |> cast_assoc(:legal_documents)
     |> validate_required(@required_fields)
   end
 end

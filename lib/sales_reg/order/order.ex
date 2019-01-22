@@ -308,7 +308,7 @@ defmodule SalesReg.Order do
         Order.supervise_pdf_upload(receipt)
         Email.send_email(sale, "yc_payment_received")
 
-        {:ok, receipt.invoice}
+        {:ok, receipt}
 
       {:error, _reason} = error_tuple ->
         error_tuple
@@ -334,7 +334,7 @@ defmodule SalesReg.Order do
         Order.supervise_pdf_upload(receipt)
         Email.send_email(sale, "yc_payment_received")
 
-        {:ok, receipt.invoice}
+        {:ok, receipt}
 
       {:error, _reason} = error_tuple ->
         error_tuple

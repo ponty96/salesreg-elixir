@@ -53,8 +53,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
-    field(:review, :review, resolve: dataloader(SalesReg.Order, :review))
-    field(:star, :star, resolve: dataloader(SalesReg.Order, :star))
+    field(:reviews, list_of(:review), resolve: dataloader(SalesReg.Order, :reviews))
+    field(:stars, list_of(:star), resolve: dataloader(SalesReg.Order, :stars))
+    field(:legal_documents, list_of(:legal_document), resolve: dataloader(SalesReg.Business, :legal_documents))
   end
 
   @desc """
@@ -283,6 +284,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))
+    field(:location, :location, resolve: dataloader(SalesReg.Business, :location))
   end
 
   connection(node_type: :sale)

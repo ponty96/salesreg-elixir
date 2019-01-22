@@ -72,15 +72,28 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
   def upsert_legal_document(%{legal_document: params, legal_document_id: id}, _res) do
     Business.get_legal_document(id)
     |> Business.update_legal_document(params)
+    |> handle_legal_document_upsert_res
   end
 
   def upsert_legal_document(%{legal_document: params}, _res) do
     params
     |> Business.add_legal_document()
+    |> handle_legal_document_upsert_res()
   end
 
   def update_company_cover_photo(%{cover_photo: params}, _res) do
     Business.update_company_cover_photo(params)
+  end
+
+  defp handle_legal_document_upsert_res(res) do
+    case res do
+      {:ok, legal_document} ->
+        company = Repo.preload(legal_document, :company) |> Map.get(:company)
+        {:ok, company}
+
+      {:error, error} ->
+        {:error, error}
+    end
   end
 
   defp pagination_args(args) do
