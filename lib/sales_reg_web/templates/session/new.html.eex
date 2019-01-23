@@ -1,6 +1,6 @@
 <div class="header">
   <ol class="breadcrumb text-right">
-    <li><%= link "Home", to: page_path(@conn, :index) %></li>
+    <li><%= link "Home", to: theme_path(@conn, :index) %></li>
   </ol>
 </div>
 

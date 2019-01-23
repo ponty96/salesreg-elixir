@@ -1,7 +1,7 @@
 defmodule SalesRegWeb.Router do
   use SalesRegWeb, :router
   use Plug.ErrorHandler
-  use Sentry.Plug
+  # use Sentry.Plug
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -10,6 +10,7 @@ defmodule SalesRegWeb.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
     plug(SalesRegWeb.Plug.AssignUser)
+    plug(SalesRegWeb.Plug.TemplateHandler)
   end
 
   # RemoteIp should always be the first in the pipeline
@@ -28,8 +29,7 @@ defmodule SalesRegWeb.Router do
   scope "/", SalesRegWeb do
     pipe_through(:browser)
 
-    get("/", PageController, :index)
-    get("/company", ThemeController, :index)
+    get("/", ThemeController, :index)
     resources("/users", UserController, only: [:new, :create])
     resources("/companies", CompanyController, only: [:new, :create])
   end
