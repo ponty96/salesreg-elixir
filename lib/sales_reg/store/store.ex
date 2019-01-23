@@ -15,6 +15,10 @@ defmodule SalesReg.Store do
     Invoice
   ]
 
+  alias Ecto.UUID
+
+  defdelegate category_image(category), to: Category
+
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
   end
@@ -94,24 +98,6 @@ defmodule SalesReg.Store do
       select: p
     )
     |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
-  end
-
-  def list_featured_items(company_id) do
-    Product
-    |> where([p], p.is_featured == true)
-    |> where([p], p.company_id == ^company_id)
-    |> select([p], {p.name, p.is_top_rated_by_merchant})
-    |> order_by([p], asc: p.is_featured)
-    |> Repo.all()
-  end
-
-  def list_top_rated_items(company_id) do
-    Product
-    |> where([p], p.is_top_rated_by_merchant == true)
-    |> where([p], p.company_id == ^company_id)
-    |> select([p], {p.name, p.is_top_rated_by_merchant})
-    |> order_by([p], asc: p.is_top_rated_by_merchant)
-    |> Repo.all()
   end
 
   # PRODUCT INVENTORY
@@ -312,6 +298,82 @@ defmodule SalesReg.Store do
     end
   end
 
+  # WEBSTORE REQUIRED METHODS
+  def load_featured_products(company_id) do
+    list_featured_items(Product, company_id)
+  end
+
+  def home_categories(company_id) do
+    Repo.all(
+      from(c in Category,
+        where: c.company_id == ^company_id,
+        limit: 10,
+        preload: [:products]
+      )
+    )
+  end
+
+  def paginated_categories(company_id) do
+    Repo.all(
+      from(c in Category,
+        where: c.company_id == ^company_id,
+        limit: 15,
+        preload: [:products]
+      )
+    )
+  end
+
+  def category_products(category_id, page) do
+    {:ok, category_id} = UUID.dump(category_id)
+
+    query =
+      from(p in Product,
+        join: pc in "products_categories",
+        on: pc.category_id == ^category_id,
+        where: pc.product_id == p.id,
+        select: p
+      )
+
+    Repo.paginate(query, page: page)
+  end
+
+  def filter_webstore_products(company_id, filter_params) do
+    from(p in Product, where: p.company_id == ^company_id, select: p)
+    |> Repo.paginate(page: Map.get(filter_params, :page))
+  end
+
+  defp list_featured_items(schema, company_id) do
+    schema
+    |> where([p], p.company_id == ^company_id)
+    |> where([p], p.is_featured == true)
+    |> select([p], [p])
+    |> limit(10)
+    |> Repo.all()
+    |> Enum.map(&store_item_preloads(&1))
+    |> List.flatten()
+  end
+
+  def list_top_rated_items(company_id) do
+    Product
+    |> where([p], p.is_top_rated_by_merchant == true)
+    |> where([p], p.company_id == ^company_id)
+    |> select([p], {p.name, p.is_top_rated_by_merchant})
+    |> order_by([p], asc: p.is_top_rated_by_merchant)
+    |> Repo.all()
+  end
+
+  def calculate_store_item_stars(%{stars: []}), do: 0
+
+  def calculate_store_item_stars(%{stars: stars}) do
+    total_stars =
+      stars
+      |> Enum.map(& &1.value)
+      |> Enum.sum()
+
+    no_of_time_starred = Enum.count(stars)
+    total_stars / no_of_time_starred
+  end
+
   defp all_categories(categories_ids) do
     Repo.all(
       from(
@@ -492,5 +554,9 @@ defmodule SalesReg.Store do
 
   defp option_values_of_disconnected_options(options_ids) do
     from(option_value in OptionValue, where: option_value.option_id in ^options_ids)
+  end
+
+  defp store_item_preloads(item) do
+    Repo.preload(item, [:tags, :reviews, :stars, :categories])
   end
 end

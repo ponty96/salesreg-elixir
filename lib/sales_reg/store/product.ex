@@ -23,8 +23,8 @@ defmodule SalesReg.Store.Product do
     belongs_to(:user, SalesReg.Accounts.User)
 
     has_many(:items, SalesReg.Order.Item)
-    has_many(:review, SalesReg.Order.Review)
-    has_many(:star, SalesReg.Order.Star)
+    has_many(:reviews, SalesReg.Order.Review)
+    has_many(:stars, SalesReg.Order.Star)
 
     many_to_many(
       :categories,
