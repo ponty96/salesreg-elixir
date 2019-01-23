@@ -1,4 +1,4 @@
-defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
+defmodule SalesRegWeb.GraphQL.DataTypes do
   @moduledoc """
   	Module contains all GraphQL Object Types
   """
@@ -49,6 +49,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
+
+    field :home_categories, list_of(:category) do
+      resolve(fn _parent, %{source: company} ->
+        {:ok, Store.home_categories(company.id)}
+      end)
+    end
   end
 
   @desc """
@@ -140,6 +146,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     )
 
     field(:product_group, :product_group, resolve: dataloader(SalesReg.Store, :product_group))
+
+    field(:reviews, list_of(:review), resolve: dataloader(SalesReg.Order, :reviews))
+    field(:stars, list_of(:star), resolve: dataloader(SalesReg.Order, :stars))
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
@@ -331,6 +340,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
       list_of(:product),
       resolve: dataloader(SalesReg.Business, :products)
     )
+
+    field :image, :string do
+      resolve(fn _parent, %{source: category} ->
+        {:ok, Store.category_image(category)}
+      end)
+    end
   end
 
   connection(node_type: :category)
@@ -343,6 +358,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:name, :string)
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:products, list_of(:product), resolve: dataloader(SalesReg.Store, :products))
   end
 
   connection(node_type: :tag)
@@ -447,13 +463,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
     field(:id, :uuid)
     field(:type, :string)
     field(:amount, :string)
-    
+
     field(:inserted_at, :naive_datetime)
 
     field :ref_id, :string do
       resolve(fn _parent, %{source: activity} ->
-        {:ok,
-          Order.preload_activity(activity).invoice.ref_id}
+        {:ok, Order.preload_activity(activity).invoice.ref_id}
       end)
     end
   end
@@ -823,5 +838,44 @@ defmodule SalesRegWeb.GraphQL.Schemas.DataTypes do
   input_object :update_phone_input do
     field(:id, non_null(:uuid))
     field(:number, non_null(:string))
+  end
+
+  ###
+  # DATA SPECIFIC TO THE WEBSOTE
+  ##
+  object :home_data do
+    field(:categories, list_of(:category))
+    field(:featured_products, list_of(:product))
+    field(:company, :company)
+  end
+
+  object :category_page do
+    field(:category, :category)
+    field(:products, list_of(:product))
+    field(:page_meta, :pagination_meta)
+  end
+
+  object :store_page do
+    field(:products, list_of(:product))
+    field(:page_meta, :pagination_meta)
+  end
+
+  object :pagination_meta do
+    field(:total_pages, :integer)
+    field(:page_number, :integer)
+    field(:page_size, :integer)
+    field(:total_entries, :integer)
+  end
+
+  input_object :webstore_create_sale_input do
+    field(:date, non_null(:string))
+    field(:items, non_null(list_of(:item_input)))
+    field(:contact, :webstore_sale_contact_input)
+  end
+
+  input_object :webstore_sale_contact_input do
+    field(:contact_name, non_null(:string))
+    field(:email, non_null(:string))
+    field(:address, :location_input)
   end
 end

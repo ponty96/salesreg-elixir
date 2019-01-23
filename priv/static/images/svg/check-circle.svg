@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="102px" height="98px" viewBox="0 0 102 98" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>check-circle</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="Completed" transform="translate(-649.000000, -460.000000)" stroke="#417505" stroke-width="2">
+            <g id="Group" transform="translate(275.000000, 461.000000)">
+                <g id="check-circle" transform="translate(375.000000, 0.000000)">
+                    <path d="M94.9907236,44.0875696 L94.9907236,48.5046382 C94.9786969,69.5388419 81.1329732,88.059787 60.9619706,94.0237226 C40.7909681,99.9876581 19.0997541,91.9738758 7.65128946,74.3281815 C-3.79717522,56.6824872 -2.2756764,33.6083781 11.3906901,17.6187471 C25.0570565,1.62911614 47.6127354,-3.46704132 66.825974,5.09387755" id="Shape"></path>
+                    <polyline id="Shape" points="99.7402597 5.75881262 47.4953618 58.0037106 33.2467532 43.755102"></polyline>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

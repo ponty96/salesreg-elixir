@@ -3,6 +3,9 @@ defmodule SalesReg.Store.Category do
   import Ecto.Changeset
 
   alias SalesReg.Store.Product
+  alias SalesReg.Repo
+
+  @placeholder_image 'http://app.yipcart.com/images/yipcart-item-category.png'
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -38,5 +41,14 @@ defmodule SalesReg.Store.Category do
   def delete_changeset(category) do
     category
     |> cast(%{}, [])
+  end
+
+  def category_image(category),
+    do: get_category_image(Repo.preload(category, [:products]))
+
+  defp get_category_image(%{products: []}), do: @placeholder_image
+
+  defp get_category_image(%{products: products}) do
+    Enum.random(products).featured_image
   end
 end
