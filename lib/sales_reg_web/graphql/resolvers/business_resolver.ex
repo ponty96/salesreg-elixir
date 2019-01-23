@@ -84,6 +84,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
   def delete_legal_document(%{legal_document_id: legal_document_id}, _res) do
     Business.get_legal_document(legal_document_id)
     |> Business.delete_legal_document()
+    |> handle_legal_document_upsert_res()
   end
 
   def update_company_cover_photo(%{cover_photo: params}, _res) do
