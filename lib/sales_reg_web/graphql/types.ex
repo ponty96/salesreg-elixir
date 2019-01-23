@@ -852,12 +852,12 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   object :category_page do
     field(:category, :category)
     field(:products, list_of(:product))
-    field(:product_page, :pagination_meta)
+    field(:page_meta, :pagination_meta)
   end
 
   object :store_page do
     field(:products, list_of(:product))
-    field(:product_page, :pagination_meta)
+    field(:page_meta, :pagination_meta)
   end
 
   object :pagination_meta do

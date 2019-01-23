@@ -32,7 +32,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
      %{
        category: Store.get_category(id),
        products: products,
-       product_page: product_page
+       page_meta: product_page
      }}
   end
 
@@ -50,7 +50,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
     {:ok,
      %{
        products: products,
-       product_page: product_page
+       page_meta: product_page
      }}
   end
 
