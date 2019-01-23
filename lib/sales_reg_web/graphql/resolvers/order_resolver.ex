@@ -1,6 +1,5 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   use SalesRegWeb, :context
-  
   def upsert_sale(%{sale: params, sale_id: id}, _res) do
     Order.get_sale(id)
     |> Order.update_sale(params)
