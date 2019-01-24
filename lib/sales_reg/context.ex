@@ -112,7 +112,7 @@ defmodule SalesReg.Context do
       end
     end
   end
-  CompanyTemplate
+  
   defmacro search_schema_by_field(schema, {query, company_id}, field) do
     quote do
       query_regex = "%" <> unquote(query) <> "%"
