@@ -43,14 +43,20 @@ real_product_params = [
     ["91000", "1242", "332", "https://www-konga-com-res.cloudinary.com/w_auto,f_auto,fl_lossy,dpr_auto,q_auto/media/catalog/product/B/U/142283_1544365503.jpg", "Tecno Camon S Pro Bordeaux"]
   ]
 
- 
-{:ok, user} = Seed.create_user()
-{:ok, company} = Seed.create_company(user.id)
-# {:ok, template} = Seed.add_template(
+
+  {:ok, _template} = Seed.add_template()
+  {:ok, user} = Seed.create_user()
+  {:ok, company} = Seed.create_company(user.id)
 # {:ok, company_template} = Seed.add_company_template(company.id, user.id, template.id)
 
+categories =
+  Enum.map(1..25, fn _index ->
+    {:ok, category} = Seed.add_category(company.id, user.id)
+    category.id
+  end)
+
 products = Enum.map(real_product_params, fn(params) ->
-  {:ok, product} = Seed.add_product_without_variant(params, company.id, user.id)
+  {:ok, product} = Seed.add_product_without_variant(params, company.id, user.id, Enum.take_random(categories, 4))
   product
 end)
 
@@ -96,8 +102,12 @@ Seed.create_sales_order(company.id, user.id, customer.id, %{items: products, typ
 
 
 # Enum.map(random_customers, fn customer ->
-#   Seed.create_sales_order(company.id, user.id, customer.id, products, services)
+#   Seed.create_sales_order(company.id, user.id, customer.id, %{items: services, type: "service"})
 # end)
+
+# # Enum.map(random_customers, fn customer ->
+# #   Seed.create_sales_order(company.id, user.id, customer.id, products, services)
+# # end)
 
 Enum.map(1..10, fn _index ->
   Seed.create_bank(company.id)

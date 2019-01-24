@@ -15,6 +15,7 @@ defmodule SalesReg.Business do
     LegalDocument
   ]
 
+  @default_template_slug "yc1-template"
   @email_types [
     "yc_email_before_due",
     "yc_email_early_due",
@@ -39,7 +40,15 @@ defmodule SalesReg.Business do
          },
          {:ok, _branch} <- add_branch(branch_params),
          [{:ok, _option} | _t] <- Store.insert_default_options(company.id),
+         template <- Theme.get_template_by_slug(@default_template_slug),
+         company_template_params <- %{
+           template_id: template.id,
+           company_id: company.id,
+           user_id: user_id
+         },
+         {:ok, company_template} <- Theme.add_company_template(company_template_params),
          {_int, _result} <- insert_company_email_temps(company.id),
+         # TODO send email in task supervisor process
          %Bamboo.Email{} <- send_email(company, "yc_email_welcome_to_yc") do
       {:ok, company}
     else
@@ -145,6 +154,12 @@ defmodule SalesReg.Business do
      |> Repo.all()}
   end
 
+  def get_company_by_slug(name) do
+    Company
+    |> Repo.get_by(slug: name)
+    |> Repo.preload([:company_template, [company_template: :template]])
+  end
+
   def search_customers_by_name(%{company_id: company_id, name: name}) do
     Context.search_schema_by_field(Contact, {name, company_id}, :contact_name)
     |> Enum.filter(fn contact ->
@@ -172,6 +187,11 @@ defmodule SalesReg.Business do
   def update_company_cover_photo(%{cover_photo: _cover_photo, company_id: id} = params) do
     Business.get_company(id)
     |> Business.update_company(params)
+  end
+  
+  def send_email(resource, type) do
+    binary = return_file_content(type)
+    Email.send_email(resource, type, binary)
   end
 
   # Private Functions
@@ -216,11 +236,6 @@ defmodule SalesReg.Business do
       end)
 
     Repo.insert_all(CompanyEmailTemplate, templates)
-  end
-
-  defp send_email(company, type) do
-    binary = return_file_content(type)
-    Email.send_email(company, type, binary)
   end
 
   defp return_file_content(type) do

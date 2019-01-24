@@ -22,7 +22,7 @@ defmodule SalesReg.Seed do
   def create_user() do
     user_params = %{
       "date_of_birth" => "15-08-1991",
-      "email" => "samson.oluwole@gmail.com",
+      "email" => "ayo.aregbede@gmail.com",
       "first_name" => "Samson",
       "gender" => "Male",
       "last_name" => "Oluwole",
@@ -36,10 +36,10 @@ defmodule SalesReg.Seed do
   def create_company(user_id) do
     company_params = %{
       about: "Sales of Mobile Devices",
-      contact_email: "official.sandbox@gmail.com",
+      contact_email: "ayo.aregbede@yipcart.com",
       title: "Sandbox PLC",
       head_office: gen_location_params(),
-      currency: "Naira",
+      currency: "NGN",
       description: "Sandbox is basically into sales
        of Mobiles devices and related assessories of specific brands which
        include Samsung, Apple, Sony, Tecno, Infinix and Nokia. It also provides
@@ -177,15 +177,12 @@ defmodule SalesReg.Seed do
   # SALES ORDER SEED
 
   def create_sales_order(company_id, user_id, contact_id, items) do
-    IO.inspect items, label: "This is the Items"
-    create_sales_order(
-      %{
-        company_id: company_id, 
-        user_id: user_id, 
-        contact_id: contact_id,
-        items: items
-      }
-    )
+    create_sales_order(%{
+      company_id: company_id,
+      user_id: user_id,
+      contact_id: contact_id,
+      items: items
+    })
   end
 
   def add_category(company_id, user_id) do
@@ -233,8 +230,8 @@ defmodule SalesReg.Seed do
 
   def add_template() do
     params = %{
-      "title" => "General Templates",
-      "slug" => "template",
+      "title" => "Default Templates",
+      "slug" => "yc1-template",
       "featured_image" => Avatar.image_url()
     }
 
@@ -285,14 +282,13 @@ defmodule SalesReg.Seed do
       "http://shfcs.org/en/wp-content/uploads/2015/11/MedRes_Product-presentation-2.jpg"
   }
 
-  def add_product_without_variant(params, company_id, user_id) do
+  def add_product_without_variant(params, company_id, user_id, categories) do
     {:ok, prod_grp} = insert_prod_grp(company_id)
 
     params
-    |> product_params(company_id, user_id, prod_grp.id)
+    |> product_params(company_id, user_id, prod_grp.id, categories)
     |> Map.put(:option_values, [])
     |> Map.put(:tags, [])
-    |> Map.put(:categories, [])
     |> Store.add_product()
   end
 
@@ -350,7 +346,13 @@ defmodule SalesReg.Seed do
     |> Repo.insert()
   end
 
-  defp product_params([price, sku, min_sku, feat_img, name], company_id, user_id, prod_grp_id) do
+  defp product_params(
+         [price, sku, min_sku, feat_img, name],
+         company_id,
+         user_id,
+         prod_grp_id,
+         categories
+       ) do
     %{
       price: price,
       sku: sku,
@@ -359,7 +361,9 @@ defmodule SalesReg.Seed do
       minimum_sku: min_sku,
       featured_image: feat_img,
       name: name,
-      product_group_id: prod_grp_id
+      product_group_id: prod_grp_id,
+      categories: categories,
+      images: Enum.map(1..8, fn _index -> Avatar.image_url() end)
     }
   end
 end

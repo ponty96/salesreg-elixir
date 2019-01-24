@@ -11,13 +11,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
   object :order_mutations do
     ### Sale order mutations
     @desc """
-    create a sale order
+    upsert a sale order
     """
     field :upsert_sale_order, :mutation_response do
       arg(:sale, non_null(:sale_input))
+      arg(:sale_id, :uuid)
 
       middleware(Authorize)
-      resolve(&OrderResolver.create_sale/2)
+      resolve(&OrderResolver.upsert_sale/2)
     end
 
     @desc """

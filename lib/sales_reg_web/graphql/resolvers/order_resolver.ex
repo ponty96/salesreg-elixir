@@ -1,7 +1,11 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   use SalesRegWeb, :context
-  
-  def create_sale(%{sale: params}, _res) do
+  def upsert_sale(%{sale: params, sale_id: id}, _res) do
+    Order.get_sale(id)
+    |> Order.update_sale(params)
+  end
+
+  def upsert_sale(%{sale: params}, _res) do
     Order.create_sale(params)
   end
 

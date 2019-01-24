@@ -66,8 +66,8 @@ defmodule SalesReg.Order do
 
   def create_review(
         %{
-          sale_id: _sale_id, 
-          contact_id: _contact_id, 
+          sale_id: _sale_id,
+          contact_id: _contact_id,
           product_id: _product_id,
           company_id: _company_id,
           text: text
@@ -109,7 +109,10 @@ defmodule SalesReg.Order do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      {:ok, Email.send_email(sale, "yc_email_received_order")}
+      Email.send_email(sale, "yc_email_received_order")
+      __MODULE__.send_email(sale, "yc_email_order_notification")
+
+      {:ok, "Email Sent"}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -129,7 +132,10 @@ defmodule SalesReg.Order do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      {:ok, Email.send_email(sale, "yc_email_received_order")}
+      Email.send_email(sale, "yc_email_received_order")
+      __MODULE__.send_email(sale, "yc_email_order_notification")
+
+      {:ok, "Email Sent"}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -150,7 +156,10 @@ defmodule SalesReg.Order do
       |> Order.add_sale()
     end)
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      {:ok, Email.send_email(sale, "yc_email_received_order")}
+      Email.send_email(sale, "yc_email_received_order")
+      __MODULE__.send_email(sale, "yc_email_order_notification")
+
+      {:ok, "Email Sent"}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -175,7 +184,10 @@ defmodule SalesReg.Order do
       |> Order.add_sale()
     end)
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      {:ok, Email.send_email(sale, "yc_email_received_order")}
+      Email.send_email(sale, "yc_email_received_order")
+      __MODULE__.send_email(sale, "yc_email_order_notification")
+
+      {:ok, "Email Sent"}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -191,31 +203,12 @@ defmodule SalesReg.Order do
     |> sale_multi_transac()
   end
 
-  # Called when a registered company contact chooses to make a payment for an order via card (get contact by email)
-  def create_sale(%{contact_email: email, payment_method: "card"} = params) do
-    Multi.new()
-    |> Multi.run(:get_contact, fn _repo, %{} ->
-      contact = Business.get_contact_by_email(email)
-      case contact do
-        %Contact{} ->
-          {:ok, contact}
-
-        _ -> 
-          {:error, "Contact not found"}
-      end
-    end)
-    |> Multi.run(:insert_sale, fn _repo, %{get_contact: contact} ->
-      params 
-      |> Map.put_new(:contact_id, contact.id)
-      |> Order.add_sale()
-    end)
-    |> sale_multi_transac()
-  end
-
   # Called when an unregistered company contact chooses to make payment for an order via card
   def create_sale(%{contact: contact_params, payment_method: "card"} = params) do
     Multi.new()
-    |> Multi.insert(:insert_contact, Contact.through_order_changeset(%Contact{}, contact_params))
+    |> Multi.run(:insert_contact, fn _repo, %{} ->
+      create_contact_if_not_exist(contact_params)
+    end)
     |> Multi.run(:insert_sale, fn _repo, %{insert_contact: contact} ->
       params
       |> Map.put_new(:contact_id, contact.id)
@@ -224,10 +217,30 @@ defmodule SalesReg.Order do
     |> sale_multi_transac()
   end
 
+  def create_contact_if_not_exist(params) do
+    contact = Business.get_contact_by_email(params.email)
+
+    case contact do
+      %Contact{} ->
+        {:ok, contact}
+
+      _ ->
+        {:ok, contact} =
+          %Contact{}
+          |> Contact.through_order_changeset(params)
+          |> Repo.insert()
+
+        {:ok, contact}
+    end
+  end
+
   def sale_multi_transac(multi) do
     multi
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      {:ok, Email.send_email(sale, "yc_email_received_order")}
+      Email.send_email(sale, "yc_email_received_order")
+      __MODULE__.send_email(sale, "yc_email_order_notification")
+
+      {:ok, "Email Sent"}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
@@ -308,6 +321,9 @@ defmodule SalesReg.Order do
         Order.supervise_pdf_upload(receipt)
         Email.send_email(sale, "yc_payment_received")
 
+        Map.put_new(sale, :amount, amount)
+        |> __MODULE__.send_email("yc_email_invoice_payment_notice")
+
         {:ok, receipt}
 
       {:error, _reason} = error_tuple ->
@@ -334,6 +350,9 @@ defmodule SalesReg.Order do
         Order.supervise_pdf_upload(receipt)
         Email.send_email(sale, "yc_payment_received")
 
+        Map.put_new(sale, :amount, amount)
+        |> __MODULE__.send_email("yc_email_invoice_payment_notice")
+
         {:ok, receipt}
 
       {:error, _reason} = error_tuple ->
@@ -341,10 +360,13 @@ defmodule SalesReg.Order do
     end
   end
 
+  defdelegate send_email(resource, type), to: Business, as: :send_email
+
   def create_activities(receipt) do
     receipt = preload_receipt(receipt)
+
     create_activity(
-      "payment", 
+      "payment",
       receipt.amount_paid,
       receipt.invoice_id,
       receipt.sale.contact_id,
@@ -550,7 +572,6 @@ defmodule SalesReg.Order do
     with sale <- get_sale(params.sale_id),
          true <- sale.contact_id == params.contact_id,
          {:ok, _item} <- find_in_items(preload_order(sale).items, params.product_id) do
-
       callback.(params)
     else
       {:ok, "not found"} ->
