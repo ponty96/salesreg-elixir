@@ -11,7 +11,7 @@ defmodule SalesRegWeb.CompanyEmailTemplateController do
       {:ok, _template} ->
         conn
         |> put_flash(:info, "Company Email Template updated successfully.")
-        |> redirect(to: page_path(conn, :index))
+        |> redirect(to: theme_path(conn, :index))
 
       {:error, changeset} ->
         render(conn, "index.html", changeset: changeset)

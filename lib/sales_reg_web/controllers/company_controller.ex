@@ -16,7 +16,7 @@ defmodule SalesRegWeb.CompanyController do
       {:ok, _company} ->
         conn
         |> put_flash(:info, "Company Registered!")
-        |> redirect(to: page_path(conn, :index))
+        |> redirect(to: theme_path(conn, :index))
 
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
