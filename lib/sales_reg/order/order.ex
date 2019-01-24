@@ -66,8 +66,8 @@ defmodule SalesReg.Order do
 
   def create_review(
         %{
-          sale_id: _sale_id, 
-          contact_id: _contact_id, 
+          sale_id: _sale_id,
+          contact_id: _contact_id,
           product_id: _product_id,
           text: text
         } = params
@@ -79,8 +79,8 @@ defmodule SalesReg.Order do
 
   def create_star(
         %{
-          sale_id: _sale_id, 
-          contact_id: _contact_id, 
+          sale_id: _sale_id,
+          contact_id: _contact_id,
           product_id: _product_id
         } = params
       ) do
@@ -108,7 +108,7 @@ defmodule SalesReg.Order do
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
       Email.send_email(sale, "yc_email_received_order")
       __MODULE__.send_email(sale, "yc_email_order_notification")
-      
+
       {:ok, "Email Sent"}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
@@ -131,7 +131,7 @@ defmodule SalesReg.Order do
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
       Email.send_email(sale, "yc_email_received_order")
       __MODULE__.send_email(sale, "yc_email_order_notification")
-      
+
       {:ok, "Email Sent"}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
@@ -155,7 +155,7 @@ defmodule SalesReg.Order do
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
       Email.send_email(sale, "yc_email_received_order")
       __MODULE__.send_email(sale, "yc_email_order_notification")
-      
+
       {:ok, "Email Sent"}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
@@ -183,7 +183,7 @@ defmodule SalesReg.Order do
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
       Email.send_email(sale, "yc_email_received_order")
       __MODULE__.send_email(sale, "yc_email_order_notification")
-      
+
       {:ok, "Email Sent"}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
@@ -204,7 +204,7 @@ defmodule SalesReg.Order do
   def create_sale(%{contact: contact_params, payment_method: "card"} = params) do
     Multi.new()
     |> Multi.run(:insert_contact, fn _repo, %{} ->
-        create_contact_if_not_exist(contact_params)
+      create_contact_if_not_exist(contact_params)
     end)
     |> Multi.run(:insert_sale, fn _repo, %{insert_contact: contact} ->
       params
@@ -216,18 +216,18 @@ defmodule SalesReg.Order do
 
   def create_contact_if_not_exist(params) do
     contact = Business.get_contact_by_email(params.email)
-    
+
     case contact do
       %Contact{} ->
-        contact
+        {:ok, contact}
 
       _ ->
-        {:ok, contact} = 
+        {:ok, contact} =
           %Contact{}
           |> Contact.through_order_changeset(params)
           |> Repo.insert()
-        
-        contact
+
+        {:ok, contact}
     end
   end
 
@@ -236,7 +236,7 @@ defmodule SalesReg.Order do
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
       Email.send_email(sale, "yc_email_received_order")
       __MODULE__.send_email(sale, "yc_email_order_notification")
-      
+
       {:ok, "Email Sent"}
     end)
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
@@ -317,7 +317,7 @@ defmodule SalesReg.Order do
 
         Order.supervise_pdf_upload(receipt)
         Email.send_email(sale, "yc_payment_received")
-        
+
         Map.put_new(sale, :amount, amount)
         |> __MODULE__.send_email("yc_email_invoice_payment_notice")
 
@@ -358,11 +358,12 @@ defmodule SalesReg.Order do
   end
 
   defdelegate send_email(resource, type), to: Business, as: :send_email
-  
+
   def create_activities(receipt) do
     receipt = preload_receipt(receipt)
+
     create_activity(
-      "payment", 
+      "payment",
       receipt.amount_paid,
       receipt.invoice_id,
       receipt.sale.contact_id,
@@ -568,7 +569,6 @@ defmodule SalesReg.Order do
     with sale <- get_sale(params.sale_id),
          true <- sale.contact_id == params.contact_id,
          {:ok, _item} <- find_in_items(preload_order(sale).items, params.product_id) do
-
       callback.(params)
     else
       {:ok, "not found"} ->

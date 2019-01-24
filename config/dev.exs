@@ -11,7 +11,7 @@ config :sales_reg, SalesRegWeb.Endpoint,
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
-  watchers: []
+  watchers: [npm: ["run", "watch", cd: Path.expand("../assets", __DIR__)]]
 
 # ## SSL Support
 #
@@ -46,3 +46,24 @@ config :sales_reg, SalesReg.Repo,
   pool_size: 10
 
 config :sales_reg, SalesReg.Mailer, sandbox: true
+
+config :cors_plug,
+  origins: [~r/http?.*yipcartlocal.com\d?\.com$/],
+  max_age: 8_666_400,
+  methods: ["GET", "POST", "OPTIONS"],
+  headers: [
+    "Authorization",
+    "Content-Type",
+    "Accept",
+    "Origin",
+    "User-Agent",
+    "DNT",
+    "Cache-Control",
+    "X-Mx-ReqToken",
+    "Keep-Alive",
+    "X-Requested-With",
+    "If-Modified-Since",
+    "X-CSRF-Token",
+    "Access-Control-Allow-Origin",
+    "request-endpoint"
+  ]
