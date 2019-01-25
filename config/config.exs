@@ -112,6 +112,15 @@ config :sales_reg, SalesReg.Scheduler,
     ]
   ]
 
+  config :heroku,
+    app_id_or_name: System.get_env("APP_ID_OR_NAME"),
+    base_url: "https://api.heroku.com/apps/",
+    default_header: [
+      {"Content-Type", "application/json"},
+      {"Accept", "application/vnd.heroku+json; version=3"},
+      {"Authorization", "Bearer #{System.get_env("AUTH_TOKEN")}"}
+    ]
+
 ###############################################################
 ### AWS (image upload functionality) config
 ###############################################################
