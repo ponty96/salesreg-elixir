@@ -9,6 +9,7 @@ defmodule SalesReg.Repo.Migrations.CreateProductStar do
       add(:sale_id, references(:sales, type: :binary_id))
       add(:product_id, references(:products, type: :binary_id))
       add(:contact_id, references(:contacts, type: :binary_id))
+      add(:company_id, references(:companies, type: :binary_id))
 
       timestamps()
     end
@@ -16,5 +17,6 @@ defmodule SalesReg.Repo.Migrations.CreateProductStar do
     create(index(:star, [:sale_id], on_delete: :nothing, type: :binary_id))
     create(index(:star, [:contact_id], on_delete: :nothing, type: :binary_id))
     create(index(:star, [:product_id], on_delete: :nothing, type: :binary_id))
+    create(index(:star, [:company_id], on_delete: :nothing, type: :binary_id))
   end
 end

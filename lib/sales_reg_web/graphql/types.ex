@@ -44,11 +44,18 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:logo, :string)
     field(:cover_photo, :string)
     field(:slug, :string)
+    field(:facebook, :string)
+    field(:instagram, :string)
+    field(:twitter, :string)
+    field(:linkedin, :string)
 
     field(:branches, list_of(:branch), resolve: dataloader(SalesReg.Business, :branches))
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
+    field(:reviews, list_of(:review), resolve: dataloader(SalesReg.Order, :reviews))
+    field(:stars, list_of(:star), resolve: dataloader(SalesReg.Order, :stars))
+    field(:legal_documents, list_of(:legal_document), resolve: dataloader(SalesReg.Business, :legal_documents))
 
     field :home_categories, list_of(:category) do
       resolve(fn _parent, %{source: company} ->
@@ -56,6 +63,19 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       end)
     end
   end
+
+  @desc """
+    Legal_document object type
+  """
+  object :legal_document do
+    field(:id, :uuid)
+    field(:name, :string)
+    field(:type, :string)
+    field(:content, :string)
+    field(:pdf_url, :string)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+  end  
 
   @desc """
     Branch object type
@@ -273,6 +293,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))
+    field(:location, :location, resolve: dataloader(SalesReg.Business, :location))
   end
 
   connection(node_type: :sale)
@@ -400,6 +421,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
     field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
     field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
 
   @desc """
@@ -412,6 +434,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
     field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
     field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
 
   @desc """
@@ -510,7 +533,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       :option,
       :template,
       :company_template,
-      :activity
+      :activity,
+      :legal_document
     ])
 
     resolve_type(fn
@@ -537,6 +561,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       %Template{}, _ -> :template
       %CompanyTemplate{}, _ -> :company_template
       %Activity{}, _ -> :activity
+      %LegalDocument{}, _ -> :legal_document
     end)
   end
 
@@ -562,6 +587,13 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   enum :company_template_status do
     value(:active, as: "ACTIVE")
     value(:inactive, as: "INACTIVE")
+  end
+
+  @desc "sorts the order from either ASC or DESC"
+  enum :legal_document_type do
+    value(:policy, as: "policy")
+    value(:terms, as: "terms")
+    value(:information, as: "information")
   end
 
   @desc "sorts the order from either ASC or DESC"
@@ -633,6 +665,19 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:phone, :phone_input)
     field(:logo, :string)
     field(:slug, non_null(:string))
+    field(:facebook, :string)
+    field(:instagram, :string)
+    field(:twitter, :string)
+    field(:linkedin, :string)
+    field(:legal_document, :legal_document_input)
+  end
+
+  input_object :legal_document_input do
+    field(:name, non_null(:string))
+    field(:type, non_null(:legal_document_type))
+    field(:content, (:string))
+    field(:pdf_url, :string)
+    field(:company_id, non_null(:string))
   end
 
   input_object :branch_input do
@@ -755,6 +800,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:amount_paid, :string)
     field(:contact, :through_order_contact_input)
     field(:contact_email, :string)
+    field(:location, :location_input)
 
     field(:user_id, non_null(:uuid))
     field(:contact_id, :uuid)
@@ -800,6 +846,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:product_id, :uuid)
     field(:contact_id, non_null(:uuid))
     field(:sale_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
   end
 
   input_object :star_input do
@@ -807,6 +854,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:product_id, :uuid)
     field(:contact_id, non_null(:uuid))
     field(:sale_id, non_null(:uuid))
+    field(:company_id, non_null(:uuid))
   end
 
   input_object :receipt_input do
@@ -817,6 +865,11 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:company_id, non_null(:uuid))
     field(:sale_id, non_null(:uuid))
     field(:reference_id, :string)
+  end
+
+  input_object :cover_photo_input do
+    field(:company_id, :uuid)
+    field(:cover_photo, non_null(:string))
   end
 
   #########################################################

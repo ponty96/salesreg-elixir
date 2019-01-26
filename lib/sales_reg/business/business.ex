@@ -11,7 +11,8 @@ defmodule SalesReg.Business do
     Company,
     Branch,
     Expense,
-    Bank
+    Bank,
+    LegalDocument
   ]
 
   @default_template_slug "yc1-template"
@@ -183,6 +184,11 @@ defmodule SalesReg.Business do
     Business.update_expense(expense, params)
   end
 
+  def update_company_cover_photo(%{cover_photo: _cover_photo, company_id: id} = params) do
+    Business.get_company(id)
+    |> Business.update_company(params)
+  end
+  
   def send_email(resource, type) do
     binary = return_file_content(type)
     Email.send_email(resource, type, binary)

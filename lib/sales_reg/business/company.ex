@@ -16,6 +16,10 @@ defmodule SalesReg.Business.Company do
     field(:logo, :string)
     field(:cover_photo, :string)
     field(:slug, :string)
+    field(:facebook, :string)
+    field(:twitter, :string)
+    field(:instagram, :string)
+    field(:linkedin, :string)
 
     belongs_to(:owner, SalesReg.Accounts.User)
     has_many(:branches, Branch)
@@ -25,22 +29,26 @@ defmodule SalesReg.Business.Company do
     has_one(:bank, SalesReg.Business.Bank, on_replace: :delete)
     has_one(:company_template, SalesReg.Theme.CompanyTemplate)
     has_many(:sales, SalesReg.Order.Sale)
+    has_many(:reviews, SalesReg.Order.Review)
+    has_many(:stars, SalesReg.Order.Star)
+    has_many(:legal_documents, SalesReg.Business.LegalDocument)
 
     timestamps()
   end
 
   @required_fields [:title, :contact_email, :owner_id, :currency, :slug]
-  @optional_fields [:about, :description, :logo]
+  @optional_fields [:about, :description, :logo, :facebook, :twitter, :instagram, :linkedin]
 
   @doc false
   def changeset(company, attrs) do
     company
-    |> Repo.preload([:phone, :bank])
+    |> Repo.preload([:phone, :bank, :legal_documents])
     |> change(attrs)
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> unique_constraint(:owner_id, message: "Sorry, but you already have a business with us")
     |> foreign_key_constraint(:owner_id)
     |> cast_assoc(:phone)
+    |> cast_assoc(:legal_documents)
     |> validate_required(@required_fields)
   end
 end
