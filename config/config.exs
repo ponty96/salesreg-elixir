@@ -121,6 +121,16 @@ config :sales_reg, SalesReg.Scheduler,
       {"Authorization", "Bearer #{System.get_env("AUTH_TOKEN")}"}
     ]
 
+  config :cloudfare,
+    zone_id: System.get_env("ZONE_ID"),
+    base_url: "https://api.cloudflare.com/client/v4/zones/",
+    default_header: [
+      {"X-Auth-Key", "#{System.get_env("X_AUTH_KEY")}"},
+      {"Content-Type", "application/json"},
+      {"X-Auth-Email", "#{System.get_env("X_AUTH_EMAIL")}"}
+    ]
+    
+
 ###############################################################
 ### AWS (image upload functionality) config
 ###############################################################
