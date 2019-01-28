@@ -10,7 +10,7 @@ defmodule SalesReg.Theme.Template do
     field(:slug, :string)
     field(:featured_image, :string)
 
-    has_many(:company_template, SalesReg.Theme.CompanyTemplate)
+    has_many(:company_templates, SalesReg.Theme.CompanyTemplate)
 
     timestamps()
   end
