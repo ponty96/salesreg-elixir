@@ -1,4 +1,4 @@
-if Mix.env() == :prod do
+if Mix.env() == :prod do 
   defmodule SalesRegWeb.Services.Cloudfare do
     alias SalesRegWeb.Services.Base
   
@@ -34,7 +34,7 @@ if Mix.env() == :prod do
     end
 
     defp process_url() do
-      base_url = Application.get_env(:cloudfare, :base_url) 
+      base_url = Application.get_env(:cloudfare, :api_base_url) 
       zone_id = Application.get_env(:cloudfare, :zone_id)
     
       base_url <> zone_id <> "/dns_records/"

@@ -21,6 +21,12 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]
 
+config :logger,
+  backends: [:console],
+  level: :debug,
+  format: "\n$time $metadata[$level] $levelpad$message\n",
+  metadata: :all
+
 config :sales_reg, SalesRegWeb.TokenImpl,
   issuer: "sales_reg",
   secret_key: "Q/pRXuJQoZblGk4AIOHhMX0AkzuUpBS91hQVlO06PqrtRd/iAobc3CdBkMPDVYgc"
@@ -113,8 +119,9 @@ config :sales_reg, SalesReg.Scheduler,
   ]
 
   config :heroku,
+    base_domain: System.get_env("BASE_DOMAIN"),
     app_id_or_name: System.get_env("APP_ID_OR_NAME"),
-    base_url: "https://api.heroku.com/apps/",
+    api_base_url: "https://api.heroku.com/apps/",
     default_header: [
       {"Content-Type", "application/json"},
       {"Accept", "application/vnd.heroku+json; version=3"},
@@ -123,7 +130,7 @@ config :sales_reg, SalesReg.Scheduler,
 
   config :cloudfare,
     zone_id: System.get_env("ZONE_ID"),
-    base_url: "https://api.cloudflare.com/client/v4/zones/",
+    api_base_url: "https://api.cloudflare.com/client/v4/zones/",
     default_header: [
       {"X-Auth-Key", "#{System.get_env("X_AUTH_KEY")}"},
       {"Content-Type", "application/json"},

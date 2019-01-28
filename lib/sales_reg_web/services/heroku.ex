@@ -29,7 +29,7 @@ if Mix.env() == :prod do
     end
 
     defp process_url() do
-      base_url = Application.get_env(:heroku, :base_url) 
+      base_url = Application.get_env(:heroku, :api_base_url) 
       app_id_or_name = Application.get_env(:heroku, :app_id_or_name)
 
       base_url <> app_id_or_name <> "/domains/"
