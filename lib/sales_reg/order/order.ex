@@ -69,6 +69,7 @@ defmodule SalesReg.Order do
           sale_id: _sale_id,
           contact_id: _contact_id,
           product_id: _product_id,
+          company_id: _company_id,
           text: text
         } = params
       ) do
@@ -79,9 +80,11 @@ defmodule SalesReg.Order do
 
   def create_star(
         %{
-          sale_id: _sale_id,
-          contact_id: _contact_id,
-          product_id: _product_id
+          sale_id: _sale_id, 
+          contact_id: _contact_id, 
+          product_id: _product_id,
+          company_id: _company_id,
+          value: _value
         } = params
       ) do
     create_star_or_review(params, fn attrs ->

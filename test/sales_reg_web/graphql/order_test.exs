@@ -123,11 +123,45 @@ defmodule SalesRegWeb.GraphqlOrderTest do
   """
 
   @all_company_sales_query """
-    query listCompanySales($companyId: Uuid!){
-      listCompanySales(companyId: $companyId){
-        status,
-        paymentMethod,
-        date
+    query listCompanySales($companyId: Uuid!, $first: Int){
+      listCompanySales(companyId: $companyId, first: $first){
+        edges{
+          node{
+            id,
+            date,
+            paymentMethod,
+            status,
+            refId
+          }
+        }
+      }
+    }
+  """
+
+  @all_company_invoices_query """
+    query listCompanyInvoices($companyId: Uuid!, $first: Int){
+      listCompanyInvoices(companyId: $companyId, first: $first){
+        edges{
+          node{
+            id,
+            dueDate,
+            refId
+          }
+        }
+      }
+    }
+  """
+
+  @all_company_activities_query """
+    query listContactActivities($companyId: Uuid!, $contactId: Uuid, $first: Int){
+      listContactActivities(companyId: $companyId, contactId: $contactId, first: $first){
+        edges{
+          node{
+            id,
+            type,
+            amount
+          }
+        }
       }
     }
   """
@@ -170,16 +204,16 @@ defmodule SalesRegWeb.GraphqlOrderTest do
     |> Map.put_new(:items, items)
   end
 
-  def review_variables(review_params, sale, product, contact) do
+  def review_variables(review_params, sale, product, contact, company) do
     review_params
     |> Map.put_new(:sale_id, sale.id)
     |> Map.put_new(:product_id, product.id)
     |> Map.put_new(:contact_id, contact.id)
+    |> Map.put_new(:company_id, company.id)
   end
 
-  describe "Order Tests" do
-    # MUTATIONS
-
+  # MUTATIONS
+  describe "Order Mutation Tests" do
     # tests that a sales order, order status and invoice due date is successfully 
     # created and updated respectively 
     @tag order: "order_and_invoice_tests"
@@ -263,7 +297,7 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       {:ok, sale_order} = Seed.create_sales_order(company.id, user.id, contact.id, items)
 
       variables = %{
-        review: review_variables(%{text: "this is a text"}, sale_order, product, contact)
+        review: review_variables(%{text: "this is a text"}, sale_order, product, contact, company)
       }
 
       res =
@@ -292,7 +326,7 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       {:ok, sale_order} = Seed.create_sales_order(company.id, user.id, contact.id, items)
 
       variables = %{
-        star: review_variables(%{value: 4}, sale_order, product, contact)
+        star: review_variables(%{value: 4}, sale_order, product, contact, company)
       }
 
       res =
@@ -339,4 +373,139 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       assert data["paymentMethod"] == "CASH"
     end
   end
+
+  #QUERIES
+  describe "Order Query Tests" do
+    @tag order: "all_company_sales"
+    test "All Company Sales Test", %{company: company, user: user, conn: conn} do
+      {:ok, product} = Seed.add_product_without_variant(@product_params, company.id, user.id)
+      {:ok, contact} = Seed.add_contact(user.id, company.id, "customer")
+      
+      items = Enum.map(@valid_items_params, fn item ->
+        Map.put_new(item, :product_id, product.id)
+      end)
+
+      add_many_sales = 
+        Enum.map(1..3, fn _index ->
+          {:ok, order} = 
+            company.id
+            |> Seed.create_sales_order(user.id, contact.id, items)
+
+          order
+          |> Helpers.transform_struct([
+            :id,
+            :date,
+            :payment_method,
+            :status,
+            :ref_id
+          ])
+        end)
+        |> Enum.sort()
+
+      variables = %{companyId: company.id, first: 3}
+
+      res =
+        conn
+        |> post("/graphiql", Helpers.query_skeleton(@all_company_sales_query, variables))
+      
+      response = json_response(res, 200)["data"]["listCompanySales"]["edges"]
+      response = 
+        Enum.map(response, fn %{"node" => map} ->
+          map
+        end)
+        |> Helpers.underscore_map_keys()
+        |> Enum.sort()
+
+      assert response == add_many_sales
+    end
+
+    @tag order: "all_company_invoices"
+    test "All Company Invoices Test", %{company: company, user: user, conn: conn} do
+      {:ok, product} = Seed.add_product_without_variant(@product_params, company.id, user.id)
+      {:ok, contact} = Seed.add_contact(user.id, company.id, "customer")
+      
+      items = Enum.map(@valid_items_params, fn item ->
+        Map.put_new(item, :product_id, product.id)
+      end)
+
+      {:ok, sale} = Seed.create_sales_order(company.id, user.id, contact.id, items)
+      invoices = Enum.map(1..3, fn _index ->
+        {:ok, invoice} = Seed.create_invoice(sale)
+        
+        invoice
+        |> Helpers.transform_struct([
+            :id,
+            :due_date,
+            :ref_id
+          ])
+      end)
+      |> Enum.sort()
+
+      variables = %{companyId: company.id, first: 3}
+
+      res =
+        conn
+        |> post("/graphiql", Helpers.query_skeleton(@all_company_invoices_query, variables))
+
+      response = json_response(res, 200)["data"]["listCompanyInvoices"]["edges"]
+      response = 
+        Enum.map(response, fn %{"node" => map} ->
+          map
+        end)
+        |> Helpers.underscore_map_keys()
+        |> Enum.sort()
+
+      assert response == invoices
+    end
+
+    @tag order: "all_company_activities"
+    test "All Company Activities Test", %{company: company, user: user, conn: conn} do
+      {:ok, product} = Seed.add_product_without_variant(@product_params, company.id, user.id)
+      {:ok, contact} = Seed.add_contact(user.id, company.id, "customer")
+      
+      items = Enum.map(@valid_items_params, fn item ->
+        Map.put_new(item, :product_id, product.id)
+      end)
+
+      {:ok, sale} = Seed.create_sales_order(company.id, user.id, contact.id, items)
+      {:ok, invoice} = Seed.create_invoice(sale)
+      {:ok, receipt} = Order.create_receipt(%{invoice_id: invoice.id, amount_paid: "20"})
+      
+      Enum.map(1..3, fn _index ->
+        Order.create_activities(receipt)
+      end)
+
+      {:ok, %{edges: edges}} = 
+        company.id
+        |> Order.list_company_activities(contact.id, %{first: 3})
+
+      activities = 
+        Enum.map(edges, fn activity ->
+          activity.node
+          |> Helpers.transform_struct([
+              :id,
+              :type,
+              :amount
+          ])
+          end)
+          |> Enum.sort()
+
+      variables = %{companyId: company.id, contactId: contact.id, first: 3}
+
+      res =
+        conn
+        |> post("/graphiql", Helpers.query_skeleton(@all_company_activities_query, variables))
+
+      response = json_response(res, 200)["data"]["listContactActivities"]["edges"]
+      response = 
+        Enum.map(response, fn %{"node" => map} ->
+          map
+        end)
+        |> Helpers.underscore_map_keys()
+        |> Enum.sort()
+
+      assert response == activities
+    end
+  end
 end
+
