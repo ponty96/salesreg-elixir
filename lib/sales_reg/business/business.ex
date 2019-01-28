@@ -4,6 +4,8 @@ defmodule SalesReg.Business do
   """
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
+  alias SalesRegWeb.Services.{Heroku, Cloudfare}
+  require Logger
 
   use SalesReg.Context, [
     Location,
@@ -38,6 +40,7 @@ defmodule SalesReg.Business do
            location: Map.get(company_params, :head_office),
            company_id: company.id
          },
+         _response <- create_business_subdomain(company.slug),
          {:ok, _branch} <- add_branch(branch_params),
          [{:ok, _option} | _t] <- Store.insert_default_options(company.id),
          template <- Theme.get_template_by_slug(@default_template_slug),
@@ -244,5 +247,29 @@ defmodule SalesReg.Business do
       |> File.read()
 
     binary
+  end
+
+  # The business name is the slug of the company
+  defp create_business_subdomain(business_name) do
+    Task.Supervisor.start_child(TaskSupervisor, fn ->
+      base_domain = Application.get_env(:heroku, :base_domain)
+      hostname = String.downcase(business_name) <> "." <> base_domain 
+
+      with  :ok <- Logger.info(fn -> "Creating new domain on heroku with hostname: #{hostname}" end),
+            {:ok, :success, data} <- Heroku.create_domain(hostname),
+            {:ok, :success, data} <- Cloudfare.create_dns_record(
+              "CNAME", data["hostname"], data["cname"], %{"ttl" => 1}
+            ) do
+        {:ok, :success, data}
+      else
+        {:ok, :fail, data} ->
+          Logger.debug(fn -> "The Server did perform the transaction: #{data["cname"]}" end)
+          {:ok, :fail, data}
+
+        {:error, reason} ->
+          Logger.error(fn -> "An error occurred: #{reason}" end)
+          {:error, reason}
+      end
+    end)
   end
 end
