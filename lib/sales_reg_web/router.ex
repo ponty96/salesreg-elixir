@@ -10,7 +10,7 @@ defmodule SalesRegWeb.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
     plug(SalesRegWeb.Plug.AssignUser)
-    plug(SalesRegWeb.Plug.TemplateHandler)
+    # plug(SalesRegWeb.Plug.TemplateHandler)
   end
 
   # RemoteIp should always be the first in the pipeline
