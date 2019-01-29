@@ -10,20 +10,18 @@ defmodule SalesRegWeb.Router do
     plug(:protect_from_forgery)
     plug(:put_secure_browser_headers)
     plug(SalesRegWeb.Plug.AssignUser)
-    plug(SalesRegWeb.Plug.TemplateHandler)
   end
 
   # RemoteIp should always be the first in the pipeline
   pipeline :api do
-    plug(RemoteIp)
-    plug(SalesRegWeb.PlugAttack)
     plug(:accepts, ["json"])
+    plug(SalesRegWeb.Plug.ValidateFlutterRequest)
   end
 
-  scope "/api/paystack", SalesRegWeb do
+  scope "/api/flutterwave", SalesRegWeb do
     pipe_through(:api)
 
-    post("/webhooks", HookController, :hook)
+    post("/webhooks/payment", HookController, :hook)
   end
 
   scope "/", SalesRegWeb do
