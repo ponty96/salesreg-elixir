@@ -46,7 +46,11 @@ defmodule SalesReg.Seed do
        numerous services",
       logo:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTulsnrbHjdztPnDwdWzruyJ-p1gi7Mwf43hT7cC1oiwl1hU_h",
-      slug: "sandbox"
+      slug: "Sandbox",
+      facebook: "http://facebook.com/officialsandbox",
+      instagram: "http://instagram.com/officialsandbox",
+      twitter: "http://twitter.com/officialsandbox",
+      linkedin: "http://linkedin.com/officialsandbox"
     }
 
     Business.create_company(user_id, company_params)
@@ -215,10 +219,10 @@ defmodule SalesReg.Seed do
 
   def create_invoice(order) do
     params = %{
-      "due_date" => order.date,
-      "user_id" => order.user_id,
-      "company_id" => order.company_id,
-      "sale_id" => order.id
+      due_date: order.date,
+      user_id: order.user_id,
+      company_id: order.company_id,
+      sale_id: order.id
     }
 
     SalesReg.Order.add_invoice(params)

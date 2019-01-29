@@ -64,7 +64,8 @@ defmodule SalesRegWeb.ConnCase do
     phone: %{
       number: "+2348131900893"
     },
-    slug: "nickname of the company"
+    slug: "nickname of the company",
+    cover_photo: "img3455"
   }
 
   # this is called for all tests

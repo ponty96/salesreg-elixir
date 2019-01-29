@@ -35,7 +35,8 @@ defmodule SalesReg.Mixfile do
         :bamboo,
         :scrivener_ecto,
         :ecto_sql,
-        :sentry
+        :sentry,
+        :httpoison
       ]
     ]
   end
@@ -86,7 +87,9 @@ defmodule SalesReg.Mixfile do
       {:timex, "~> 3.0"},
       {:scrivener_ecto, "~> 2.0"},
       {:cors_plug, "~> 2.0"},
-      {:sentry, "~> 6.4"}
+      {:sentry, "~> 6.4"},
+      {:httpoison, "~> 1.4"},
+      {:poison, "~> 3.1"}
     ]
   end
 
