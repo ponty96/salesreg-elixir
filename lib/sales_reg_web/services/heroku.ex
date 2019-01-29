@@ -24,15 +24,20 @@ if Mix.env() == :prod do
     end
 
     defp request(method, url, body, opts \\ []) do
-      header = Application.get_env(:heroku, :default_header)
+      header = get_config_key_val(:default_header)
       HTTPoison.request(method, url, body, header, Base.set_default_timeout(opts))
     end
 
     defp process_url() do
-      base_url = Application.get_env(:heroku, :api_base_url) 
-      app_id_or_name = Application.get_env(:heroku, :app_id_or_name)
+      base_url = get_config_key_val(:api_base_url) 
+      app_id_or_name = get_config_key_val(:app_id_or_name)
 
       base_url <> app_id_or_name <> "/domains/"
+    end
+
+    defp get_config_key_val(key) do
+      opts = Application.get_env(:sales_reg, __MODULE__)
+      Keyword.get(opts, key)
     end
   end
 
