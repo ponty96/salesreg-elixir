@@ -1,1 +1,1 @@
-web: MIX_ENV=prod mix run update_company_templates.exs && mix phx.server
+web: MIX_ENV=prod mix run new_release_script.exs && mix phx.server
