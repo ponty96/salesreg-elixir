@@ -118,7 +118,7 @@ config :sales_reg, SalesReg.Scheduler,
     ]
   ]
 
-  config :heroku,
+  config :sales_reg, SalesRegWeb.Services.Heroku,
     base_domain: System.get_env("BASE_DOMAIN"),
     app_id_or_name: System.get_env("APP_ID_OR_NAME"),
     api_base_url: "https://api.heroku.com/apps/",
@@ -128,7 +128,7 @@ config :sales_reg, SalesReg.Scheduler,
       {"Authorization", "Bearer #{System.get_env("AUTH_TOKEN")}"}
     ]
 
-  config :cloudfare,
+  config :sales_reg, SalesRegWeb.Services.Cloudfare,
     zone_id: System.get_env("ZONE_ID"),
     api_base_url: "https://api.cloudflare.com/client/v4/zones/",
     default_header: [
