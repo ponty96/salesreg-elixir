@@ -9,7 +9,7 @@ defmodule SalesReg.Accounts.User do
 
   schema "users" do
     field(:date_of_birth, :string)
-    field(:email, :string)
+    field(:email, SalesReg.FieldTypes.CaseInsensitive)
     field(:first_name, :string)
     field(:gender, :string)
     field(:last_name, :string)

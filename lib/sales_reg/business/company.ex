@@ -9,13 +9,13 @@ defmodule SalesReg.Business.Company do
 
   schema "companies" do
     field(:about, :string)
-    field(:contact_email, :string)
+    field(:contact_email, SalesReg.FieldTypes.CaseInsensitive)
     field(:currency, :string)
     field(:title, :string)
     field(:description, :string)
     field(:logo, :string)
     field(:cover_photo, :string)
-    field(:slug, :string)
+    field(:slug, SalesReg.FieldTypes.CaseInsensitive)
     field(:facebook, :string)
     field(:twitter, :string)
     field(:instagram, :string)
