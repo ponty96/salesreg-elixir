@@ -11,7 +11,7 @@ config :sales_reg, SalesRegWeb.Endpoint,
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
-  watchers: [npm: ["run", "watch", cd: Path.expand("../assets", __DIR__)]]
+  watchers: []
 
 # ## SSL Support
 #
