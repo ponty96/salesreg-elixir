@@ -55,7 +55,10 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
     field(:reviews, list_of(:review), resolve: dataloader(SalesReg.Order, :reviews))
     field(:stars, list_of(:star), resolve: dataloader(SalesReg.Order, :stars))
-    field(:legal_documents, list_of(:legal_document), resolve: dataloader(SalesReg.Business, :legal_documents))
+
+    field(:legal_documents, list_of(:legal_document),
+      resolve: dataloader(SalesReg.Business, :legal_documents)
+    )
 
     field :home_categories, list_of(:category) do
       resolve(fn _parent, %{source: company} ->
@@ -75,7 +78,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:pdf_url, :string)
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-  end  
+  end
 
   @desc """
     Branch object type
@@ -675,7 +678,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   input_object :legal_document_input do
     field(:name, non_null(:string))
     field(:type, non_null(:legal_document_type))
-    field(:content, (:string))
+    field(:content, :string)
     field(:pdf_url, :string)
     field(:company_id, non_null(:string))
   end
@@ -899,6 +902,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   object :home_data do
     field(:categories, list_of(:category))
     field(:featured_products, list_of(:product))
+    field(:top_rated_products, list_of(:product))
     field(:company, :company)
   end
 

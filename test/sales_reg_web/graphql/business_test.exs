@@ -11,7 +11,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     password_confirmation: "asdfasdf",
     profile_picture: "picture.jpg"
   }
-  
+
   @bank_params %{
     account_name: "Account Name",
     account_number: "0101010101",
@@ -39,8 +39,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
   }
 
   describe "company tests" do
-  
-  # adds a user to a company
+    # adds a user to a company
     @tag :add_user_company
     test "add user company", context do
       {:ok, user} =
@@ -142,7 +141,6 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
 
     @tag company: "update_company_cover_photo"
     test "update company cover photo", context do
-    
       query_doc = """
       updateCompanyCoverPhoto(
         coverPhoto:{
@@ -162,9 +160,12 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
         }
       """
 
-      res = 
-      context.conn
-      |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "updateCompanyCoverPhoto"))
+      res =
+        context.conn
+        |> post(
+          "/graphiql",
+          Helpers.query_skeleton(:mutation, query_doc, "updateCompanyCoverPhoto")
+        )
 
       response = json_response(res, 200)["data"]["updateCompanyCoverPhoto"]
 
@@ -570,7 +571,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
         context.conn
         |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "upsertLegalDocument"))
 
-      IO.inspect res.resp_body, label: "response body"
+      IO.inspect(res.resp_body, label: "response body")
       response = json_response(res, 200)["data"]["upsertLegalDocument"]
 
       assert response["success"] == true
@@ -642,13 +643,11 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
       res =
         context.conn
         |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "deleteLegalDocument"))
-    
-      
+
       response = json_response(res, 200)["data"]["deleteLegalDocument"]
 
       assert response["success"] == true
-      assert response["fieldErrors"] ==  []
-      
+      assert response["fieldErrors"] == []
     end
   end
 end

@@ -191,7 +191,7 @@ defmodule SalesReg.Business do
     Business.get_company(id)
     |> Business.update_company(params)
   end
-  
+
   def send_email(resource, type) do
     binary = return_file_content(type)
     Email.send_email(resource, type, binary)
@@ -252,17 +252,22 @@ defmodule SalesReg.Business do
   # The business name is the slug of the company
   defp create_business_subdomain(business_name) do
     Task.Supervisor.start_child(TaskSupervisor, fn ->
-      base_domain = 
+      base_domain =
         Application.get_env(:sales_reg, Heroku)
         |> Keyword.get(:base_domain)
 
-      hostname = String.downcase(business_name) <> "." <> base_domain 
-      
-      with  :ok <- Logger.info(fn -> "Creating new domain on heroku with hostname: #{hostname}" end),
-            {:ok, :success, data} <- Heroku.create_domain(hostname),
-            {:ok, :success, data} <- Cloudfare.create_dns_record(
-              "CNAME", data["hostname"], data["cname"], %{"ttl" => 1}
-            ) do
+      hostname = String.downcase(business_name) <> "." <> base_domain
+
+      with :ok <-
+             Logger.info(fn -> "Creating new domain on heroku with hostname: #{hostname}" end),
+           {:ok, :success, data} <- Heroku.create_domain(hostname),
+           {:ok, :success, data} <-
+             Cloudfare.create_dns_record(
+               "CNAME",
+               data["hostname"],
+               data["cname"],
+               %{"ttl" => 1}
+             ) do
         {:ok, :success, data}
       else
         {:ok, :fail, data} ->
