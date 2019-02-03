@@ -59,10 +59,10 @@
 																	<tr>
 																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89);line-height: 1.4;font-size: 16px">
 																			<p>Hi <span><%= sale.contact.contact_name %></span>,</p>
-																			<p>We are please to notify you that your order as referenced above is currently being delivered and will get to you soon</p>
-																			<p>In the meantime, if you have any questions send us an email at <a href="mailto:example@yipcart.com" style="color:#127bcc">example@yipcart.com</a> and we will be happy to help you.</p>
-																			<a href="#" style="text-decoration: none!important;"><span style="color:#127bcc">View your order</span></a> or <a href="#" style="text-decoration: none!important;"><span style="color:#127bcc">visit our store</span></a>
-																			<p>Thanks for choosing ABC Hot CakesABC Hot Cakes & Pastries</p>
+																			<p>This is to notify you that your order as referenced above is currently being delivered, and will get to you soon</p>
+																			<p>Please, if you have any questions, do not hesitate to send us an email at <a href="mailto:<%= sale.company.contact_email %>" style="color:#127bcc"><%= sale.company.contact_email %></a> and we'll be right at your service.</p>
+																			<p>You can <a href="#" style="text-decoration: none!important;"><span style="color:#127bcc">View your order</span></a> or <a href="<%= Business.get_company_subdomain(sale.company) %>" style="text-decoration: none!important;"><span style="color:#127bcc">visit our store</span></a></p>
+																			<p><%= sale.contact.contact_name %>, you are the best, thanks for choosing <%= sale.company.title %></p>
 																			<p>Best regards,<br><%= sale.company.owner.first_name %>.</p>
 																		</td>
 																	</tr>

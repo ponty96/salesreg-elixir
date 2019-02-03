@@ -27,7 +27,7 @@
 																	<tr>
 																		<td style="width: 100%">
 																			<h1 style="display: inline-flex; color: rgb(255,255,255);margin: 0;font-size: 25px;padding: 35px 0;font-weight: 400">Invoice due notification:</h1>
-																			<h1 style="display: inline-flex; color: rgb(255,255,255);margin: 0;font-size: 25px;padding: 35px 0;font-weight: 400"><%= sale.invoice.ref_id %></h1>
+																			<h1 style="display: inline-flex; color: rgb(255,255,255);margin: 0;font-size: 25px;padding: 35px 0;font-weight: 400">#<%= sale.invoice.ref_id %></h1>
 																		</td>
 																	</tr>
 																	</tbody>

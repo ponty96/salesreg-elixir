@@ -44,8 +44,9 @@
 																			<p>Hey <%= company.title %>,</p>
 																			<p>I really appreciate you signing up for Yipcart, and I'm sure you'll love it when you see how easy it is to get the right things done.</p>
 																			<p>We built Yipcart to help SMEs improve their productivity, and I hope that we can achieve that for you.</p>
-																			<p>If you wouldn't mind, I'd love it if you answered one quick question: why did you sign up for Yipcart?</p>
-																			<p>I'm asking because knowing what made you sign up is really helpful for us in making sure that we're delivering on what our users want. Just hit "reply" and let me know</p>
+																			<p>I love to aslo inform you that in three(3) days time, you will be able to receive payments from your customers who buy from your webstore.</p>
+																			<p>Now if you wouldn't mind, I'd loved it if you answered one quick question: <span style="font-style: italic">Why did you sign up for yipcart?</span> I'm asking because knowing what made you sign up will help us to make sure that what we are delivering is exactly what you need.</p>
+																			<p>Just hit "Reply" and let me know.</p>
 																			<p>Thanks</p>
 																			<p>Ayomide CEO</p>
 																		</td>
