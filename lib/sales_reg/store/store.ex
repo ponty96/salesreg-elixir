@@ -424,15 +424,16 @@ defmodule SalesReg.Store do
     |> List.flatten()
   end
 
-  def list_top_rated_products(company_id) do
-    Product
-    |> where([p], p.company_id == ^company_id)
-    |> where([p], p.is_top_rated_by_merchant == true)
-    |> select([p], [p])
-    |> limit(10)
-    |> Repo.all()
+  def random_top_rated_product(company_id) do
+    query =
+      from(p in Product,
+        where: p.company_id == ^company_id and p.is_top_rated_by_merchant == true,
+        order_by: fragment("RANDOM()")
+      )
+
+    Repo.all(query)
     |> Enum.map(&store_item_preloads(&1))
-    |> List.flatten()
+    |> Enum.at(0)
   end
 
   def calculate_store_item_stars(%{stars: []}), do: 0

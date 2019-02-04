@@ -17,8 +17,9 @@ defmodule SalesRegWeb.Plug.ValidateFlutterRequest do
   end
 
   defp verify_secret_hash(conn, secret_hash) do
-    IO.inspect secret_hash, label: "secret hash"
-    IO.inspect System.get_env("FLUTTER_SECRET_HASH"), label: "FLUTER_SECRET_HASH"
+    IO.inspect(secret_hash, label: "secret hash")
+    IO.inspect(System.get_env("FLUTTER_SECRET_HASH"), label: "FLUTER_SECRET_HASH")
+
     if System.get_env("FLUTTER_SECRET_HASH") == secret_hash do
       conn
     else

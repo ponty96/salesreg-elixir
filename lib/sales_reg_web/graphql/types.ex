@@ -902,7 +902,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   object :home_data do
     field(:categories, list_of(:category))
     field(:featured_products, list_of(:product))
-    field(:top_rated_products, list_of(:product))
+    field(:top_rated_product, :product)
     field(:company, :company)
   end
 

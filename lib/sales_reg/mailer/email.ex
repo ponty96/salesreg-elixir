@@ -31,17 +31,19 @@ defmodule SalesReg.Email do
   end
 
   def send_email(email_params) do
-    new_email = new_email(
-      from: email_params.from,
-      to: email_params.to,
-      subject: email_params.subject,
-      html_body: email_params.html_body
-    )
-   
+    new_email =
+      new_email(
+        from: email_params.from,
+        to: email_params.to,
+        subject: email_params.subject,
+        html_body: email_params.html_body
+      )
+
     if Mix.env() == :prod do
       Mailer.deliver_later(new_email)
     else
       Logger.info("Sending email to #{email_params.to}")
+
       %Bamboo.Email{
         from: email_params.from,
         to: email_params.to,
