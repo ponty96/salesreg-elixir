@@ -36,14 +36,16 @@ config :sales_reg, SalesReg.Repo,
 
 config :sentry,
   dsn: "https://450c8312e5094c859c0ff835ce5234d4@sentry.io/1369497",
-  environment_name: Mix.env(),
+  environment_name: :prod,
   enable_source_code_context: true,
   root_source_code_path: File.cwd!(),
   tags: %{
     env: "production"
   },
   included_environments: [:prod],
-  use_error_logger: true
+  use_error_logger: true,
+  hackney_opts: [pool: :my_pool],
+  in_app_module_whitelist: [SalesReg]
 
 config :cors_plug,
   origins: [~r/https?.*yipcartstaging2019.com\d?\.com$/],
