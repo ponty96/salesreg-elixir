@@ -44,3 +44,24 @@ config :sentry,
   },
   included_environments: [:prod],
   use_error_logger: true
+
+config :cors_plug,
+  origins: [~r/https?.*yipcartstaging2019.com\d?\.com$/],
+  max_age: 8_666_400,
+  methods: ["GET", "POST", "OPTIONS"],
+  headers: [
+    "Authorization",
+    "Content-Type",
+    "Accept",
+    "Origin",
+    "User-Agent",
+    "DNT",
+    "Cache-Control",
+    "X-Mx-ReqToken",
+    "Keep-Alive",
+    "X-Requested-With",
+    "If-Modified-Since",
+    "X-CSRF-Token",
+    "Access-Control-Allow-Origin",
+    "request-endpoint"
+  ]
