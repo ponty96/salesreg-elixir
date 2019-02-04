@@ -9,7 +9,7 @@ defmodule SalesRegWeb.HookController do
       {:ok, _receipt} ->
         put_status(conn, 200)
         |> json("Successful")
-      
+
       _ ->
         put_status(conn, 200)
         |> json("Transaction already occurred")
