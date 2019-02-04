@@ -17,8 +17,8 @@ defmodule SalesReg.Order do
     Activity
   ]
 
-  @receipt_html_path "lib/sales_reg_web/templates/mailer/receipt.html.eex"
-  @invoice_html_path "lib/sales_reg_web/templates/mailer/invoice.html.eex"
+  @receipt_html_path "lib/sales_reg_web/templates/mailer/yc_email_receipt_pdf.html.eex"
+  @invoice_html_path "lib/sales_reg_web/templates/mailer/yc_email_order_invoice_pdf.html.eex"
 
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
@@ -496,6 +496,13 @@ defmodule SalesReg.Order do
       select: ac
     )
     |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
+  end
+
+  def calc_item_amount(item) do
+    {quantity, _} = Float.parse(item.quantity)
+    {unit_price, _} = Float.parse(item.unit_price)
+
+    quantity * unit_price
   end
 
   defp calc_items_amount(items) do
