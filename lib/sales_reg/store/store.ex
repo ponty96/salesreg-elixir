@@ -104,12 +104,12 @@ defmodule SalesReg.Store do
     {:ok, company_id} = Ecto.UUID.dump(company_id)
     {:ok, product_id} = Ecto.UUID.dump(product_id)
     params = [company_id, product_id, product_id, limit, offset]
-    
+
     query = """
       SELECT  *
       FROM    products AS prods
       WHERE   prods.company_id = $1::uuid
-      AND  
+      AND
         ARRAY(
           SELECT  tags.name
           FROM    tags tags
@@ -148,12 +148,12 @@ defmodule SalesReg.Store do
                 WHERE   products_tags.product_id = prods.id
               )
             )
-          ), 1) 
+          ), 1)
         ) DESC
       LIMIT   $4::int
       OFFSET  $5::int
     """
-    
+
     Repo.execute_and_load(query, params, Product)
   end
 
@@ -174,7 +174,7 @@ defmodule SalesReg.Store do
     |> order_by([p], asc: p.is_top_rated_by_merchant)
     |> Repo.all()
   end
-  
+
   # PRODUCT INVENTORY
   def update_product_inventory(:increment, order_items) when is_list(order_items) do
     Enum.map(order_items, fn order_item ->
@@ -374,10 +374,6 @@ defmodule SalesReg.Store do
   end
 
   # WEBSTORE REQUIRED METHODS
-  def load_featured_products(company_id) do
-    list_featured_items(Product, company_id)
-  end
-
   def home_categories(company_id) do
     Repo.all(
       from(c in Category,
@@ -417,8 +413,8 @@ defmodule SalesReg.Store do
     |> Repo.paginate(page: Map.get(filter_params, :page))
   end
 
-  defp list_featured_items(schema, company_id) do
-    schema
+  def list_featured_products(company_id) do
+    Product
     |> where([p], p.company_id == ^company_id)
     |> where([p], p.is_featured == true)
     |> select([p], [p])
@@ -428,13 +424,15 @@ defmodule SalesReg.Store do
     |> List.flatten()
   end
 
-  def list_top_rated_items(company_id) do
+  def list_top_rated_products(company_id) do
     Product
-    |> where([p], p.is_top_rated_by_merchant == true)
     |> where([p], p.company_id == ^company_id)
-    |> select([p], {p.name, p.is_top_rated_by_merchant})
-    |> order_by([p], asc: p.is_top_rated_by_merchant)
+    |> where([p], p.is_top_rated_by_merchant == true)
+    |> select([p], [p])
+    |> limit(10)
     |> Repo.all()
+    |> Enum.map(&store_item_preloads(&1))
+    |> List.flatten()
   end
 
   def calculate_store_item_stars(%{stars: []}), do: 0

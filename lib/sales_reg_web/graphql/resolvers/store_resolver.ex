@@ -89,8 +89,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   end
 
   def list_related_products(%{product_id: product_id, company_id: company_id} = params, _res) do
-    {:ok, 
-      Store.load_related_products(company_id, product_id, params.limit, params.offset)}
+    {:ok, Store.load_related_products(company_id, product_id, params.limit, params.offset)}
   end
 
   defp pagination_args(args) do
