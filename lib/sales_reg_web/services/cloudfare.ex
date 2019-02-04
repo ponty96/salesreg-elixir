@@ -1,8 +1,9 @@
-if Mix.env() == :prod do 
+if Mix.env() == :prod do
   defmodule SalesRegWeb.Services.Cloudfare do
     alias SalesRegWeb.Services.Base
-  
-    def create_dns_record(type, name, content, optional_params \\ %{}) when is_map(optional_params) == true  do
+
+    def create_dns_record(type, name, content, optional_params \\ %{})
+        when is_map(optional_params) == true do
       body =
         %{
           "type" => type,
@@ -34,9 +35,9 @@ if Mix.env() == :prod do
     end
 
     defp process_url() do
-      base_url = get_config_key_val(:api_base_url) 
+      base_url = get_config_key_val(:api_base_url)
       zone_id = get_config_key_val(:zone_id)
-    
+
       base_url <> zone_id <> "/dns_records/"
     end
 
@@ -45,5 +46,4 @@ if Mix.env() == :prod do
       Keyword.get(opts, key)
     end
   end
-
 end

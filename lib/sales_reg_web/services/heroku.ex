@@ -1,19 +1,19 @@
-if Mix.env() == :prod do 
+if Mix.env() == :prod do
   defmodule SalesRegWeb.Services.Heroku do
     alias SalesRegWeb.Services.Base
 
     def create_domain(hostname) do
-      body = 
+      body =
         %{"hostname" => hostname}
         |> Base.encode()
-    
+
       request(:post, process_url(), body)
       |> Base.process_response()
     end
 
     def delete_domain(domain_id_or_host_name) do
       url = process_url() <> domain_id_or_host_name
-    
+
       request(:delete, url, "")
       |> Base.process_response()
     end
@@ -29,7 +29,7 @@ if Mix.env() == :prod do
     end
 
     defp process_url() do
-      base_url = get_config_key_val(:api_base_url) 
+      base_url = get_config_key_val(:api_base_url)
       app_id_or_name = get_config_key_val(:app_id_or_name)
 
       base_url <> app_id_or_name <> "/domains/"
@@ -40,6 +40,4 @@ if Mix.env() == :prod do
       Keyword.get(opts, key)
     end
   end
-
 end
-
