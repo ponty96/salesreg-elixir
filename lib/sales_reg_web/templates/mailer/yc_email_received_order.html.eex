@@ -55,14 +55,16 @@
 																	<tbody>
 																	<tr>
 																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89)">
-																			<p>Dear <span><%= sale.contact.contact_name %></span>,</p>
+																			<p>Thank you! Thank you!! Thank you!!!</p>
+																			<p>Hello <span><%= sale.contact.contact_name %></span>,</p>
 																			<p>This is just a quick email to say we've received your order.</p>
-																			<p>As soon as everything has been confirmed and ready for shipment, we will send you another email with your order details and any other information about your package</p>
+																			<p>As soon as everything has been confirmed and ready for shipment, we will send you another email with your order details and any other information about your package.</p>
 																			<p>Your shipping ETA is one working days from when you received this email. We'll follow up as quick as possible.</p>
-																			<p>In the meantime, if you have any questions, send us an email at <a href="mailto:<%= sale.company.contact_email %>" style="color: #3668D3"><<%= sale.company.contact_email %>/a> and we'll be happy to help you.</p>
+																			<p>In the meantime, if you have any questions, send us an email at <a href="mailto:<%= sale.company.contact_email %>" style="color: #3668D3"><%= sale.company.contact_email %></a> and we'll be happy to help you.</p>
 																			<p>
-																				<span><a href="#" target="_blank" style="text-decoration: none;color: #3668D3">View order</a></span> or <span><a href="#" target="_blank" style="text-decoration: none;color: #3668D3">Visit our webstore</a></span>
+																				<span><a href="#" target="_blank" style="text-decoration: none;color: #3668D3">View order</a></span> or <span><a href="<%= Business.get_company_subdomain(sale.company)" target="_blank" style="text-decoration: none;color: #3668D3">Visit our webstore</a></span>
 																			</p>
+																			<p>Best regards.</p>
 																		</td>
 																	</tr>
 																	</tbody>
