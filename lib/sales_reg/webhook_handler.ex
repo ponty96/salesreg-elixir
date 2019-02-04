@@ -15,7 +15,7 @@ defmodule SalesReg.WebhookHandler do
       data["txRef"]
       |> String.replace("_", " ")
       |> String.split()
-    
+
     Order.get_sale(order_id)
   end
 
