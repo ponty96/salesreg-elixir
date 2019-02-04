@@ -62,7 +62,7 @@
 																			<p>Your shipping ETA is one working days from when you received this email. We'll follow up as quick as possible.</p>
 																			<p>In the meantime, if you have any questions, send us an email at <a href="mailto:<%= sale.company.contact_email %>" style="color: #3668D3"><%= sale.company.contact_email %></a> and we'll be happy to help you.</p>
 																			<p>
-																				<span><a href="#" target="_blank" style="text-decoration: none;color: #3668D3">View order</a></span> or <span><a href="<%= Business.get_company_subdomain(sale.company)" target="_blank" style="text-decoration: none;color: #3668D3">Visit our webstore</a></span>
+																				<span><a href="#" target="_blank" style="text-decoration: none;color: #3668D3">View order</a></span> or <span><a href="<%= Business.get_company_subdomain(sale.company) %>" target="_blank" style="text-decoration: none;color: #3668D3">Visit our webstore</a></span>
 																			</p>
 																			<p>Best regards.</p>
 																		</td>
