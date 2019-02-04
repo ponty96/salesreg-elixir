@@ -197,6 +197,14 @@ defmodule SalesReg.Business do
     Email.send_email(resource, type, binary)
   end
 
+  def get_company_subdomain(company) do
+    base_domain = 
+        Application.get_env(:sales_reg, Heroku)
+        |> Keyword.get(:base_domain)
+
+    company.slug <> "." <> base_domain 
+  end
+
   # Private Functions
   defp put_items_amount(params) do
     total_amount =
@@ -252,9 +260,12 @@ defmodule SalesReg.Business do
   # The business name is the slug of the company
   defp create_business_subdomain(business_name) do
     Task.Supervisor.start_child(TaskSupervisor, fn ->
-      base_domain = Application.get_env(:heroku, :base_domain)
-      hostname = String.downcase(business_name) <> "." <> base_domain 
+      base_domain = 
+        Application.get_env(:sales_reg, Heroku)
+        |> Keyword.get(:base_domain)
 
+      hostname = String.downcase(business_name) <> "." <> base_domain 
+      
       with  :ok <- Logger.info(fn -> "Creating new domain on heroku with hostname: #{hostname}" end),
             {:ok, :success, data} <- Heroku.create_domain(hostname),
             {:ok, :success, data} <- Cloudfare.create_dns_record(

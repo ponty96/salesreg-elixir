@@ -1,0 +1,153 @@
+<div style="font-family:'Roboto',sans-serif;color:#000000;height:100%!important;Margin:0!important;padding:0!important;width:100%!important;background:#ffffff">
+
+	<span style="display:none!important;font-size:0!important;line-height:0!important">Email Description</span>
+	<table width="100%" align="center" border="0" cellspacing="0" cellpadding="0" style="border:0;font-family:'Roboto',sans-serif;color:#000000;height:100%!important;Margin:0!important;padding:0!important;width:100%!important;background:#f8f8f9">
+		<tbody>
+		<tr>
+			<td align="center" valign="top" style="padding-top: 30px">
+
+				<table width="100%" align="center" border="0" cellspacing="0" cellpadding="0" style="border:0;width:100%;Margin:0;padding:0;clear:both">
+					<tbody>
+					<tr>
+						<td align="center" valign="middle">
+							<table align="center" valign="middle" border="0" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border: 1px solid rgb(236,236,236);width:100%;max-width:650px;min-width:390px;Margin:0 auto" width="100%">
+								<tbody>
+								<tr>
+									<td>
+										<table width="100%" style="border-collapse: collapse; width: 100%" align="center" valign="top" border="0" cellpadding="0" cellspacing="0">
+											<tbody>
+											<tr>
+												<td>
+													<table width="100%" align="center" valign="top" border="0" cellpadding="0" cellspacing="0" style="width: 100%">
+														<tbody>
+
+														<!-- Header Section -->
+														<tr>
+															<td align="left" valign="middle" style="padding: 0 50px;vertical-align: top;background: rgb(54,104,211);font-size: 12px;line-height: 16px;">
+																<table>
+																	<tbody>
+																	<tr>
+																		<td>
+																			<h1 style="color: rgb(255,255,255);margin: 0;font-size: 20px;padding: 25px 0 0;font-weight: 400"><%= receipt.company.title %></h1>
+																			<h1 style="color: rgb(255,255,255);margin: 0;font-size: 20px;padding: 10px 0 25px;font-weight: 400">Sales Receipt</h1>
+																		</td>
+																	</tr>
+																	</tbody>
+																</table>
+															</td>
+														</tr>
+														<!-- Header Section Ends -->
+
+														<tr>
+															<td align="left" valign="middle" style="padding: 0 50px;vertical-align: top;background: #ffffff;font-size: 12px;line-height: 16px;">
+																<table width="100%" style="width: 100%">
+																	<tbody>
+
+																	<!-- Date of invoice -->
+																	<tr style="display: flex; justify-content: space-between; padding-top: 30px">
+																		<td>
+																			<table>
+																				<tbody style=" color: #26262c">
+																				<tr>
+																					<td style="font-weight: 500">Issued to: <span style="font-weight: 400"><%= receipt.sale.contact.contact_name %></span></td>
+																				</tr>
+																				<tr>
+																					<td style="font-weight: 500">Date issued: <span style="font-weight: 400"><%= NaiveDateTime.to_date(receipt.inserted_at) %></span></td>
+																				</tr>
+																				</tbody>
+																			</table>
+																		</td>
+
+																		<td>
+																			<table style="text-align: right">
+																				<tbody style=" color: #26262c">
+																				<tr>
+																					<td style="font-weight: 500">Reciept: <span style="font-weight: 400">R<%= receipt.ref_id %></span></td>
+																				</tr>
+																				<tr>
+																					<td colspan="1"></td>
+																				</tr>
+																				</tbody>
+																			</table>
+																		</td>
+																	</tr>
+																	<!-- Date of invoice Ends -->
+
+
+																	<tr style="width: 100%">
+																		<td style="padding: 30px 0 0 0;">
+																			<table style="width: 100%;border-collapse:collapse;border-spacing:0;">
+
+																				<thead>
+																				<tr style="font-size: 12px;color: #000000; background-color: #e8e8e8; border-radius: 3px">
+																					<th style="display:table-cell;width:3rem;border-width:0;border-color:#e8e8e8;text-align:left;font-weight:500;padding: 10px;border-style:solid;overflow:hidden;border-top-width:1px;border-bottom-width:1px;">S/N</th>
+																					<th style="display:table-cell;border-width:0;border-color:#e8e8e8;text-align:left;font-weight: 500;padding: 10px;border-style:solid;overflow:hidden;word-break:normal;border-top-width:1px;border-bottom-width:1px">ITEM</th>
+																					<th style="display:table-cell;border-width:0;border-color:#e8e8e8;text-align:left;font-weight: 500;padding: 10px;border-style:solid;overflow:hidden;word-break:normal;border-top-width:1px;border-bottom-width:1px;">UNIT PRICE(N)</th>
+																					<th style="display:table-cell;border-width:0;border-color:#e8e8e8;text-align:left;font-weight: 500;padding: 10px;border-style:solid;overflow:hidden;word-break:normal;border-top-width:1px;border-bottom-width:1px;">QTY</th>
+																					<th style="display:table-cell;border-width:0;border-color:#e8e8e8;text-align:right;font-weight: 500;padding: 10px;border-style:solid;overflow:hidden;word-break:normal;border-top-width:1px;border-bottom-width:1px;">AMOUNT(N)</th>
+																				</tr>
+																				</thead>
+
+																				<tbody style="color: #000000">
+																					<%= for {item, counter}  <- Enum.index_with(receipt.sale.items) do %>
+																						<tr style="font-size:14px;vertical-align: middle" valign="middle">
+																							<td style="display:table-cell;width:3rem;border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= counter %></td>
+																							<td style="display:table-cell;border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= item.product.name %></td>
+																							<td style="display:table-cell;border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= item.unit_price %></td>
+																							<td style="display:table-cell;border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= item.quantity %></td>
+																							<td style="display:table-cell;border-color:#DBDBDB;text-align:right;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= Order.calc_item_amount(item) %></td>
+																						</tr>
+																					<% end %>																		
+																				<tr>
+																					<td colspan="5" style="display:table-cell;padding: 15px 0"></td>
+																				</tr>
+																				</tbody>
+
+																				<tfoot>
+																				<tr style="font-size:14px;vertical-align: middle" valign="middle">
+																					<td colspan="3" style="background-color: #CAF1E7;display:table-cell;text-align:left;padding: 10px;overflow:hidden;word-break:normal;color: #189D7A;font-weight: 600">Total due:</td>
+																					<td colspan="2" style="background-color: #189D7A;color: #ffffff;display:table-cell;text-align:right;padding: 10px;overflow:hidden;word-break:normal;font-weight: 600"><%= Order.calc_order_amount(receipt.sale) %></td>
+																				</tr>
+
+																				<tr style="font-size:14px;vertical-align: middle" valign="middle">
+																					<td colspan="4" style="display:table-cell; border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;border-top-width: 1px">Amount paid:</td>
+																					<td style="display:table-cell; border-color:#DBDBDB;text-align:right;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;color: #189D7A;font-weight: 500"><%= Order.calc_order_amount_paid(receipt.sale) %></td>
+																				</tr>
+
+																				<tr style="font-size:14px;vertical-align: middle" valign="middle">
+																					<td colspan="4" style="display:table-cell;border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;border-top-width: 1px">Balance due:</td>
+																					<td style="display:table-cell; border-color:#DBDBDB;text-align:right;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;color: rgba(255,57,32,0.8);font-weight: 500"><%= Order.calc_pay_outstanding(receipt.sale) %></td>
+																				</tr>
+																				</tfoot>
+
+																			</table>
+																		</td>
+																	</tr>
+																	</tbody>
+																</table>
+															</td>
+														</tr>
+
+														</tbody>
+													</table>
+												</td>
+											</tr>
+											</tbody>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td style="height:50px" height="50">&nbsp;</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+
+			</td>
+		</tr>
+		</tbody>
+	</table>
+</div>

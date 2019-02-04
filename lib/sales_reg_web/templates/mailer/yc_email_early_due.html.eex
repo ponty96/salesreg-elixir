@@ -43,7 +43,7 @@
 																		<td style="padding: 15px 0;font-size: 20px">
 																			<span>Invoice:</span>
 																			<span>
-																				<strong><%= sale.invoice.ref_id %></strong>
+																				<strong>#<%= sale.invoice.ref_id %></strong>
 																			</span>
 																		</td>
 																	</tr>
@@ -59,13 +59,10 @@
 																	<tr>
 																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89)">
 																			<p>Dear <span><%= sale.contact.contact_name %></span>,</p>
-																			<p>I hope you are well,</p>
-																			<p>Please kindly note that we are yet to recieve <span style="color: red">N<%= SalesReg.Order.calc_pay_outstanding(sale) %></span> in respect of the above invoice, which was due for payment on <%= sale.invoice.due_date %></p>
-																			<a href="<%= sale.invoice.pdf_url %>" style="text-decoration: none!important;">
-																				<span style="color:#127bcc">View Invoice</span>
-																			</a>
-																			<p>I would be really grateful if you would be so kind as to let us know when we should expect to recieve the payment</p>
-																			<p>We appreciate your prompt payment.</p>
+																			<p>Once again, thanks for your kind patronage.</p>
+																			<p>This is just to remind you about the <span style="color: red">N<%= SalesReg.Order.calc_pay_outstanding(sale) %></span> in respect of the above referenced invoice, which was due for payment on <%= sale.invoice.due_date %></p>
+																			<p>Can you please <a href="#" style="text-decoration: none!important;"><span style="color:#127bcc">Pay invoice now</span></a></p>
+																			<p>Or let us know how soon you can complete payment.</p>
 																			<p>Best regards,<br><%= sale.company.owner.first_name %></p>
 																		</td>
 																	</tr>
