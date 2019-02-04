@@ -13,11 +13,14 @@ defmodule SalesRegWeb.Router do
   # RemoteIp should always be the first in the pipeline
   pipeline :api do
     plug(:accepts, ["json"])
+  end
+
+  pipeline :hook do
     plug(SalesRegWeb.Plug.ValidateFlutterRequest)
   end
 
   scope "/api/flutterwave", SalesRegWeb do
-    pipe_through(:api)
+    pipe_through([:api, :hook])
 
     post("/webhooks/payment", HookController, :hook)
   end
