@@ -46,7 +46,7 @@ config :sentry,
   use_error_logger: true
 
 config :cors_plug,
-  origins: [~r/http?.*yipcartstaging2019.com\d?\.com$/],
+  origins: [~r/https?.*yipcartstaging2019.com\d?\.com$/],
   max_age: 8_666_400,
   methods: ["GET", "POST", "OPTIONS"],
   headers: [
