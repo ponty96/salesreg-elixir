@@ -46,7 +46,7 @@ defmodule SalesReg.Email do
         from: email_params.from,
         to: email_params.to,
         subject: email_params.subject,
-        from: email_params.from,
+        from: email_params.from
       }
     end
   end
