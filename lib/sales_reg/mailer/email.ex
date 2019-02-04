@@ -1,6 +1,7 @@
 defmodule SalesReg.Email do
   use SalesRegWeb, :context
   import Bamboo.Email
+  require Logger
 
   def send_email(%Company{} = company, type, binary) do
     binary
@@ -30,13 +31,24 @@ defmodule SalesReg.Email do
   end
 
   def send_email(email_params) do
-    new_email(
+    new_email = new_email(
       from: email_params.from,
       to: email_params.to,
       subject: email_params.subject,
       html_body: email_params.html_body
     )
-    |> Mailer.deliver_later()
+   
+    if Mix.env() == :prod do
+      Mailer.deliver_later(new_email)
+    else
+      Logger.info("Sending email to #{email_params.to}")
+      %Bamboo.Email{
+        from: email_params.from,
+        to: email_params.to,
+        subject: email_params.subject,
+        from: email_params.from,
+      }
+    end
   end
 
   defp transform_template(template, %Sale{} = sale) when is_map(template) do
