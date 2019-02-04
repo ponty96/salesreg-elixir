@@ -26,7 +26,7 @@ defmodule SalesReg.Order.Sale do
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:contact, SalesReg.Business.Contact)
     belongs_to(:company, SalesReg.Business.Company)
-  
+
     timestamps()
   end
 

@@ -37,7 +37,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
     """
     field :update_company_cover_photo, :mutation_response do
       arg(:cover_photo, non_null(:cover_photo_input))
-      
+
       middleware(Authorize)
       resolve(&BusinessResolver.update_company_cover_photo/2)
     end
@@ -63,7 +63,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       resolve(&BusinessResolver.delete_legal_document/2)
     end
   end
-
 
   # Bank Mutations
   object :bank_mutations do
