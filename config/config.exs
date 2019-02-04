@@ -118,25 +118,24 @@ config :sales_reg, SalesReg.Scheduler,
     ]
   ]
 
-  config :sales_reg, SalesRegWeb.Services.Heroku,
-    base_domain: System.get_env("BASE_DOMAIN"),
-    app_id_or_name: System.get_env("APP_ID_OR_NAME"),
-    api_base_url: "https://api.heroku.com/apps/",
-    default_header: [
-      {"Content-Type", "application/json"},
-      {"Accept", "application/vnd.heroku+json; version=3"},
-      {"Authorization", "Bearer #{System.get_env("AUTH_TOKEN")}"}
-    ]
+config :sales_reg, SalesRegWeb.Services.Heroku,
+  base_domain: System.get_env("BASE_DOMAIN"),
+  app_id_or_name: System.get_env("APP_ID_OR_NAME"),
+  api_base_url: "https://api.heroku.com/apps/",
+  default_header: [
+    {"Content-Type", "application/json"},
+    {"Accept", "application/vnd.heroku+json; version=3"},
+    {"Authorization", "Bearer #{System.get_env("AUTH_TOKEN")}"}
+  ]
 
-  config :sales_reg, SalesRegWeb.Services.Cloudfare,
-    zone_id: System.get_env("ZONE_ID"),
-    api_base_url: "https://api.cloudflare.com/client/v4/zones/",
-    default_header: [
-      {"X-Auth-Key", "#{System.get_env("X_AUTH_KEY")}"},
-      {"Content-Type", "application/json"},
-      {"X-Auth-Email", "#{System.get_env("X_AUTH_EMAIL")}"}
-    ]
-    
+config :sales_reg, SalesRegWeb.Services.Cloudfare,
+  zone_id: System.get_env("ZONE_ID"),
+  api_base_url: "https://api.cloudflare.com/client/v4/zones/",
+  default_header: [
+    {"X-Auth-Key", "#{System.get_env("X_AUTH_KEY")}"},
+    {"Content-Type", "application/json"},
+    {"X-Auth-Email", "#{System.get_env("X_AUTH_EMAIL")}"}
+  ]
 
 ###############################################################
 ### AWS (image upload functionality) config

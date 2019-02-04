@@ -80,8 +80,8 @@ defmodule SalesReg.Order do
 
   def create_star(
         %{
-          sale_id: _sale_id, 
-          contact_id: _contact_id, 
+          sale_id: _sale_id,
+          contact_id: _contact_id,
           product_id: _product_id,
           company_id: _company_id,
           value: _value
