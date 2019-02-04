@@ -1,29 +1,19 @@
 defmodule SalesRegWeb.Services.Base do
-  
   def encode(data) do
     Poison.encode!(data)
   end
 
-  def process_response({:ok,
-    %HTTPoison.Response{status_code: status} = response
-  }) when status in [200, 201, 202, 206] do 
-    {:ok,
-      :success,
-      Poison.decode!(response.body)
-    } 
+  def process_response({:ok, %HTTPoison.Response{status_code: status} = response})
+      when status in [200, 201, 202, 206] do
+    {:ok, :success, Poison.decode!(response.body)}
   end
 
-  def process_response({:ok,
-    %HTTPoison.Response{status_code: _status} = response
-  }) do  
-    {:ok, 
-      :fail, 
-      Poison.decode!(response.body)
-    }
+  def process_response({:ok, %HTTPoison.Response{status_code: _status} = response}) do
+    {:ok, :fail, Poison.decode!(response.body)}
   end
 
-  def process_response({:error, response}) do  
-    IO.inspect response, label: "Request Response"
+  def process_response({:error, response}) do
+    IO.inspect(response, label: "Request Response")
     {:error, response.reason}
   end
 

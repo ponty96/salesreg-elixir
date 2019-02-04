@@ -11,7 +11,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
 
     home_data = %{
       categories: Store.home_categories(company.id),
-      featured_products: Store.load_featured_products(company.id),
+      featured_products: Store.list_featured_products(company.id),
+      top_rated_products: Store.list_top_rated_products(company.id),
       company: company
     }
 
