@@ -198,11 +198,11 @@ defmodule SalesReg.Business do
   end
 
   def get_company_subdomain(company) do
-    base_domain = 
-        Application.get_env(:sales_reg, Heroku)
-        |> Keyword.get(:base_domain)
+    base_domain =
+      Application.get_env(:sales_reg, Heroku)
+      |> Keyword.get(:base_domain)
 
-    company.slug <> "." <> base_domain 
+    company.slug <> "." <> base_domain
   end
 
   # Private Functions
