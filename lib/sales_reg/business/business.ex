@@ -197,6 +197,14 @@ defmodule SalesReg.Business do
     Email.send_email(resource, type, binary)
   end
 
+  def get_company_subdomain(company) do
+    base_domain = 
+        Application.get_env(:sales_reg, Heroku)
+        |> Keyword.get(:base_domain)
+
+    company.slug <> "." <> base_domain 
+  end
+
   # Private Functions
   defp put_items_amount(params) do
     total_amount =

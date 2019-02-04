@@ -43,7 +43,7 @@
 																		<td style="padding: 15px 0;font-size: 20px">
 																			<span>Invoice:</span>
 																			<span>
-																				<strong><%= sale.invoice.ref_id %></strong>
+																				<strong>#<%= sale.invoice.ref_id %></strong>
 																			</span>
 																		</td>
 																	</tr>
@@ -64,7 +64,7 @@
 																			<a href="<%= sale.invoice.pdf_url %>" style="text-decoration: none!important;">
 																				<span style="color:#127bcc">View Invoice</span>
 																			</a>
-																			<p>I would appreciate it if you can kindly confirm that everything is on track, for payment</p>
+																			<p>I would appreciate it if you can kindly confirm that everything is on track, for payment.</p>
 																			<p>Best regards,<br><%= sale.company.owner.first_name %>.</p>
 																		</td>
 																	</tr>

@@ -43,7 +43,7 @@
 																		<td style="padding: 15px 0;font-size: 20px">
 																			<span>Invoice:</span>
 																			<span>
-																				<strong><%= sale.invoice.ref_id %></strong>
+																				<strong>#<%= sale.invoice.ref_id %></strong>
 																			</span>
 																		</td>
 																	</tr>
@@ -60,12 +60,11 @@
 																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89)">
 																			<p>Hi <span><%= sale.contact.contact_name %></span>,</p>
 																			<p>I hope you are well,</p>
-																			<p>Please kindly note that we are yet to recieve <span style="color: red"><%= SalesReg.Order.calc_pay_outstanding(sale) %></span> in respect of the above invoice, which was due for payment on <%= sale.invoice.due_date %></p>
-																			<a href="<%= sale.invoice.pdf_url %>" style="text-decoration: none!important;">
-																				<span style="color:#127bcc">View Invoice</span>
-																			</a>
+																			<p>Please, we just have to point out that we are yet to recieve <span style="color: red">N<%= SalesReg.Order.calc_pay_outstanding(sale) %></span> in respect of the above invoice, which was due for payment on <%= sale.invoice.due_date %></p>
+																			<p>Please, we implore you to understand that this invoice has been due for over <%= Date.diff(Timex.now(), SalesReg.Mailer(sale.invoice.due_date)) %> days running, and is consequently making our business operations difficult.</p>
+																			<p><a href="#" style="text-decoration: none!important;"><span style="color:#127bcc">Please Play invoice now</span></a></p>
 																			<p>This invoice has been due for over <%= Date.diff(Timex.now(), SalesReg.Mailer(sale.invoice.due_date)) %> days running, and it is making our business operation difficult.</p>
-																			<p>Please do let us know when payment will be made as a matter of urgency.</p>
+																			<p>Or kindly let us know when payment will be made as a matter of urgency.</p>
 																			<p>Best regards,<br><%= sale.company.owner.first_name %>.</p>
 																		</td>
 																	</tr>
