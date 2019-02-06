@@ -377,8 +377,11 @@ defmodule SalesReg.Store do
   def home_categories(company_id) do
     Repo.all(
       from(c in Category,
+        join: pc in "products_categories",
+        on: pc.category_id == c.id,
         where: c.company_id == ^company_id,
         limit: 10,
+        distinct: true,
         preload: [:products]
       )
     )
