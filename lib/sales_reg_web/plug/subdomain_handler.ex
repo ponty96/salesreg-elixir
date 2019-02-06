@@ -3,6 +3,7 @@ defmodule SalesRegWeb.Plug.SubdomainHandler do
   import Plug.Conn
   require Logger
   alias SalesReg.Business
+  alias SalesReg.Business.Company
 
   def init(default), do: default
 
@@ -24,11 +25,13 @@ defmodule SalesRegWeb.Plug.SubdomainHandler do
   defp handle_request(_headers, conn), do: assign(conn, :company, %{})
 
   defp business?(name, conn) do
-    case Business.get_company_by_slug(name) do
+    res = Business.get_company_by_slug(name)
+    Logger.debug(fn -> "Get business by slug: #{res}" end)
+    case res do
       nil ->
         handle_404_redirect(conn)
 
-      company ->
+      %Company{} = company ->
         conn
         |> assign(:company_id, company.id)
         |> assign(:company, company)
