@@ -438,6 +438,17 @@ defmodule SalesReg.Store do
     |> Enum.map(&store_item_preloads(&1))
     |> Enum.at(0)
   end
+  
+  def list_top_rated_products(company_id) do
+    Product
+    |> where([p], p.company_id == ^company_id)
+    |> where([p], p.is_top_rated_by_merchant == true)
+    |> select([p], [p])
+    |> limit(10)
+    |> Repo.all()
+    |> Enum.map(&store_item_preloads(&1))
+    |> List.flatten()
+  end
 
   def calculate_store_item_stars(%{stars: []}), do: 0
 
