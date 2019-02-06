@@ -26,7 +26,7 @@ defmodule SalesRegWeb.Plug.SubdomainHandler do
 
   defp business?(name, conn) do
     res = Business.get_company_by_slug(name)
-    Logger.debug(fn -> "Get business by slug: #{res}" end)
+    Logger.info(fn -> "Get business by slug: #{res}" end)
     case res do
       nil ->
         handle_404_redirect(conn)
