@@ -397,6 +397,25 @@ defmodule SalesReg.Store do
     )
   end
 
+  def search_company_categories(company_id, query, args) do
+    query_regex = "%" <> query  <> "%"
+
+    from(c in Category,
+      join: pc in "products_categories",
+      on: pc.category_id == c.id,
+      where: c.company_id == ^company_id,
+      where: ilike(c.title, ^query_regex),
+      order_by: fragment(
+        "ts_rank(to_tsvector(?), plainto_tsquery(?)) DESC",
+        c.title,
+        ^query
+      ),
+      distinct: c.id,
+      preload: [:products]
+    )
+    |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
+  end
+
   def category_products(category_id, page) do
     {:ok, category_id} = UUID.dump(category_id)
 
