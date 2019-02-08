@@ -61,9 +61,9 @@
 																			<p>Hi <span><%= sale.contact.contact_name %></span>,</p>
 																			<p>I hope you are well,</p>
 																			<p>Please, we just have to point out that we are yet to recieve <span style="color: red">N<%= SalesReg.Order.calc_pay_outstanding(sale) %></span> in respect of the above invoice, which was due for payment on <%= sale.invoice.due_date %></p>
-																			<p>Please, we implore you to understand that this invoice has been due for over <%= Date.diff(Timex.now(), SalesReg.Mailer(sale.invoice.due_date)) %> days running, and is consequently making our business operations difficult.</p>
+																			<p>Please, we implore you to understand that this invoice has been due for over <%= Date.diff(Timex.now(), SalesReg.Mailer.naive_date(sale.invoice.due_date)) %> days running, and is consequently making our business operations difficult.</p>
 																			<p><a href="#" style="text-decoration: none!important;"><span style="color:#127bcc">Please Play invoice now</span></a></p>
-																			<p>This invoice has been due for over <%= Date.diff(Timex.now(), SalesReg.Mailer(sale.invoice.due_date)) %> days running, and it is making our business operation difficult.</p>
+																			<p>This invoice has been due for over <%= Date.diff(Timex.now(), SalesReg.Mailer.naive_date(sale.invoice.due_date)) %> days running, and it is making our business operation difficult.</p>
 																			<p>Or kindly let us know when payment will be made as a matter of urgency.</p>
 																			<p>Best regards,<br><%= sale.company.owner.first_name %>.</p>
 																		</td>
