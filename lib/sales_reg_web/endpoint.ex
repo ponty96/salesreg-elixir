@@ -1,6 +1,6 @@
 defmodule SalesRegWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :sales_reg
-  # use Sentry.Phoenix.Endpoint
+  use Sentry.Phoenix.Endpoint
   
   socket("/socket", SalesRegWeb.UserSocket)
 
