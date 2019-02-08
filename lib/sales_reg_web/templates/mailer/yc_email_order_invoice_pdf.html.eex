@@ -89,13 +89,13 @@
 																				</thead>
 
 																				<tbody style="color: #000000">
-																					<%= for {item, counter}  <- Enum.index_with(invoice.sale.items) do %>
+																					<%= for {item, counter}  <- Enum.with_index(invoice.sale.items) do %>
 																						<tr style="font-size:14px;vertical-align: middle" valign="middle">
 																							<td style="display:table-cell;width:3rem;border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= counter %></td>
 																							<td style="display:table-cell;border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= item.product.name %></td>
 																							<td style="display:table-cell;border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= item.unit_price %></td>
 																							<td style="display:table-cell;border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= item.quantity %></td>
-																							<td style="display:table-cell;border-color:#DBDBDB;text-align:right;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= Order.calc_item_amount(item) %></td>
+																							<td style="display:table-cell;border-color:#DBDBDB;text-align:right;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= SalesReg.Order.calc_item_amount(item) %></td>
 																						</tr>
 																					<% end %>
 																				<tr>
@@ -106,17 +106,17 @@
 																				<tfoot>
 																				<tr style="font-size:14px;vertical-align: middle" valign="middle">
 																					<td colspan="3" style="background-color: #CAF1E7;display:table-cell;text-align:left;padding: 10px;overflow:hidden;word-break:normal;color: #189D7A;font-weight: 600">Total due:</td>
-																					<td colspan="2" style="background-color: #189D7A;color: #ffffff;display:table-cell;text-align:right;padding: 10px;overflow:hidden;word-break:normal;font-weight: 600"><%= Order.calc_order_amount(invoice.sale) %></td>
+																					<td colspan="2" style="background-color: #189D7A;color: #ffffff;display:table-cell;text-align:right;padding: 10px;overflow:hidden;word-break:normal;font-weight: 600"><%= SalesReg.Order.calc_order_amount(invoice.sale) %></td>
 																				</tr>
 
 																				<tr style="font-size:14px;vertical-align: middle" valign="middle">
 																					<td colspan="4" style="display:table-cell; border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;border-top-width: 1px">Amount paid:</td>
-																					<td style="display:table-cell; border-color:#DBDBDB;text-align:right;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;color: #189D7A;font-weight: 500"><%= Order.calc_order_amount_paid(invoice.sale) %></td>
+																					<td style="display:table-cell; border-color:#DBDBDB;text-align:right;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;color: #189D7A;font-weight: 500"><%= SalesReg.Order.calc_order_amount_paid(invoice.sale) %></td>
 																				</tr>
 
 																				<tr style="font-size:14px;vertical-align: middle" valign="middle">
 																					<td colspan="4" style="display:table-cell;border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;border-top-width: 1px">Balance due:</td>
-																					<td style="display:table-cell; border-color:#DBDBDB;text-align:right;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;color: rgba(255,57,32,0.8);font-weight: 500"><%= Order.calc_pay_outstanding(invoice.sale) %></td>
+																					<td style="display:table-cell; border-color:#DBDBDB;text-align:right;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;color: rgba(255,57,32,0.8);font-weight: 500"><%= SalesReg.Order.calc_pay_outstanding(invoice.sale) %></td>
 																				</tr>
 																				</tfoot>
 
