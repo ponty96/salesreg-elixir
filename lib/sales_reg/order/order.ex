@@ -29,15 +29,15 @@ defmodule SalesReg.Order do
   end
 
   def preload_order(order) do
-    Repo.preload(order, [:invoice, :contact, company: [:owner], items: [:product]])
+    Repo.preload(order, [:contact, company: [:owner], items: [:product], invoice: [:receipts]])
   end
 
   def preload_invoice(invoice) do
-    Repo.preload(invoice, [:company, :user, sale: [items: [:product]]])
+    Repo.preload(invoice, [:company, :user, sale: [:contact, items: [:product]]])
   end
 
   def preload_receipt(receipt) do
-    Repo.preload(receipt, [:sale])
+    Repo.preload(receipt, [:company, :invoice, :user, sale: [:contact, items: [:product]]])
   end
 
   def preload_activity(activity) do
@@ -316,7 +316,7 @@ defmodule SalesReg.Order do
 
     case add_receipt do
       {:ok, receipt} ->
-        receipt = Repo.preload(receipt, [:company, :invoice, :user, sale: [items: [:product]]])
+        receipt = preload_receipt(receipt)
 
         Order.supervise_pdf_upload(receipt)
         Email.send_email(sale, "yc_payment_received")
@@ -413,7 +413,7 @@ defmodule SalesReg.Order do
   end
 
   def calc_order_amount_paid(%Sale{} = sale) do
-    sale = Repo.preload(sale, invoice: :receipts)
+    sale = preload_order(sale)
 
     if sale.invoice.receipts do
       calc_amount_paid(sale.invoice.receipts)
@@ -515,7 +515,7 @@ defmodule SalesReg.Order do
     |> Enum.sum()
   end
 
-  defp calc_amount_paid(receipts) do
+  defp calc_amount_paid(receipts) do    
     Enum.map(receipts, fn receipt ->
       {amount_paid, _} = Float.parse(receipt.amount_paid)
       amount_paid
