@@ -1,3 +1,4 @@
-defmodule SalesRegWeb.PdfView do
+defmodule SalesRegWeb.MailerView do
   use SalesRegWeb, :view
+  use SalesRegWeb, :context
 end
