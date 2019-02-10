@@ -14,7 +14,7 @@ defmodule SalesReg.Accounts.PasswordReset do
   @doc false
   def changeset(password_reset, attrs) do
     password_reset
-    |> cast(attrs, :user_id)
+    |> cast(attrs, [:user_id])
     |> validate_required(:user_id)
   end
 
