@@ -98,6 +98,7 @@ defmodule SalesRegWeb do
       alias SalesReg.{
         Accounts,
         Accounts.User,
+        Accounts.PasswordReset,
         Business,
         Contact,
         Business.Company,
