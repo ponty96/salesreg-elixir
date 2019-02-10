@@ -51,6 +51,14 @@ defmodule SalesReg.Accounts.User do
     |> cast_assoc(:company)
   end
 
+  def password_reset_changeset(user, attrs) do
+    user
+    |> cast(attrs, @registration_fields)
+    |> validate_required(@registration_fields)
+    |> validate_password()
+    |> set_password()
+  end
+
   defp validate_password(changeset) do
     if get_field(changeset, :password) == get_field(changeset, :password_confirmation) do
       changeset

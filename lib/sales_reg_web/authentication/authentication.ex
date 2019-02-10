@@ -107,9 +107,56 @@ defmodule SalesRegWeb.Authentication do
     end
   end
 
+  def reset_password(email) do
+    with user <- Accounts.get_user_by_email(email),
+        {:ok, password_reset} <- Accounts.add_password_reset(%{user_id: user.id}),
+        url <-  "https://www.#{System.get_env("BASE_DOMAIN")}/#{password_reset.id}",
+        {params, text_body} <- Mailer.reset_pass_params(email, url), 
+        %Bamboo.Email{} <- Email.send_email(params, text_body) do
+      
+      {:ok, "An email has been sent to you. Please check your email"}
+    else
+      nil -> {:error, "User does not exist"}
+      {:error, _reason} = error -> error
+    end
+  end
+
+  def reset_password(params, reset_id) do
+    with password_reset <- Accounts.get_password_reset(reset_id),
+        true <- password_reset_expired?(password_reset), 
+        user <- get_pass_reset_user(password_reset),
+        {:ok, _user} <- Accounts.update_user_password(user, params)
+        do
+      Accounts.delete_password_reset(password_reset)
+      {:ok, "Your password has been changed successfully"}
+    else
+      nil -> {:error, "No prior request to change user password"}
+      false -> {:error, "Reset Password Expired"}
+      {:error, _reason} = error -> error
+    end
+
+    # THERE IS A NEED TO PERIODICALLY CHECK THE DATABASE FOR PASSWORD RESET THAT HAVE EXPIRED AND
+    # DELETE THEM ALL. 
+  end
+
   def authenticate(%Ueberauth.Auth{provider: :identity} = auth) do
     Accounts.get_user_by_email(auth.uid)
     |> authorize(auth)
+  end
+
+  defp password_reset_expired?(password_reset) do
+    date_initialized = password_reset.inserted_at
+    date_expired = NaiveDateTime.add(date_initialized, 86400)
+    
+    if NaiveDateTime.diff(date_expired, NaiveDateTime.utc_now()) > 0 do
+      true
+    else
+      false
+    end
+  end
+
+  defp get_pass_reset_user(password_reset) do
+    Repo.preload(password_reset, [:user]).user
   end
 
   defp tokens_exist?(access_token, refresh_token) do

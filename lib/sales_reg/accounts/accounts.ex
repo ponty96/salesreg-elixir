@@ -5,6 +5,10 @@ defmodule SalesReg.Accounts do
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
 
+  use SalesReg.Context, [
+    PasswordReset
+  ]
+
   def get_user(id), do: Repo.get(User, id)
 
   def get_user_by_email(value), do: Repo.get_by(User, email: value)
@@ -18,6 +22,12 @@ defmodule SalesReg.Accounts do
   def update_user(%User{} = user, attrs) do
     user
     |> User.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def update_user_password(%User{} = user, attrs) do
+    user
+    |> User.password_reset_changeset(attrs)
     |> Repo.update()
   end
 

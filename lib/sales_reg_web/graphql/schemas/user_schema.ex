@@ -78,5 +78,14 @@ defmodule SalesRegWeb.GraphQL.Schemas.UserSchema do
 
       resolve(&UserResolver.logout/2)
     end
+
+    @desc """
+    forgot password
+    """
+    field :forgot_password, :mutation_response do
+      arg(:email, non_null(:string))
+
+      resolve(&UserResolver.reset_password/2)
+    end
   end
 end

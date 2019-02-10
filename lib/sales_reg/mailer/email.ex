@@ -30,13 +30,14 @@ defmodule SalesReg.Email do
     |> send_email()
   end
 
-  def send_email(email_params) do
+  def send_email(email_params, text_body \\ "") do
     new_email =
       new_email(
         from: email_params.from,
         to: email_params.to,
         subject: email_params.subject,
-        html_body: email_params.html_body
+        html_body: email_params.html_body,
+        text_body: text_body
       )
 
     if Mix.env() == :prod do
@@ -46,9 +47,7 @@ defmodule SalesReg.Email do
       %Bamboo.Email{
         from: email_params.from,
         to: email_params.to,
-        subject: email_params.subject,
-        from: email_params.from
-      }
+        subject: email_params.subject      }
     end
   end
 

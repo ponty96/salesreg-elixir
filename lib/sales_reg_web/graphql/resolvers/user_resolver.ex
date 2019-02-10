@@ -54,4 +54,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.UserResolver do
   def update_user(%{user: params}, %{context: %{current_user: user}}) do
     Accounts.update_user(user, params)
   end
+
+  def reset_password(%{email: email}, _res) do
+    Authentication.reset_password(email)
+  end
 end
