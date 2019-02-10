@@ -108,7 +108,7 @@ defmodule SalesRegWeb.Authentication do
   end
 
   def reset_password(email) do
-    with user <- Accounts.get_user_by_email(email),
+    with %User{} = user <- Accounts.get_user_by_email(email),
         {:ok, password_reset} <- Accounts.add_password_reset(%{user_id: user.id}),
         url <-  "https://www.#{System.get_env("BASE_DOMAIN")}/#{password_reset.id}",
         {params, text_body} <- Mailer.reset_pass_params(email, url), 
