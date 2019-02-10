@@ -58,4 +58,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.UserResolver do
   def reset_password(%{email: email}, _res) do
     Authentication.reset_password(email)
   end
+
+  def reset_password(%{reset_id: reset_id, params: params}, _res) do
+    Authentication.reset_password(params, reset_id)
+  end
 end

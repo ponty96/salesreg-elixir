@@ -6,7 +6,7 @@ defmodule SalesReg.Accounts.PasswordReset do
   @foreign_key_type :binary_id
 
   schema "password_reset" do
-    belongs_to(:users, SalesReg.Accounts.User)
+    belongs_to(:user, SalesReg.Accounts.User)
 
     timestamps()
   end
@@ -15,10 +15,10 @@ defmodule SalesReg.Accounts.PasswordReset do
   def changeset(password_reset, attrs) do
     password_reset
     |> cast(attrs, [:user_id])
-    |> validate_required(:user_id)
+    |> validate_required([:user_id])
   end
 
-  def delete_changeset(password_reset, attrs) do
+  def delete_changeset(password_reset) do
     password_reset
     |> cast(%{}, [])
   end

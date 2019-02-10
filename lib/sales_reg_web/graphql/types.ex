@@ -875,6 +875,11 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:cover_photo, non_null(:string))
   end
 
+  input_object :reset_password_input do
+    field(:password, non_null(:string))
+    field(:password_confirmation, non_null(:string))
+  end
+
   #########################################################
   # These are used only at the point of updating the
   # ID has to be supplied except for parent input objects

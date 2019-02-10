@@ -134,9 +134,6 @@ defmodule SalesRegWeb.Authentication do
       false -> {:error, "Reset Password Expired"}
       {:error, _reason} = error -> error
     end
-
-    # THERE IS A NEED TO PERIODICALLY CHECK THE DATABASE FOR PASSWORD RESET THAT HAVE EXPIRED AND
-    # DELETE THEM ALL. 
   end
 
   def authenticate(%Ueberauth.Auth{provider: :identity} = auth) do
