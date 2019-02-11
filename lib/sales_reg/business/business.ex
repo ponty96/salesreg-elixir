@@ -113,6 +113,10 @@ defmodule SalesReg.Business do
     Repo.insert_all(CompanyEmailTemplate, templates)
   end
 
+  def get_company_share_domain() do
+   System.get_env("SHORT_URL") || "https://ycartstag.me"
+  end
+
   ## CONTACTS
   def list_company_contacts(company_id, type) do
     {:ok,
@@ -218,14 +222,6 @@ defmodule SalesReg.Business do
     Business.update_expense(expense, params)
   end
 
-  defp return_file_content(type) do
-    {:ok, binary} =
-      Path.expand("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
-      |> File.read()
-
-    binary
-  end
-
   # Private Functions
 
   # The business name is the slug of the company
@@ -258,6 +254,14 @@ defmodule SalesReg.Business do
           {:error, reason}
       end
     end)
+  end
+
+  defp return_file_content(type) do
+    {:ok, binary} =
+      Path.expand("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
+      |> File.read()
+
+    binary
   end
 
   defp put_items_amount(params) do

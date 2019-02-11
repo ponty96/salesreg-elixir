@@ -4,6 +4,7 @@ defmodule SalesReg.Store.Product do
   alias SalesReg.Store.Category
   alias SalesReg.Repo
   alias SalesReg.Store
+  alias SalesReg.Business
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -107,6 +108,11 @@ defmodule SalesReg.Store.Product do
           Enum.map(product.option_values, &(&1.name || "?")) |> Enum.join(" ")
         })"
     end
+  end
+
+  def get_product_share_link(product) do
+    product = Repo.preload(product, [:company])
+    "#{Business.get_company_share_domain()}/#{product.company.slug}/p/#{product.slug}"
   end
 
   defp add_product_slug(changeset) do
