@@ -114,7 +114,7 @@ defmodule SalesReg.Business do
   end
 
   def get_company_share_domain() do
-   System.get_env("SHORT_URL") || "https://ycartstag.me"
+    System.get_env("SHORT_URL") || "https://ycartstag.me"
   end
 
   ## CONTACTS

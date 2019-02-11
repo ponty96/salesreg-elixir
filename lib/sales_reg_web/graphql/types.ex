@@ -156,9 +156,9 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:price, :string)
 
     field :share_link, :string do
-      resolve fn _product, %{source: product} ->
+      resolve(fn _product, %{source: product} ->
         {:ok, Store.get_product_share_link(product)}
-      end
+      end)
     end
 
     field(:featured_image, :string)
