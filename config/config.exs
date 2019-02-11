@@ -118,9 +118,10 @@ config :sales_reg, SalesReg.Scheduler,
     ]
   ]
 
-config :sentry, dsn: "https://450c8312e5094c859c0ff835ce5234d4@sentry.io/1369497",
+config :sentry,
+  dsn: "https://450c8312e5094c859c0ff835ce5234d4@sentry.io/1369497",
   included_environments: [:prod, :dev],
-  environment_name: Mix.env
+  environment_name: Mix.env()
 
 config :sales_reg, SalesRegWeb.Services.Heroku,
   base_domain: System.get_env("BASE_DOMAIN"),

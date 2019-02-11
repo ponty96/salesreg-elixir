@@ -43,6 +43,7 @@ defmodule SalesReg.Email do
       Mailer.deliver_later(new_email)
     else
       Logger.info("Sending email to #{email_params.to}")
+
       %Bamboo.Email{
         from: email_params.from,
         to: email_params.to,

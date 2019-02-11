@@ -154,6 +154,13 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:minimum_sku, :string)
     field(:cost_price, :string)
     field(:price, :string)
+    field(:slug, :string)
+
+    field :share_link, :string do
+      resolve(fn _product, %{source: product} ->
+        {:ok, Store.get_product_share_link(product)}
+      end)
+    end
 
     field(:featured_image, :string)
     field(:images, list_of(:string))
@@ -356,6 +363,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:id, :uuid)
     field(:description, :string)
     field(:title, :string)
+    field(:slug, :string)
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
 
