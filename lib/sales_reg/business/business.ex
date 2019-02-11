@@ -82,6 +82,37 @@ defmodule SalesReg.Business do
     Company.changeset(company, %{})
   end
 
+  def update_company_cover_photo(%{cover_photo: _cover_photo, company_id: id} = params) do
+    Business.get_company(id)
+    |> Business.update_company(params)
+  end
+
+  def send_email(resource, type) do
+    binary = return_file_content(type)
+    Email.send_email(resource, type, binary)
+  end
+
+  def get_company_subdomain(company) do
+    base_domain =
+      Application.get_env(:sales_reg, Heroku)
+      |> Keyword.get(:base_domain)
+
+    company.slug <> "." <> base_domain
+  end
+
+  def insert_company_email_temps(company_id) do
+    templates =
+      Enum.map(@email_types, fn type ->
+        %{
+          body: return_file_content(type),
+          type: type,
+          company_id: company_id
+        }
+      end)
+
+    Repo.insert_all(CompanyEmailTemplate, templates)
+  end
+
   ## CONTACTS
   def list_company_contacts(company_id, type) do
     {:ok,
@@ -187,68 +218,6 @@ defmodule SalesReg.Business do
     Business.update_expense(expense, params)
   end
 
-  def update_company_cover_photo(%{cover_photo: _cover_photo, company_id: id} = params) do
-    Business.get_company(id)
-    |> Business.update_company(params)
-  end
-
-  def send_email(resource, type) do
-    binary = return_file_content(type)
-    Email.send_email(resource, type, binary)
-  end
-
-  def get_company_subdomain(company) do
-    base_domain =
-      Application.get_env(:sales_reg, Heroku)
-      |> Keyword.get(:base_domain)
-
-    company.slug <> "." <> base_domain
-  end
-
-  # Private Functions
-  defp put_items_amount(params) do
-    total_amount =
-      params.expense_items
-      |> calc_expense_amount(0)
-
-    Map.put_new(params, :items_amount, total_amount)
-  end
-
-  defp calc_expense_amount([], 0), do: 0.0
-  defp calc_expense_amount([], acc), do: Float.round(acc, 2)
-
-  defp calc_expense_amount([h | t], acc) do
-    val = fn amount ->
-      {float, _} = Float.parse(amount)
-      float
-    end
-
-    calc_expense_amount(t, acc + val.(h.amount))
-  end
-
-  defp update_bank_field(company_id) do
-    attrs = %{"is_primary" => false}
-
-    Bank
-    |> where([b], b.company_id == ^company_id)
-    |> where([b], b.is_primary == true)
-    |> Repo.one()
-    |> Business.update_bank(attrs)
-  end
-
-  def insert_company_email_temps(company_id) do
-    templates =
-      Enum.map(@email_types, fn type ->
-        %{
-          body: return_file_content(type),
-          type: type,
-          company_id: company_id
-        }
-      end)
-
-    Repo.insert_all(CompanyEmailTemplate, templates)
-  end
-
   defp return_file_content(type) do
     {:ok, binary} =
       Path.expand("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
@@ -256,6 +225,8 @@ defmodule SalesReg.Business do
 
     binary
   end
+
+  # Private Functions
 
   # The business name is the slug of the company
   defp create_business_subdomain(business_name) do
@@ -287,5 +258,35 @@ defmodule SalesReg.Business do
           {:error, reason}
       end
     end)
+  end
+
+  defp put_items_amount(params) do
+    total_amount =
+      params.expense_items
+      |> calc_expense_amount(0)
+
+    Map.put_new(params, :items_amount, total_amount)
+  end
+
+  defp calc_expense_amount([], 0), do: 0.0
+  defp calc_expense_amount([], acc), do: Float.round(acc, 2)
+
+  defp calc_expense_amount([h | t], acc) do
+    val = fn amount ->
+      {float, _} = Float.parse(amount)
+      float
+    end
+
+    calc_expense_amount(t, acc + val.(h.amount))
+  end
+
+  defp update_bank_field(company_id) do
+    attrs = %{"is_primary" => false}
+
+    Bank
+    |> where([b], b.company_id == ^company_id)
+    |> where([b], b.is_primary == true)
+    |> Repo.one()
+    |> Business.update_bank(attrs)
   end
 end
