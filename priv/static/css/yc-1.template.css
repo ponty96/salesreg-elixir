@@ -7655,7 +7655,8 @@ select {
   padding-top: 7rem;
   padding-bottom: 7rem;
   text-align: left;
-  min-height: 47rem;
+  min-height: 30rem;
+  max-height: 40rem;
   height: auto;
   background-size: cover;
   position: relative;

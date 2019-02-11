@@ -25,10 +25,6 @@ defmodule SalesRegWeb.Router do
     post("/webhooks/payment", HookController, :hook)
   end
 
-  scope "/", SalesRegWeb do
-    pipe_through(:browser)
-  end
-
   scope "/auth", SalesRegWeb do
     pipe_through(:browser)
 
@@ -36,6 +32,8 @@ defmodule SalesRegWeb.Router do
     get("/identity/callback", SessionController, :callback)
     post("/identity/callback", SessionController, :callback)
     delete("/logout", SessionController, :delete)
+    get("/:business_slug/p/:product_slug", ForwardController, :forward_product)
+    get("/:business_slug", ForwardController, :forward_business)
   end
 
   pipeline :graphql do
@@ -49,9 +47,18 @@ defmodule SalesRegWeb.Router do
     forward("/", Absinthe.Plug, schema: SalesRegWeb.GraphQL.Schemas)
   end
 
-  if Mix.env() == :dev or Mix.env() == :test do
-    pipe_through([:api, :graphql])
-    forward("/graphiql", Absinthe.Plug.GraphiQL, schema: SalesRegWeb.GraphQL.Schemas)
+  scope "/graphiql" do
+    if Mix.env() == :dev or Mix.env() == :test do
+      pipe_through([:api, :graphql])
+      forward("/", Absinthe.Plug.GraphiQL, schema: SalesRegWeb.GraphQL.Schemas)
+    end
+  end
+
+  scope "/", SalesRegWeb do
+    pipe_through(:browser)
+    # get("/:business_slug/c/:category_slug", ForwardController, :forward_category)
+    get("/:business_slug/p/:product_slug", ForwardController, :forward_product)
+    get("/:business_slug", ForwardController, :forward_business)
   end
 
   # graphiql endpoint
