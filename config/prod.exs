@@ -15,7 +15,7 @@ use Mix.Config
 # which you typically run after static files are built.
 
 # Do not print debug messages in production
-config :logger, level: :info
+config :logger, level: :debug
 
 # Configures the endpoint
 config :sales_reg, SalesRegWeb.Endpoint,
