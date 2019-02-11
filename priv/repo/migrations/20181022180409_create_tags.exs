@@ -16,8 +16,6 @@ defmodule SalesReg.Repo.Migrations.CreateTags do
       add(:tag_id, references(:tags, type: :binary_id, on_delete: :delete_all))
     end
 
-
-
     create(index(:tags, [:company_id]))
 
     create(unique_index(:products_tags, [:product_id, :tag_id]))

@@ -18,6 +18,8 @@ defmodule SalesReg.Store do
   alias Ecto.UUID
 
   defdelegate category_image(category), to: Category
+  defdelegate get_product_name(product), to: Product
+  defdelegate get_product_share_link(product), to: Product
 
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
@@ -248,6 +250,7 @@ defmodule SalesReg.Store do
           product_params =
             product_params
             |> Map.put(:product_group_id, product_grp.id)
+            |> Map.put(:title, product_grp.title)
 
           Product.changeset(%Product{}, product_params)
         end
@@ -296,6 +299,7 @@ defmodule SalesReg.Store do
           product_params =
             product_params
             |> Map.put(:product_group_id, product_grp.id)
+            |> Map.put(:title, product_grp.title)
 
           Product.changeset(%Product{}, product_params)
         end
@@ -358,19 +362,15 @@ defmodule SalesReg.Store do
     end
   end
 
-  # get product name
-  def get_product_name(product) do
-    product = Repo.preload(product, [:product_group, :option_values])
+  def update_product_details(id, params) do
+    product = Store.get_product(id, preload: [:product_group])
 
-    case product.option_values do
-      [] ->
-        product.product_group.title
+    params =
+      params
+      |> Map.put(:title, product.product_group.title)
+      |> Map.put(:product_group_id, product.product_group.id)
 
-      _ ->
-        "#{product.product_group.title} (#{
-          Enum.map(product.option_values, &(&1.name || "?")) |> Enum.join(" ")
-        })"
-    end
+    update_product(product, params)
   end
 
   # WEBSTORE REQUIRED METHODS
@@ -398,18 +398,19 @@ defmodule SalesReg.Store do
   end
 
   def search_company_categories(company_id, query, args) do
-    query_regex = "%" <> query  <> "%"
+    query_regex = "%" <> query <> "%"
 
     from(c in Category,
       join: pc in "products_categories",
       on: pc.category_id == c.id,
       where: c.company_id == ^company_id,
       where: ilike(c.title, ^query_regex),
-      order_by: fragment(
-        "ts_rank(to_tsvector(?), plainto_tsquery(?)) DESC",
-        c.title,
-        ^query
-      ),
+      order_by:
+        fragment(
+          "ts_rank(to_tsvector(?), plainto_tsquery(?)) DESC",
+          c.title,
+          ^query
+        ),
       distinct: c.id,
       preload: [:products]
     )
@@ -457,7 +458,7 @@ defmodule SalesReg.Store do
     |> Enum.map(&store_item_preloads(&1))
     |> Enum.at(0)
   end
-  
+
   def list_top_rated_products(company_id) do
     Product
     |> where([p], p.company_id == ^company_id)
@@ -479,6 +480,16 @@ defmodule SalesReg.Store do
 
     no_of_time_starred = Enum.count(stars)
     total_stars / no_of_time_starred
+  end
+
+  def get_product_by_slug(slug) do
+    Product
+    |> Repo.get_by(slug: slug)
+  end
+
+  def get_category_by_slug(slug) do
+    Category
+    |> Repo.get_by(slug: slug)
   end
 
   defp all_categories(categories_ids) do
@@ -572,6 +583,7 @@ defmodule SalesReg.Store do
           product_params =
             product_params
             |> Map.put(:product_group_id, product_grp.id)
+            |> Map.put(:title, product_grp.title)
 
           Product.changeset(product, product_params)
         end
@@ -590,6 +602,7 @@ defmodule SalesReg.Store do
       params
       |> Map.get(:product)
       |> Map.put(:product_group_id, product_grp.id)
+      |> Map.put(:title, product_grp.title)
 
     add_product(product_params)
   end

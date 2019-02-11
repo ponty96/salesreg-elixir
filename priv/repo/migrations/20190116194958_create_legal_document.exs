@@ -14,6 +14,6 @@ defmodule SalesReg.Repo.Migrations.CreateLegalDocument do
       timestamps()
     end
 
-    create(index(:legal_documents, [:company_id], on_delete: :nothing, type: :binary_id))    
+    create(index(:legal_documents, [:company_id], on_delete: :nothing, type: :binary_id))
   end
 end
