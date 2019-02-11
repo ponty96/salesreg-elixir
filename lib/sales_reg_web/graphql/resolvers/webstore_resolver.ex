@@ -21,18 +21,20 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
 
   def product_page_query(%{slug: slug}, _resolution) do
     %{product_group: product_group} =
-      slug |> Store.get_product_slug() |> Repo.preload([:product_group])
+      slug |> Store.get_product_by_slug() |> Repo.preload([:product_group])
 
     {:ok, product_group}
   end
 
-  def category_page_query(%{id: id, product_page: p_page}, _resolution) do
+  def category_page_query(%{slug: slug, product_page: p_page}, _resolution) do
+    category = Store.get_category_by_slug(slug)
+
     {%{entries: products}, product_page} =
-      Store.category_products(id, p_page) |> Map.split([:entries])
+      Store.category_products(category.id, p_page) |> Map.split([:entries])
 
     {:ok,
      %{
-       category: Store.get_category(id),
+       category: category,
        products: products,
        page_meta: product_page
      }}

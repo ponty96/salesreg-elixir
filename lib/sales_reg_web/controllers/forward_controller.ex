@@ -17,7 +17,7 @@ defmodule SalesRegWeb.ForwardController do
   defp get_product_query_params(product_slug) do
     %{option_values: option_values} =
       product_slug
-      |> Store.get_product_slug()
+      |> Store.get_product_by_slug()
       |> Repo.preload([:option_values, option_values: [:option]])
 
     option_values

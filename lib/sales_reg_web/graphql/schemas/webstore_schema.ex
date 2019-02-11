@@ -6,7 +6,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
   use Absinthe.Relay.Schema.Notation, :classic
   alias SalesRegWeb.GraphQL.Resolvers.WebStoreResolver
   alias SalesRegWeb.GraphQL.Resolvers.StoreResolver
-  alias SalesRegWeb.GraphQL.MiddleWares.Authorize
 
   # WEBSTORE HOME PAGE
   object :web_store_queries do
@@ -24,7 +23,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
     end
 
     field :category_page_query, :category_page do
-      arg(:id, non_null(:uuid))
+      arg(:slug, non_null(:string))
       arg(:product_page, :string)
 
       resolve(&WebStoreResolver.category_page_query/2)
