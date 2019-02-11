@@ -19,6 +19,9 @@ defmodule SalesReg.Store.Product do
     field(:is_featured, :boolean)
     field(:is_top_rated_by_merchant, :boolean)
 
+    field(:slug, :string)
+    field(:title, :string, virtual: true)
+
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
 
@@ -50,7 +53,9 @@ defmodule SalesReg.Store.Product do
     :images,
     :is_featured,
     :is_top_rated_by_merchant,
-    :name
+    :name,
+    :slug,
+    :title
   ]
 
   @required_fields [
@@ -76,6 +81,36 @@ defmodule SalesReg.Store.Product do
     |> put_assoc(:tags, Store.load_tags(attrs))
     |> cast_assoc(:option_values)
     |> no_assoc_constraint(:items, message: "This product is still associated with sales")
+    |> add_product_slug
+  end
+
+  defp add_product_slug(changeset) do
+    title = get_change(changeset, :title) |> String.split(" ") |> Enum.join("-")
+
+    hash_from_product_grp_uuid =
+      get_change(changeset, :product_group_id) |> hash_from_product_grp_uuid
+
+    option_values = get_change(changeset, :option_values)
+
+    slug =
+      case option_values do
+        [] ->
+          "#{title}-#{hash_from_product_grp_uuid}"
+
+        _ ->
+          "#{title}-#{
+            Enum.map(option_values, &(&1.changes.name || ""))
+            |> Enum.join("-")
+          }-#{hash_from_product_grp_uuid}"
+      end
+
+    put_change(changeset, :slug, slug)
+  end
+
+  defp hash_from_product_grp_uuid(id) do
+    id
+    |> String.split("-")
+    |> List.last()
   end
 
   @doc false

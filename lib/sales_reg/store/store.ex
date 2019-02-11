@@ -248,6 +248,7 @@ defmodule SalesReg.Store do
           product_params =
             product_params
             |> Map.put(:product_group_id, product_grp.id)
+            |> Map.put(:title, product_grp.title)
 
           Product.changeset(%Product{}, product_params)
         end
@@ -296,6 +297,7 @@ defmodule SalesReg.Store do
           product_params =
             product_params
             |> Map.put(:product_group_id, product_grp.id)
+            |> Map.put(:title, product_grp.title)
 
           Product.changeset(%Product{}, product_params)
         end
@@ -398,18 +400,19 @@ defmodule SalesReg.Store do
   end
 
   def search_company_categories(company_id, query, args) do
-    query_regex = "%" <> query  <> "%"
+    query_regex = "%" <> query <> "%"
 
     from(c in Category,
       join: pc in "products_categories",
       on: pc.category_id == c.id,
       where: c.company_id == ^company_id,
       where: ilike(c.title, ^query_regex),
-      order_by: fragment(
-        "ts_rank(to_tsvector(?), plainto_tsquery(?)) DESC",
-        c.title,
-        ^query
-      ),
+      order_by:
+        fragment(
+          "ts_rank(to_tsvector(?), plainto_tsquery(?)) DESC",
+          c.title,
+          ^query
+        ),
       distinct: c.id,
       preload: [:products]
     )
@@ -457,7 +460,7 @@ defmodule SalesReg.Store do
     |> Enum.map(&store_item_preloads(&1))
     |> Enum.at(0)
   end
-  
+
   def list_top_rated_products(company_id) do
     Product
     |> where([p], p.company_id == ^company_id)
@@ -572,6 +575,7 @@ defmodule SalesReg.Store do
           product_params =
             product_params
             |> Map.put(:product_group_id, product_grp.id)
+            |> Map.put(:title, product_grp.title)
 
           Product.changeset(product, product_params)
         end
@@ -590,6 +594,7 @@ defmodule SalesReg.Store do
       params
       |> Map.get(:product)
       |> Map.put(:product_group_id, product_grp.id)
+      |> Map.put(:title, product_grp.title)
 
     add_product(product_params)
   end
