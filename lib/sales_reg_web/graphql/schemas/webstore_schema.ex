@@ -19,7 +19,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
     end
 
     field :product_page_query, :product_group do
-      arg(:id, :uuid)
+      arg(:slug, :string)
       resolve(&WebStoreResolver.product_page_query/2)
     end
 

@@ -482,6 +482,11 @@ defmodule SalesReg.Store do
     total_stars / no_of_time_starred
   end
 
+  def get_product_slug(slug) do
+    Product
+    |> Repo.get_by(slug: slug)
+  end
+
   defp all_categories(categories_ids) do
     Repo.all(
       from(

@@ -19,8 +19,9 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
     {:ok, home_data}
   end
 
-  def product_page_query(%{id: id}, _resolution) do
-    %{product_group: product_group} = Store.get_product(id, preload: [:product_group])
+  def product_page_query(%{slug: slug}, _resolution) do
+    %{product_group: product_group} =
+      slug |> Store.get_product_slug() |> Repo.preload([:product_group])
 
     {:ok, product_group}
   end

@@ -23,6 +23,7 @@ defmodule SalesRegWeb do
       import Plug.Conn
       import SalesRegWeb.Router.Helpers
       import SalesRegWeb.Gettext
+      alias SalesReg.Repo
       SalesRegWeb.shared_aliases()
     end
   end
