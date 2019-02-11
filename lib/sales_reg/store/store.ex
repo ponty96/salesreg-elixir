@@ -18,6 +18,7 @@ defmodule SalesReg.Store do
   alias Ecto.UUID
 
   defdelegate category_image(category), to: Category
+  defdelegate get_product_name(product), to: Product
 
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
@@ -357,21 +358,6 @@ defmodule SalesReg.Store do
     case Repo.transaction(opts) do
       {:ok, %{update_product_grp: update_product_grp}} -> {:ok, update_product_grp}
       {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
-    end
-  end
-
-  # get product name
-  def get_product_name(product) do
-    product = Repo.preload(product, [:product_group, :option_values])
-
-    case product.option_values do
-      [] ->
-        product.product_group.title
-
-      _ ->
-        "#{product.product_group.title} (#{
-          Enum.map(product.option_values, &(&1.name || "?")) |> Enum.join(" ")
-        })"
     end
   end
 

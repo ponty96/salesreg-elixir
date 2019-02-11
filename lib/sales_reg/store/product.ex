@@ -84,6 +84,31 @@ defmodule SalesReg.Store.Product do
     |> add_product_slug
   end
 
+  @doc false
+  def delete_changeset(product) do
+    product
+    |> Repo.preload(:categories)
+    |> Repo.preload(:tags)
+    |> Repo.preload(:items)
+    |> cast(%{}, [])
+    |> no_assoc_constraint(:items, message: "This product is still associated with sales")
+  end
+
+  # get product name
+  def get_product_name(product) do
+    product = Repo.preload(product, [:product_group, :option_values])
+
+    case product.option_values do
+      [] ->
+        product.product_group.title
+
+      _ ->
+        "#{product.product_group.title} (#{
+          Enum.map(product.option_values, &(&1.name || "?")) |> Enum.join(" ")
+        })"
+    end
+  end
+
   defp add_product_slug(changeset) do
     title = get_change(changeset, :title) |> String.split(" ") |> Enum.join("-")
 
@@ -111,15 +136,5 @@ defmodule SalesReg.Store.Product do
     id
     |> String.split("-")
     |> List.last()
-  end
-
-  @doc false
-  def delete_changeset(product) do
-    product
-    |> Repo.preload(:categories)
-    |> Repo.preload(:tags)
-    |> Repo.preload(:items)
-    |> cast(%{}, [])
-    |> no_assoc_constraint(:items, message: "This product is still associated with sales")
   end
 end
