@@ -301,12 +301,17 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
   connection(node_type: :sale)
 
+  @desc """
+    Bank object type
+  """
   object :bank do
     field(:id, :uuid)
+    field(:bank_code, :string)
     field(:account_name, :string)
     field(:account_number, :string)
     field(:bank_name, :string)
     field(:is_primary, :boolean)
+    field(:subaccount_id, :string)
 
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
@@ -665,7 +670,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:head_office, non_null(:location_input))
     field(:currency, non_null(:string))
     field(:description, :string)
-    field(:phone, :phone_input)
+    field(:phone, non_null(:phone_input))
     field(:logo, :string)
     field(:slug, non_null(:string))
     field(:facebook, :string)
@@ -811,7 +816,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   input_object :bank_input do
-    field(:account_name, :string)
+    field(:bank_code, non_null(:string))
+    field(:account_name, non_null(:string))
     field(:account_number, non_null(:string))
     field(:bank_name, non_null(:string))
     field(:is_primary, :boolean)

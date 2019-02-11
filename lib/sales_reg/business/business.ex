@@ -4,7 +4,11 @@ defmodule SalesReg.Business do
   """
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
-  alias SalesRegWeb.Services.{Heroku, Cloudfare}
+  alias SalesRegWeb.Services.{
+    Heroku, 
+    Cloudfare, 
+    Flutterwave
+  }
   require Logger
 
   use SalesReg.Context, [
@@ -111,36 +115,40 @@ defmodule SalesReg.Business do
   end
 
   def create_bank(params) do
-    bank_list = company_banks(params.company_id)
+    with {:ok, :success, data} <- create_subaccount(params),
+        bank_params <- Map.put(params, :subaccount, data["data"]["id"]),
+        {:ok, bank} <- Business.add_bank(bank_params) do
+      
+      {:ok, bank}
+    else
+      {:ok, :fail, data} ->
+        Logger.debug(fn -> "The Server did perform the transaction." end)
+        {:error, "Not successful"}
 
-    case params do
-      %{is_primary: true} ->
-        if Enum.count(bank_list) == 0 do
-          Business.add_bank(params)
-        else
-          update_bank_field(params.company_id)
-          Business.add_bank(params)
-        end
+      {:error, reason} ->
+        Logger.error(fn -> "An error occurred: #{reason}" end)
+        {:error, reason}
 
-      _ ->
-        if Enum.count(bank_list) == 0 do
-          params
-          |> Map.put(:is_primary, true)
-          |> Business.add_bank()
-        else
-          Business.add_bank(params)
-        end
+      {:error, _changeset} = error -> error
     end
-  end
+  end 
 
   def update_bank_details(bank, params) do
-    case params do
-      %{is_primary: true} ->
-        update_bank_field(params.company_id)
-        Business.update_bank(bank, params)
+    with {:ok, :success, data} <- 
+              update_subaccount(params, bank.sub_account_id),
+        {:ok, bank} <- Business.update_bank(bank, params) do
 
-      _ ->
-        Business.update_bank(bank, params)
+      {:ok, bank}
+    else
+      {:ok, :fail, data} ->
+        Logger.debug(fn -> "The Server did perform the transaction." end)
+        {:error, "Not successful."}
+
+      {:error, reason} ->
+        Logger.error(fn -> "An error occurred: #{reason}" end)
+        {:error, reason}
+
+      {:error, _changeset} = error -> error
     end
   end
 
@@ -226,16 +234,6 @@ defmodule SalesReg.Business do
     calc_expense_amount(t, acc + val.(h.amount))
   end
 
-  defp update_bank_field(company_id) do
-    attrs = %{"is_primary" => false}
-
-    Bank
-    |> where([b], b.company_id == ^company_id)
-    |> where([b], b.is_primary == true)
-    |> Repo.one()
-    |> Business.update_bank(attrs)
-  end
-
   def insert_company_email_temps(company_id) do
     templates =
       Enum.map(@email_types, fn type ->
@@ -287,5 +285,37 @@ defmodule SalesReg.Business do
           {:error, reason}
       end
     end)
+  end
+
+  defp create_subaccount(params) do
+    company = preload_company(params.company_id)
+    
+    params
+    |> construct_subaccount_params(company)
+    |> Flutterwave.create_subaccount()
+  end
+
+  defp update_subaccount(params, sub_account_id) do
+    company = preload_company(params.company_id)
+
+    params
+    |> construct_subaccount_params(company)
+    |> Flutterwave.update_subaccount(sub_account_id)
+  end
+
+  defp preload_company(company_id) do
+    Company
+    |> Repo.get(company_id)
+    |> Repo.preload([:phone])
+  end
+
+  defp construct_subaccount_params(params, company) do
+    %{
+      account_bank: params.bank_code,
+      account_number: params.account_number,
+      business_name: company.title,
+      business_email: company.contact_email,
+      business_mobile: company.phone.number
+    }
   end
 end
