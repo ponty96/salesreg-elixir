@@ -515,7 +515,7 @@ defmodule SalesReg.Order do
     |> Enum.sum()
   end
 
-  defp calc_amount_paid(receipts) do    
+  defp calc_amount_paid(receipts) do
     Enum.map(receipts, fn receipt ->
       {amount_paid, _} = Float.parse(receipt.amount_paid)
       amount_paid
