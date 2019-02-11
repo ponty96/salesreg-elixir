@@ -130,7 +130,7 @@ defmodule SalesReg.Store.Product do
 
         _ ->
           "#{title}-#{
-            Enum.map(option_values, &(&1.name || ""))
+            Enum.map(option_values, &(remove_space(&1.name) || ""))
             |> Enum.join("-")
           }-#{hash_from_product_grp_uuid}"
       end
@@ -144,5 +144,9 @@ defmodule SalesReg.Store.Product do
     id
     |> String.split("-")
     |> List.last()
+  end
+
+  defp remove_space(string) do
+    String.split(string, " ") |> Enum.join("-")
   end
 end
