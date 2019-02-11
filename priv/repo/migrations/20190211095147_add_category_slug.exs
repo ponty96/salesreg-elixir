@@ -7,5 +7,6 @@ defmodule SalesReg.Repo.Migrations.AddCategorySlug do
     end
 
     create(unique_index(:categories, [:slug]))
+    create(unique_index(:categories, [:title, :company_id]))
   end
 end

@@ -362,6 +362,17 @@ defmodule SalesReg.Store do
     end
   end
 
+  def update_product_details(id, params) do
+    product = Store.get_product(id, preload: [:product_group])
+
+    params =
+      params
+      |> Map.put(:title, product.product_group.title)
+      |> Map.put(:product_group_id, product.product_group.id)
+
+    update_product(product, params)
+  end
+
   # WEBSTORE REQUIRED METHODS
   def home_categories(company_id) do
     Repo.all(

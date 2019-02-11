@@ -82,7 +82,8 @@ defmodule SalesReg.Store.Product do
     |> put_assoc(:tags, Store.load_tags(attrs))
     |> cast_assoc(:option_values)
     |> no_assoc_constraint(:items, message: "This product is still associated with sales")
-    |> add_product_slug
+    |> add_product_slug(attrs)
+    |> unique_constraint(:slug)
   end
 
   @doc false
@@ -115,13 +116,12 @@ defmodule SalesReg.Store.Product do
     "#{Business.get_company_share_domain()}/#{product.company.slug}/p/#{product.slug}"
   end
 
-  defp add_product_slug(changeset) do
-    title = get_change(changeset, :title) |> String.split(" ") |> Enum.join("-")
+  defp add_product_slug(changeset, attrs) do
+    title = Map.get(attrs, :title) |> String.split(" ") |> Enum.join("-")
 
-    hash_from_product_grp_uuid =
-      get_change(changeset, :product_group_id) |> hash_from_product_grp_uuid
+    hash_from_product_grp_uuid = Map.get(attrs, :product_group_id) |> hash_from_product_grp_uuid
 
-    option_values = get_change(changeset, :option_values)
+    option_values = Map.get(attrs, :option_values)
 
     slug =
       case option_values do
@@ -130,10 +130,12 @@ defmodule SalesReg.Store.Product do
 
         _ ->
           "#{title}-#{
-            Enum.map(option_values, &(&1.changes.name || ""))
+            Enum.map(option_values, &(&1.name || ""))
             |> Enum.join("-")
           }-#{hash_from_product_grp_uuid}"
       end
+      |> String.downcase()
+      |> URI.encode()
 
     put_change(changeset, :slug, slug)
   end
