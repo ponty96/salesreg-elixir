@@ -94,6 +94,9 @@ config :sales_reg, SalesReg.Mailer,
   adapter: Bamboo.SendGridAdapter,
   api_key: "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"
 
+config :sales_reg, SalesReg.Mailer,
+  adapter: Bamboo.LocalAdapter
+
 config :sales_reg, SalesReg.Scheduler,
   jobs: [
     mail_on_order_due_date: [
