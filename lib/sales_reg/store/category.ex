@@ -29,14 +29,12 @@ defmodule SalesReg.Store.Category do
   @required_fields [
     :company_id,
     :user_id,
-    :title,
-    :slug
+    :title
   ]
   @doc false
   def changeset(category, attrs) do
     category
     |> cast(attrs, @fields ++ @required_fields)
-    |> validate_required(@required_fields)
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
     |> unique_constraint(:title,
