@@ -28,5 +28,4 @@ Product
 |> Repo.preload([:option_values, :items, :stars, :tags, :categories, :user, :company, :product_group])
 |> Enum.map(&Store.update_product_details(&1.id, UpdateProduct.transform_product(&1)))
 
-Repo.all(Category)
-|> Enum.map(&(Store.update_category(&1, %{title: &1.title, company_id: &1.company_id})))
+Repo.all(Category) |> Enum.map(&(Store.update_category(&1, %{title: &1.title, company_id: &1.company_id})))
