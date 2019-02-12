@@ -47,8 +47,7 @@ defmodule SalesReg.Email do
       %Bamboo.Email{
         from: email_params.from,
         to: email_params.to,
-        subject: email_params.subject,
-        from: email_params.from
+        subject: email_params.subject
       }
     end
   end

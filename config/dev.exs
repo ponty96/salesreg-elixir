@@ -38,7 +38,6 @@ config :phoenix, :stacktrace_depth, 20
 
 # Configure your database
 config :sales_reg, SalesReg.Repo,
-  adapter: Ecto.Adapters.Postgres,
   username: "postgres",
   password: "postgres",
   database: "sales_reg_dev",

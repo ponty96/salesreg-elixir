@@ -6,7 +6,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
     {:ok, company}
   end
 
-  def home_page_query(params, resolution) do
+  def home_page_query(_params, resolution) do
     company = resolution.context.company
 
     home_data = %{

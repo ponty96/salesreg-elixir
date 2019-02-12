@@ -64,29 +64,13 @@ defmodule SalesReg.Order do
     |> Repo.all()
   end
 
-  def create_review(
-        %{
-          sale_id: _sale_id,
-          contact_id: _contact_id,
-          product_id: _product_id,
-          company_id: _company_id,
-          text: text
-        } = params
-      ) do
+  def create_review(params) do
     create_star_or_review(params, fn attrs ->
       Order.add_review(attrs)
     end)
   end
 
-  def create_star(
-        %{
-          sale_id: _sale_id,
-          contact_id: _contact_id,
-          product_id: _product_id,
-          company_id: _company_id,
-          value: _value
-        } = params
-      ) do
+  def create_star(params) do
     create_star_or_review(params, fn attrs ->
       Order.add_star(attrs)
     end)

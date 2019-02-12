@@ -13,14 +13,6 @@ defmodule SalesRegWeb.GraphQL.MiddleWares.ChangesetErrors do
     end
   end
 
-  def call(%{errors: [%Ecto.Changeset{} = changeset]} = res, _) do
-    %{
-      res
-      | value: %{errors: transform_errors(changeset)},
-        errors: []
-    }
-  end
-
   defp transform_errors(changeset) do
     changeset
     |> Changeset.traverse_errors(&format_error/1)
@@ -49,7 +41,7 @@ defmodule SalesRegWeb.GraphQL.MiddleWares.ChangesetErrors do
     end
   end
 
-  def serialize_error(key, value) when is_map(value) do
+  def serialize_error(_key, value) when is_map(value) do
     value
     |> Map.to_list()
     |> Enum.map(fn {assoc_key, value} ->

@@ -49,7 +49,7 @@ defmodule SalesReg.Business do
            company_id: company.id,
            user_id: user_id
          },
-         {:ok, company_template} <- Theme.add_company_template(company_template_params),
+         {:ok, _company_template} <- Theme.add_company_template(company_template_params),
          {_int, _result} <- insert_company_email_temps(company.id),
          # TODO send email in task supervisor process
          %Bamboo.Email{} <- send_email(company, "yc_email_welcome_to_yc") do
@@ -66,7 +66,7 @@ defmodule SalesReg.Business do
            type: "head_office",
            location: Map.get(company_params, :head_office)
          },
-         {:ok, branch} <- update_company_head_office(company.id, branch_params) do
+         {:ok, _branch} <- update_company_head_office(company.id, branch_params) do
       {:ok, company}
     else
       {:error, changeset} -> {:error, changeset}

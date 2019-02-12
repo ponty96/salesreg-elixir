@@ -1,15 +1,12 @@
 defmodule SalesReg.Seed do
   use SalesRegWeb, :context
 
-  alias Faker.{Phone.EnGb, Internet, Commerce, Avatar, Industry, Name, Address}
-  alias Faker.Company.En, as: CompanyEn
+  alias Faker.{Commerce, Avatar, Industry, Address}
   alias Faker.Name.En, as: NameEn
   alias Faker.Commerce.En, as: CommerceEn
   alias Faker.Date, as: FakerDate
 
   @location_types ["office", "home"]
-  @phone_types ["home", "mobile", "work"]
-  @currency ["Dollars", "Naira", "Euro", "Pounds"]
   @marital_status ["Single", "Married", "Widowed"]
   @banks ["076", "011", "063", "058"]
   @likes ["honesty", "integrity", "principled"]
@@ -17,7 +14,6 @@ defmodule SalesReg.Seed do
   @payment_method ["cash", "card"]
   @seed_order_status ["pending", "processed", "delivering"]
   @gender ["MALE", "FEMALE"]
-  @company_template_status ["active", "inactive"]
 
   def create_user() do
     user_params = %{
@@ -127,13 +123,6 @@ defmodule SalesReg.Seed do
       "street1" => Address.street_address(),
       "street2" => Address.street_address(),
       "type" => Enum.random(@location_types)
-    }
-  end
-
-  defp gen_phone_params() do
-    %{
-      "number" => "#{EnGb.mobile_number()}",
-      "type" => Enum.random(@phone_types)
     }
   end
 
@@ -247,29 +236,6 @@ defmodule SalesReg.Seed do
     }
 
     Theme.add_company_template(params)
-  end
-
-  defp order_items(items, type) do
-    Enum.map(items, fn item ->
-      unit_price = Map.get(item, :price)
-
-      %{
-        "quantity" => "3",
-        "unit_price" => unit_price,
-        "#{type}_id" => item.id
-      }
-    end)
-  end
-
-  defp order_total_cost(order_items) do
-    amounts =
-      Enum.map(order_items, fn item ->
-        unit_price = Decimal.new(item["unit_price"]) |> Decimal.to_float()
-        quantity = Decimal.new(item["quantity"]) |> Decimal.to_float()
-        unit_price * quantity
-      end)
-
-    "#{Enum.sum(amounts)}"
   end
 
   # create product

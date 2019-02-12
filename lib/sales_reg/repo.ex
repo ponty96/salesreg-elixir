@@ -1,5 +1,8 @@
 defmodule SalesReg.Repo do
-  use Ecto.Repo, otp_app: :sales_reg
+  use Ecto.Repo,
+    otp_app: :sales_reg,
+    adapter: Ecto.Adapters.Postgres
+
   use Scrivener, page_size: 12
 
   @doc """
