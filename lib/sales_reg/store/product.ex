@@ -145,6 +145,7 @@ defmodule SalesReg.Store.Product do
     |> String.split("-")
     |> List.last()
   end
+
   defp remove_space(string) do
     String.split(string, " ") |> Enum.join("-")
   end
