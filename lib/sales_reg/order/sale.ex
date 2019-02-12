@@ -44,7 +44,8 @@ defmodule SalesReg.Order.Sale do
 
   @doc false
   def changeset(sale, attrs) do
-    new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
+    new_attrs =
+      SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
       |> Map.put_new(:charge, "#{System.get_env("CHARGE")}")
 
     sale

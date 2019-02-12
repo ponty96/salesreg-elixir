@@ -4,11 +4,13 @@ defmodule SalesReg.Business do
   """
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
+
   alias SalesRegWeb.Services.{
-    Heroku, 
-    Cloudfare, 
+    Heroku,
+    Cloudfare,
     Flutterwave
   }
+
   require Logger
 
   use SalesReg.Context, [
@@ -151,35 +153,34 @@ defmodule SalesReg.Business do
 
   def create_bank(params) do
     with {:ok, :success, data} <- create_subaccount(params),
-        bank_params <- update_bank_params(params, data),
-        {:ok, bank} <- Business.add_bank(bank_params) do
-      
+         bank_params <- update_bank_params(params, data),
+         {:ok, bank} <- Business.add_bank(bank_params) do
       {:ok, bank}
     else
       {:ok, :fail, _data} ->
         Logger.debug(fn -> "The Server did perform the transaction." end)
         {:error, [%{key: "subaccount", message: "Not successful"}]}
 
-      {:error, %Ecto.Changeset{}} = error -> error
+      {:error, %Ecto.Changeset{}} = error ->
+        error
 
       {:error, reason} ->
         Logger.error(fn -> "An error occurred" end)
         {:error, [%{key: "subaccount", message: "Not successful"}]}
     end
-  end 
+  end
 
   def update_bank_details(bank, params) do
-    with {:ok, :success, data} <- 
-              update_subaccount(params, bank.subaccount_transac_id),
-        {:ok, bank} <- Business.update_bank(bank, params) do
-
+    with {:ok, :success, data} <- update_subaccount(params, bank.subaccount_transac_id),
+         {:ok, bank} <- Business.update_bank(bank, params) do
       {:ok, bank}
     else
       {:ok, :fail, _data} ->
         Logger.debug(fn -> "The Server did perform the transaction." end)
         {:error, [%{key: "subaccount", message: "Not successful"}]}
 
-      {:error, %Ecto.Changeset{}} = error -> error
+      {:error, %Ecto.Changeset{}} = error ->
+        error
 
       {:error, _reason} ->
         Logger.error(fn -> "An error occurred" end)
@@ -347,7 +348,7 @@ defmodule SalesReg.Business do
 
   defp create_subaccount(params) do
     company = preload_company(params.company_id)
-    
+
     params
     |> construct_subaccount_params(company)
     |> Flutterwave.create_subaccount()
@@ -381,6 +382,7 @@ defmodule SalesReg.Business do
       business_email: company.contact_email,
       business_mobile: company.phone.number
     }
+  end
 
   defp update_bank_field(company_id) do
     attrs = %{"is_primary" => false}

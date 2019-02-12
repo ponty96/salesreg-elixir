@@ -5,17 +5,19 @@ defmodule SalesRegWeb.Services.Flutterwave do
   @flutterwave_secret_key System.get_env("FLUTTERWAVE_SECRET_KEY")
 
   def create_subaccount(params) do
-    body = params
+    body =
+      params
       |> construct_subaccount_details()
       |> Base.encode()
 
-    :post 
+    :post
     |> request(process_url("v2/gpx/subaccounts/create"), body)
     |> Base.process_response()
   end
 
   def update_subaccount(params, id) do
-    body = params
+    body =
+      params
       |> construct_subaccount_details()
       |> Map.delete("business_mobile")
       |> Map.put("id", id)
@@ -35,11 +37,12 @@ defmodule SalesRegWeb.Services.Flutterwave do
 
   def delete_subaccount(id) do
     endpoint = process_url("v2/gpx/subaccounts/delete")
-    body = 
+
+    body =
       %{
         "id" => id,
         "seckey" => @flutterwave_secret_key
-      } 
+      }
       |> Base.encode()
 
     request(:delete, endpoint, body)
@@ -48,11 +51,12 @@ defmodule SalesRegWeb.Services.Flutterwave do
 
   defp request(method, endpoint, body, opts \\ []) do
     header = [{"Content-Type", "application/json"}]
+
     HTTPoison.request(
       method,
-      endpoint, 
-      body, 
-      header, 
+      endpoint,
+      body,
+      header,
       Base.set_default_timeout(opts)
     )
   end

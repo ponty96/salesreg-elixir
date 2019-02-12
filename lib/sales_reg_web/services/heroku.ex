@@ -24,21 +24,19 @@ defmodule SalesRegWeb.Services.Heroku do
 
   defp request(method, url, body, opts \\ []) do
     header = get_config_key_val(:default_header)
+
     if Mix.env() == :prod do
       HTTPoison.request(
-        method, 
-        url, 
-        body, 
-        header, 
+        method,
+        url,
+        body,
+        header,
         Base.set_default_timeout(opts)
       )
     else
-      {:ok, body} = Poison.encode(
-        %{message: "A request was made to Heroku"}
-      )
-      
-      {:ok, 
-        %HTTPoison.Response{status_code: 200, body: body}}
+      {:ok, body} = Poison.encode(%{message: "A request was made to Heroku"})
+
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}}
     end
   end
 
