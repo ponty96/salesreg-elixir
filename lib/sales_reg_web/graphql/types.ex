@@ -272,6 +272,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:payment_method, :string)
     field(:tax, :string)
     field(:ref_id, :string)
+    field(:charge, :string)
 
     field :amount, :float do
       resolve(fn _parent, %{source: sale} ->
