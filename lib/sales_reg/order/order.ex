@@ -7,6 +7,8 @@ defmodule SalesReg.Order do
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
   alias SalesReg.Order.OrderStateMachine
+  alias SalesReg.Mailer.YipcartToCustomers, as: YC2C
+  alias SalesReg.Mailer.MerchantsToCustomers, as: M2C
 
   use SalesReg.Context, [
     Sale,
@@ -109,8 +111,10 @@ defmodule SalesReg.Order do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      Email.send_email(sale, "yc_email_received_order")
-      __MODULE__.send_email(sale, "yc_email_order_notification")
+      
+      M2C.send_received_order_mail(sale)
+      # send order notification email to merchant
+      YC2C.send_order_notification(sale)
 
       {:ok, "Email Sent"}
     end)
@@ -132,8 +136,10 @@ defmodule SalesReg.Order do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      Email.send_email(sale, "yc_email_received_order")
-      __MODULE__.send_email(sale, "yc_email_order_notification")
+      
+      M2C.send_received_order_mail(sale)
+      # send order notification email to merchant
+      YC2C.send_order_notification(sale)
 
       {:ok, "Email Sent"}
     end)
@@ -156,8 +162,10 @@ defmodule SalesReg.Order do
       |> Order.add_sale()
     end)
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      Email.send_email(sale, "yc_email_received_order")
-      __MODULE__.send_email(sale, "yc_email_order_notification")
+      
+      M2C.send_received_order_mail(sale)
+      # send order notification email to merchant
+      YC2C.send_order_notification(sale)
 
       {:ok, "Email Sent"}
     end)
@@ -184,8 +192,10 @@ defmodule SalesReg.Order do
       |> Order.add_sale()
     end)
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      Email.send_email(sale, "yc_email_received_order")
-      __MODULE__.send_email(sale, "yc_email_order_notification")
+      
+      M2C.send_received_order_mail(sale)
+      # send order notification email to merchant
+      YC2C.send_order_notification(sale)
 
       {:ok, "Email Sent"}
     end)
@@ -237,8 +247,10 @@ defmodule SalesReg.Order do
   def sale_multi_transac(multi) do
     multi
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      Email.send_email(sale, "yc_email_received_order")
-      __MODULE__.send_email(sale, "yc_email_order_notification")
+      
+      M2C.send_received_order_mail(sale)
+      # send order notification email to merchant
+      YC2C.send_order_notification(sale)
 
       {:ok, "Email Sent"}
     end)
@@ -298,7 +310,7 @@ defmodule SalesReg.Order do
         Order.supervise_pdf_upload(invoice)
 
         invoice.sale
-        |> Email.send_email("yc_email_before_due")
+        |> M2C.send_before_due_mail()
 
         add_invoice
 
@@ -319,10 +331,11 @@ defmodule SalesReg.Order do
         receipt = preload_receipt(receipt)
 
         Order.supervise_pdf_upload(receipt)
-        Email.send_email(sale, "yc_payment_received")
+        M2C.send_payment_received_mail(sale)
 
+        # send invoice payment notifice email to merchant
         Map.put_new(sale, :amount, amount)
-        |> __MODULE__.send_email("yc_email_invoice_payment_notice")
+        |> YC2C.send_invoice_payment_notice()
 
         {:ok, receipt}
 
@@ -348,10 +361,11 @@ defmodule SalesReg.Order do
         receipt = Repo.preload(receipt, [:company, :invoice, :user, sale: [items: [:product]]])
 
         Order.supervise_pdf_upload(receipt)
-        Email.send_email(sale, "yc_payment_received")
+        M2C.send_payment_received_mail(sale)
 
+        # send invoice payment notifice email to merchant
         Map.put_new(sale, :amount, amount)
-        |> __MODULE__.send_email("yc_email_invoice_payment_notice")
+        |> YC2C.send_invoice_payment_notice()
 
         {:ok, receipt}
 
@@ -359,8 +373,6 @@ defmodule SalesReg.Order do
         error_tuple
     end
   end
-
-  defdelegate send_email(resource, type), to: Business, as: :send_email
 
   def create_activities(receipt) do
     receipt = preload_receipt(receipt)

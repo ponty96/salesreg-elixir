@@ -95,7 +95,8 @@ config :sales_reg, SalesReg.Mailer,
   api_key: "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"
 
 config :sales_reg, SalesReg.Mailer,
-  adapter: Bamboo.LocalAdapter
+  adapter: Bamboo.LocalAdapter,
+  open_email_in_browser_url: "http://localhost:4000/sent_emails"
 
 config :sales_reg, SalesReg.Scheduler,
   jobs: [
