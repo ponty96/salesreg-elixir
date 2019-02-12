@@ -1,5 +1,4 @@
 defmodule SalesRegWeb.Services.Flutterwave do
-  require Logger
   alias SalesRegWeb.Services.Base
 
   @base_url "https://ravesandboxapi.flutterwave.com/"
@@ -49,17 +48,13 @@ defmodule SalesRegWeb.Services.Flutterwave do
 
   defp request(method, endpoint, body, opts \\ []) do
     header = [{"Content-Type", "application/json"}]
-    if Mix.env() == :prod do
-      HTTPoison.request(
-        method,
-        endpoint, 
-        body, 
-        header, 
-        Base.set_default_timeout(opts)
-      )
-    else
-      Logger.info("Making request to Flutterwave: #{endpoint}")
-    end
+    HTTPoison.request(
+      method,
+      endpoint, 
+      body, 
+      header, 
+      Base.set_default_timeout(opts)
+    )
   end
 
   defp process_url(endpoint) do

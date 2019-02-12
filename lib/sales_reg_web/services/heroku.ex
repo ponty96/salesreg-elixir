@@ -1,5 +1,4 @@
 defmodule SalesRegWeb.Services.Heroku do
-  require Logger
   alias SalesRegWeb.Services.Base
 
   def create_domain(hostname) do
@@ -34,7 +33,12 @@ defmodule SalesRegWeb.Services.Heroku do
         Base.set_default_timeout(opts)
       )
     else
-      Logger.info("Making request to Heroku: #{url}")
+      {:ok, body} = Poison.encode(
+        %{message: "A request was made to Heroku"}
+      )
+      
+      {:ok, 
+        %HTTPoison.Response{status_code: 200, body: body}}
     end
   end
 

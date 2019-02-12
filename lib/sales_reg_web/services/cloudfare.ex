@@ -1,5 +1,4 @@
 defmodule SalesRegWeb.Services.Cloudfare do
-  require Logger
   alias SalesRegWeb.Services.Base
 
   def create_dns_record(type, name, content, optional_params \\ %{})
@@ -40,7 +39,12 @@ defmodule SalesRegWeb.Services.Cloudfare do
         Base.set_default_timeout(opts)
       )
     else
-      Logger.info("Making request to Cloudfare: #{url}")
+      {:ok, body} = Poison.encode(
+        %{message: "A request was made to Cloudflare"}
+      )
+      
+      {:ok, 
+        %HTTPoison.Response{status_code: 200, body: body}}
     end
   end
 
