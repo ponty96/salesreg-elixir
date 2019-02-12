@@ -418,6 +418,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
+    field(:receipts, list_of(:receipt), resolve: dataloader(SalesReg.Order, :receipts))
   end
 
   connection(node_type: :invoice)
