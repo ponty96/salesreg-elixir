@@ -19,7 +19,6 @@ if Mix.env() == :prod do
       body = params
         |> construct_subaccount_details()
         |> Map.delete("business_mobile")
-        |> Map.delete("seckey")
         |> Map.put("id", id)
         |> Base.encode()
 

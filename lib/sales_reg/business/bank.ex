@@ -22,10 +22,11 @@ defmodule SalesReg.Business.Bank do
     :bank_name, 
     :company_id, 
     :account_name, 
-    :bank_code
+    :bank_code,
+    :subaccount_id
   ]
   
-  @optional_fields [:subaccount_id]
+  @optional_fields []
 
   @doc false
   def changeset(bank, attrs) do

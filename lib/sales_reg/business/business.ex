@@ -116,7 +116,7 @@ defmodule SalesReg.Business do
 
   def create_bank(params) do
     with {:ok, :success, data} <- create_subaccount(params),
-        bank_params <- Map.put(params, :subaccount, data["data"]["id"]),
+        bank_params <- Map.put(params, :subaccount_id, "#{data["data"]["id"]}"),
         {:ok, bank} <- Business.add_bank(bank_params) do
       
       {:ok, bank}
@@ -125,17 +125,17 @@ defmodule SalesReg.Business do
         Logger.debug(fn -> "The Server did perform the transaction." end)
         {:error, "Not successful"}
 
+      {:error, %Ecto.Changeset{}} = error -> error
+
       {:error, reason} ->
         Logger.error(fn -> "An error occurred: #{reason}" end)
         {:error, reason}
-
-      {:error, _changeset} = error -> error
     end
   end 
 
   def update_bank_details(bank, params) do
     with {:ok, :success, data} <- 
-              update_subaccount(params, bank.sub_account_id),
+              update_subaccount(params, bank.subaccount_id),
         {:ok, bank} <- Business.update_bank(bank, params) do
 
       {:ok, bank}
@@ -144,11 +144,11 @@ defmodule SalesReg.Business do
         Logger.debug(fn -> "The Server did perform the transaction." end)
         {:error, "Not successful."}
 
+      {:error, %Ecto.Changeset{}} = error -> error
+
       {:error, reason} ->
         Logger.error(fn -> "An error occurred: #{reason}" end)
         {:error, reason}
-
-      {:error, _changeset} = error -> error
     end
   end
 
@@ -295,12 +295,12 @@ defmodule SalesReg.Business do
     |> Flutterwave.create_subaccount()
   end
 
-  defp update_subaccount(params, sub_account_id) do
+  defp update_subaccount(params, subaccount_id) do
     company = preload_company(params.company_id)
 
     params
     |> construct_subaccount_params(company)
-    |> Flutterwave.update_subaccount(sub_account_id)
+    |> Flutterwave.update_subaccount(subaccount_id)
   end
 
   defp preload_company(company_id) do
@@ -311,7 +311,7 @@ defmodule SalesReg.Business do
 
   defp construct_subaccount_params(params, company) do
     %{
-      account_bank: params.bank_code,
+      account_bank: params.bank_name,
       account_number: params.account_number,
       business_name: company.title,
       business_email: company.contact_email,
