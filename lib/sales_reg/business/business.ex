@@ -164,7 +164,7 @@ defmodule SalesReg.Business do
       {:error, %Ecto.Changeset{}} = error ->
         error
 
-      {:error, reason} ->
+      {:error, _reason} ->
         Logger.error(fn -> "An error occurred" end)
         {:error, [%{key: "subaccount", message: "Not successful"}]}
     end

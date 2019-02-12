@@ -56,6 +56,12 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:reviews, list_of(:review), resolve: dataloader(SalesReg.Order, :reviews))
     field(:stars, list_of(:star), resolve: dataloader(SalesReg.Order, :stars))
 
+    field :sale_charge, :string do
+      resolve(fn _, _ ->
+        {:ok, "#{System.get_env("CHARGE")}"}
+      end)
+    end
+
     field(:legal_documents, list_of(:legal_document),
       resolve: dataloader(SalesReg.Business, :legal_documents)
     )
