@@ -89,7 +89,8 @@ defmodule SalesReg.Mixfile do
       {:cors_plug, "~> 2.0"},
       {:sentry, "~> 6.4"},
       {:httpoison, "~> 1.4"},
-      {:poison, "~> 3.1"}
+      {:poison, "~> 3.1"},
+      {:ecto_autoslug_field, "~> 1.0"}
     ]
   end
 

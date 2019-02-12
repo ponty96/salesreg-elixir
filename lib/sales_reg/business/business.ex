@@ -86,6 +86,41 @@ defmodule SalesReg.Business do
     Company.changeset(company, %{})
   end
 
+  def update_company_cover_photo(%{cover_photo: _cover_photo, company_id: id} = params) do
+    Business.get_company(id)
+    |> Business.update_company(params)
+  end
+
+  def send_email(resource, type) do
+    binary = return_file_content(type)
+    Email.send_email(resource, type, binary)
+  end
+
+  def get_company_subdomain(company) do
+    base_domain =
+      Application.get_env(:sales_reg, Heroku)
+      |> Keyword.get(:base_domain)
+
+    company.slug <> "." <> base_domain
+  end
+
+  def insert_company_email_temps(company_id) do
+    templates =
+      Enum.map(@email_types, fn type ->
+        %{
+          body: return_file_content(type),
+          type: type,
+          company_id: company_id
+        }
+      end)
+
+    Repo.insert_all(CompanyEmailTemplate, templates)
+  end
+
+  def get_company_share_domain() do
+    System.get_env("SHORT_URL") || "https://ycartstag.me"
+  end
+
   ## CONTACTS
   def list_company_contacts(company_id, type) do
     {:ok,
@@ -195,25 +230,48 @@ defmodule SalesReg.Business do
     Business.update_expense(expense, params)
   end
 
-  def update_company_cover_photo(%{cover_photo: _cover_photo, company_id: id} = params) do
-    Business.get_company(id)
-    |> Business.update_company(params)
-  end
-
-  def send_email(resource, type) do
-    binary = return_file_content(type)
-    Email.send_email(resource, type, binary)
-  end
-
-  def get_company_subdomain(company) do
-    base_domain =
-      Application.get_env(:sales_reg, Heroku)
-      |> Keyword.get(:base_domain)
-
-    company.slug <> "." <> base_domain
-  end
-
   # Private Functions
+
+  # The business name is the slug of the company
+  defp create_business_subdomain(business_name) do
+    Task.Supervisor.start_child(TaskSupervisor, fn ->
+      base_domain =
+        Application.get_env(:sales_reg, Heroku)
+        |> Keyword.get(:base_domain)
+
+      hostname = String.downcase(business_name) <> "." <> base_domain
+
+      with :ok <-
+             Logger.info(fn -> "Creating new domain on heroku with hostname: #{hostname}" end),
+           {:ok, :success, data} <- Heroku.create_domain(hostname),
+           {:ok, :success, data} <-
+             Cloudfare.create_dns_record(
+               "CNAME",
+               data["hostname"],
+               data["cname"],
+               %{"ttl" => 1}
+             ) do
+        {:ok, :success, data}
+      else
+        {:ok, :fail, data} ->
+          Logger.debug(fn -> "The Server did perform the transaction: #{data["cname"]}" end)
+          {:ok, :fail, data}
+
+        {:error, reason} ->
+          Logger.error(fn -> "An error occurred: #{reason}" end)
+          {:error, reason}
+      end
+    end)
+  end
+
+  defp return_file_content(type) do
+    {:ok, binary} =
+      Path.expand("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
+      |> File.read()
+
+    binary
+  end
+
   defp put_items_amount(params) do
     total_amount =
       params.expense_items
@@ -323,5 +381,14 @@ defmodule SalesReg.Business do
       business_email: company.contact_email,
       business_mobile: company.phone.number
     }
+
+  defp update_bank_field(company_id) do
+    attrs = %{"is_primary" => false}
+
+    Bank
+    |> where([b], b.company_id == ^company_id)
+    |> where([b], b.is_primary == true)
+    |> Repo.one()
+    |> Business.update_bank(attrs)
   end
 end
