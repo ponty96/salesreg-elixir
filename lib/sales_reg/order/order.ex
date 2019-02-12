@@ -20,6 +20,8 @@ defmodule SalesReg.Order do
   @receipt_html_path "lib/sales_reg_web/templates/mailer/yc_email_receipt_pdf.html.eex"
   @invoice_html_path "lib/sales_reg_web/templates/mailer/yc_email_order_invoice_pdf.html.eex"
 
+  defdelegate get_invoice_share_link(invoice), to: Invoice
+
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
   end

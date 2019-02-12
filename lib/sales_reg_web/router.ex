@@ -33,6 +33,7 @@ defmodule SalesRegWeb.Router do
     post("/identity/callback", SessionController, :callback)
     delete("/logout", SessionController, :delete)
     get("/:business_slug/p/:product_slug", ForwardController, :forward_product)
+    get("/:business_slug/in/:invoice_id", ForwardController, :forward_invoice)
     get("/:business_slug", ForwardController, :forward_business)
   end
 

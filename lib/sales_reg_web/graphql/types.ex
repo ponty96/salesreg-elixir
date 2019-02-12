@@ -428,6 +428,12 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       end)
     end
 
+    field :share_link, :string do
+      resolve(fn _, %{source: invoice} ->
+        {:ok, Order.get_invoice_share_link(invoice)}
+      end)
+    end
+
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
