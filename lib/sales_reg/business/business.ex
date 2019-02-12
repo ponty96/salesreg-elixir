@@ -123,13 +123,13 @@ defmodule SalesReg.Business do
     else
       {:ok, :fail, _data} ->
         Logger.debug(fn -> "The Server did perform the transaction." end)
-        {:error, %{subaccount: "Not successful"}}
+        {:error, [%{key: "subaccount", message: "Not successful"}]}
 
       {:error, %Ecto.Changeset{}} = error -> error
 
       {:error, reason} ->
         Logger.error(fn -> "An error occurred: #{reason}" end)
-        {:error, reason}
+        {:error, [%{key: "subaccount", message: "Not successful"}]}
     end
   end 
 
@@ -142,13 +142,13 @@ defmodule SalesReg.Business do
     else
       {:ok, :fail, _data} ->
         Logger.debug(fn -> "The Server did perform the transaction." end)
-        {:error, %{subaccount: "Not successful"}}
+        {:error, [%{key: "subaccount", message: "Not successful"}]}
 
       {:error, %Ecto.Changeset{}} = error -> error
 
-      {:error, reason} ->
+      {:error, _reason} ->
         Logger.error(fn -> "An error occurred: #{reason}" end)
-        {:error, reason}
+        {:error, [%{key: "subaccount", message: "Not successful"}]}
     end
   end
 
