@@ -279,6 +279,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:payment_method, :string)
     field(:tax, :string)
     field(:ref_id, :string)
+    field(:charge, :string)
 
     field :amount, :float do
       resolve(fn _parent, %{source: sale} ->
@@ -308,12 +309,18 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
   connection(node_type: :sale)
 
+  @desc """
+    Bank object type
+  """
   object :bank do
     field(:id, :uuid)
+    field(:bank_code, :string)
     field(:account_name, :string)
     field(:account_number, :string)
     field(:bank_name, :string)
     field(:is_primary, :boolean)
+    field(:subaccount_id, :string)
+    field(:subaccount_transac_id, :string)
 
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
@@ -579,7 +586,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
   object :error do
     field(:message, :string)
-    field(:key, non_null(:string))
+    field(:key, :string)
   end
 
   object :authorization do
@@ -674,7 +681,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:head_office, non_null(:location_input))
     field(:currency, non_null(:string))
     field(:description, :string)
-    field(:phone, :phone_input)
+    field(:phone, non_null(:phone_input))
     field(:logo, :string)
     field(:slug, non_null(:string))
     field(:facebook, :string)
@@ -820,7 +827,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   input_object :bank_input do
-    field(:account_name, :string)
+    field(:bank_code, non_null(:string))
+    field(:account_name, non_null(:string))
     field(:account_number, non_null(:string))
     field(:bank_name, non_null(:string))
     field(:is_primary, :boolean)
