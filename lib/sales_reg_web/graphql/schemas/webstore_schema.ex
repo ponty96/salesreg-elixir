@@ -36,19 +36,19 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
     end
 
     field :sale_page_query, :sale do
-      arg(:sale_id, :string)
+      arg(:sale_id, :uuid)
 
       resolve(&WebStoreResolver.sale_page_query/2)
     end
 
     field :invoice_page_query, :invoice do
-      arg(:invoice_id, :string)
+      arg(:invoice_id, :uuid)
 
       resolve(&WebStoreResolver.invoice_page_query/2)
     end
 
     field :receipt_page_query, :receipt do
-      arg(:receipt_id, :string)
+      arg(:receipt_id, :uuid)
 
       resolve(&WebStoreResolver.receipt_page_query/2)
     end
