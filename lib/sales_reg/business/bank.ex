@@ -11,6 +11,7 @@ defmodule SalesReg.Business.Bank do
     field(:bank_name, :string)
     field(:bank_code, :string)
     field(:subaccount_id, :string)
+    field(:subaccount_transac_id, :string)
 
     belongs_to(:company, SalesReg.Business.Company)
 
@@ -23,7 +24,8 @@ defmodule SalesReg.Business.Bank do
     :company_id, 
     :account_name, 
     :bank_code,
-    :subaccount_id
+    :subaccount_id,
+    :subaccount_transac_id
   ]
   
   @optional_fields []

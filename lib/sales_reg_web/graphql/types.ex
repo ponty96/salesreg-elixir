@@ -312,6 +312,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:bank_name, :string)
     field(:is_primary, :boolean)
     field(:subaccount_id, :string)
+    field(:subaccount_transac_id, :string)
 
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
@@ -575,7 +576,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
   object :error do
     field(:message, :string)
-    field(:key, non_null(:string))
+    field(:key, :string)
   end
 
   object :authorization do

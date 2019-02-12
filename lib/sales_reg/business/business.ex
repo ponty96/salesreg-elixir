@@ -116,14 +116,14 @@ defmodule SalesReg.Business do
 
   def create_bank(params) do
     with {:ok, :success, data} <- create_subaccount(params),
-        bank_params <- Map.put(params, :subaccount_id, "#{data["data"]["id"]}"),
+        bank_params <- update_bank_params(params, data),
         {:ok, bank} <- Business.add_bank(bank_params) do
       
       {:ok, bank}
     else
-      {:ok, :fail, data} ->
+      {:ok, :fail, _data} ->
         Logger.debug(fn -> "The Server did perform the transaction." end)
-        {:error, "Not successful"}
+        {:error, %{subaccount: "Not successful"}}
 
       {:error, %Ecto.Changeset{}} = error -> error
 
@@ -135,14 +135,14 @@ defmodule SalesReg.Business do
 
   def update_bank_details(bank, params) do
     with {:ok, :success, data} <- 
-              update_subaccount(params, bank.subaccount_id),
+              update_subaccount(params, bank.subaccount_transac_id),
         {:ok, bank} <- Business.update_bank(bank, params) do
 
       {:ok, bank}
     else
-      {:ok, :fail, data} ->
+      {:ok, :fail, _data} ->
         Logger.debug(fn -> "The Server did perform the transaction." end)
-        {:error, "Not successful."}
+        {:error, %{subaccount: "Not successful"}}
 
       {:error, %Ecto.Changeset{}} = error -> error
 
@@ -293,6 +293,12 @@ defmodule SalesReg.Business do
     params
     |> construct_subaccount_params(company)
     |> Flutterwave.create_subaccount()
+  end
+
+  defp update_bank_params(params, data) do
+    params
+    |> Map.put(:subaccount_id, "#{data["data"]["subaccount_id"]}")
+    |> Map.put(:subaccount_transac_id, "#{data["data"]["id"]}")
   end
 
   defp update_subaccount(params, subaccount_id) do
