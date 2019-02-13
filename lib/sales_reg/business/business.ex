@@ -119,6 +119,17 @@ defmodule SalesReg.Business do
     System.get_env("SHORT_URL") || "https://ycartstag.me"
   end
 
+  def get_company_share_url(company) do
+    "#{get_company_share_domain()}/#{company.slug}"
+  end
+
+  def get_company_address(company) do
+    company = Repo.preload(company, [:branches])
+    location = Enum.at(company.branches, 0).location
+
+    "#{location.street1} #{location.city} #{location.state} #{location.country}"
+  end
+
   ## CONTACTS
   def list_company_contacts(company_id, type) do
     {:ok,
