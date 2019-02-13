@@ -375,6 +375,12 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       end)
     end
 
+    field :amount_before_charge, :float do
+      resolve(fn _parent, %{source: sale} ->
+        {:ok, Order.cal_order_amount_before_charge(sale)}
+      end)
+    end
+
     field :amount_paid, :float do
       resolve(fn _parent, %{source: sale} ->
         {:ok, Order.calc_order_amount_paid(sale)}
@@ -419,6 +425,13 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field :amount, :float do
       resolve(fn _parent, %{source: invoice} ->
         {:ok, Order.calc_order_amount(invoice)}
+      end)
+    end
+
+    field :amount_before_charge, :float do
+      resolve(fn _parent, %{source: invoice} ->
+        %{amount: order_amount_before_charge} = Order.cal_order_amount_before_charge(invoice)
+        {:ok, order_amount_before_charge}
       end)
     end
 
