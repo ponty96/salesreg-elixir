@@ -2,7 +2,6 @@ defmodule SalesRegWeb.Services.Flutterwave do
   alias SalesRegWeb.Services.Base
 
   @base_url "https://ravesandboxapi.flutterwave.com/"
-  @flutterwave_secret_key System.get_env("FLUTTERWAVE_SECRET_KEY")
 
   def create_subaccount(params) do
     body =
@@ -29,7 +28,7 @@ defmodule SalesRegWeb.Services.Flutterwave do
   end
 
   def list_subaccount() do
-    endpoint = process_url("v2/gpx/subaccounts?seckey=#{@flutterwave_secret_key}")
+    endpoint = process_url("v2/gpx/subaccounts?seckey=#{get_flutterwave_key()}")
 
     request(:get, endpoint, "")
     |> Base.process_response()
@@ -41,7 +40,7 @@ defmodule SalesRegWeb.Services.Flutterwave do
     body =
       %{
         "id" => id,
-        "seckey" => @flutterwave_secret_key
+        "seckey" => get_flutterwave_key()
       }
       |> Base.encode()
 
@@ -72,9 +71,13 @@ defmodule SalesRegWeb.Services.Flutterwave do
       "business_name" => params.business_name,
       "business_email" => params.business_email,
       "business_mobile" => params.business_mobile,
-      "seckey" => @flutterwave_secret_key,
+      "seckey" => get_flutterwave_key(),
       "split_type" => "percentage",
       "split_value" => "#{System.get_env("CHARGE")}"
     }
+  end
+
+  defp get_flutterwave_key do
+    System.get_env("FLUTTERWAVE_SECRET_KEY")
   end
 end
