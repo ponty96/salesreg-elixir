@@ -61,7 +61,7 @@
 																			<p>Hi <span><%= sale.contact.contact_name %></span>,</p>
 																			<p>Happy to let you know that your order as referenced above is being processed for delivery and will be sent to you shortly</p>
 																			<p>In the meantime, if you have any questions, send us an email at <a href="mailto:<%= sale.company.contact_email %>" style="color:#127bcc"><%= sale.company.contact_email %></a> and we will be happy to help you.</p>
-																			<p>Kindly <a href="#" style="text-decoration: none!important;"><span style="color:#127bcc">View your order</span></a> or <a href="#" style="text-decoration: none!important;"><span style="color:#127bcc">visit our store</span></a></p>
+																			<p>Kindly <a href="<%= SalesReg.Order.get_sale_share_link(sale) %>" style="text-decoration: none!important;"><span style="color:#127bcc">View your order</span></a> or <a href="#" style="text-decoration: none!important;"><span style="color:#127bcc">visit our store</span></a></p>
 																			<p>Thanks <%= sale.contact.contact_name %> for choosing <%= sale.company.title %></p>
 																			<p>Best regards,<br><%= sale.company.owner.first_name %>.</p>
 																		</td>
