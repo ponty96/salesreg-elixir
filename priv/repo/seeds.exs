@@ -1,3 +1,4 @@
+
 # Script for populating the database. You can run it as:
 #
 #     mix run priv/repo/seeds.exs
@@ -138,12 +139,6 @@ real_product_params = [
 {:ok, company} = Seed.create_company(user.id)
 # {:ok, company_template} = Seed.add_company_template(company.id, user.id, template.id)
 
-categories =
-  Enum.map(1..25, fn _index ->
-    {:ok, category} = Seed.add_category(company.id, user.id)
-    category.id
-  end)
-
 products =
   Enum.map(real_product_params, fn params ->
     {:ok, product} =
@@ -151,7 +146,7 @@ products =
         params,
         company.id,
         user.id,
-        Enum.take_random(categories, 4)
+        []
       )
 
     product

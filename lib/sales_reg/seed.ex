@@ -287,6 +287,7 @@ defmodule SalesReg.Seed do
 
     params
     |> product_params(company_id, user_id, prod_grp.id, categories)
+    |> Map.put(:title, prod_grp.title)
     |> Map.put(:option_values, [])
     |> Map.put(:tags, [])
     |> Store.add_product()

@@ -61,7 +61,7 @@
 																			<p>Hi <span><%= sale.contact.contact_name %></span>,</p>
 																			<p>I hope you are well,</p>
 																			<p>Please this is a quick reminder that <span style="color: red"><%= SalesReg.Order.calc_pay_outstanding(sale) %></span> in respect of the above referenced invoice is due for payment on <%= sale.invoice.due_date %></p>
-																			<a href="<%= sale.invoice.pdf_url %>" style="text-decoration: none!important;">
+																			<a href="#" style="text-decoration: none!important;">
 																				<span style="color:#127bcc">View Invoice</span>
 																			</a>
 																			<p>I would appreciate it if you can kindly confirm that everything is on track, for payment.</p>
