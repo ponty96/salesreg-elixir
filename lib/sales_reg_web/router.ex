@@ -15,6 +15,10 @@ defmodule SalesRegWeb.Router do
     plug(:accepts, ["json"])
   end
 
+  if Mix.env == :dev do
+    forward("/sent_emails", Bamboo.SentEmailViewerPlug)
+  end
+
   pipeline :hook do
     plug(SalesRegWeb.Plug.ValidateFlutterRequest)
   end
