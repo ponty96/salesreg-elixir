@@ -557,20 +557,21 @@ defmodule SalesReg.Store do
   end
 
   defp parse_product_params(product, params) do
-      params
-      |> Map.put(:title, product.product_group.title)
-      |> Map.put(:product_group_id, product.product_group.id)
-      |> Map.put(:option_values, Enum.map(product.option_values, &(transform_option_value(&1))))
+    params
+    |> Map.put(:title, product.product_group.title)
+    |> Map.put(:product_group_id, product.product_group.id)
+    |> Map.put(:option_values, Enum.map(product.option_values, &transform_option_value(&1)))
   end
 
   defp transform_option_value(option_value) do
     option_value = Map.from_struct(option_value)
+
     %{
       name: option_value.name,
       company_id: option_value.company_id,
       option_id: option_value.option_id
     }
-   end
+  end
 
   ## if the product group doesn't have options already,
   ##     1 update product group options association

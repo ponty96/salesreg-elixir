@@ -184,7 +184,7 @@
 									<td colspan="3" style="font-size:1px;height:50px" height="50">&nbsp;</td>
 								</tr>
 								<tr>
-									<td style="font-size:14px!important;color:#737881;font-weight:400;text-align:center" align="center"><%= sale.company.title %>, <%= Business.get_company_address(sale.company) %></td>
+									<td style="font-size:14px!important;color:#737881;font-weight:400;text-align:center" align="center"><%= sale.company.title %>, <%= SalesReg.Business.get_company_address(sale.company) %></td>
 								</tr>
 								<tr>
 									<td style="height:0;font-size:14px!important;color:#737881;font-weight:300;text-align:center" height="0" align="center">&nbsp;</td>
