@@ -685,7 +685,9 @@ defmodule SalesReg.Store do
     |> Enum.map(fn product ->
       product_changeset =
         Product.changeset(product, %{
-          option_values: parse_product_option_values(product.option_values, new_option_values)
+          option_values: parse_product_option_values(product.option_values, new_option_values),
+          title: product.product_group.title,
+          product_group_id: product.product_group.id
         })
 
       Repo.update(product_changeset)
