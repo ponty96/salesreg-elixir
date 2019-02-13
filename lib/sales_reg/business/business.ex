@@ -4,7 +4,14 @@ defmodule SalesReg.Business do
   """
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
-  alias SalesRegWeb.Services.{Heroku, Cloudfare}
+  alias SalesReg.Mailer.YipcartToCustomers, as: YC2C
+
+  alias SalesRegWeb.Services.{
+    Heroku,
+    Cloudfare,
+    Flutterwave
+  }
+
   require Logger
 
   use SalesReg.Context, [
@@ -52,7 +59,7 @@ defmodule SalesReg.Business do
          {:ok, company_template} <- Theme.add_company_template(company_template_params),
          {_int, _result} <- insert_company_email_temps(company.id),
          # TODO send email in task supervisor process
-         %Bamboo.Email{} <- send_email(company, "yc_email_welcome_to_yc") do
+         %Bamboo.Email{} <- YC2C.send_welcome_mail(company) do
       {:ok, company}
     else
       {:error, changeset} -> {:error, changeset}
@@ -87,11 +94,6 @@ defmodule SalesReg.Business do
     |> Business.update_company(params)
   end
 
-  def send_email(resource, type) do
-    binary = return_file_content(type)
-    Email.send_email(resource, type, binary)
-  end
-
   def get_company_subdomain(company) do
     base_domain =
       Application.get_env(:sales_reg, Heroku)
@@ -115,6 +117,17 @@ defmodule SalesReg.Business do
 
   def get_company_share_domain() do
     System.get_env("SHORT_URL") || "https://ycartstag.me"
+  end
+
+  def get_company_share_url(company) do
+    "#{get_company_share_domain()}/#{company.slug}"
+  end
+
+  def get_company_address(company) do
+    company = Repo.preload(company, [branches: [:location]])
+    location = Enum.at(company.branches, 0).location
+
+    "#{location.street1} #{location.city} #{location.state} #{location.country}"
   end
 
   ## CONTACTS
@@ -146,36 +159,39 @@ defmodule SalesReg.Business do
   end
 
   def create_bank(params) do
-    bank_list = company_banks(params.company_id)
+    with {:ok, :success, data} <- create_subaccount(params),
+         bank_params <- update_bank_params(params, data),
+         {:ok, bank} <- Business.add_bank(bank_params) do
+      {:ok, bank}
+    else
+      {:ok, :fail, _data} ->
+        Logger.debug(fn -> "The Server did perform the transaction." end)
+        {:error, [%{key: "subaccount", message: "Not successful"}]}
 
-    case params do
-      %{is_primary: true} ->
-        if Enum.count(bank_list) == 0 do
-          Business.add_bank(params)
-        else
-          update_bank_field(params.company_id)
-          Business.add_bank(params)
-        end
+      {:error, %Ecto.Changeset{}} = error ->
+        error
 
-      _ ->
-        if Enum.count(bank_list) == 0 do
-          params
-          |> Map.put(:is_primary, true)
-          |> Business.add_bank()
-        else
-          Business.add_bank(params)
-        end
+      {:error, _reason} ->
+        Logger.error(fn -> "An error occurred" end)
+        {:error, [%{key: "subaccount", message: "Not successful"}]}
     end
   end
 
   def update_bank_details(bank, params) do
-    case params do
-      %{is_primary: true} ->
-        update_bank_field(params.company_id)
-        Business.update_bank(bank, params)
+    with {:ok, :success, data} <- update_subaccount(params, bank.subaccount_transac_id),
+         {:ok, bank} <- Business.update_bank(bank, params) do
+      {:ok, bank}
+    else
+      {:ok, :fail, _data} ->
+        Logger.debug(fn -> "The Server did perform the transaction." end)
+        {:error, [%{key: "subaccount", message: "Not successful"}]}
 
-      _ ->
-        Business.update_bank(bank, params)
+      {:error, %Ecto.Changeset{}} = error ->
+        error
+
+      {:error, _reason} ->
+        Logger.error(fn -> "An error occurred" end)
+        {:error, [%{key: "subaccount", message: "Not successful"}]}
     end
   end
 
@@ -282,6 +298,97 @@ defmodule SalesReg.Business do
     end
 
     calc_expense_amount(t, acc + val.(h.amount))
+  end
+
+  def insert_company_email_temps(company_id) do
+    templates =
+      Enum.map(@email_types, fn type ->
+        %{
+          body: return_file_content(type),
+          type: type,
+          company_id: company_id
+        }
+      end)
+
+    Repo.insert_all(CompanyEmailTemplate, templates)
+  end
+
+  defp return_file_content(type) do
+    {:ok, binary} =
+      Path.expand("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
+      |> File.read()
+
+    binary
+  end
+
+  # The business name is the slug of the company
+  defp create_business_subdomain(business_name) do
+    Task.Supervisor.start_child(TaskSupervisor, fn ->
+      base_domain =
+        Application.get_env(:sales_reg, Heroku)
+        |> Keyword.get(:base_domain)
+
+      hostname = String.downcase(business_name) <> "." <> base_domain
+
+      with :ok <-
+             Logger.info(fn -> "Creating new domain on heroku with hostname: #{hostname}" end),
+           {:ok, :success, data} <- Heroku.create_domain(hostname),
+           {:ok, :success, data} <-
+             Cloudfare.create_dns_record(
+               "CNAME",
+               data["hostname"],
+               data["cname"],
+               %{"ttl" => 1}
+             ) do
+        {:ok, :success, data}
+      else
+        {:ok, :fail, data} ->
+          Logger.debug(fn -> "The Server did perform the transaction: #{data["cname"]}" end)
+          {:ok, :fail, data}
+
+        {:error, reason} ->
+          Logger.error(fn -> "An error occurred: #{reason}" end)
+          {:error, reason}
+      end
+    end)
+  end
+
+  defp create_subaccount(params) do
+    company = preload_company(params.company_id)
+
+    params
+    |> construct_subaccount_params(company)
+    |> Flutterwave.create_subaccount()
+  end
+
+  defp update_bank_params(params, data) do
+    params
+    |> Map.put(:subaccount_id, "#{data["data"]["subaccount_id"]}")
+    |> Map.put(:subaccount_transac_id, "#{data["data"]["id"]}")
+  end
+
+  defp update_subaccount(params, subaccount_id) do
+    company = preload_company(params.company_id)
+
+    params
+    |> construct_subaccount_params(company)
+    |> Flutterwave.update_subaccount(subaccount_id)
+  end
+
+  defp preload_company(company_id) do
+    Company
+    |> Repo.get(company_id)
+    |> Repo.preload([:phone])
+  end
+
+  defp construct_subaccount_params(params, company) do
+    %{
+      account_bank: params.bank_name,
+      account_number: params.account_number,
+      business_name: company.title,
+      business_email: company.contact_email,
+      business_mobile: company.phone.number
+    }
   end
 
   defp update_bank_field(company_id) do

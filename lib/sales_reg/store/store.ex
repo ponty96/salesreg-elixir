@@ -363,7 +363,7 @@ defmodule SalesReg.Store do
   end
 
   def update_product_details(id, params) do
-    product = Store.get_product(id, preload: [:product_group])
+    product = get_product(id, preload: [:product_group])
 
     params =
       params
@@ -533,18 +533,44 @@ defmodule SalesReg.Store do
 
   # PRODUCT INVENTORY
   defp increment_product_sku(product_id, quantity) do
-    product = get_product(product_id)
+    product = get_product_for_inventory(product_id)
     quantity = String.to_integer(quantity)
     product_sku = String.to_integer(product.sku)
-    update_product(product, %{"sku" => "#{quantity + product_sku}"})
+
+    params = parse_product_params(product, %{sku: "#{product_sku + quantity}"})
+
+    update_product(product, params)
   end
 
   defp decrement_product_sku(product_id, quantity) do
-    product = get_product(product_id)
+    product = get_product_for_inventory(product_id)
     quantity = String.to_integer(quantity)
     product_sku = String.to_integer(product.sku)
 
-    update_product(product, %{"sku" => "#{product_sku - quantity}"})
+    params = parse_product_params(product, %{sku: "#{product_sku - quantity}"})
+
+    update_product(product, params)
+  end
+
+  defp get_product_for_inventory(product_id) do
+    get_product(product_id, preload: [:product_group, :option_values])
+  end
+
+  defp parse_product_params(product, params) do
+    params
+    |> Map.put(:title, product.product_group.title)
+    |> Map.put(:product_group_id, product.product_group.id)
+    |> Map.put(:option_values, Enum.map(product.option_values, &transform_option_value(&1)))
+  end
+
+  defp transform_option_value(option_value) do
+    option_value = Map.from_struct(option_value)
+
+    %{
+      name: option_value.name,
+      company_id: option_value.company_id,
+      option_id: option_value.option_id
+    }
   end
 
   ## if the product group doesn't have options already,
@@ -654,12 +680,14 @@ defmodule SalesReg.Store do
   defp update_product_group_associated_product_option_values(new_option_values, product_group_id) do
     Product
     |> where([p], p.product_group_id == ^product_group_id)
-    |> preload([p], [:option_values])
+    |> preload([p], [:option_values, :product_group])
     |> Repo.all()
     |> Enum.map(fn product ->
       product_changeset =
         Product.changeset(product, %{
-          option_values: parse_product_option_values(product.option_values, new_option_values)
+          option_values: parse_product_option_values(product.option_values, new_option_values),
+          title: product.product_group.title,
+          product_group_id: product.product_group.id
         })
 
       Repo.update(product_changeset)

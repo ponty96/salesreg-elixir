@@ -1,5 +1,7 @@
 defmodule SalesReg.Tasks do
   use SalesRegWeb, :context
+  alias SalesReg.Mailer.YipcartToCustomers, as: YC2C
+  alias SalesReg.Mailer.MerchantsToCustomers, as: M2C
 
   # sends emails on the day orders are due for payment
   def mail_on_order_due_date() do
@@ -10,8 +12,15 @@ defmodule SalesReg.Tasks do
         Date.diff(due_date, now()) == 0
       end)
 
-    send_mul_email(invoices, "yc_email_reminder", :to_customers)
-    send_mul_email(invoices, "yc_email_invoice_due_notification", :to_merchants)
+    Enum.map(invoices, fn invoice ->
+      Order.preload_order(invoice).sale
+      |> M2C.send_reminder()
+    end)
+
+    Enum.map(invoices, fn invoice ->
+      Order.preload_order(invoice).sale
+      |> YC2C.send_invoice_due_notification()
+    end)
   end
 
   # sends emails 3 days before the orders are due for payment
@@ -21,7 +30,10 @@ defmodule SalesReg.Tasks do
       due_date = Mailer.naive_date(invoice.due_date)
       Date.diff(due_date, now()) == 3
     end)
-    |> send_mul_email("yc_email_reminder", :to_customers)
+    |> Enum.map(fn invoice ->
+      Order.preload_order(invoice).sale
+      |> M2C.send_reminder()
+    end)
   end
 
   # sends emails 3 days after the orders are due for payment
@@ -31,7 +43,10 @@ defmodule SalesReg.Tasks do
       due_date = Mailer.naive_date(invoice.due_date)
       Date.diff(now(), due_date) == 3
     end)
-    |> send_mul_email("yc_email_early_due", :to_customers)
+    |> Enum.map(fn invoice ->
+      Order.preload_order(invoice).sale
+      |> M2C.send_early_due_mail()
+    end)
   end
 
   # sends emails 7 days after the orders are due for payment
@@ -41,7 +56,10 @@ defmodule SalesReg.Tasks do
       due_date = Mailer.naive_date(invoice.due_date)
       Date.diff(now(), due_date) == 7
     end)
-    |> send_mul_email("yc_email_late_overdue", :to_customers)
+    |> Enum.map(fn invoice ->
+      Order.preload_order(invoice).sale
+      |> M2C.send_late_overdue_mail()
+    end)
   end
 
   # create activities when order is due
@@ -55,20 +73,6 @@ defmodule SalesReg.Tasks do
   end
 
   ### Private Functions
-  defp send_mul_email(invoices, type, :to_customers) do
-    Enum.map(invoices, fn invoice ->
-      invoice = Order.preload_invoice(invoice)
-      Email.send_email(invoice.sale, type)
-    end)
-  end
-
-  defp send_mul_email(invoices, type, :to_merchants) do
-    Enum.map(invoices, fn invoice ->
-      invoice = Order.preload_invoice(invoice)
-      Business.send_email(invoice.sale, type)
-    end)
-  end
-
   defp create_mul_activities(invoices) do
     Enum.map(invoices, fn invoice ->
       invoice = Order.preload_invoice(invoice)
