@@ -56,6 +56,12 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:reviews, list_of(:review), resolve: dataloader(SalesReg.Order, :reviews))
     field(:stars, list_of(:star), resolve: dataloader(SalesReg.Order, :stars))
 
+    field :sale_charge, :string do
+      resolve(fn _, _ ->
+        {:ok, "#{System.get_env("CHARGE")}"}
+      end)
+    end
+
     field(:legal_documents, list_of(:legal_document),
       resolve: dataloader(SalesReg.Business, :legal_documents)
     )
@@ -105,6 +111,116 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:street2, :string)
     field(:type, :string)
   end
+
+  @desc """
+    Contact object type
+  """
+  object :contact do
+    field(:id, :uuid)
+    field(:image, :string)
+    field(:contact_name, :string)
+    field(:email, :string)
+    field(:currency, :string)
+    field(:birthday, :string)
+    field(:marital_status, :string)
+    field(:likes, list_of(:string))
+    field(:dislikes, list_of(:string))
+    field(:type, :string)
+    field(:gender, :string)
+    field(:instagram, :string)
+    field(:twitter, :string)
+    field(:facebook, :string)
+    field(:snapchat, :string)
+    field(:allows_marketing, :string)
+
+    field :total_debt, :float do
+      resolve(fn _parent, %{source: contact} ->
+        {:ok, Order.contact_orders_debt(contact)}
+      end)
+    end
+
+    # total sales made by merchant to customer
+    field :total_amount_paid, :float do
+      resolve(fn _parent, %{source: contact} ->
+        {:ok, Order.contact_total_amount_paid(contact)}
+      end)
+    end
+
+    field(:address, :location, resolve: dataloader(SalesReg.Business, :address))
+    field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
+
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
+  end
+
+  connection(node_type: :contact)
+
+  @desc """
+    Phone object type
+  """
+  object :phone do
+    field(:id, :uuid)
+    field(:number, :string)
+    field(:type, :string)
+  end
+
+  @desc """
+    Bank object type
+  """
+  object :bank do
+    field(:id, :uuid)
+    field(:bank_code, :string)
+    field(:account_name, :string)
+    field(:account_number, :string)
+    field(:bank_name, :string)
+    field(:is_primary, :boolean)
+    field(:subaccount_id, :string)
+    field(:subaccount_transac_id, :string)
+
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+  end
+
+  connection(node_type: :bank)
+
+  @desc """
+    Expense object type
+  """
+  object :expense do
+    field(:id, :uuid)
+    field(:title, :string)
+    field(:date, :string)
+    field(:total_amount, :float)
+    field(:payment_method, :string)
+
+    field(:paid_by, :user, resolve: dataloader(SalesReg.Accounts, :paid_by))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+
+    field(
+      :expense_items,
+      list_of(:expense_item),
+      resolve: dataloader(SalesReg.Business, :expense_items)
+    )
+  end
+
+  connection(node_type: :expense)
+
+  @desc """
+    Expense Item object type
+  """
+  object :expense_item do
+    field(:id, :uuid)
+    field(:item_name, :string)
+    field(:amount, :float)
+
+    field(:expense, :expense, resolve: dataloader(SalesReg.Business, :expense))
+  end
+
+  connection(node_type: :tag)
 
   @desc """
     Product Group object type
@@ -194,169 +310,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   connection(node_type: :product)
 
   @desc """
-    Option Value Object Type
-  """
-  object :option_value do
-    field(:id, :uuid)
-    field(:name, :string)
-
-    field(:option, :option, resolve: dataloader(SalesReg.Store, :option))
-    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
-  end
-
-  @desc """
-    Contact object type
-  """
-  object :contact do
-    field(:id, :uuid)
-    field(:image, :string)
-    field(:contact_name, :string)
-    field(:email, :string)
-    field(:currency, :string)
-    field(:birthday, :string)
-    field(:marital_status, :string)
-    field(:likes, list_of(:string))
-    field(:dislikes, list_of(:string))
-    field(:type, :string)
-    field(:gender, :string)
-    field(:instagram, :string)
-    field(:twitter, :string)
-    field(:facebook, :string)
-    field(:snapchat, :string)
-    field(:allows_marketing, :string)
-
-    field :total_debt, :float do
-      resolve(fn _parent, %{source: contact} ->
-        {:ok, Order.contact_orders_debt(contact)}
-      end)
-    end
-
-    # total sales made by merchant to customer
-    field :total_amount_paid, :float do
-      resolve(fn _parent, %{source: contact} ->
-        {:ok, Order.contact_total_amount_paid(contact)}
-      end)
-    end
-
-    field(:address, :location, resolve: dataloader(SalesReg.Business, :address))
-    field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
-    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-    field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
-
-    field(:inserted_at, :naive_datetime)
-    field(:updated_at, :naive_datetime)
-  end
-
-  connection(node_type: :contact)
-
-  @desc """
-    Phone object type
-  """
-  object :phone do
-    field(:id, :uuid)
-    field(:number, :string)
-    field(:type, :string)
-  end
-
-  @desc """
-    Item object type
-  """
-  object :item do
-    field(:id, :uuid)
-    field(:quantity, :string)
-    field(:unit_price, :string)
-
-    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
-  end
-
-  @desc """
-    Sale object type
-  """
-  object :sale do
-    field(:id, :uuid)
-    field(:date, :string)
-    field(:status, :string)
-    field(:payment_method, :string)
-    field(:tax, :string)
-    field(:ref_id, :string)
-
-    field :amount, :float do
-      resolve(fn _parent, %{source: sale} ->
-        {:ok, Order.calc_order_amount(sale)}
-      end)
-    end
-
-    field :amount_paid, :float do
-      resolve(fn _parent, %{source: sale} ->
-        {:ok, Order.calc_order_amount_paid(sale)}
-      end)
-    end
-
-    field(:discount, :string)
-    field(:type, :string)
-    field(:inserted_at, :naive_datetime)
-    field(:updated_at, :naive_datetime)
-
-    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
-    field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
-    field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :items))
-    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-    field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
-    field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))
-    field(:location, :location, resolve: dataloader(SalesReg.Business, :location))
-  end
-
-  connection(node_type: :sale)
-
-  object :bank do
-    field(:id, :uuid)
-    field(:account_name, :string)
-    field(:account_number, :string)
-    field(:bank_name, :string)
-    field(:is_primary, :boolean)
-
-    field(:inserted_at, :naive_datetime)
-    field(:updated_at, :naive_datetime)
-
-    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-  end
-
-  connection(node_type: :bank)
-
-  @desc """
-    Expense object type
-  """
-  object :expense do
-    field(:id, :uuid)
-    field(:title, :string)
-    field(:date, :string)
-    field(:total_amount, :float)
-    field(:payment_method, :string)
-
-    field(:paid_by, :user, resolve: dataloader(SalesReg.Accounts, :paid_by))
-    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-
-    field(
-      :expense_items,
-      list_of(:expense_item),
-      resolve: dataloader(SalesReg.Business, :expense_items)
-    )
-  end
-
-  connection(node_type: :expense)
-
-  @desc """
-    Expense Item object type
-  """
-  object :expense_item do
-    field(:id, :uuid)
-    field(:item_name, :string)
-    field(:amount, :float)
-
-    field(:expense, :expense, resolve: dataloader(SalesReg.Business, :expense))
-  end
-
-  @desc """
     Category object Type
   """
   object :category do
@@ -393,7 +346,73 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:products, list_of(:product), resolve: dataloader(SalesReg.Store, :products))
   end
 
-  connection(node_type: :tag)
+  @desc """
+    Option Value Object Type
+  """
+  object :option_value do
+    field(:id, :uuid)
+    field(:name, :string)
+
+    field(:option, :option, resolve: dataloader(SalesReg.Store, :option))
+    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
+  end
+
+  @desc """
+    Sale object type
+  """
+  object :sale do
+    field(:id, :uuid)
+    field(:date, :string)
+    field(:status, :string)
+    field(:payment_method, :string)
+    field(:tax, :string)
+    field(:ref_id, :string)
+    field(:charge, :string)
+
+    field :amount, :float do
+      resolve(fn _parent, %{source: sale} ->
+        {:ok, Order.calc_order_amount(sale)}
+      end)
+    end
+
+    field :amount_before_charge, :float do
+      resolve(fn _parent, %{source: sale} ->
+        {:ok, Order.cal_order_amount_before_charge(sale)}
+      end)
+    end
+
+    field :amount_paid, :float do
+      resolve(fn _parent, %{source: sale} ->
+        {:ok, Order.calc_order_amount_paid(sale)}
+      end)
+    end
+
+    field(:discount, :string)
+    field(:type, :string)
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
+
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+    field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
+    field(:items, list_of(:item), resolve: dataloader(SalesReg.Order, :items))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
+    field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))
+    field(:location, :location, resolve: dataloader(SalesReg.Business, :location))
+  end
+
+  connection(node_type: :sale)
+
+  @desc """
+  Item object type
+  """
+  object :item do
+    field(:id, :uuid)
+    field(:quantity, :string)
+    field(:unit_price, :string)
+
+    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
+  end
 
   @desc """
     Invoice object Type
@@ -409,18 +428,50 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       end)
     end
 
+    field :amount_before_charge, :float do
+      resolve(fn _parent, %{source: invoice} ->
+        %{amount: order_amount_before_charge} = Order.cal_order_amount_before_charge(invoice)
+        {:ok, order_amount_before_charge}
+      end)
+    end
+
     field :amount_paid, :float do
       resolve(fn _parent, %{source: invoice} ->
         {:ok, Order.calc_order_amount_paid(invoice)}
       end)
     end
 
+    field :share_link, :string do
+      resolve(fn _, %{source: invoice} ->
+        {:ok, Order.get_invoice_share_link(invoice)}
+      end)
+    end
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+    field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
+    field(:receipts, list_of(:receipt), resolve: dataloader(SalesReg.Order, :receipts))
+  end
+
+  connection(node_type: :invoice)
+
+  @desc """
+    Receipt object Type
+  """
+  object :receipt do
+    field(:id, :uuid)
+    field(:amount_paid, :string)
+    field(:time_paid, :string)
+    field(:payment_method, :payment_method)
+    field(:pdf_url, :string)
+    field(:reference_id, :string)
+    field(:ref_id, :string)
+
+    field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
   end
-
-  connection(node_type: :invoice)
 
   @desc """
     Review object type
@@ -446,24 +497,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
     field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-  end
-
-  @desc """
-    Receipt object Type
-  """
-  object :receipt do
-    field(:id, :uuid)
-    field(:amount_paid, :string)
-    field(:time_paid, :string)
-    field(:payment_method, :payment_method)
-    field(:pdf_url, :string)
-    field(:reference_id, :string)
-    field(:ref_id, :string)
-
-    field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))
-    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
-    field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
   end
 
   @desc """
@@ -578,7 +611,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
   object :error do
     field(:message, :string)
-    field(:key, non_null(:string))
+    field(:key, :string)
   end
 
   object :authorization do
@@ -673,7 +706,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:head_office, non_null(:location_input))
     field(:currency, non_null(:string))
     field(:description, :string)
-    field(:phone, :phone_input)
+    field(:phone, non_null(:phone_input))
     field(:logo, :string)
     field(:slug, non_null(:string))
     field(:facebook, :string)
@@ -819,7 +852,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   input_object :bank_input do
-    field(:account_name, :string)
+    field(:bank_code, non_null(:string))
+    field(:account_name, non_null(:string))
     field(:account_number, non_null(:string))
     field(:bank_name, non_null(:string))
     field(:is_primary, :boolean)

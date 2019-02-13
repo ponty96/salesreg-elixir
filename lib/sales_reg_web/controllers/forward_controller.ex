@@ -14,6 +14,24 @@ defmodule SalesRegWeb.ForwardController do
     redirect(conn, external: url)
   end
 
+  def forward_invoice(conn, %{"business_slug" => slug, "invoice_id" => invoice_id}) do
+    url = "#{base_url(conn, slug)}/invoices/#{invoice_id}"
+
+    redirect(conn, external: url)
+  end
+
+  def forward_receipt(conn, %{"business_slug" => slug, "receipt_id" => receipt_id}) do
+    url = "#{base_url(conn, slug)}/receipts/#{receipt_id}"
+
+    redirect(conn, external: url)
+  end
+
+  def forward_sale(conn, %{"business_slug" => slug, "sale_id" => receipt_id}) do
+    url = "#{base_url(conn, slug)}/sales/#{receipt_id}"
+
+    redirect(conn, external: url)
+  end
+
   defp get_product_query_params(product_slug) do
     %{option_values: option_values} =
       product_slug

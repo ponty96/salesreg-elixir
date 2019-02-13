@@ -1,6 +1,8 @@
 defmodule SalesReg.Order.Invoice do
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Business
+  alias SalesReg.Repo
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -36,5 +38,10 @@ defmodule SalesReg.Order.Invoice do
     |> assoc_constraint(:sale)
     |> assoc_constraint(:user)
     |> assoc_constraint(:company)
+  end
+
+  def get_invoice_share_link(invoice) do
+    invoice = Repo.preload(invoice, [:company])
+    "#{Business.get_company_share_domain()}/#{invoice.company.slug}/in/#{invoice.id}"
   end
 end

@@ -7,6 +7,8 @@ defmodule SalesReg.Order do
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
   alias SalesReg.Order.OrderStateMachine
+  alias SalesReg.Mailer.YipcartToCustomers, as: YC2C
+  alias SalesReg.Mailer.MerchantsToCustomers, as: M2C
 
   use SalesReg.Context, [
     Sale,
@@ -19,6 +21,10 @@ defmodule SalesReg.Order do
 
   @receipt_html_path "lib/sales_reg_web/templates/mailer/yc_email_receipt_pdf.html.eex"
   @invoice_html_path "lib/sales_reg_web/templates/mailer/yc_email_order_invoice_pdf.html.eex"
+
+  defdelegate get_invoice_share_link(invoice), to: Invoice
+  defdelegate get_sale_share_link(sale), to: Sale
+  defdelegate get_receipt_share_link(receipt), to: Receipt
 
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
@@ -92,25 +98,14 @@ defmodule SalesReg.Order do
     end)
   end
 
-  def update_receipt_details(filename, %Receipt{} = receipt) do
-    company = receipt.company
-    url = SalesReg.ImageUpload.url({filename, company})
-    __MODULE__.update_receipt(receipt, %{pdf_url: url})
-  end
-
-  def update_invoice_details(filename, %Invoice{} = invoice) do
-    company = invoice.company
-    url = SalesReg.ImageUpload.url({filename, company})
-    __MODULE__.update_invoice(invoice, %{pdf_url: url})
-  end
-
   # Called when a registered company contact makes an order and pays some amount using cash
   def create_sale(%{contact_id: _id, amount_paid: amount, payment_method: "cash"} = params) do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      Email.send_email(sale, "yc_email_received_order")
-      __MODULE__.send_email(sale, "yc_email_order_notification")
+      M2C.send_received_order_mail(sale)
+      # send order notification email to merchant
+      YC2C.send_order_notification(sale)
 
       {:ok, "Email Sent"}
     end)
@@ -132,8 +127,9 @@ defmodule SalesReg.Order do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      Email.send_email(sale, "yc_email_received_order")
-      __MODULE__.send_email(sale, "yc_email_order_notification")
+      M2C.send_received_order_mail(sale)
+      # send order notification email to merchant
+      YC2C.send_order_notification(sale)
 
       {:ok, "Email Sent"}
     end)
@@ -156,8 +152,9 @@ defmodule SalesReg.Order do
       |> Order.add_sale()
     end)
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      Email.send_email(sale, "yc_email_received_order")
-      __MODULE__.send_email(sale, "yc_email_order_notification")
+      M2C.send_received_order_mail(sale)
+      # send order notification email to merchant
+      YC2C.send_order_notification(sale)
 
       {:ok, "Email Sent"}
     end)
@@ -184,8 +181,9 @@ defmodule SalesReg.Order do
       |> Order.add_sale()
     end)
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      Email.send_email(sale, "yc_email_received_order")
-      __MODULE__.send_email(sale, "yc_email_order_notification")
+      M2C.send_received_order_mail(sale)
+      # send order notification email to merchant
+      YC2C.send_order_notification(sale)
 
       {:ok, "Email Sent"}
     end)
@@ -237,8 +235,9 @@ defmodule SalesReg.Order do
   def sale_multi_transac(multi) do
     multi
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      Email.send_email(sale, "yc_email_received_order")
-      __MODULE__.send_email(sale, "yc_email_order_notification")
+      M2C.send_received_order_mail(sale)
+      # send order notification email to merchant
+      YC2C.send_order_notification(sale)
 
       {:ok, "Email Sent"}
     end)
@@ -247,34 +246,6 @@ defmodule SalesReg.Order do
     end)
     |> Repo.transaction()
     |> repo_transaction_resp()
-  end
-
-  def supervise_pdf_upload(resource) do
-    Task.Supervisor.start_child(TaskSupervisor, fn ->
-      {:ok, filename} = Order.upload_pdf(resource)
-
-      case resource do
-        %Receipt{} ->
-          Order.update_receipt_details(filename, resource)
-
-        %Invoice{} ->
-          Order.update_invoice_details(filename, resource)
-
-        _ ->
-          %{}
-      end
-    end)
-  end
-
-  def upload_pdf(resource) do
-    uniq_name = gen_pdf_uniq_name(resource)
-
-    {:ok, path} =
-      resource
-      |> build_resource_html()
-      |> PdfGenerator.generate(filename: uniq_name)
-
-    SalesReg.ImageUpload.store({path, resource.company})
   end
 
   def create_receipt(%{invoice_id: id, amount_paid: amount}) do
@@ -295,10 +266,9 @@ defmodule SalesReg.Order do
     case add_invoice do
       {:ok, invoice} ->
         invoice = preload_invoice(invoice)
-        Order.supervise_pdf_upload(invoice)
 
         invoice.sale
-        |> Email.send_email("yc_email_before_due")
+        |> M2C.send_before_due_mail()
 
         add_invoice
 
@@ -318,11 +288,11 @@ defmodule SalesReg.Order do
       {:ok, receipt} ->
         receipt = preload_receipt(receipt)
 
-        Order.supervise_pdf_upload(receipt)
-        Email.send_email(sale, "yc_payment_received")
+        M2C.send_payment_received_mail(sale)
 
+        # send invoice payment notifice email to merchant
         Map.put_new(sale, :amount, amount)
-        |> __MODULE__.send_email("yc_email_invoice_payment_notice")
+        |> YC2C.send_invoice_payment_notice()
 
         {:ok, receipt}
 
@@ -347,11 +317,11 @@ defmodule SalesReg.Order do
       {:ok, receipt} ->
         receipt = Repo.preload(receipt, [:company, :invoice, :user, sale: [items: [:product]]])
 
-        Order.supervise_pdf_upload(receipt)
-        Email.send_email(sale, "yc_payment_received")
+        M2C.send_payment_received_mail(sale)
 
+        # send invoice payment notifice email to merchant
         Map.put_new(sale, :amount, amount)
-        |> __MODULE__.send_email("yc_email_invoice_payment_notice")
+        |> YC2C.send_invoice_payment_notice()
 
         {:ok, receipt}
 
@@ -359,8 +329,6 @@ defmodule SalesReg.Order do
         error_tuple
     end
   end
-
-  defdelegate send_email(resource, type), to: Business, as: :send_email
 
   def create_activities(receipt) do
     receipt = preload_receipt(receipt)
@@ -402,14 +370,26 @@ defmodule SalesReg.Order do
     Repo.get_by(Receipt, transaction_id: transaction_id)
   end
 
-  def calc_order_amount(%Sale{} = sale) do
+  def cal_order_amount_before_charge(%Sale{} = sale) do
     sale = Repo.preload(sale, [:items])
     calc_items_amount(sale.items)
   end
 
-  def calc_order_amount(%Invoice{} = invoice) do
+  def calc_order_amount(%Sale{} = sale) do
+    order_amount_before_charge = cal_order_amount_before_charge(sale)
+    order_amount_before_charge + charge_to_float(sale.charge) * order_amount_before_charge
+  end
+
+  def cal_order_amount_before_charge(%Invoice{} = invoice) do
     invoice = Repo.preload(invoice, sale: :items)
-    calc_items_amount(invoice.sale.items)
+    %{invoice: invoice, amount: calc_items_amount(invoice.sale.items)}
+  end
+
+  def calc_order_amount(%Invoice{} = invoice) do
+    %{invoice: invoice, amount: order_amount_before_charge} =
+      cal_order_amount_before_charge(invoice)
+
+    order_amount_before_charge + charge_to_float(invoice.sale.charge) * order_amount_before_charge
   end
 
   def calc_order_amount_paid(%Sale{} = sale) do
@@ -567,14 +547,6 @@ defmodule SalesReg.Order do
     EEx.eval_file(@invoice_html_path, invoice: invoice)
   end
 
-  defp gen_pdf_uniq_name(resource) do
-    source = resource.__meta__.source
-    schema = resource.__meta__.schema
-    count = Enum.count(Repo.all(schema))
-
-    "#{String.replace(resource.company.title, " ", "-")}-#{source}-#{count}"
-  end
-
   defp create_star_or_review(params, callback) do
     with sale <- get_sale(params.sale_id),
          true <- sale.contact_id == params.contact_id,
@@ -610,5 +582,9 @@ defmodule SalesReg.Order do
       )
 
     Repo.all(query)
+  end
+
+  defp charge_to_float(charge) do
+    charge |> Float.parse() |> elem(0)
   end
 end

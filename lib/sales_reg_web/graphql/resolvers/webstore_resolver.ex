@@ -78,6 +78,18 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
     Order.create_sale(sale_params)
   end
 
+  def sale_page_query(%{sale_id: id}, _resolution) do
+    {:ok, Order.get_sale(id)}
+  end
+
+  def invoice_page_query(%{invoice_id: id}, _resolution) do
+    {:ok, Order.get_invoice(id)}
+  end
+
+  def receipt_page_query(%{receipt_id: id}, _resolution) do
+    {:ok, Order.get_receipt(id)}
+  end
+
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
   end
