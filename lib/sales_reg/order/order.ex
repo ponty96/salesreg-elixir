@@ -94,18 +94,6 @@ defmodule SalesReg.Order do
     end)
   end
 
-  def update_receipt_details(filename, %Receipt{} = receipt) do
-    company = receipt.company
-    url = SalesReg.ImageUpload.url({filename, company})
-    __MODULE__.update_receipt(receipt, %{pdf_url: url})
-  end
-
-  def update_invoice_details(filename, %Invoice{} = invoice) do
-    company = invoice.company
-    url = SalesReg.ImageUpload.url({filename, company})
-    __MODULE__.update_invoice(invoice, %{pdf_url: url})
-  end
-
   # Called when a registered company contact makes an order and pays some amount using cash
   def create_sale(%{contact_id: _id, amount_paid: amount, payment_method: "cash"} = params) do
     Multi.new()
@@ -261,34 +249,6 @@ defmodule SalesReg.Order do
     |> repo_transaction_resp()
   end
 
-  def supervise_pdf_upload(resource) do
-    Task.Supervisor.start_child(TaskSupervisor, fn ->
-      {:ok, filename} = Order.upload_pdf(resource)
-
-      case resource do
-        %Receipt{} ->
-          Order.update_receipt_details(filename, resource)
-
-        %Invoice{} ->
-          Order.update_invoice_details(filename, resource)
-
-        _ ->
-          %{}
-      end
-    end)
-  end
-
-  def upload_pdf(resource) do
-    uniq_name = gen_pdf_uniq_name(resource)
-
-    {:ok, path} =
-      resource
-      |> build_resource_html()
-      |> PdfGenerator.generate(filename: uniq_name)
-
-    SalesReg.ImageUpload.store({path, resource.company})
-  end
-
   def create_receipt(%{invoice_id: id, amount_paid: amount}) do
     invoice =
       Order.get_invoice(id)
@@ -307,7 +267,6 @@ defmodule SalesReg.Order do
     case add_invoice do
       {:ok, invoice} ->
         invoice = preload_invoice(invoice)
-        Order.supervise_pdf_upload(invoice)
 
         invoice.sale
         |> M2C.send_before_due_mail()
@@ -330,7 +289,6 @@ defmodule SalesReg.Order do
       {:ok, receipt} ->
         receipt = preload_receipt(receipt)
 
-        Order.supervise_pdf_upload(receipt)
         M2C.send_payment_received_mail(sale)
 
         # send invoice payment notifice email to merchant
@@ -360,7 +318,6 @@ defmodule SalesReg.Order do
       {:ok, receipt} ->
         receipt = Repo.preload(receipt, [:company, :invoice, :user, sale: [items: [:product]]])
 
-        Order.supervise_pdf_upload(receipt)
         M2C.send_payment_received_mail(sale)
 
         # send invoice payment notifice email to merchant
@@ -577,14 +534,6 @@ defmodule SalesReg.Order do
 
   defp build_resource_html(%Invoice{} = invoice) do
     EEx.eval_file(@invoice_html_path, invoice: invoice)
-  end
-
-  defp gen_pdf_uniq_name(resource) do
-    source = resource.__meta__.source
-    schema = resource.__meta__.schema
-    count = Enum.count(Repo.all(schema))
-
-    "#{String.replace(resource.company.title, " ", "-")}-#{source}-#{count}"
   end
 
   defp create_star_or_review(params, callback) do

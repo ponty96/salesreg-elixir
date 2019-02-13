@@ -60,7 +60,7 @@
 																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89)">
 																			<p>Dear <span><%= sale.contact.contact_name %></span>,</p>
 																			<p>The above referenced invoice has been created for you, based on orders you made.</p>
-																			<a href="<%= sale.invoice.pdf_url %>" style="text-decoration: none!important;">
+																			<a href="#" style="text-decoration: none!important;">
 																				<span style="color:#127bcc">View Invoice</span>
 																			</a>
 																			<p>We appreciate your prompt payment.</p>
