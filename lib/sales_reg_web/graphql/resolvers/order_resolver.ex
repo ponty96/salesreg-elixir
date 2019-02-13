@@ -1,5 +1,6 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   use SalesRegWeb, :context
+  alias SalesReg.Mailer.MerchantsToCustomers, as: M2C
 
   def upsert_sale(%{sale: params, sale_id: id}, _res) do
     Order.get_sale(id)
@@ -44,11 +45,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
 
     case create_receipt do
       {:ok, receipt} ->
-        Order.supervise_pdf_upload(receipt)
         sale = Order.preload_receipt(receipt).sale
-
-        receipt.company_id
-        |> Email.send_email("yc_payment_received", sale)
+        M2C.send_payment_received_mail(sale)
 
         {:ok, receipt}
 
