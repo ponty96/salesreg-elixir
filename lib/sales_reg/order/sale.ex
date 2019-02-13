@@ -1,6 +1,7 @@
 defmodule SalesReg.Order.Sale do
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Business
   alias SalesReg.Repo
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -44,7 +45,8 @@ defmodule SalesReg.Order.Sale do
 
   @doc false
   def changeset(sale, attrs) do
-    new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
+    new_attrs =
+      SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
       |> Map.put_new(:charge, "#{System.get_env("CHARGE")}")
 
     sale
@@ -75,5 +77,10 @@ defmodule SalesReg.Order.Sale do
     |> no_assoc_constraint(:items,
       message: "This sale is still associated with a product"
     )
+  end
+
+  def get_sale_share_link(sale) do
+    sale = Repo.preload(sale, [:company])
+    "#{Business.get_company_share_domain()}/#{sale.company.slug}/s/#{sale.id}"
   end
 end

@@ -2,20 +2,21 @@ defmodule SalesRegWeb.Services.Flutterwave do
   alias SalesRegWeb.Services.Base
 
   @base_url "https://ravesandboxapi.flutterwave.com/"
-  @flutterwave_secret_key System.get_env("FLUTTERWAVE_SECRET_KEY")
 
   def create_subaccount(params) do
-    body = params
+    body =
+      params
       |> construct_subaccount_details()
       |> Base.encode()
 
-    :post 
+    :post
     |> request(process_url("v2/gpx/subaccounts/create"), body)
     |> Base.process_response()
   end
 
   def update_subaccount(params, id) do
-    body = params
+    body =
+      params
       |> construct_subaccount_details()
       |> Map.delete("business_mobile")
       |> Map.put("id", id)
@@ -27,7 +28,7 @@ defmodule SalesRegWeb.Services.Flutterwave do
   end
 
   def list_subaccount() do
-    endpoint = process_url("v2/gpx/subaccounts?seckey=#{@flutterwave_secret_key}")
+    endpoint = process_url("v2/gpx/subaccounts?seckey=#{get_flutterwave_key()}")
 
     request(:get, endpoint, "")
     |> Base.process_response()
@@ -35,11 +36,12 @@ defmodule SalesRegWeb.Services.Flutterwave do
 
   def delete_subaccount(id) do
     endpoint = process_url("v2/gpx/subaccounts/delete")
-    body = 
+
+    body =
       %{
         "id" => id,
-        "seckey" => @flutterwave_secret_key
-      } 
+        "seckey" => get_flutterwave_key()
+      }
       |> Base.encode()
 
     request(:delete, endpoint, body)
@@ -48,11 +50,12 @@ defmodule SalesRegWeb.Services.Flutterwave do
 
   defp request(method, endpoint, body, opts \\ []) do
     header = [{"Content-Type", "application/json"}]
+
     HTTPoison.request(
       method,
-      endpoint, 
-      body, 
-      header, 
+      endpoint,
+      body,
+      header,
       Base.set_default_timeout(opts)
     )
   end
@@ -68,9 +71,13 @@ defmodule SalesRegWeb.Services.Flutterwave do
       "business_name" => params.business_name,
       "business_email" => params.business_email,
       "business_mobile" => params.business_mobile,
-      "seckey" => @flutterwave_secret_key,
+      "seckey" => get_flutterwave_key(),
       "split_type" => "percentage",
       "split_value" => "#{System.get_env("CHARGE")}"
     }
+  end
+
+  defp get_flutterwave_key do
+    System.get_env("FLUTTERWAVE_SECRET_KEY")
   end
 end

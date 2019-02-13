@@ -19,15 +19,15 @@ defmodule SalesReg.Business.Bank do
   end
 
   @required_fields [
-    :account_number, 
-    :bank_name, 
-    :company_id, 
-    :account_name, 
+    :account_number,
+    :bank_name,
+    :company_id,
+    :account_name,
     :bank_code,
     :subaccount_id,
     :subaccount_transac_id
   ]
-  
+
   @optional_fields []
 
   @doc false
