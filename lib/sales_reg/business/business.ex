@@ -5,6 +5,7 @@ defmodule SalesReg.Business do
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
   alias SalesReg.Mailer.YipcartToCustomers, as: YC2C
+
   alias SalesRegWeb.Services.{
     Heroku,
     Cloudfare,
@@ -389,5 +390,3 @@ defmodule SalesReg.Business do
     |> Business.update_bank(attrs)
   end
 end
-
-

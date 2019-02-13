@@ -12,12 +12,12 @@ defmodule SalesReg.Tasks do
         Date.diff(due_date, now()) == 0
       end)
 
-    Enum.map(invoices, fn(invoice) ->
+    Enum.map(invoices, fn invoice ->
       Order.preload_order(invoice).sale
       |> M2C.send_reminder()
     end)
-    
-    Enum.map(invoices, fn(invoice) ->
+
+    Enum.map(invoices, fn invoice ->
       Order.preload_order(invoice).sale
       |> YC2C.send_invoice_due_notification()
     end)
@@ -30,9 +30,9 @@ defmodule SalesReg.Tasks do
       due_date = Mailer.naive_date(invoice.due_date)
       Date.diff(due_date, now()) == 3
     end)
-    |> Enum.map(fn(invoice) ->
-        Order.preload_order(invoice).sale
-        |> M2C.send_reminder()
+    |> Enum.map(fn invoice ->
+      Order.preload_order(invoice).sale
+      |> M2C.send_reminder()
     end)
   end
 
@@ -43,7 +43,7 @@ defmodule SalesReg.Tasks do
       due_date = Mailer.naive_date(invoice.due_date)
       Date.diff(now(), due_date) == 3
     end)
-    |> Enum.map(fn(invoice) ->
+    |> Enum.map(fn invoice ->
       Order.preload_order(invoice).sale
       |> M2C.send_early_due_mail()
     end)
@@ -56,7 +56,7 @@ defmodule SalesReg.Tasks do
       due_date = Mailer.naive_date(invoice.due_date)
       Date.diff(now(), due_date) == 7
     end)
-    |> Enum.map(fn(invoice) ->
+    |> Enum.map(fn invoice ->
       Order.preload_order(invoice).sale
       |> M2C.send_late_overdue_mail()
     end)

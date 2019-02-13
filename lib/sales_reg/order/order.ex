@@ -23,6 +23,8 @@ defmodule SalesReg.Order do
   @invoice_html_path "lib/sales_reg_web/templates/mailer/yc_email_order_invoice_pdf.html.eex"
 
   defdelegate get_invoice_share_link(invoice), to: Invoice
+  defdelegate get_sale_share_link(sale), to: Sale
+  defdelegate get_receipt_share_link(receipt), to: Receipt
 
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
@@ -101,7 +103,6 @@ defmodule SalesReg.Order do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      
       M2C.send_received_order_mail(sale)
       # send order notification email to merchant
       YC2C.send_order_notification(sale)
@@ -126,7 +127,6 @@ defmodule SalesReg.Order do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      
       M2C.send_received_order_mail(sale)
       # send order notification email to merchant
       YC2C.send_order_notification(sale)
@@ -152,7 +152,6 @@ defmodule SalesReg.Order do
       |> Order.add_sale()
     end)
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      
       M2C.send_received_order_mail(sale)
       # send order notification email to merchant
       YC2C.send_order_notification(sale)
@@ -182,7 +181,6 @@ defmodule SalesReg.Order do
       |> Order.add_sale()
     end)
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      
       M2C.send_received_order_mail(sale)
       # send order notification email to merchant
       YC2C.send_order_notification(sale)
@@ -237,7 +235,6 @@ defmodule SalesReg.Order do
   def sale_multi_transac(multi) do
     multi
     |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      
       M2C.send_received_order_mail(sale)
       # send order notification email to merchant
       YC2C.send_order_notification(sale)

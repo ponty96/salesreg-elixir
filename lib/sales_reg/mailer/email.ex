@@ -123,7 +123,7 @@ defmodule SalesReg.Email do
 
   #     "yc_email_invoice_due_notification" ->
   #       "Payment Reminder Invoice ##{sale.invoice.ref_id}"
-      
+
   #      _ ->
   #       "No Subject"
   #   end
