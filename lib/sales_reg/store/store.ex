@@ -680,7 +680,7 @@ defmodule SalesReg.Store do
   defp update_product_group_associated_product_option_values(new_option_values, product_group_id) do
     Product
     |> where([p], p.product_group_id == ^product_group_id)
-    |> preload([p], [:option_values])
+    |> preload([p], [:option_values, :product_group])
     |> Repo.all()
     |> Enum.map(fn product ->
       product_changeset =
