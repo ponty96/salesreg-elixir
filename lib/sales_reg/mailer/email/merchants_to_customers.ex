@@ -5,7 +5,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
   def send_reminder(sale) do
     sale = Order.preload_order(sale)
     subject = "Payment Reminder Invoice ##{sale.invoice.ref_id}"
-    
+
     sale
     |> eval_and_send_email("yc_email_reminder", subject)
   end
@@ -13,7 +13,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
   def send_before_due_mail(sale) do
     sale = Order.preload_order(sale)
     subject = "Invoice ##{sale.invoice.ref_id} created"
-    
+
     sale
     |> eval_and_send_email("yc_email_before_due", subject)
   end
@@ -21,7 +21,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
   def send_delivered_order_mail(sale) do
     sale = Order.preload_order(sale)
     subject = "Delivered Order ##{sale.ref_id}"
-    
+
     sale
     |> eval_and_send_email("yc_email_delivered_order", subject)
   end
@@ -29,7 +29,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
   def send_delivering_order_mail(sale) do
     sale = Order.preload_order(sale)
     subject = "Delivering Order ##{sale.ref_id}"
-    
+
     sale
     |> eval_and_send_email("yc_email_delivering_order", subject)
   end
@@ -37,7 +37,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
   def send_early_due_mail(sale) do
     sale = Order.preload_order(sale)
     subject = "Payment Reminder Invoice ##{sale.invoice.ref_id}"
-    
+
     sale
     |> eval_and_send_email("yc_email_early_due", subject)
   end
@@ -45,7 +45,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
   def send_late_overdue_mail(sale) do
     sale = Order.preload_order(sale)
     subject = "Payment Reminder Invoice ##{sale.invoice.ref_id}"
-    
+
     sale
     |> eval_and_send_email("yc_email_late_overdue", subject)
   end
@@ -53,7 +53,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
   def send_pending_delivery_mail(sale) do
     sale = Order.preload_order(sale)
     subject = "Pending Delivery Order ##{sale.ref_id}"
-    
+
     sale
     |> eval_and_send_email("yc_email_pending_delivery", subject)
   end
@@ -61,7 +61,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
   def send_pending_order_mail(sale) do
     sale = Order.preload_order(sale)
     subject = "Pending Order ##{sale.ref_id}"
-    
+
     sale
     |> eval_and_send_email("yc_email_pending_order", subject)
   end
@@ -69,7 +69,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
   def send_received_order_mail(sale) do
     sale = Order.preload_order(sale)
     subject = "Order Received"
-    
+
     sale
     |> eval_and_send_email("yc_email_received_order", subject)
   end
@@ -77,7 +77,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
   def send_payment_received_mail(sale) do
     sale = Order.preload_order(sale)
     subject = "Payment on invoice ##{sale.invoice.ref_id}"
-    
+
     sale
     |> eval_and_send_email("yc_payment_received", subject)
   end
@@ -86,9 +86,9 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
     template =
       sale.company.id
       |> Theme.get_email_template_by_type(type)
-    
+
     eval_html_body = EEx.eval_string(template.body, sale: sale)
-    
+
     sale
     |> send_email(eval_html_body, subject)
   end

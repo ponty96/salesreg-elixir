@@ -61,7 +61,7 @@
 																			<p>Hi <span><%= sale.contact.contact_name %></span>,</p>
 																			<p>Feels really good to let you know that your order as referenced above, has been delivered.</p>
 																			<p>Please, if you think there is anything you want to ask us, do not hesitate, send an email to <a href="mailto:<%= sale.company.contact_email %>" style="color:#127bcc"><%= sale.company.contact_email %></a> we can't wait to help you.</p>
-																			<p>You can <a href="#" style="text-decoration: none!important;"><span style="color:#127bcc">View your order</span></a> or <a href="<%= SalesReg.Business.get_company_subdomain(sale.company) %>" style="text-decoration: none!important;"><span style="color:#127bcc">visit our store</span></a></p>
+																			<p>You can <a href="<%= SalesReg.Order.get_sale_share_link(sale) %>" style="text-decoration: none!important;"><span style="color:#127bcc">View your order</span></a> or <a href="<%= SalesReg.Business.get_company_subdomain(sale.company) %>" style="text-decoration: none!important;"><span style="color:#127bcc">visit our store</span></a></p>
 																			<p><%= sale.contact.contact_name %>, it has been a pleasure having you, thank you for choosing <%= sale.company.title %></p>
 																			<p>Best regards,<br><%= sale.company.owner.first_name %>.</p>
 																		</td>
@@ -105,8 +105,8 @@
 								<tr>
 									<td>
 										<center>
-											<a href="https://yipcart.com" target="_blank">
-												<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/yipcart-logo.png" width="114" height="40" alt="YipCart" class="CToWUd">
+											<a href="<%= SalesReg.Business.get_company_share_url(sale.company) %>" target="_blank">
+												<img src="<%= sale.company.logo %>" width="114" height="40" alt="YipCart" class="CToWUd">
 											</a>
 										</center>
 									</td>
@@ -120,7 +120,9 @@
 								<!-- Footer Yipcart intro -->
 								<tr>
 									<td>
-										<h2 style="color: rgb(85,85,85);font-size:15px!important;font-weight:400;line-height:1.4em;text-align:center" align="center">The product and service eco-system that streamline the sales, ordering, and communication processes.</h2>
+										<h2 style="color: rgb(85,85,85);font-size:15px!important;font-weight:400;line-height:1.4em;text-align:center" align="center">
+											<%= sale.company.description %>
+										</h2>
 									</td>
 								</tr>
 								<!-- Footer Yipcart intro Ends -->
@@ -146,7 +148,7 @@
 											<!-- Social Medias -->
 											<tr>
 												<td>
-													<a href="https://facebook.com/yipcarthq" target="_blank">
+													<a href="https://facebook.com/<%= sale.company.facebook %>" target="_blank">
 														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/facebook-footer-icon.png" width="50" height="50" alt="Facebook Logo">
 													</a>
 												</td>
@@ -156,7 +158,7 @@
 												<td></td>
 
 												<td>
-													<a href="https://twitter.com/yipcarthq" target="_blank">
+													<a href="https://twitter.com/<%= sale.company.twitter %>" target="_blank">
 														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/twitter-footer-icon.png" width="50" height="50" alt="Twitter Logo">
 													</a>
 												</td>
@@ -164,7 +166,7 @@
 												<td style="font-size:1px;width:32px;height:30px" height="30" width="32">&nbsp;</td>
 
 												<td>
-													<a href="#" target="_blank">
+													<a href="https://instagram.com/<%= sale.company.instagram %>" target="_blank">
 														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/instagram.png" width="50" height="50" alt="Instagram Logo">
 													</a>
 												</td>
@@ -180,7 +182,7 @@
 									<td colspan="3" style="font-size:1px;height:50px" height="50">&nbsp;</td>
 								</tr>
 								<tr>
-									<td style="font-size:14px!important;color:#737881;font-weight:400;text-align:center" align="center">YipCart, Road Y, Off O”dola Ave, Oba-Ile, Ondo, NG</td>
+									<td style="font-size:14px!important;color:#737881;font-weight:400;text-align:center" align="center"><%= sale.company.title %>, <%= SalesReg.Business.get_company_address(sale.company) %></td>
 								</tr>
 								<tr>
 									<td style="height:0;font-size:14px!important;color:#737881;font-weight:300;text-align:center" height="0" align="center">&nbsp;</td>
@@ -191,9 +193,9 @@
 											<tbody>
 											<tr style="display: flex;align-items: center;justify-content: center;">
 												<td style="display:inline-flex;text-align:center;margin:0 auto" align="center">
-													<a href="https://www.yipcart.com" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">VISIT&nbsp;YIPCART.COM</a>
+													<a href="<%= SalesReg.Business.get_company_share_url(sale.company) %>" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">VISIT&nbsp;<%= SalesReg.Business.get_company_share_url(sale.company) %></a>
 													<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/vertical-line-footer-icon.png" width="34" height="24" style="vertical-align:bottom;">
-													<a href="#" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">UNSUBSCRIBE</a>
+													<%# <a href="#" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">UNSUBSCRIBE</a> %>
 												</td>
 											</tr>
 											</tbody>

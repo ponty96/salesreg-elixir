@@ -2,18 +2,18 @@ defmodule SalesRegWeb.Services.Cloudfare do
   alias SalesRegWeb.Services.Base
 
   def create_dns_record(type, name, content, optional_params \\ %{})
-    when is_map(optional_params) == true do
-      body =
-        %{
-          "type" => type,
-          "name" => name,
-          "content" => content
-        }
-        |> Map.merge(optional_params)
-        |> Base.encode()
+      when is_map(optional_params) == true do
+    body =
+      %{
+        "type" => type,
+        "name" => name,
+        "content" => content
+      }
+      |> Map.merge(optional_params)
+      |> Base.encode()
 
-      request(:post, process_url(), body)
-      |> Base.process_response()
+    request(:post, process_url(), body)
+    |> Base.process_response()
   end
 
   def delete_dns_record(identifier) do
@@ -30,21 +30,19 @@ defmodule SalesRegWeb.Services.Cloudfare do
 
   defp request(method, url, body, opts \\ []) do
     header = get_config_key_val(:default_header)
+
     if Mix.env() == :prod do
       HTTPoison.request(
-        method, 
-        url, 
-        body, 
-        header, 
+        method,
+        url,
+        body,
+        header,
         Base.set_default_timeout(opts)
       )
     else
-      {:ok, body} = Poison.encode(
-        %{message: "A request was made to Cloudflare"}
-      )
-      
-      {:ok, 
-        %HTTPoison.Response{status_code: 200, body: body}}
+      {:ok, body} = Poison.encode(%{message: "A request was made to Cloudflare"})
+
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}}
     end
   end
 

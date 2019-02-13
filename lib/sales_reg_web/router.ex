@@ -15,7 +15,7 @@ defmodule SalesRegWeb.Router do
     plug(:accepts, ["json"])
   end
 
-  if Mix.env == :dev do
+  if Mix.env() == :dev do
     forward("/sent_emails", Bamboo.SentEmailViewerPlug)
   end
 
@@ -36,8 +36,6 @@ defmodule SalesRegWeb.Router do
     get("/identity/callback", SessionController, :callback)
     post("/identity/callback", SessionController, :callback)
     delete("/logout", SessionController, :delete)
-    get("/:business_slug/p/:product_slug", ForwardController, :forward_product)
-    get("/:business_slug", ForwardController, :forward_business)
   end
 
   pipeline :graphql do
@@ -61,6 +59,9 @@ defmodule SalesRegWeb.Router do
   scope "/", SalesRegWeb do
     pipe_through(:browser)
     # get("/:business_slug/c/:category_slug", ForwardController, :forward_category)
+    get("/:business_slug/in/:invoice_id", ForwardController, :forward_invoice)
+    get("/:business_slug/s/:sale_id", ForwardController, :forward_sale)
+    get("/:business_slug/r/:receipt_id", ForwardController, :forward_receipt)
     get("/:business_slug/p/:product_slug", ForwardController, :forward_product)
     get("/:business_slug", ForwardController, :forward_business)
   end

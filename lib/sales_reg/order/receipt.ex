@@ -1,6 +1,8 @@
 defmodule SalesReg.Order.Receipt do
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Business
+  alias SalesReg.Repo
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -48,5 +50,10 @@ defmodule SalesReg.Order.Receipt do
     |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_inclusion(:payment_method, ["cash"], message: "The payment method must be cash")
+  end
+
+  def get_receipt_share_link(receipt) do
+    receipt = Repo.preload(receipt, [:company])
+    "#{Business.get_company_share_domain()}/#{receipt.company.slug}/r/#{receipt.id}"
   end
 end
