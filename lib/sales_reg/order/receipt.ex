@@ -54,6 +54,6 @@ defmodule SalesReg.Order.Receipt do
 
   def get_receipt_share_link(receipt) do
     receipt = Repo.preload(receipt, [:company])
-    "#{Business.get_company_share_domain()}/#{receipt.company.slug}/s/#{receipt.id}"
+    "#{Business.get_company_share_domain()}/#{receipt.company.slug}/r/#{receipt.id}"
   end
 end
