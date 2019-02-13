@@ -9,15 +9,26 @@ defmodule SalesReg.Business.Bank do
     field(:account_name, :string)
     field(:account_number, :string)
     field(:bank_name, :string)
-    field(:is_primary, :boolean, default: false)
+    field(:bank_code, :string)
+    field(:subaccount_id, :string)
+    field(:subaccount_transac_id, :string)
 
     belongs_to(:company, SalesReg.Business.Company)
 
     timestamps()
   end
 
-  @required_fields [:account_number, :bank_name, :is_primary, :company_id]
-  @optional_fields [:account_name]
+  @required_fields [
+    :account_number, 
+    :bank_name, 
+    :company_id, 
+    :account_name, 
+    :bank_code,
+    :subaccount_id,
+    :subaccount_transac_id
+  ]
+  
+  @optional_fields []
 
   @doc false
   def changeset(bank, attrs) do

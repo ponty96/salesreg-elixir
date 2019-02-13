@@ -14,6 +14,7 @@ defmodule SalesReg.Order.Sale do
     field(:tax, :string)
     field(:discount, :string)
     field(:ref_id, :string)
+    field(:charge, :string)
 
     field(:state, :string, virtual: true)
 
@@ -36,13 +37,15 @@ defmodule SalesReg.Order.Sale do
     :contact_id,
     :company_id,
     :date,
-    :ref_id
+    :ref_id,
+    :charge
   ]
   @optional_fields [:status, :tax, :discount]
 
   @doc false
   def changeset(sale, attrs) do
     new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
+      |> Map.put_new(:charge, "#{System.get_env("CHARGE")}")
 
     sale
     |> Repo.preload([:items, :location])
