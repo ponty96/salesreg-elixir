@@ -48,7 +48,7 @@ config :sentry,
   in_app_module_whitelist: [SalesReg]
 
 config :cors_plug,
-  origins: [~r/https?.*yipcartstaging2019.com\d?\.com$/],
+  origins: [~r/https?.*yipcart.com\d?\.com$/],
   max_age: 8_666_400,
   methods: ["GET", "POST", "OPTIONS"],
   headers: [
