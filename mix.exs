@@ -33,7 +33,10 @@ defmodule SalesReg.Mixfile do
         :ueberauth,
         :ueberauth_identity,
         :bamboo,
-        :sentry
+        :scrivener_ecto,
+        :ecto_sql,
+        :sentry,
+        :httpoison
       ]
     ]
   end
@@ -82,7 +85,12 @@ defmodule SalesReg.Mixfile do
       {:remote_ip, "~> 0.1.0"},
       {:quantum, "~> 2.3"},
       {:timex, "~> 3.0"},
-      {:sentry, "~> 6.4"}
+      {:scrivener_ecto, "~> 2.0"},
+      {:cors_plug, "~> 2.0"},
+      {:sentry, "~> 6.4"},
+      {:httpoison, "~> 1.4"},
+      {:poison, "~> 3.1"},
+      {:ecto_autoslug_field, "~> 1.0"}
     ]
   end
 

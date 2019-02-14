@@ -12,11 +12,12 @@ defmodule SalesReg.Order.Review do
     belongs_to(:sale, SalesReg.Order.Sale)
     belongs_to(:product, SalesReg.Store.Product)
     belongs_to(:contact, SalesReg.Business.Contact)
+    belongs_to(:company, SalesReg.Business.Company)
 
     timestamps()
   end
 
-  @required_fields [:text, :sale_id, :contact_id, :product_id]
+  @required_fields [:text, :sale_id, :contact_id, :product_id, :company_id]
 
   def changeset(review, attrs) do
     review

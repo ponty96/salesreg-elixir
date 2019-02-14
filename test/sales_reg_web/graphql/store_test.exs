@@ -533,7 +533,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
       {:ok, user} = Accounts.create_user(@user_params)
       {:ok, company} = Seed.create_company(user.id)
 
-      add_many_services =
+      add_many_categories =
         Enum.map(1..3, fn _index ->
           {:ok, category} =
             company.id
@@ -569,7 +569,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
         |> Helpers.underscore_map_keys()
         |> Enum.sort()
 
-      assert response == add_many_services
+      assert response == add_many_categories
     end
   end
 end

@@ -32,6 +32,12 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     items_amount: 20.007
   }
 
+  @legal_document_params %{
+    name: "Refund Policy",
+    type: "policy",
+    content: "This is the refund policy"
+  }
+
   describe "company tests" do
     # adds a user to a company
     @tag :add_user_company
@@ -132,11 +138,45 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
       assert response["success"] == true
       assert response["fieldErrors"] == []
     end
+
+    @tag company: "update_company_cover_photo"
+    test "update company cover photo", context do
+      query_doc = """
+      updateCompanyCoverPhoto(
+        coverPhoto:{
+          coverPhoto: "img1234",
+          companyId: "#{context.company.id}"
+        }){
+          fieldErrors{
+            key,
+            message
+          },
+          success,
+          data {
+            ... on Company{
+              id
+            }
+          }
+        }
+      """
+
+      res =
+        context.conn
+        |> post(
+          "/graphiql",
+          Helpers.query_skeleton(:mutation, query_doc, "updateCompanyCoverPhoto")
+        )
+
+      response = json_response(res, 200)["data"]["updateCompanyCoverPhoto"]
+
+      assert response["success"] == true
+      assert response["fieldErrors"] == []
+    end
   end
 
   describe "Bank tests" do
     # Upsert a Bank
-    @tag :create_bank
+    @tag bank: "create_bank"
     test "create a bank", context do
       query_doc = """
       upsertBank(
@@ -499,6 +539,115 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
         |> Enum.sort()
 
       assert response == add_many_tags
+    end
+  end
+
+  describe "legal_document tests" do
+    # Upsert a legal_document
+    @tag legal_document: "create_legal_document"
+    test "create a legal_document", context do
+      query_doc = """
+      upsertLegalDocument(
+        legalDocument: {
+          name: "Refund policy",
+          type: POLICY,
+          content: "This is the refund policy",
+          companyId: "#{context.company.id}"
+        }){
+          fieldErrors {
+            key,
+            message
+          },
+          success,
+          data {
+            ... on Company{
+              id
+            }
+          }
+        }
+      """
+
+      res =
+        context.conn
+        |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "upsertLegalDocument"))
+
+      IO.inspect(res.resp_body, label: "response body")
+      response = json_response(res, 200)["data"]["upsertLegalDocument"]
+
+      assert response["success"] == true
+      assert response["fieldErrors"] == []
+    end
+
+    @tag legal_document: "update_legal_document"
+    test "update a legal_document", context do
+      {:ok, legal_document} =
+        @legal_document_params
+        |> Map.put_new(:company_id, context.company.id)
+        |> Business.add_legal_document()
+
+      query_doc = """
+      upsertLegalDocument(
+        legalDocument: {
+          name: "Updated Refund policy",
+          type: POLICY,
+          content: "This is the updated refund policy",
+          companyId: "#{context.company.id}"
+        }, legalDocumentId: "#{legal_document.id}"){
+          fieldErrors {
+            key,
+            message
+          },
+          success,
+          data {
+            ... on Company{
+              id
+            }
+          }
+        }
+      """
+
+      res =
+        context.conn
+        |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "upsertLegalDocument"))
+
+      response = json_response(res, 200)["data"]["upsertLegalDocument"]
+
+      assert response["success"] == true
+      assert response["fieldErrors"] == []
+    end
+
+    @tag legal_document: "delete_legal_document"
+    test "delete a legal_document", context do
+      {:ok, legal_document} =
+        @legal_document_params
+        |> Map.put_new(:company_id, context.company.id)
+        |> Business.add_legal_document()
+
+      query_doc = """
+      deleteLegalDocument(
+        legalDocumentId: "#{legal_document.id}"
+        ){
+        success,
+        fieldErrors{
+          key,
+          message
+          }
+        data {
+          ... on Company{
+            id
+          }
+        }
+        }
+      """
+
+      res =
+        context.conn
+        |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "deleteLegalDocument"))
+
+      response = json_response(res, 200)["data"]["deleteLegalDocument"]
+
+      assert response["success"] == true
+      assert response["fieldErrors"] == []
     end
   end
 end

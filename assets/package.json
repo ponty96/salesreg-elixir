@@ -1,18 +1,13 @@
 {
-  "repository": {},
-  "license": "MIT",
+  "private": true,
   "scripts": {
-    "deploy": "brunch build --production",
-    "watch": "brunch watch --stdin"
-  },
-  "dependencies": {
-    "phoenix": "file:../deps/phoenix",
-    "phoenix_html": "file:../deps/phoenix_html"
-  },
-  "devDependencies": {
-    "babel-brunch": "6.1.1",
-    "brunch": "2.10.9",
-    "clean-css-brunch": "2.10.0",
-    "uglify-js-brunch": "2.10.0"
+    "release": "RELEASE=$(git rev-parse HEAD)-$(date +%s)-client",
+    "deploy": "node_modules/.bin/webpack --config webpack.prod.js -p",
+    "eslint": "node_modules/.bin/eslint js/",
+    "tslint": "tslint -c tslint.json 'js/**/*.{ts,tsx}'",
+    "pretty": "prettier --write --tab-width 2 --no-semi --single-quote 'js/**/*.ts'",
+    "stylelint": "node_modules/.bin/stylelint 'css/**/*.s+(a|c)ss'",
+    "watch": "node_modules/.bin/webpack --config webpack.dev.js --watch-stdin --progress --color",
+    "analyzer": "node_modules/.bin/webpack --config webpack.dev.js --env.runAnalyzer=true --watch-stdin --progress --color"
   }
 }

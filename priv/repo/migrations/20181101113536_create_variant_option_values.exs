@@ -13,7 +13,8 @@ defmodule SalesReg.Repo.Migrations.CreateOptionValues do
       timestamps()
     end
 
-    create(index(:option_values, [:company_id])) # comment this out
+    # comment this out
+    create(index(:option_values, [:company_id]))
     create(index(:option_values, [:option_id]))
   end
 end

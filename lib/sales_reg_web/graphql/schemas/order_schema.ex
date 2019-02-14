@@ -22,15 +22,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
     end
 
     @desc """
-    delete a sale order
-    """
-    field :delete_sale_order, :mutation_response do
-      arg(:sale_id, non_null(:uuid))
-
-      resolve(&OrderResolver.delete_sale/2)
-    end
-
-    @desc """
     update an order's status
     """
     field :update_order_status, :mutation_response do
@@ -73,15 +64,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
     ### Receipt mutations
     @desc """
-    upsert a receipt
-    """
-    field :upsert_receipt, :mutation_response do
-      arg(:receipt, non_null(:receipt_input))
-
-      resolve(&OrderResolver.upsert_receipt/2)
-    end
-
-    @desc """
       create a receipt when payment is by cash
     """
     field :create_receipt, :mutation_response do
@@ -89,16 +71,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       arg(:amount_paid, non_null(:string))
 
       resolve(&OrderResolver.create_receipt/2)
-    end
-
-    @desc """
-      mutation to delete receipt
-    """
-    field :delete_receipt, :mutation_response do
-      arg(:receipt_id, non_null(:uuid))
-
-      middleware(Authorize)
-      resolve(&OrderResolver.delete_receipt/2)
     end
   end
 
@@ -122,6 +94,17 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
       middleware(Authorize)
       resolve(&OrderResolver.list_company_invoices/2)
+    end
+
+    @desc """
+      query for all activities of a company contact
+    """
+    connection field(:list_contact_activities, node_type: :activity) do
+      arg(:company_id, non_null(:uuid))
+      arg(:contact_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&OrderResolver.list_company_activities/2)
     end
   end
 end

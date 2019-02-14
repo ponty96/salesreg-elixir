@@ -1,6 +1,8 @@
 defmodule SalesReg.Order.Invoice do
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Business
+  alias SalesReg.Repo
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -28,13 +30,32 @@ defmodule SalesReg.Order.Invoice do
   @optional_fields [:pdf_url]
 
   def changeset(invoice, attrs) do
-    new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Invoice, attrs)
-
     invoice
-    |> cast(new_attrs, @required_fields ++ @optional_fields)
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> before_update_callback(attrs)
     |> validate_required(@required_fields)
     |> assoc_constraint(:sale)
     |> assoc_constraint(:user)
     |> assoc_constraint(:company)
+  end
+
+  def get_invoice_share_link(invoice) do
+    invoice = Repo.preload(invoice, [:company])
+    "#{Business.get_company_share_domain()}/#{invoice.company.slug}/in/#{invoice.id}"
+  end
+
+  defp before_update_callback(changeset, attrs) do
+    case changeset do
+      %Ecto.Changeset{action: :insert} ->
+        ref_id = SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
+          |> Map.get(:ref_id)
+        
+        changeset
+        |> put_change(:ref_id, ref_id)
+        |> put_change(:charge, "#{System.get_env("CHARGE")}")
+
+      _ ->
+        changeset
+    end
   end
 end

@@ -41,11 +41,12 @@
 																	<tbody>
 																	<tr>
 																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89)">
-																			<p>Hey,</p>
+																			<p>Hey <%= company.title %>,</p>
 																			<p>I really appreciate you signing up for Yipcart, and I'm sure you'll love it when you see how easy it is to get the right things done.</p>
 																			<p>We built Yipcart to help SMEs improve their productivity, and I hope that we can achieve that for you.</p>
-																			<p>If you wouldn't mind, I'd love it if you answered one quick question: why did you sign up for Yipcart?</p>
-																			<p>I'm asking because knowing what made you sign up is really helpful for us in making sure that we're delivering on what our users want. Just hit "reply" and let me know</p>
+																			<p>I love to aslo inform you that in three(3) days time, you will be able to receive payments from your customers who buy from your webstore.</p>
+																			<p>Now if you wouldn't mind, I'd loved it if you answered one quick question: <span style="font-style: italic">Why did you sign up for yipcart?</span> I'm asking because knowing what made you sign up will help us to make sure that what we are delivering is exactly what you need.</p>
+																			<p>Just hit "Reply" and let me know.</p>
 																			<p>Thanks</p>
 																			<p>Ayomide CEO</p>
 																		</td>
@@ -89,8 +90,8 @@
 								<tr>
 									<td>
 										<center>
-											<a href="#" target="_blank">
-												<img src="assets/sm-yipcart-logo.svg" width="114" height="40" alt="InVision" class="CToWUd">
+											<a href="https://yipcart.com" target="_blank">
+												<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/yipcart-logo.png" width="114" height="40" alt="YipCart" class="CToWUd">
 											</a>
 										</center>
 									</td>
@@ -104,7 +105,7 @@
 								<!-- Footer Yipcart intro -->
 								<tr>
 									<td>
-										<h2 style="color: rgb(85,85,85);font-size:15px!important;font-weight:400;line-height:1.4em;text-align:center" align="center">The product eco-system that streamline the sales, ordering, and communication processes.</h2>
+										<h2 style="color: rgb(85,85,85);font-size:15px!important;font-weight:400;line-height:1.4em;text-align:center" align="center">The product and service eco-system that streamline the sales, ordering, and communication processes.</h2>
 									</td>
 								</tr>
 								<!-- Footer Yipcart intro Ends -->
@@ -119,7 +120,7 @@
 											<tbody>
 
 											<tr>
-												<td colspan="5"></td>
+												<td colspan="3"></td>
 												<h3 style="font-size:14px!important;font-family:'Roboto',sans-serif;text-align:center;font-weight:400;color:#737881" align="center">FOLLOW US</h3></td>
 											</tr>
 
@@ -130,8 +131,8 @@
 											<!-- Social Medias -->
 											<tr>
 												<td>
-													<a href="#" target="_blank">
-														<img src="assets/facebook-footer-icon.png" width="50" height="50" alt="Facebook Logo">
+													<a href="https://facebook.com/yipcarthq" target="_blank">
+														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/facebook-footer-icon.png" width="50" height="50" alt="Facebook Logo">
 													</a>
 												</td>
 
@@ -140,8 +141,8 @@
 												<td></td>
 
 												<td>
-													<a href="#" target="_blank">
-														<img src="assets/twitter-footer-icon.png" width="50" height="50" alt="Twitter Logo">
+													<a href="https://twitter.com/yipcarthq" target="_blank">
+														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/twitter-footer-icon.png" width="50" height="50" alt="Twitter Logo">
 													</a>
 												</td>
 
@@ -149,7 +150,7 @@
 
 												<td>
 													<a href="#" target="_blank">
-														<img src="assets/linkedin-footer-icon.png" width="50" height="50" alt="LinkedIn Logo">
+														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/instagram.png" width="50" height="50" alt="Instagram Logo">
 													</a>
 												</td>
 											</tr>
@@ -174,9 +175,9 @@
 										<table cellspacing="0" cellpadding="0" style="border:0;width:100%" width="100%">
 											<tbody>
 											<tr style="display: flex;align-items: center;justify-content: center;">
-												<td style="display:inline-flex;text-align:center" align="center">
-													<a href="#" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">VISIT&nbsp;YIPCART.COM</a>
-													<img src="assets/vertical-line-footer-icon.png" width="34" height="24" style="vertical-align:bottom;">
+												<td style="display:inline-flex;text-align:center;margin:0 auto" align="center">
+													<a href="https://www.yipcart.com" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">VISIT&nbsp;YIPCART.COM</a>
+													<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/vertical-line-footer-icon.png" width="34" height="24" style="vertical-align:bottom;">
 													<a href="#" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">UNSUBSCRIBE</a>
 												</td>
 											</tr>

@@ -1,5 +1,6 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   use SalesRegWeb, :context
+  alias SalesReg.Mailer.MerchantsToCustomers, as: M2C
 
   def upsert_sale(%{sale: params, sale_id: id}, _res) do
     Order.get_sale(id)
@@ -18,11 +19,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   def list_company_invoices(%{company_id: company_id} = args, _res) do
     [company_id: company_id]
     |> Order.paginated_list_company_invoices(pagination_args(args))
-  end
-
-  def delete_sale(%{sale_id: sale_id}, _res) do
-    Order.get_sale(sale_id)
-    |> Order.delete_sale()
   end
 
   def update_order_status(%{status: status, id: id, order_type: order_type}, _res) do
@@ -49,11 +45,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
 
     case create_receipt do
       {:ok, receipt} ->
-        Order.supervise_pdf_upload(receipt)
         sale = Order.preload_receipt(receipt).sale
-
-        receipt.company_id
-        |> Email.send_email("yc_payment_received", sale)
+        M2C.send_payment_received_mail(sale)
 
         {:ok, receipt}
 
@@ -69,6 +62,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   def delete_receipt(%{receipt_id: receipt_id}, _res) do
     Order.get_receipt(receipt_id)
     |> Order.delete_receipt()
+  end
+
+  def list_company_activities(params, _res) do
+    params.company_id
+    |> Order.list_company_activities(params.contact_id, pagination_args(params))
   end
 
   defp pagination_args(args) do

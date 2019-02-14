@@ -15,7 +15,7 @@ use Mix.Config
 # which you typically run after static files are built.
 
 # Do not print debug messages in production
-config :logger, level: :info
+config :logger, level: :debug
 
 # Configures the endpoint
 config :sales_reg, SalesRegWeb.Endpoint,
@@ -38,8 +38,32 @@ config :sentry,
   dsn: "https://5b18bcdf49e54cc48fa881846afadd0a@sentry.io/1369436",
   environment_name: Mix.env(),
   enable_source_code_context: true,
-  root_source_code_path: File.cwd!,
+  root_source_code_path: File.cwd!(),
   tags: %{
     env: "production"
   },
-  included_environments: [:prod]
+  included_environments: [:prod],
+  use_error_logger: true,
+  hackney_opts: [pool: :my_pool],
+  in_app_module_whitelist: [SalesReg]
+
+config :cors_plug,
+  origins: [~r/https?.*yipcartstaging2019.com\d?\.com$/],
+  max_age: 8_666_400,
+  methods: ["GET", "POST", "OPTIONS"],
+  headers: [
+    "Authorization",
+    "Content-Type",
+    "Accept",
+    "Origin",
+    "User-Agent",
+    "DNT",
+    "Cache-Control",
+    "X-Mx-ReqToken",
+    "Keep-Alive",
+    "X-Requested-With",
+    "If-Modified-Since",
+    "X-CSRF-Token",
+    "Access-Control-Allow-Origin",
+    "request-endpoint"
+  ]

@@ -7,12 +7,15 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   end
 
   def update_product(%{product: params, product_id: id}, _res) do
-    Store.get_product(id)
-    |> Store.update_product(params)
+    Store.update_product_details(id, params)
   end
 
   def update_product_group_options(params, _res) do
     Store.update_product_group_options(params)
+  end
+
+  def get_product(%{id: id}, _res) do
+    {:ok, Store.get_product(id)}
   end
 
   # category
@@ -33,10 +36,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
 
   def upsert_option(%{option: params}, _res) do
     Store.add_option(params)
-  end
-
-  def list_featured_items(%{company_id: company_id}, _res) do
-    Store.list_featured_items(company_id)
   end
 
   def delete_product(%{product_id: product_id}, _res) do
@@ -86,6 +85,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
 
   def restock_products(%{items: items}, _res) do
     {:ok, Store.update_product_inventory(:increment, items)}
+  end
+
+  def list_related_products(%{product_id: product_id, company_id: company_id} = params, _res) do
+    {:ok, Store.load_related_products(company_id, product_id, params.limit, params.offset)}
   end
 
   defp pagination_args(args) do

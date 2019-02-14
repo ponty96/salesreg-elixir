@@ -23,6 +23,8 @@ defmodule SalesRegWeb do
       import Plug.Conn
       import SalesRegWeb.Router.Helpers
       import SalesRegWeb.Gettext
+      alias SalesReg.Repo
+      SalesRegWeb.shared_aliases()
     end
   end
 
@@ -41,6 +43,7 @@ defmodule SalesRegWeb do
       import SalesRegWeb.Router.Helpers
       import SalesRegWeb.ErrorHelpers
       import SalesRegWeb.Gettext
+      SalesRegWeb.shared_aliases()
     end
   end
 
@@ -106,6 +109,7 @@ defmodule SalesRegWeb do
         Business.Bank,
         Business.Expense,
         Business.ExpenseItem,
+        Business.LegalDocument,
         Store,
         Store.Product,
         Store.Category,
@@ -117,6 +121,7 @@ defmodule SalesRegWeb do
         Order.Receipt,
         Order.Review,
         Order.Star,
+        Order.Activity,
         Store.ProductGroup,
         Store.Option,
         Store.OptionValue,
