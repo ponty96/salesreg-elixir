@@ -67,3 +67,7 @@ config :cors_plug,
     "Access-Control-Allow-Origin",
     "request-endpoint"
   ]
+
+config :sales_reg, SalesReg.Mailer,
+  adapter: Bamboo.LocalAdapter,
+  open_email_in_browser_url: "http://localhost:5000/sent_emails"
