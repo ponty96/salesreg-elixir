@@ -45,13 +45,10 @@ defmodule SalesReg.Order.Sale do
 
   @doc false
   def changeset(sale, attrs) do
-    new_attrs =
-      SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
-      |> Map.put_new(:charge, "#{System.get_env("CHARGE")}")
-
     sale
     |> Repo.preload([:items, :location])
-    |> cast(new_attrs, @required_fields ++ @optional_fields)
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> before_update_callback(attrs)
     |> validate_required(@required_fields)
     |> cast_assoc(:items)
     |> cast_assoc(:location)
@@ -82,5 +79,20 @@ defmodule SalesReg.Order.Sale do
   def get_sale_share_link(sale) do
     sale = Repo.preload(sale, [:company])
     "#{Business.get_company_share_domain()}/#{sale.company.slug}/s/#{sale.id}"
+  end
+
+  defp before_update_callback(changeset, attrs) do
+    case changeset do
+      %Ecto.Changeset{action: :insert} ->
+        ref_id = SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
+          |> Map.get(:ref_id)
+        
+        changeset
+        |> put_change(:ref_id, ref_id)
+        |> put_change(:charge, "#{System.get_env("CHARGE")}")
+
+      _ ->
+        changeset
+    end
   end
 end
