@@ -671,7 +671,7 @@ defmodule SalesReg.Store do
     Enum.map(option_ids, fn id ->
       %{
         option_id: id,
-        name: "",
+        name: "?",
         company_id: company_id
       }
     end)

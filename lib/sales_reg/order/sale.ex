@@ -82,17 +82,15 @@ defmodule SalesReg.Order.Sale do
   end
 
   defp before_update_callback(changeset, attrs) do
-    case changeset do
-      %Ecto.Changeset{action: :insert} ->
-        ref_id = SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
-          |> Map.get(:ref_id)
-        
-        changeset
-        |> put_change(:ref_id, ref_id)
-        |> put_change(:charge, "#{System.get_env("CHARGE")}")
+    if Enum.count(changeset.changes) > 1 do
+      ref_id = SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
+        |> Map.get(:ref_id)
 
-      _ ->
-        changeset
+      changeset
+      |> put_change(:ref_id, ref_id)
+      |> put_change(:charge, "#{System.get_env("CHARGE")}")
+    else
+      changeset
     end
   end
 end
