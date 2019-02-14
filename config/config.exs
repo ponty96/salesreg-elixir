@@ -123,7 +123,7 @@ config :sales_reg, SalesReg.Scheduler,
   ]
 
 config :sentry,
-  dsn: "https://450c8312e5094c859c0ff835ce5234d4@sentry.io/1369497",
+  dsn: "https://5b18bcdf49e54cc48fa881846afadd0a@sentry.io/1369436",
   included_environments: [:prod, :dev],
   environment_name: Mix.env()
 
