@@ -13,7 +13,7 @@ defmodule SalesReg.Repo.Migrations.CreateTemplate do
 
       timestamps()
     end
-    
+
     create(index(:templates, [:user_id], on_delete: :nothing, type: :binary_id))
     create(index(:templates, [:company_id], on_delete: :nothing, type: :binary_id))
   end

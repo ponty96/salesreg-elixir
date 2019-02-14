@@ -46,3 +46,28 @@ config :sales_reg, SalesReg.Repo,
   pool_size: 10
 
 config :sales_reg, SalesReg.Mailer, sandbox: true
+
+config :cors_plug,
+  origins: [~r/http?.*yipcartlocal.com\d?\.com$/],
+  max_age: 8_666_400,
+  methods: ["GET", "POST", "OPTIONS"],
+  headers: [
+    "Authorization",
+    "Content-Type",
+    "Accept",
+    "Origin",
+    "User-Agent",
+    "DNT",
+    "Cache-Control",
+    "X-Mx-ReqToken",
+    "Keep-Alive",
+    "X-Requested-With",
+    "If-Modified-Since",
+    "X-CSRF-Token",
+    "Access-Control-Allow-Origin",
+    "request-endpoint"
+  ]
+
+config :sales_reg, SalesReg.Mailer,
+  adapter: Bamboo.LocalAdapter,
+  open_email_in_browser_url: "http://localhost:5000/sent_emails"

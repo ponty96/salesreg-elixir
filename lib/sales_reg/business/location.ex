@@ -17,12 +17,13 @@ defmodule SalesReg.Business.Location do
     belongs_to(:branch, SalesReg.Business.Branch)
     belongs_to(:contact, SalesReg.Business.Contact, foreign_key: :contact_id)
     belongs_to(:user, SalesReg.Accounts.User)
+    belongs_to(:sale, SalesReg.Order.Sale)
 
     timestamps()
   end
 
   @required_fields [:street1, :city, :state, :country]
-  @fields [:street2, :lat, :long, :type]
+  @fields [:street2, :lat, :long, :type, :sale_id]
 
   @doc false
   def changeset(location, attrs) do

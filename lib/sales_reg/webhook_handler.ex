@@ -1,9 +1,7 @@
 defmodule SalesReg.WebhookHandler do
   use SalesRegWeb, :context
 
-  def insert_receipt(%{"data" => data}) do
-    amount = data["amount"] / 1000
-
+  def insert_receipt(%{"charged_amount" => amount} = data) do
     if receipt_exists?(data) do
       nil
     else
@@ -14,7 +12,7 @@ defmodule SalesReg.WebhookHandler do
 
   defp get_sale_order(data) do
     [order_id, _timestamp] =
-      data["reference"]
+      data["txRef"]
       |> String.replace("_", " ")
       |> String.split()
 

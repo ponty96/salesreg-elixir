@@ -15,6 +15,12 @@ defmodule SalesReg.Store do
     Invoice
   ]
 
+  alias Ecto.UUID
+
+  defdelegate category_image(category), to: Category
+  defdelegate get_product_name(product), to: Product
+  defdelegate get_product_share_link(product), to: Product
+
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
   end
@@ -94,6 +100,63 @@ defmodule SalesReg.Store do
       select: p
     )
     |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
+  end
+
+  def load_related_products(company_id, product_id, limit \\ 12, offset \\ 0) do
+    {:ok, company_id} = Ecto.UUID.dump(company_id)
+    {:ok, product_id} = Ecto.UUID.dump(product_id)
+    params = [company_id, product_id, product_id, limit, offset]
+
+    query = """
+      SELECT  *
+      FROM    products AS prods
+      WHERE   prods.company_id = $1::uuid
+      AND
+        ARRAY(
+          SELECT  tags.name
+          FROM    tags tags
+          JOIN    products_tags
+          ON      products_tags.tag_id  = tags.id
+          WHERE   products_tags.product_id = $2::uuid
+        )
+        &&
+        ARRAY(
+          SELECT  tags.name
+          FROM    tags tags
+          JOIN    products_tags
+          ON      products_tags.tag_id = tags.id
+          WHERE   products_tags.product_id = prods.id
+        )
+
+      ORDER BY (
+        array_length(
+          ARRAY(
+            SELECT UNNEST(
+              ARRAY(
+                SELECT  tags.name
+                FROM    tags tags
+                JOIN    products_tags
+                ON      products_tags.tag_id  = tags.id
+                WHERE   products_tags.product_id = $3::uuid
+              )
+            )
+            INTERSECT
+            SELECT UNNEST(
+              ARRAY(
+                SELECT  tags.name
+                FROM    tags tags
+                JOIN    products_tags
+                ON      products_tags.tag_id = tags.id
+                WHERE   products_tags.product_id = prods.id
+              )
+            )
+          ), 1)
+        ) DESC
+      LIMIT   $4::int
+      OFFSET  $5::int
+    """
+
+    Repo.execute_and_load(query, params, Product)
   end
 
   def list_featured_items(company_id) do
@@ -187,6 +250,7 @@ defmodule SalesReg.Store do
           product_params =
             product_params
             |> Map.put(:product_group_id, product_grp.id)
+            |> Map.put(:title, product_grp.title)
 
           Product.changeset(%Product{}, product_params)
         end
@@ -235,6 +299,7 @@ defmodule SalesReg.Store do
           product_params =
             product_params
             |> Map.put(:product_group_id, product_grp.id)
+            |> Map.put(:title, product_grp.title)
 
           Product.changeset(%Product{}, product_params)
         end
@@ -297,19 +362,134 @@ defmodule SalesReg.Store do
     end
   end
 
-  # get product name
-  def get_product_name(product) do
-    product = Repo.preload(product, [:product_group, :option_values])
+  def update_product_details(id, params) do
+    product = get_product(id, preload: [:product_group])
 
-    case product.option_values do
-      [] ->
-        product.product_group.title
+    params =
+      params
+      |> Map.put(:title, product.product_group.title)
+      |> Map.put(:product_group_id, product.product_group.id)
 
-      _ ->
-        "#{product.product_group.title} (#{
-          Enum.map(product.option_values, &(&1.name || "?")) |> Enum.join(" ")
-        })"
-    end
+    update_product(product, params)
+  end
+
+  # WEBSTORE REQUIRED METHODS
+  def home_categories(company_id) do
+    Repo.all(
+      from(c in Category,
+        join: pc in "products_categories",
+        on: pc.category_id == c.id,
+        where: c.company_id == ^company_id,
+        limit: 10,
+        distinct: true,
+        preload: [:products]
+      )
+    )
+  end
+
+  def paginated_categories(company_id) do
+    Repo.all(
+      from(c in Category,
+        where: c.company_id == ^company_id,
+        limit: 15,
+        preload: [:products]
+      )
+    )
+  end
+
+  def search_company_categories(company_id, query, args) do
+    query_regex = "%" <> query <> "%"
+
+    from(c in Category,
+      join: pc in "products_categories",
+      on: pc.category_id == c.id,
+      where: c.company_id == ^company_id,
+      where: ilike(c.title, ^query_regex),
+      order_by:
+        fragment(
+          "ts_rank(to_tsvector(?), plainto_tsquery(?)) DESC",
+          c.title,
+          ^query
+        ),
+      distinct: c.id,
+      preload: [:products]
+    )
+    |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
+  end
+
+  def category_products(category_id, page) do
+    {:ok, category_id} = UUID.dump(category_id)
+
+    query =
+      from(p in Product,
+        join: pc in "products_categories",
+        on: pc.category_id == ^category_id,
+        where: pc.product_id == p.id,
+        select: p
+      )
+
+    Repo.paginate(query, page: page)
+  end
+
+  def filter_webstore_products(company_id, filter_params) do
+    from(p in Product, where: p.company_id == ^company_id, select: p)
+    |> Repo.paginate(page: Map.get(filter_params, :page))
+  end
+
+  def list_featured_products(company_id) do
+    Product
+    |> where([p], p.company_id == ^company_id)
+    |> where([p], p.is_featured == true)
+    |> select([p], [p])
+    |> limit(10)
+    |> Repo.all()
+    |> Enum.map(&store_item_preloads(&1))
+    |> List.flatten()
+  end
+
+  def random_top_rated_product(company_id) do
+    query =
+      from(p in Product,
+        where: p.company_id == ^company_id and p.is_top_rated_by_merchant == true,
+        order_by: fragment("RANDOM()")
+      )
+
+    Repo.all(query)
+    |> Enum.map(&store_item_preloads(&1))
+    |> Enum.at(0)
+  end
+
+  def list_top_rated_products(company_id) do
+    Product
+    |> where([p], p.company_id == ^company_id)
+    |> where([p], p.is_top_rated_by_merchant == true)
+    |> select([p], [p])
+    |> limit(10)
+    |> Repo.all()
+    |> Enum.map(&store_item_preloads(&1))
+    |> List.flatten()
+  end
+
+  def calculate_store_item_stars(%{stars: []}), do: 0
+
+  def calculate_store_item_stars(%{stars: stars}) do
+    total_stars =
+      stars
+      |> Enum.map(& &1.value)
+      |> Enum.sum()
+
+    no_of_time_starred = Enum.count(stars)
+    total_stars / no_of_time_starred
+  end
+
+  def get_product_by_slug(slug) do
+    Product
+    |> Repo.get_by(slug: slug)
+  end
+
+  def get_category_by_slug(slug) do
+    Category
+    |> Repo.get_by(slug: slug)
   end
 
   defp all_categories(categories_ids) do
@@ -353,18 +533,44 @@ defmodule SalesReg.Store do
 
   # PRODUCT INVENTORY
   defp increment_product_sku(product_id, quantity) do
-    product = get_product(product_id)
+    product = get_product_for_inventory(product_id)
     quantity = String.to_integer(quantity)
     product_sku = String.to_integer(product.sku)
-    update_product(product, %{"sku" => "#{quantity + product_sku}"})
+
+    params = parse_product_params(product, %{sku: "#{product_sku + quantity}"})
+
+    update_product(product, params)
   end
 
   defp decrement_product_sku(product_id, quantity) do
-    product = get_product(product_id)
+    product = get_product_for_inventory(product_id)
     quantity = String.to_integer(quantity)
     product_sku = String.to_integer(product.sku)
 
-    update_product(product, %{"sku" => "#{product_sku - quantity}"})
+    params = parse_product_params(product, %{sku: "#{product_sku - quantity}"})
+
+    update_product(product, params)
+  end
+
+  defp get_product_for_inventory(product_id) do
+    get_product(product_id, preload: [:product_group, :option_values])
+  end
+
+  defp parse_product_params(product, params) do
+    params
+    |> Map.put(:title, product.product_group.title)
+    |> Map.put(:product_group_id, product.product_group.id)
+    |> Map.put(:option_values, Enum.map(product.option_values, &transform_option_value(&1)))
+  end
+
+  defp transform_option_value(option_value) do
+    option_value = Map.from_struct(option_value)
+
+    %{
+      name: option_value.name,
+      company_id: option_value.company_id,
+      option_id: option_value.option_id
+    }
   end
 
   ## if the product group doesn't have options already,
@@ -403,6 +609,7 @@ defmodule SalesReg.Store do
           product_params =
             product_params
             |> Map.put(:product_group_id, product_grp.id)
+            |> Map.put(:title, product_grp.title)
 
           Product.changeset(product, product_params)
         end
@@ -421,6 +628,7 @@ defmodule SalesReg.Store do
       params
       |> Map.get(:product)
       |> Map.put(:product_group_id, product_grp.id)
+      |> Map.put(:title, product_grp.title)
 
     add_product(product_params)
   end
@@ -472,12 +680,14 @@ defmodule SalesReg.Store do
   defp update_product_group_associated_product_option_values(new_option_values, product_group_id) do
     Product
     |> where([p], p.product_group_id == ^product_group_id)
-    |> preload([p], [:option_values])
+    |> preload([p], [:option_values, :product_group])
     |> Repo.all()
     |> Enum.map(fn product ->
       product_changeset =
         Product.changeset(product, %{
-          option_values: parse_product_option_values(product.option_values, new_option_values)
+          option_values: parse_product_option_values(product.option_values, new_option_values),
+          title: product.product_group.title,
+          product_group_id: product.product_group.id
         })
 
       Repo.update(product_changeset)
@@ -492,5 +702,9 @@ defmodule SalesReg.Store do
 
   defp option_values_of_disconnected_options(options_ids) do
     from(option_value in OptionValue, where: option_value.option_id in ^options_ids)
+  end
+
+  defp store_item_preloads(item) do
+    Repo.preload(item, [:tags, :reviews, :stars, :categories])
   end
 end

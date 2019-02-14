@@ -21,6 +21,12 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]
 
+config :logger,
+  backends: [:console],
+  level: :debug,
+  format: "\n$time $metadata[$level] $levelpad$message\n",
+  metadata: :all
+
 config :sales_reg, SalesRegWeb.TokenImpl,
   issuer: "sales_reg",
   secret_key: "Q/pRXuJQoZblGk4AIOHhMX0AkzuUpBS91hQVlO06PqrtRd/iAobc3CdBkMPDVYgc"
@@ -88,6 +94,10 @@ config :sales_reg, SalesReg.Mailer,
   adapter: Bamboo.SendGridAdapter,
   api_key: "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"
 
+config :sales_reg, SalesReg.Mailer,
+  adapter: Bamboo.LocalAdapter,
+  open_email_in_browser_url: "http://localhost:5000/sent_emails"
+
 config :sales_reg, SalesReg.Scheduler,
   jobs: [
     mail_on_order_due_date: [
@@ -98,10 +108,42 @@ config :sales_reg, SalesReg.Scheduler,
       schedule: "@daily",
       task: {SalesReg.Tasks, :mail_before_order_due_date, []}
     ],
+    mail_after_order_due_date: [
+      schedule: "@daily",
+      task: {SalesReg.Tasks, :mail_after_order_due_date, []}
+    ],
     mail_after_order_overdue: [
       schedule: "@daily",
       task: {SalesReg.Tasks, :mail_after_order_overdue, []}
+    ],
+    create_activity_when_order_due: [
+      schedule: "@daily",
+      task: {SalesReg.Tasks, :create_activity_when_order_due, []}
     ]
+  ]
+
+config :sentry,
+  dsn: "https://450c8312e5094c859c0ff835ce5234d4@sentry.io/1369497",
+  included_environments: [:prod, :dev],
+  environment_name: Mix.env()
+
+config :sales_reg, SalesRegWeb.Services.Heroku,
+  base_domain: System.get_env("BASE_DOMAIN"),
+  app_id_or_name: System.get_env("APP_ID_OR_NAME"),
+  api_base_url: "https://api.heroku.com/apps/",
+  default_header: [
+    {"Content-Type", "application/json"},
+    {"Accept", "application/vnd.heroku+json; version=3"},
+    {"Authorization", "Bearer #{System.get_env("AUTH_TOKEN")}"}
+  ]
+
+config :sales_reg, SalesRegWeb.Services.Cloudfare,
+  zone_id: System.get_env("ZONE_ID"),
+  api_base_url: "https://api.cloudflare.com/client/v4/zones/",
+  default_header: [
+    {"X-Auth-Key", "#{System.get_env("X_AUTH_KEY")}"},
+    {"Content-Type", "application/json"},
+    {"X-Auth-Email", "#{System.get_env("X_AUTH_EMAIL")}"}
   ]
 
 ###############################################################

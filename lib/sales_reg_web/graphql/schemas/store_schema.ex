@@ -194,5 +194,18 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       middleware(Authorize)
       resolve(&StoreResolver.search_products_by_name/2)
     end
+
+    @desc """
+      list related products 
+    """
+    field :list_related_products, list_of(:product) do
+      arg(:product_id, non_null(:uuid))
+      arg(:company_id, non_null(:uuid))
+      arg(:limit, non_null(:integer))
+      arg(:offset, non_null(:integer))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.list_related_products/2)
+    end
   end
 end

@@ -12,6 +12,12 @@ defmodule SalesReg.Repo.Migrations.CompanyEmailTemplates do
     end
 
     create(index(:company_email_templates, [:sale_id], on_delete: :nothing, type: :binary_id))
-    create(unique_index(:company_email_templates, [:type, :company_id], on_delete: :nothing, type: :binary_id))
+
+    create(
+      unique_index(:company_email_templates, [:type, :company_id],
+        on_delete: :nothing,
+        type: :binary_id
+      )
+    )
   end
 end

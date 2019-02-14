@@ -1,6 +1,7 @@
 defmodule SalesReg.Order.Sale do
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Business
   alias SalesReg.Repo
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -14,13 +15,15 @@ defmodule SalesReg.Order.Sale do
     field(:tax, :string)
     field(:discount, :string)
     field(:ref_id, :string)
+    field(:charge, :string)
 
     field(:state, :string, virtual: true)
 
     has_one(:invoice, SalesReg.Order.Invoice)
+    has_one(:location, SalesReg.Business.Location)
     has_many(:items, SalesReg.Order.Item, on_replace: :delete)
-    has_many(:review, SalesReg.Order.Review)
-    has_many(:star, SalesReg.Order.Star)
+    has_many(:reviews, SalesReg.Order.Review)
+    has_many(:stars, SalesReg.Order.Star)
 
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:contact, SalesReg.Business.Contact)
@@ -35,19 +38,20 @@ defmodule SalesReg.Order.Sale do
     :contact_id,
     :company_id,
     :date,
-    :ref_id
+    :ref_id,
+    :charge
   ]
   @optional_fields [:status, :tax, :discount]
 
   @doc false
   def changeset(sale, attrs) do
-    new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
-
     sale
-    |> Repo.preload([:items])
-    |> cast(new_attrs, @required_fields ++ @optional_fields)
+    |> Repo.preload([:items, :location])
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> before_update_callback(attrs)
     |> validate_required(@required_fields)
     |> cast_assoc(:items)
+    |> cast_assoc(:location)
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
     |> assoc_constraint(:contact)
@@ -70,5 +74,25 @@ defmodule SalesReg.Order.Sale do
     |> no_assoc_constraint(:items,
       message: "This sale is still associated with a product"
     )
+  end
+
+  def get_sale_share_link(sale) do
+    sale = Repo.preload(sale, [:company])
+    "#{Business.get_company_share_domain()}/#{sale.company.slug}/s/#{sale.id}"
+  end
+
+  defp before_update_callback(changeset, attrs) do
+    case changeset do
+      %Ecto.Changeset{action: :insert} ->
+        ref_id = SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
+          |> Map.get(:ref_id)
+        
+        changeset
+        |> put_change(:ref_id, ref_id)
+        |> put_change(:charge, "#{System.get_env("CHARGE")}")
+
+      _ ->
+        changeset
+    end
   end
 end

@@ -55,14 +55,16 @@
 																	<tbody>
 																	<tr>
 																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89)">
-																			<p>Dear <span><%= sale.contact.contact_name %></span>,</p>
+																			<p>Thank you! Thank you!! Thank you!!!</p>
+																			<p>Hello <span><%= sale.contact.contact_name %></span>,</p>
 																			<p>This is just a quick email to say we've received your order.</p>
-																			<p>As soon as everything has been confirmed and ready for shipment, we will send you another email with your order details and any other information about your package</p>
+																			<p>As soon as everything has been confirmed and ready for shipment, we will send you another email with your order details and any other information about your package.</p>
 																			<p>Your shipping ETA is one working days from when you received this email. We'll follow up as quick as possible.</p>
-																			<p>In the meantime, if you have any questions, send us an email at <a href="mailto:<%= sale.company.contact_email %>" style="color: #3668D3"><<%= sale.company.contact_email %>/a> and we'll be happy to help you.</p>
+																			<p>In the meantime, if you have any questions, send us an email at <a href="mailto:<%= sale.company.contact_email %>" style="color: #3668D3"><%= sale.company.contact_email %></a> and we'll be happy to help you.</p>
 																			<p>
-																				<span><a href="#" target="_blank" style="text-decoration: none;color: #3668D3">View order</a></span> or <span><a href="#" target="_blank" style="text-decoration: none;color: #3668D3">Visit our webstore</a></span>
+																				<span><a href="<%= SalesReg.Order.get_sale_share_link(sale) %>" target="_blank" style="text-decoration: none;color: #3668D3">View order</a></span> or <span><a href="<%= SalesReg.Business.get_company_subdomain(sale.company) %>" target="_blank" style="text-decoration: none;color: #3668D3">Visit our webstore</a></span>
 																			</p>
+																			<p>Best regards.</p>
 																		</td>
 																	</tr>
 																	</tbody>
@@ -104,8 +106,8 @@
 								<tr>
 									<td>
 										<center>
-											<a href="#" target="_blank">
-												<img src="assets/sm-yipcart-logo.svg" width="114" height="40" alt="InVision" class="CToWUd">
+											<a href="<%= SalesReg.Business.get_company_share_url(sale.company) %>" target="_blank">
+												<img src="<%= sale.company.logo %>" width="114" height="40" alt="YipCart" class="CToWUd">
 											</a>
 										</center>
 									</td>
@@ -119,7 +121,9 @@
 								<!-- Footer Yipcart intro -->
 								<tr>
 									<td>
-										<h2 style="color: rgb(85,85,85);font-size:15px!important;font-weight:400;line-height:1.4em;text-align:center" align="center">The product eco-system that streamline the sales, ordering, and communication processes.</h2>
+										<h2 style="color: rgb(85,85,85);font-size:15px!important;font-weight:400;line-height:1.4em;text-align:center" align="center">
+											<%= sale.company.description %>
+										</h2>
 									</td>
 								</tr>
 								<!-- Footer Yipcart intro Ends -->
@@ -134,7 +138,7 @@
 											<tbody>
 
 											<tr>
-												<td colspan="5"></td>
+												<td colspan="3"></td>
 												<h3 style="font-size:14px!important;font-family:'Roboto',sans-serif;text-align:center;font-weight:400;color:#737881" align="center">FOLLOW US</h3></td>
 											</tr>
 
@@ -145,8 +149,8 @@
 											<!-- Social Medias -->
 											<tr>
 												<td>
-													<a href="#" target="_blank">
-														<img src="assets/facebook-footer-icon.png" width="50" height="50" alt="Facebook Logo">
+													<a href="https://facebook.com/<%= sale.company.facebook %>" target="_blank">
+														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/facebook-footer-icon.png" width="50" height="50" alt="Facebook Logo">
 													</a>
 												</td>
 
@@ -155,16 +159,16 @@
 												<td></td>
 
 												<td>
-													<a href="#" target="_blank">
-														<img src="assets/twitter-footer-icon.png" width="50" height="50" alt="Twitter Logo">
+													<a href="https://twitter.com/<%= sale.company.twitter %>" target="_blank">
+														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/twitter-footer-icon.png" width="50" height="50" alt="Twitter Logo">
 													</a>
 												</td>
 
 												<td style="font-size:1px;width:32px;height:30px" height="30" width="32">&nbsp;</td>
 
 												<td>
-													<a href="#" target="_blank">
-														<img src="assets/linkedin-footer-icon.png" width="50" height="50" alt="LinkedIn Logo">
+													<a href="https://instagram.com/<%= sale.company.instagram %>" target="_blank">
+														<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/instagram.png" width="50" height="50" alt="Instagram Logo">
 													</a>
 												</td>
 											</tr>
@@ -179,7 +183,7 @@
 									<td colspan="3" style="font-size:1px;height:50px" height="50">&nbsp;</td>
 								</tr>
 								<tr>
-									<td style="font-size:14px!important;color:#737881;font-weight:400;text-align:center" align="center">YipCart, Road Y, Off O”dola Ave, Oba-Ile, Ondo, NG</td>
+									<td style="font-size:14px!important;color:#737881;font-weight:400;text-align:center" align="center"><%= sale.company.title %>, <%= SalesReg.Business.get_company_address(sale.company) %></td>
 								</tr>
 								<tr>
 									<td style="height:0;font-size:14px!important;color:#737881;font-weight:300;text-align:center" height="0" align="center">&nbsp;</td>
@@ -189,10 +193,10 @@
 										<table cellspacing="0" cellpadding="0" style="border:0;width:100%" width="100%">
 											<tbody>
 											<tr style="display: flex;align-items: center;justify-content: center;">
-												<td style="display:inline-flex;text-align:center" align="center">
-													<a href="#" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">VISIT&nbsp;YIPCART.COM</a>
-													<img src="assets/vertical-line-footer-icon.png" width="34" height="24" style="vertical-align:bottom;">
-													<a href="#" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">UNSUBSCRIBE</a>
+												<td style="display:inline-flex;text-align:center;margin:0 auto" align="center">
+													<a href="<%= SalesReg.Business.get_company_share_url(sale.company) %>" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">VISIT&nbsp;<%= SalesReg.Business.get_company_share_url(sale.company) %></a>
+													<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/vertical-line-footer-icon.png" width="34" height="24" style="vertical-align:bottom;">
+													<%# <a href="#" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">UNSUBSCRIBE</a> %>
 												</td>
 											</tr>
 											</tbody>

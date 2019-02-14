@@ -21,7 +21,7 @@ defmodule SalesRegWeb.GraphQL.MiddleWares.ChangesetErrors do
     }
   end
 
-  defp transform_errors(changeset) do
+  defp transform_errors(%Ecto.Changeset{} = changeset) do
     changeset
     |> Changeset.traverse_errors(&format_error/1)
     |> Enum.map(fn {key, value} ->

@@ -19,3 +19,4 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 
 // import socket from "./socket"
+console.log("dd d bfjkenjkg3hr9843u8994u90u94u3290i4902iu03i092i90i490i490")

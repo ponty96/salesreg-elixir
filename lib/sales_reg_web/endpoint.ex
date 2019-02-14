@@ -1,5 +1,6 @@
 defmodule SalesRegWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :sales_reg
+  use Sentry.Phoenix.Endpoint
 
   socket("/socket", SalesRegWeb.UserSocket)
 
@@ -43,6 +44,8 @@ defmodule SalesRegWeb.Endpoint do
     signing_salt: "1PjvV655"
   )
 
+  plug(SalesRegWeb.Plug.SubdomainHandler)
+  plug(CORSPlug)
   plug(SalesRegWeb.Router)
 
   @doc """
