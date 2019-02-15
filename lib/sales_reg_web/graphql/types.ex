@@ -430,8 +430,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
     field :amount_before_charge, :float do
       resolve(fn _parent, %{source: invoice} ->
-        %{amount: order_amount_before_charge} = Order.cal_order_amount_before_charge(invoice)
-        {:ok, order_amount_before_charge}
+        {:ok, Order.cal_order_amount_before_charge(invoice)}
       end)
     end
 
