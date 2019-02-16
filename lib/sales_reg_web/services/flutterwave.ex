@@ -1,8 +1,6 @@
 defmodule SalesRegWeb.Services.Flutterwave do
   alias SalesRegWeb.Services.Base
 
-  @base_url "https://ravesandboxapi.flutterwave.com/"
-
   def create_subaccount(params) do
     body =
       params
@@ -61,7 +59,7 @@ defmodule SalesRegWeb.Services.Flutterwave do
   end
 
   defp process_url(endpoint) do
-    @base_url <> endpoint
+    get_flutterwave_api() <> endpoint
   end
 
   defp construct_subaccount_details(params) do
@@ -79,5 +77,9 @@ defmodule SalesRegWeb.Services.Flutterwave do
 
   defp get_flutterwave_key do
     System.get_env("FLUTTERWAVE_SECRET_KEY")
+  end
+
+  defp get_flutterwave_api do
+    System.get_env("FLUTTERWAVE_API")
   end
 end
