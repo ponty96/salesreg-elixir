@@ -50,6 +50,6 @@ defmodule SalesReg.Business.Company do
     |> cast_assoc(:phone)
     |> cast_assoc(:legal_documents)
     |> validate_required(@required_fields)
-    |> validate_format(:slug, ~r/^[a-zA-Z\d][a-zA-Z\d-_]+[a-zA-Z\d]$/)
+    |> validate_format(:slug, ~r/^[a-zA-Z\d][a-zA-Z\d-]+[a-zA-Z\d]$/)
   end
 end
