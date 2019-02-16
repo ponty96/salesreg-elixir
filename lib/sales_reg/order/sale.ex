@@ -83,7 +83,8 @@ defmodule SalesReg.Order.Sale do
 
   defp before_update_callback(changeset, attrs) do
     if Enum.count(changeset.changes) > 1 do
-      ref_id = SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
+      ref_id =
+        SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
         |> Map.get(:ref_id)
 
       changeset
