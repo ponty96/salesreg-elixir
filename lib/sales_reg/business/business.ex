@@ -124,7 +124,7 @@ defmodule SalesReg.Business do
   end
 
   def get_company_address(company) do
-    company = Repo.preload(company, [branches: [:location]])
+    company = Repo.preload(company, branches: [:location])
     location = Enum.at(company.branches, 0).location
 
     "#{location.street1} #{location.city} #{location.state} #{location.country}"
