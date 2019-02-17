@@ -837,7 +837,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   input_object :sale_input do
     field(:date, non_null(:string))
     field(:items, non_null(list_of(:item_input)))
-    field(:payment_method, non_null(:payment_method))
+    field(:payment_method, :payment_method)
     field(:tax, :string)
     field(:discount, :string)
     field(:amount_paid, :string)
