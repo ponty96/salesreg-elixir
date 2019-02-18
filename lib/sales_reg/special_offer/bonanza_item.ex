@@ -9,6 +9,7 @@ defmodule SalesReg.SpecialOffer.BonanzaItem do
     field(:max_quantity, :string)
 
     belongs_to(:product, SalesReg.Store.Product)
+    belongs_to(:bonanza, SalesReg.SpecialOffer.Bonanza)
 
     timestamps()
   end

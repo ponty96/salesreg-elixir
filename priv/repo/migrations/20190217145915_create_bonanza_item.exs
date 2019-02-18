@@ -8,6 +8,7 @@ defmodule SalesReg.Repo.Migrations.CreateBonanzaItem do
       add(:max_quantity, :string)
 
       add(:product_id, references(:products, on_delete: :nothing, type: :binary_id))
+      add(:bonanza_id, references(:bonanzas, on_delete: :nothing, type: :binary_id))
 
       timestamps()
     end
