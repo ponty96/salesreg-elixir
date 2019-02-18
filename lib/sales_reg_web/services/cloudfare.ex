@@ -7,7 +7,8 @@ defmodule SalesRegWeb.Services.Cloudfare do
       %{
         "type" => type,
         "name" => name,
-        "content" => content
+        "content" => content,
+        "proxied" => true
       }
       |> Map.merge(optional_params)
       |> Base.encode()

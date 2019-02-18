@@ -64,12 +64,19 @@ defmodule SalesRegWeb.ConnCase do
     phone: %{
       number: "+2348131900893"
     },
-    slug: "nickname of the company",
-    cover_photo: "img3455"
+    slug: "sanbox",
+    cover_photo: "img3455",
+    head_office: %{
+      street1: "J11 Obaile housing estate",
+      city: "Akure",
+      state: "Ondo",
+      country: "NGN"
+    }
   }
 
   # this is called for all tests
   setup %{conn: conn} do
+    {:ok, _template} = SalesReg.Seed.add_template()
     {:ok, user} = SalesReg.Accounts.create_user(@user_params)
     login_params = %{email: user.email, password: user.password}
     conn = SalesRegWeb.GraphqlTestHelpers.authenticate(conn, login_params)
