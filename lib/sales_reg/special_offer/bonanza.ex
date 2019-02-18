@@ -38,6 +38,7 @@ defmodule SalesReg.SpecialOffer.Bonanza do
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
     |> unique_constraint(:slug)
+    |> cast_assoc(:bonanza_items)
   end
 
   def delete_changeset(category) do
