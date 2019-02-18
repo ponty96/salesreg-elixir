@@ -1,6 +1,7 @@
 defmodule SalesReg.SpecialOffer.Bonanza do
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Repo
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -13,7 +14,7 @@ defmodule SalesReg.SpecialOffer.Bonanza do
     field(:description, :string)
 
     has_many(:sales, SalesReg.Order.Sale)
-    has_many(:bonanza_items, SalesReg.SpecialOffer.BonanzaItem)
+    has_many(:bonanza_items, SalesReg.SpecialOffer.BonanzaItem, on_replace: :delete)
 
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
@@ -34,6 +35,7 @@ defmodule SalesReg.SpecialOffer.Bonanza do
   @doc false
   def changeset(bonanza, attrs) do
     bonanza
+    |> Repo.preload([:bonanza_items])
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
