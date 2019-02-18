@@ -282,6 +282,9 @@ defmodule SalesReg.Seed do
       "http://shfcs.org/en/wp-content/uploads/2015/11/MedRes_Product-presentation-2.jpg"
   }
 
+  def add_product_without_variant(params, company_id, user_id),
+    do: add_product_without_variant(params, company_id, user_id, [])
+
   def add_product_without_variant(params, company_id, user_id, categories) do
     {:ok, prod_grp} = insert_prod_grp(company_id)
 
