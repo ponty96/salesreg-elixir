@@ -131,7 +131,10 @@ defmodule SalesRegWeb do
         Theme.CompanyTemplate,
         Theme.CompanyEmailTemplate,
         Email,
-        Mailer
+        Mailer,
+        SpecialOffer,
+        SpecialOffer.Bonanza,
+        SpecialOffer.BonanzaItem
       }
     end
   end

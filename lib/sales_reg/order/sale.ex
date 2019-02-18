@@ -28,6 +28,7 @@ defmodule SalesReg.Order.Sale do
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:contact, SalesReg.Business.Contact)
     belongs_to(:company, SalesReg.Business.Company)
+    belongs_to(:bonanza, SalesReg.SpecialOffer.Bonanza)
 
     timestamps()
   end
@@ -41,7 +42,7 @@ defmodule SalesReg.Order.Sale do
     :ref_id,
     :charge
   ]
-  @optional_fields [:status, :tax, :discount]
+  @optional_fields [:status, :tax, :discount, :bonanza_id]
 
   @doc false
   def changeset(sale, attrs) do

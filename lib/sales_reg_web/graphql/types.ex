@@ -399,6 +399,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))
     field(:location, :location, resolve: dataloader(SalesReg.Business, :location))
+    field(:bonanza, :bonanza, resolve: dataloader(SalesReg.SpecialOffer, :bonanza))
   end
 
   connection(node_type: :sale)
@@ -542,6 +543,39 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   connection(node_type: :activity)
 
   @desc """
+    Bonanza object type
+  """
+  object :bonanza do
+    field(:id, :uuid)
+    field(:title, :string)
+    field(:cover_photo, :string)
+    field(:start_date, :string)
+    field(:end_date, :string)
+    field(:slug, :string)
+    field(:description, :string)
+
+    field(:inserted_at, :naive_datetime)
+      
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+    field(:bonanza_items, list_of(:bonanza_item), resolve: dataloader(SalesReg.SpecialOffer, :bonanza_items))
+    field(:sales, list_of(:sale), resolve: dataloader(SalesReg.Order, :sale))
+  end
+
+  connection(node_type: :bonanza)
+
+  @desc """
+    Bonanza Item object type
+  """
+  object :bonanza_item do
+    field(:id, :uuid)
+    field(:price_slash_to, :string)
+    field(:max_quantity, :string)
+
+    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -577,7 +611,9 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       :template,
       :company_template,
       :activity,
-      :legal_document
+      :legal_document,
+      :bonanza,
+      :bonanza_item
     ])
 
     resolve_type(fn
@@ -605,6 +641,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       %CompanyTemplate{}, _ -> :company_template
       %Activity{}, _ -> :activity
       %LegalDocument{}, _ -> :legal_document
+      %Bonanza{}, _ -> :bonanza
+      %BonanzaItem{}, _ -> :bonanza_item
     end)
   end
 
@@ -848,6 +886,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:user_id, non_null(:uuid))
     field(:contact_id, :uuid)
     field(:company_id, non_null(:uuid))
+    field(:bonanza_id, :uuid)
   end
 
   input_object :bank_input do
@@ -914,6 +953,24 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   input_object :cover_photo_input do
     field(:company_id, :uuid)
     field(:cover_photo, non_null(:string))
+  end
+
+  input_object :bonanza_input do
+    field(:title, non_null(:string))
+    field(:cover_photo, :string)
+    field(:start_date, non_null(:string))
+    field(:end_date, non_null(:string))
+    field(:slug, non_null(:string))
+    field(:description, :string)
+    field(:bonanza_items, non_null(list_of(:bonanza_item_input)))
+    field(:company_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
+  end
+
+  input_object :bonanza_item_input do
+    field(:price_slash_to, non_null(:string))
+    field(:max_quantity, non_null(:string))
+    field(:product_id, non_null(:uuid))
   end
 
   #########################################################
