@@ -98,111 +98,15 @@ defmodule SalesReg.Order do
     end)
   end
 
-  # Called when a registered company contact makes an order and pays some amount using cash
-  def create_sale(%{contact_id: _id, amount_paid: amount, payment_method: "cash"} = params) do
-    Multi.new()
-    |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
-    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      M2C.send_received_order_mail(sale)
-      # send order notification email to merchant
-      YC2C.send_order_notification(sale)
-
-      {:ok, "Email Sent"}
-    end)
-    |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
-      insert_invoice(sale)
-    end)
-    |> Multi.run(:insert_receipt, fn _repo, %{insert_sale: sale, insert_invoice: invoice} ->
-      insert_receipt(sale, invoice, amount, :cash)
-    end)
-    |> Multi.run(:insert_activities, fn _repo, %{insert_receipt: receipt} ->
-      create_activities(receipt)
-    end)
-    |> Repo.transaction()
-    |> repo_transaction_resp()
-  end
-
-  # Called when a registered company contact makes an order without any initial cash payment
-  def create_sale(%{contact_id: _id, payment_method: "cash"} = params) do
-    Multi.new()
-    |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
-    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      M2C.send_received_order_mail(sale)
-      # send order notification email to merchant
-      YC2C.send_order_notification(sale)
-
-      {:ok, "Email Sent"}
-    end)
-    |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
-      insert_invoice(sale)
-    end)
-    |> Repo.transaction()
-    |> repo_transaction_resp()
-  end
-
-  # Called when an unregistered company contact makes an order and pays some amount using cash
-  def create_sale(
-        %{contact: contact_params, amount_paid: amount, payment_method: "cash"} = params
-      ) do
-    Multi.new()
-    |> Multi.insert(:insert_contact, Contact.through_order_changeset(%Contact{}, contact_params))
-    |> Multi.run(:insert_sale, fn _repo, %{insert_contact: contact} ->
-      params
-      |> Map.put_new(:contact_id, contact.id)
-      |> Order.add_sale()
-    end)
-    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      M2C.send_received_order_mail(sale)
-      # send order notification email to merchant
-      YC2C.send_order_notification(sale)
-
-      {:ok, "Email Sent"}
-    end)
-    |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
-      insert_invoice(sale)
-    end)
-    |> Multi.run(:insert_receipt, fn _repo, %{insert_sale: sale, insert_invoice: invoice} ->
-      insert_receipt(sale, invoice, amount, :cash)
-    end)
-    |> Multi.run(:insert_activities, fn _repo, %{insert_receipt: receipt} ->
-      create_activities(receipt)
-    end)
-    |> Repo.transaction()
-    |> repo_transaction_resp()
-  end
-
-  # Called when an unregistered company contact makes an order without an initial cash payment
-  def create_sale(%{contact: contact_params, payment_method: "cash"} = params) do
-    Multi.new()
-    |> Multi.insert(:insert_contact, Contact.through_order_changeset(%Contact{}, contact_params))
-    |> Multi.run(:insert_sale, fn _repo, %{insert_contact: contact} ->
-      params
-      |> Map.put_new(:contact_id, contact.id)
-      |> Order.add_sale()
-    end)
-    |> Multi.run(:send_email, fn _repo, %{insert_sale: sale} ->
-      M2C.send_received_order_mail(sale)
-      # send order notification email to merchant
-      YC2C.send_order_notification(sale)
-
-      {:ok, "Email Sent"}
-    end)
-    |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
-      insert_invoice(sale)
-    end)
-    |> Repo.transaction()
-    |> repo_transaction_resp()
-  end
-
   # Called when a registered company contact chooses to make payment for an order via card
-  def create_sale(%{contact_id: _id, payment_method: "card"} = params) do
+  def create_sale(%{contact_id: _id} = params) do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
     |> sale_multi_transac()
   end
 
   # Called when an unregistered company contact chooses to make payment for an order via card
-  def create_sale(%{contact: contact_params, payment_method: "card"} = params) do
+  def create_sale(%{contact: contact_params} = params) do
     Multi.new()
     |> Multi.run(:insert_contact, fn _repo, %{} ->
       create_contact_if_not_exist(contact_params)
