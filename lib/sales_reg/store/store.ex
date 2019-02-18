@@ -97,6 +97,7 @@ defmodule SalesReg.Store do
       on: p.product_group_id == pg.id,
       where: ilike(pg.title, ^query_regex),
       where: p.company_id == ^company_id,
+      order_by: [desc: :updated_at],
       select: p
     )
     |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)

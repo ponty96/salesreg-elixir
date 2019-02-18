@@ -18,8 +18,6 @@ defmodule SalesReg.Order.Item do
 
   @doc false
   def changeset(item, attrs) do
-    IO.inspect(attrs, label: "items attrs")
-
     item
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
