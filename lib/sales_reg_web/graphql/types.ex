@@ -986,7 +986,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:cover_photo, :string)
     field(:start_date, non_null(:string))
     field(:end_date, non_null(:string))
-    field(:slug, non_null(:string))
     field(:description, :string)
     field(:bonanza_items, non_null(list_of(:bonanza_item_input)))
     field(:company_id, non_null(:uuid))

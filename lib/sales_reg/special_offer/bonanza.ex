@@ -25,12 +25,11 @@ defmodule SalesReg.SpecialOffer.Bonanza do
     :title,
     :start_date,
     :end_date,
-    :slug,
     :company_id,
     :user_id
   ]
 
-  @optional_fields [:cover_photo, :description]
+  @optional_fields [:cover_photo, :slug, :description]
 
   @doc false
   def changeset(bonanza, attrs) do

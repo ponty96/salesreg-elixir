@@ -67,6 +67,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
 
       resolve(&WebStoreResolver.categories_page_query/2)
     end
+
+    @desc """
+    Get Bonanza
+    """
+    field :get_bonanza, :bonanza do
+      arg(:bonanza_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&SpecialOfferResolver.get_bonanza/2)
+    end
   end
 
   object :web_store_mutations do
