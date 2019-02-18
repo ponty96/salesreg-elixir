@@ -75,6 +75,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
     |> Dataloader.add_source(SalesReg.Order, SalesReg.Order.data())
     |> Dataloader.add_source(SalesReg.Store, SalesReg.Store.data())
     |> Dataloader.add_source(SalesReg.Theme, SalesReg.Theme.data())
+    |> Dataloader.add_source(SalesReg.SpecialOffer, SalesReg.SpecialOffer.data())
   end
 
   def context(ctx) do
