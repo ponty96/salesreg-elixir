@@ -14,5 +14,6 @@ defmodule SalesReg.Repo.Migrations.CreateBonanzaItem do
     end
 
     create(index(:bonanza_items, [:product_id]))
+    create(index(:bonanza_items, [:bonanza_id]))
   end
 end
