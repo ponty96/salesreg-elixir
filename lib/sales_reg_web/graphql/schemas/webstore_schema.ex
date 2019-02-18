@@ -75,7 +75,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
       arg(:bonanza_id, non_null(:uuid))
 
       middleware(Authorize)
-      resolve(&SpecialOfferResolver.get_bonanza/2)
+      resolve(&WebStoreResolver.get_bonanza/2)
     end
   end
 
