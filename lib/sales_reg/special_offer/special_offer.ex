@@ -29,9 +29,8 @@ defmodule SalesReg.SpecialOffer do
   end
 
   defp bonanza_expired?(bonanza) do
-    {:ok, end_date} = 
-      Timex.parse(bonanza.end_date, "{YYYY}-{0M}-{D}")
-    
+    {:ok, end_date} = Timex.parse(bonanza.end_date, "{YYYY}-{0M}-{D}")
+
     if Date.compare(Date.utc_today(), end_date) == :gt do
       true
     else

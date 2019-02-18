@@ -9,7 +9,7 @@ defmodule SalesReg.SpecialOffer.BonanzaItem do
     field(:max_quantity, :string)
 
     belongs_to(:product, SalesReg.Store.Product)
-    
+
     timestamps()
   end
 
@@ -20,7 +20,7 @@ defmodule SalesReg.SpecialOffer.BonanzaItem do
   ]
 
   @optional_fields []
-  
+
   @doc false
   def changeset(bonanza, attrs) do
     bonanza

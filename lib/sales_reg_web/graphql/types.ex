@@ -555,10 +555,14 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:description, :string)
 
     field(:inserted_at, :naive_datetime)
-      
+
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
-    field(:bonanza_items, list_of(:bonanza_item), resolve: dataloader(SalesReg.SpecialOffer, :bonanza_items))
+
+    field(:bonanza_items, list_of(:bonanza_item),
+      resolve: dataloader(SalesReg.SpecialOffer, :bonanza_items)
+    )
+
     field(:sales, list_of(:sale), resolve: dataloader(SalesReg.Order, :sale))
   end
 

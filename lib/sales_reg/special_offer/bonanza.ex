@@ -17,7 +17,7 @@ defmodule SalesReg.SpecialOffer.Bonanza do
 
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
-    
+
     timestamps()
   end
 
@@ -31,7 +31,7 @@ defmodule SalesReg.SpecialOffer.Bonanza do
   ]
 
   @optional_fields [:cover_photo, :description]
-  
+
   @doc false
   def changeset(bonanza, attrs) do
     bonanza
