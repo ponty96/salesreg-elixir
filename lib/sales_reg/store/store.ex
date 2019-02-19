@@ -20,6 +20,7 @@ defmodule SalesReg.Store do
   defdelegate category_image(category), to: Category
   defdelegate get_product_name(product), to: Product
   defdelegate get_product_share_link(product), to: Product
+  defdelegate product_name_based_on_visual_options(product), to: Product
 
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
