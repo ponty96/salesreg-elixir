@@ -72,6 +72,12 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
         {:ok, Store.home_categories(company.id)}
       end)
     end
+
+    field :share_link, :string do
+      resolve(fn _product, %{source: company} ->
+        {:ok, Business.get_company_share_url(company)}
+      end)
+    end
   end
 
   @desc """
@@ -586,6 +592,12 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     )
 
     field(:sales, list_of(:sale), resolve: dataloader(SalesReg.Order, :sale))
+
+    field :share_link, :string do
+      resolve(fn _product, %{source: bonanza} ->
+        {:ok, SpecialOffer.get_bonanza_share_url(bonanza)}
+      end)
+    end
   end
 
   connection(node_type: :bonanza)
