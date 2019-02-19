@@ -20,6 +20,12 @@ defmodule SalesRegWeb.ForwardController do
     redirect(conn, external: url)
   end
 
+  def forward_bonanza(conn, %{"business_slug" => slug, "bonanza_id" => bonanza_id}) do
+    url = "#{base_url(conn, slug)}/special-offers/#{bonanza_id}"
+
+    redirect(conn, external: url)
+  end
+
   def forward_receipt(conn, %{"business_slug" => slug, "receipt_id" => receipt_id}) do
     url = "#{base_url(conn, slug)}/receipts/#{receipt_id}"
 
