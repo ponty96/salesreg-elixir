@@ -94,10 +94,6 @@ config :sales_reg, SalesReg.Mailer,
   adapter: Bamboo.SendGridAdapter,
   api_key: "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"
 
-config :sales_reg, SalesReg.Mailer,
-  adapter: Bamboo.LocalAdapter,
-  open_email_in_browser_url: "http://localhost:5000/sent_emails"
-
 config :sales_reg, SalesReg.Scheduler,
   jobs: [
     mail_on_order_due_date: [
@@ -123,7 +119,7 @@ config :sales_reg, SalesReg.Scheduler,
   ]
 
 config :sentry,
-  dsn: "https://450c8312e5094c859c0ff835ce5234d4@sentry.io/1369497",
+  dsn: "https://5b18bcdf49e54cc48fa881846afadd0a@sentry.io/1369436",
   included_environments: [:prod, :dev],
   environment_name: Mix.env()
 
