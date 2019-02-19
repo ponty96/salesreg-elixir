@@ -10,6 +10,9 @@ defmodule SalesReg.SpecialOffer do
     BonanzaItem
   ]
 
+
+  defdelegate get_bonanza_share_url(bonanza), to: Bonanza
+
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
   end
