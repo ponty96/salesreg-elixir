@@ -59,6 +59,7 @@ defmodule SalesRegWeb.Router do
   scope "/", SalesRegWeb do
     pipe_through(:browser)
     # get("/:business_slug/c/:category_slug", ForwardController, :forward_category)
+    get("/:business_slug/bz/:bonanza_id", ForwardController, :forward_bonanza)
     get("/:business_slug/in/:invoice_id", ForwardController, :forward_invoice)
     get("/:business_slug/s/:sale_id", ForwardController, :forward_sale)
     get("/:business_slug/r/:receipt_id", ForwardController, :forward_receipt)

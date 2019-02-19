@@ -11,6 +11,7 @@ defmodule SalesReg.Order.Invoice do
     field(:due_date, :string)
     field(:pdf_url, :string)
     field(:ref_id, :string)
+    field(:allows_split_payment, :boolean, default: false)
 
     has_many(:receipts, SalesReg.Order.Receipt)
     belongs_to(:sale, SalesReg.Order.Sale)
@@ -27,7 +28,7 @@ defmodule SalesReg.Order.Invoice do
     :company_id,
     :ref_id
   ]
-  @optional_fields [:pdf_url]
+  @optional_fields [:pdf_url, :allows_split_payment]
 
   def changeset(invoice, attrs) do
     invoice

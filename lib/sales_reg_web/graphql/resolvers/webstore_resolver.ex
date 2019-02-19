@@ -90,6 +90,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
     {:ok, Order.get_receipt(id)}
   end
 
+  def get_bonanza(%{bonanza_id: id}, _res) do
+    SpecialOffer.get_bonanza_if_not_expired(id)
+  end
+
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
   end

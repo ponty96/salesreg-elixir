@@ -10,7 +10,7 @@ defmodule SalesReg.Order.Receipt do
   schema "receipts" do
     field(:amount_paid, :string)
     field(:time_paid, :string)
-    field(:payment_method, :string)
+    field(:payment_method, :string, default: "card")
     field(:pdf_url, :string)
     field(:transaction_id, :integer)
     field(:ref_id, :string)

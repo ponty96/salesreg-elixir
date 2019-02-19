@@ -32,7 +32,7 @@ defmodule SalesReg.Context do
           res =
             unquote(module)
             |> Query.where(company_id: ^company_id)
-            |> Query.order_by([:updated_at])
+            |> Query.order_by(desc: :updated_at)
             |> Repo.all()
 
           {:ok, res}
@@ -41,7 +41,7 @@ defmodule SalesReg.Context do
         def unquote(String.to_atom("paginated_list_company_#{schema}s"))(clauses, args) do
           unquote(module)
           |> Query.where(^clauses)
-          |> Query.order_by(:updated_at)
+          |> Query.order_by(desc: :updated_at)
           |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
         end
 
@@ -59,6 +59,7 @@ defmodule SalesReg.Context do
               ^query
             )
           )
+          |> order_by(desc: :updated_at)
           |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
         end
 
