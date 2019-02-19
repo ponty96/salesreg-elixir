@@ -48,6 +48,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:instagram, :string)
     field(:twitter, :string)
     field(:linkedin, :string)
+    field(:updated_at, :naive_datetime)
 
     field(:branches, list_of(:branch), resolve: dataloader(SalesReg.Business, :branches))
     field(:owner, :user, resolve: dataloader(SalesReg.Accounts, :owner))
@@ -71,6 +72,12 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
         {:ok, Store.home_categories(company.id)}
       end)
     end
+
+    field :share_link, :string do
+      resolve(fn _product, %{source: company} ->
+        {:ok, Business.get_company_share_url(company)}
+      end)
+    end
   end
 
   @desc """
@@ -82,6 +89,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:type, :string)
     field(:content, :string)
     field(:pdf_url, :string)
+    field(:updated_at, :naive_datetime)
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
@@ -92,6 +100,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   object :branch do
     field(:id, :uuid)
     field(:type, :string)
+    field(:updated_at, :naive_datetime)
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:location, :location, resolve: dataloader(SalesReg.Business, :location))
@@ -110,6 +119,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:street1, :string)
     field(:street2, :string)
     field(:type, :string)
+    field(:updated_at, :naive_datetime)
   end
 
   @desc """
@@ -164,6 +174,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:id, :uuid)
     field(:number, :string)
     field(:type, :string)
+    field(:updated_at, :naive_datetime)
   end
 
   @desc """
@@ -196,6 +207,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:date, :string)
     field(:total_amount, :float)
     field(:payment_method, :string)
+    field(:updated_at, :naive_datetime)
 
     field(:paid_by, :user, resolve: dataloader(SalesReg.Accounts, :paid_by))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
@@ -216,6 +228,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:id, :uuid)
     field(:item_name, :string)
     field(:amount, :float)
+    field(:updated_at, :naive_datetime)
 
     field(:expense, :expense, resolve: dataloader(SalesReg.Business, :expense))
   end
@@ -228,6 +241,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   object :product_group do
     field(:id, :uuid)
     field(:title, :string)
+    field(:updated_at, :naive_datetime)
 
     field(:products, list_of(:product), resolve: dataloader(SalesReg.Store, :products))
     field(:options, list_of(:option), resolve: dataloader(SalesReg.Store, :options))
@@ -240,6 +254,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:id, :uuid)
     field(:name, :string)
     field(:is_visual, :string)
+    field(:updated_at, :naive_datetime)
 
     field(:option_values, list_of(:option_value),
       resolve: dataloader(SalesReg.Store, :option_values)
@@ -271,6 +286,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:cost_price, :string)
     field(:price, :string)
     field(:slug, :string)
+    field(:updated_at, :naive_datetime)
 
     field :share_link, :string do
       resolve(fn _product, %{source: product} ->
@@ -319,6 +335,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:slug, :string)
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+    field(:updated_at, :naive_datetime)
 
     field(
       :products,
@@ -341,6 +358,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   object :tag do
     field(:id, :uuid)
     field(:name, :string)
+    field(:updated_at, :naive_datetime)
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:products, list_of(:product), resolve: dataloader(SalesReg.Store, :products))
@@ -399,6 +417,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:phone, :phone, resolve: dataloader(SalesReg.Business, :phone))
     field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))
     field(:location, :location, resolve: dataloader(SalesReg.Business, :location))
+    field(:bonanza, :bonanza, resolve: dataloader(SalesReg.SpecialOffer, :bonanza))
   end
 
   connection(node_type: :sale)
@@ -410,6 +429,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:id, :uuid)
     field(:quantity, :string)
     field(:unit_price, :string)
+    field(:updated_at, :naive_datetime)
 
     field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
   end
@@ -421,6 +441,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:id, :uuid)
     field(:due_date, :string)
     field(:ref_id, :string)
+    field(:updated_at, :naive_datetime)
+    field(:allows_split_payment, :boolean)
 
     field :amount, :float do
       resolve(fn _parent, %{source: invoice} ->
@@ -465,6 +487,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:pdf_url, :string)
     field(:reference_id, :string)
     field(:ref_id, :string)
+    field(:updated_at, :naive_datetime)
 
     field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
@@ -478,6 +501,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   object :review do
     field(:id, :uuid)
     field(:text, :string)
+    field(:updated_at, :naive_datetime)
 
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
     field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
@@ -491,6 +515,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   object :star do
     field(:id, :uuid)
     field(:value, :integer)
+    field(:updated_at, :naive_datetime)
 
     field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
     field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
@@ -506,6 +531,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:title, :string)
     field(:slug, :string)
     field(:featured_image, :string)
+    field(:updated_at, :naive_datetime)
   end
 
   connection(node_type: :template)
@@ -516,6 +542,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   object :company_template do
     field(:id, :uuid)
     field(:status, :string)
+    field(:updated_at, :naive_datetime)
 
     field(:template, list_of(:template), resolve: dataloader(SaleReg.Theme, :template))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
@@ -531,6 +558,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:amount, :string)
 
     field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
 
     field :ref_id, :string do
       resolve(fn _parent, %{source: activity} ->
@@ -540,6 +568,51 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   connection(node_type: :activity)
+
+  @desc """
+    Bonanza object type
+  """
+  object :bonanza do
+    field(:id, :uuid)
+    field(:title, :string)
+    field(:cover_photo, :string)
+    field(:start_date, :string)
+    field(:end_date, :string)
+    field(:slug, :string)
+    field(:description, :string)
+
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+
+    field(:bonanza_items, list_of(:bonanza_item),
+      resolve: dataloader(SalesReg.SpecialOffer, :bonanza_items)
+    )
+
+    field(:sales, list_of(:sale), resolve: dataloader(SalesReg.Order, :sale))
+
+    field :share_link, :string do
+      resolve(fn _product, %{source: bonanza} ->
+        {:ok, SpecialOffer.get_bonanza_share_url(bonanza)}
+      end)
+    end
+  end
+
+  connection(node_type: :bonanza)
+
+  @desc """
+    Bonanza Item object type
+  """
+  object :bonanza_item do
+    field(:id, :uuid)
+    field(:price_slash_to, :string)
+    field(:max_quantity, :string)
+    field(:updated_at, :naive_datetime)
+
+    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
+  end
 
   @desc """
     Consistent Type for Mutation Response
@@ -577,7 +650,9 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       :template,
       :company_template,
       :activity,
-      :legal_document
+      :legal_document,
+      :bonanza,
+      :bonanza_item
     ])
 
     resolve_type(fn
@@ -605,6 +680,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       %CompanyTemplate{}, _ -> :company_template
       %Activity{}, _ -> :activity
       %LegalDocument{}, _ -> :legal_document
+      %Bonanza{}, _ -> :bonanza
+      %BonanzaItem{}, _ -> :bonanza_item
     end)
   end
 
@@ -837,7 +914,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   input_object :sale_input do
     field(:date, non_null(:string))
     field(:items, non_null(list_of(:item_input)))
-    field(:payment_method, non_null(:payment_method))
+    field(:payment_method, :payment_method)
     field(:tax, :string)
     field(:discount, :string)
     field(:amount_paid, :string)
@@ -848,6 +925,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:user_id, non_null(:uuid))
     field(:contact_id, :uuid)
     field(:company_id, non_null(:uuid))
+    field(:bonanza_id, :uuid)
   end
 
   input_object :bank_input do
@@ -883,6 +961,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
   input_object :invoice_input do
     field(:due_date, non_null(:string))
+    field(:allows_split_payment, :boolean)
   end
 
   input_object :review_input do
@@ -914,6 +993,23 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   input_object :cover_photo_input do
     field(:company_id, :uuid)
     field(:cover_photo, non_null(:string))
+  end
+
+  input_object :bonanza_input do
+    field(:title, non_null(:string))
+    field(:cover_photo, :string)
+    field(:start_date, non_null(:string))
+    field(:end_date, non_null(:string))
+    field(:description, :string)
+    field(:bonanza_items, non_null(list_of(:bonanza_item_input)))
+    field(:company_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
+  end
+
+  input_object :bonanza_item_input do
+    field(:price_slash_to, non_null(:string))
+    field(:max_quantity, non_null(:string))
+    field(:product_id, non_null(:uuid))
   end
 
   #########################################################

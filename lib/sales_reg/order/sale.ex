@@ -28,12 +28,12 @@ defmodule SalesReg.Order.Sale do
     belongs_to(:user, SalesReg.Accounts.User)
     belongs_to(:contact, SalesReg.Business.Contact)
     belongs_to(:company, SalesReg.Business.Company)
+    belongs_to(:bonanza, SalesReg.SpecialOffer.Bonanza)
 
     timestamps()
   end
 
   @required_fields [
-    :payment_method,
     :user_id,
     :contact_id,
     :company_id,
@@ -41,7 +41,8 @@ defmodule SalesReg.Order.Sale do
     :ref_id,
     :charge
   ]
-  @optional_fields [:status, :tax, :discount]
+  
+  @optional_fields [:status, :tax, :discount, :payment_method, :bonanza_id]
 
   @doc false
   def changeset(sale, attrs) do
@@ -55,17 +56,17 @@ defmodule SalesReg.Order.Sale do
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
     |> assoc_constraint(:contact)
-    |> validate_payment_method()
+    # |> validate_payment_method()
     |> validate_inclusion(:status, @order_status)
   end
 
-  defp validate_payment_method(changeset) do
-    case get_field(changeset, :payment_method) do
-      "card" -> changeset
-      "cash" -> changeset
-      _ -> add_error(changeset, :payment_method, "Invalid payment method")
-    end
-  end
+  # defp validate_payment_method(changeset) do
+  #   case get_field(changeset, :payment_method) do
+  #     "card" -> changeset
+  #     "cash" -> changeset
+  #     _ -> add_error(changeset, :payment_method, "Invalid payment method")
+  #   end
+  # end
 
   def delete_changeset(sale) do
     sale
