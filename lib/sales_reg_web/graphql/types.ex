@@ -56,7 +56,10 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
     field(:reviews, list_of(:review), resolve: dataloader(SalesReg.Order, :reviews))
     field(:stars, list_of(:star), resolve: dataloader(SalesReg.Order, :stars))
-    field(:delivery_fee, list_of(:delivery_fee), resolve: dataloader(SalesReg.Order, :delivery_fee))
+
+    field(:delivery_fee, list_of(:delivery_fee),
+      resolve: dataloader(SalesReg.Order, :delivery_fee)
+    )
 
     field :sale_charge, :string do
       resolve(fn _, _ ->
@@ -621,7 +624,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
     field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
   end
-  
+
   @desc """
     Delivery Fee Object type
   """
