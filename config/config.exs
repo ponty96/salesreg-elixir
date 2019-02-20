@@ -96,7 +96,7 @@ config :sales_reg, SalesReg.Mailer,
 
 config :sales_reg, SalesReg.Mailer,
   adapter: Bamboo.LocalAdapter,
-  open_email_in_browser_url: "http://localhost:4000/sent_emails"
+  open_email_in_browser_url: "http://localhost:5000/sent_emails"
 
 config :sales_reg, SalesReg.Scheduler,
   jobs: [

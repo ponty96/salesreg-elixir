@@ -27,7 +27,7 @@
 																	<tbody>
 																	<tr>
 																		<td>
-																			<h1 style="margin: 0;font-size: 25px;padding: 25px 0;font-weight: 400"><%= sale.company.title %>></h1>
+																			<h1 style="margin: 0;font-size: 25px;padding: 25px 0;font-weight: 400"><%= sale.company.title %></h1>
 																		</td>
 																	</tr>
 																	</tbody>
