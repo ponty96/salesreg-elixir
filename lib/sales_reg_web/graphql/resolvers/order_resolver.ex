@@ -69,6 +69,19 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     |> Order.list_company_activities(params.contact_id, pagination_args(params))
   end
 
+  def create_delivery_fee(params, _res) do
+    Order.add_delivery_fee(params)
+  end
+
+  def list_company_delivery_fees(%{company_id: company_id}, _res) do
+    Order.list_company_delivery_fees(company_id)
+  end
+
+  def delete_delivery_fee(%{delivery_fee_id: delivery_fee_id}, _res) do
+    Order.get_delivery_fee(delivery_fee_id)
+    |> Order.delete_delivery_fee()
+  end
+
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
   end

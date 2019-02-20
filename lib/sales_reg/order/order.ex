@@ -16,7 +16,8 @@ defmodule SalesReg.Order do
     Receipt,
     Review,
     Star,
-    Activity
+    Activity,
+    DeliveryFee
   ]
 
   @receipt_html_path "lib/sales_reg_web/templates/mailer/yc_email_receipt_pdf.html.eex"

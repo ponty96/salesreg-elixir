@@ -56,6 +56,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:bank, :bank, resolve: dataloader(SalesReg.Business, :bank))
     field(:reviews, list_of(:review), resolve: dataloader(SalesReg.Order, :reviews))
     field(:stars, list_of(:star), resolve: dataloader(SalesReg.Order, :stars))
+    field(:delivery_fee, list_of(:delivery_fee), resolve: dataloader(SalesReg.Order, :delivery_fee))
 
     field :sale_charge, :string do
       resolve(fn _, _ ->
@@ -620,6 +621,17 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
     field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
   end
+  
+  @desc """
+    Delivery Fee Object type
+  """
+  object :delivery_fee do
+    field(:id, :uuid)
+    field(:price, :string)
+    field(:location, :string)
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
+  end
 
   @desc """
     Consistent Type for Mutation Response
@@ -659,7 +671,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       :activity,
       :legal_document,
       :bonanza,
-      :bonanza_item
+      :bonanza_item,
+      :delivery_fee
     ])
 
     resolve_type(fn
@@ -689,6 +702,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       %LegalDocument{}, _ -> :legal_document
       %Bonanza{}, _ -> :bonanza
       %BonanzaItem{}, _ -> :bonanza_item
+      %DeliveryFee{}, _ -> :delivery_fee
     end)
   end
 
@@ -1017,6 +1031,13 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:price_slash_to, non_null(:string))
     field(:max_quantity, non_null(:string))
     field(:product_id, non_null(:uuid))
+  end
+
+  input_object :delivery_fee_input do
+    field(:price, non_null(:string))
+    field(:location, non_null(:string))
+    field(:company_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
   end
 
   #########################################################

@@ -390,14 +390,4 @@ defmodule SalesReg.Business do
       business_mobile: company.phone.number
     }
   end
-
-  defp update_bank_field(company_id) do
-    attrs = %{"is_primary" => false}
-
-    Bank
-    |> where([b], b.company_id == ^company_id)
-    |> where([b], b.is_primary == true)
-    |> Repo.one()
-    |> Business.update_bank(attrs)
-  end
 end
