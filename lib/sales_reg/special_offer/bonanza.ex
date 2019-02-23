@@ -1,6 +1,7 @@
 defmodule SalesReg.SpecialOffer.Bonanza do
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Business
   alias SalesReg.Repo
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -46,5 +47,10 @@ defmodule SalesReg.SpecialOffer.Bonanza do
   def delete_changeset(category) do
     category
     |> cast(%{}, [])
+  end
+
+  def get_bonanza_share_url(bonanza) do
+    bonanza = Repo.preload(bonanza, [:company])
+    "#{Business.get_company_share_domain()}/#{bonanza.company.slug}/bz/#{bonanza.id}"
   end
 end
