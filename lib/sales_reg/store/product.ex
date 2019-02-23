@@ -111,6 +111,19 @@ defmodule SalesReg.Store.Product do
     end
   end
 
+  # get product name
+  def product_name_based_on_visual_options(product) do
+    product = Repo.preload(product, [:product_group, option_values: [:option]])
+
+    case product.option_values do
+      [] ->
+        product.product_group.title
+
+      _ ->
+        "#{product.product_group.title} #{visual_option_values_names(product.option_values)}"
+    end
+  end
+
   def get_product_share_link(product) do
     product = Repo.preload(product, [:company])
     "#{Business.get_company_share_domain()}/#{product.company.slug}/p/#{product.slug}"
@@ -148,5 +161,21 @@ defmodule SalesReg.Store.Product do
 
   defp remove_space(string) do
     String.split(string, " ") |> Enum.join("-")
+  end
+
+  defp visual_option_values_names(option_values) do
+    visual_option_values =
+      Enum.map(option_values, fn option_value ->
+        if option_value.option.is_visual == "yes" do
+          option_value.name
+        else
+          nil
+        end
+      end)
+
+    # if Enum.at(visual_option_values, 0) == nil,
+    #   do: "",
+    #   else: "(#{visual_option_values |> Enum.join(" ")})"
+    "(#{visual_option_values |> Enum.join(" ")})"
   end
 end

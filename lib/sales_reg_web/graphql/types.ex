@@ -275,6 +275,13 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       end)
     end
 
+    field :name_based_on_visual_variant, :string do
+      resolve(fn _parent, %{source: product} ->
+        name = Store.product_name_based_on_visual_options(product)
+        {:ok, name}
+      end)
+    end
+
     field(:sku, :string)
     field(:minimum_sku, :string)
     field(:cost_price, :string)

@@ -20,6 +20,7 @@ defmodule SalesReg.Store do
   defdelegate category_image(category), to: Category
   defdelegate get_product_name(product), to: Product
   defdelegate get_product_share_link(product), to: Product
+  defdelegate product_name_based_on_visual_options(product), to: Product
 
   def data do
     DataloaderEcto.new(Repo, query: &query/2)
@@ -433,16 +434,21 @@ defmodule SalesReg.Store do
   end
 
   def filter_webstore_products(company_id, filter_params) do
-    from(p in Product, where: p.company_id == ^company_id, select: p)
+    from(p in Product,
+      where: p.company_id == ^company_id,
+      select: p
+    )
+    |> distinct_visual_variants()
     |> Repo.paginate(page: Map.get(filter_params, :page))
   end
 
   def list_featured_products(company_id) do
-    Product
-    |> where([p], p.company_id == ^company_id)
-    |> where([p], p.is_featured == true)
-    |> select([p], [p])
-    |> limit(10)
+    from(p in Product,
+      where: p.company_id == ^company_id and p.is_featured == true,
+      select: p,
+      limit: 10
+    )
+    |> distinct_visual_variants()
     |> Repo.all()
     |> Enum.map(&store_item_preloads(&1))
     |> List.flatten()
@@ -672,7 +678,7 @@ defmodule SalesReg.Store do
     Enum.map(option_ids, fn id ->
       %{
         option_id: id,
-        name: "?",
+        name: "_",
         company_id: company_id
       }
     end)
@@ -707,5 +713,40 @@ defmodule SalesReg.Store do
 
   defp store_item_preloads(item) do
     Repo.preload(item, [:tags, :reviews, :stars, :categories])
+  end
+
+  defp distinct_visual_variants(query) do
+    from(p in query,
+      distinct:
+        fragment(
+          "CASE
+
+          WHEN array_length(ARRAY(SELECT to_jsonb(row(option_id, name, ?)) FROM option_values WHERE option_values.product_id = ? AND (SELECT is_visual FROM options WHERE options.id = option_id) = ?), 1) > 0
+
+          THEN ARRAY(SELECT to_jsonb(row(option_id, name, ?)) FROM option_values WHERE option_values.product_id = ? AND (SELECT is_visual FROM options WHERE options.id = option_values.option_id) = ?)
+
+
+          WHEN array_length(ARRAY(SELECT to_jsonb(row(option_id, ?)) FROM option_values WHERE option_values.product_id = ? AND (SELECT is_visual FROM options WHERE options.id = option_id) = ?), 1) > 0
+
+          THEN ARRAY(SELECT to_jsonb(row(option_id, ?)) FROM option_values WHERE option_values.product_id = ? AND (SELECT is_visual FROM options WHERE options.id = option_values.option_id) = ?)
+
+          ELSE ARRAY(SELECT to_jsonb(row(slug, id)) FROM products WHERE products.id = ?)
+
+          END",
+          p.product_group_id,
+          p.id,
+          "yes",
+          p.product_group_id,
+          p.id,
+          "yes",
+          p.product_group_id,
+          p.id,
+          "no",
+          p.product_group_id,
+          p.id,
+          "no",
+          p.id
+        )
+    )
   end
 end
