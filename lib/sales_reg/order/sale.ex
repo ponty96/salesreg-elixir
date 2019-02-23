@@ -41,7 +41,7 @@ defmodule SalesReg.Order.Sale do
     :ref_id,
     :charge
   ]
-  
+
   @optional_fields [:status, :tax, :discount, :payment_method, :bonanza_id]
 
   @doc false
