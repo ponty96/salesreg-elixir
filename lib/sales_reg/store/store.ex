@@ -678,7 +678,7 @@ defmodule SalesReg.Store do
     Enum.map(option_ids, fn id ->
       %{
         option_id: id,
-        name: "?",
+        name: "_",
         company_id: company_id
       }
     end)
@@ -719,9 +719,33 @@ defmodule SalesReg.Store do
     from(p in query,
       distinct:
         fragment(
-          "(ARRAY(SELECT name FROM option_values WHERE option_values.product_id = ? AND (SELECT is_visual FROM options WHERE options.id = option_id) = ?))",
+          "CASE
+
+          WHEN array_length(ARRAY(SELECT to_jsonb(row(option_id, name, ?)) FROM option_values WHERE option_values.product_id = ? AND (SELECT is_visual FROM options WHERE options.id = option_id) = ?), 1) > 0
+
+          THEN ARRAY(SELECT to_jsonb(row(option_id, name, ?)) FROM option_values WHERE option_values.product_id = ? AND (SELECT is_visual FROM options WHERE options.id = option_values.option_id) = ?)
+
+
+          WHEN array_length(ARRAY(SELECT to_jsonb(row(option_id, ?)) FROM option_values WHERE option_values.product_id = ? AND (SELECT is_visual FROM options WHERE options.id = option_id) = ?), 1) > 0
+
+          THEN ARRAY(SELECT to_jsonb(row(option_id, ?)) FROM option_values WHERE option_values.product_id = ? AND (SELECT is_visual FROM options WHERE options.id = option_values.option_id) = ?)
+
+          ELSE ARRAY(SELECT to_jsonb(row(slug, id)) FROM products WHERE products.id = ?)
+
+          END",
+          p.product_group_id,
           p.id,
-          "yes"
+          "yes",
+          p.product_group_id,
+          p.id,
+          "yes",
+          p.product_group_id,
+          p.id,
+          "no",
+          p.product_group_id,
+          p.id,
+          "no",
+          p.id
         )
     )
   end
