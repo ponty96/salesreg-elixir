@@ -449,7 +449,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:due_date, :string)
     field(:ref_id, :string)
     field(:updated_at, :naive_datetime)
-    field(:allows_split_payment, :boolean)
 
     field :amount, :float do
       resolve(fn _parent, %{source: invoice} ->
@@ -968,7 +967,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
   input_object :invoice_input do
     field(:due_date, non_null(:string))
-    field(:allows_split_payment, :boolean)
   end
 
   input_object :review_input do
