@@ -48,7 +48,7 @@ defmodule SalesReg.SpecialOffer.Bonanza do
     category
     |> cast(%{}, [])
   end
-  
+
   def get_bonanza_share_url(bonanza) do
     bonanza = Repo.preload(bonanza, [:company])
     "#{Business.get_company_share_domain()}/#{bonanza.company.slug}/bz/#{bonanza.id}"

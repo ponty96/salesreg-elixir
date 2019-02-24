@@ -120,9 +120,7 @@ defmodule SalesReg.Store.Product do
         product.product_group.title
 
       _ ->
-        "#{product.product_group.title} (#{
-          visual_option_values_names(product.option_values) |> Enum.join(" ")
-        })"
+        "#{product.product_group.title} #{visual_option_values_names(product.option_values)}"
     end
   end
 
@@ -166,12 +164,18 @@ defmodule SalesReg.Store.Product do
   end
 
   defp visual_option_values_names(option_values) do
-    Enum.map(option_values, fn option_value ->
-      if option_value.option.is_visual == "yes" do
-        option_value.name
-      else
-        ""
-      end
-    end)
+    visual_option_values =
+      Enum.map(option_values, fn option_value ->
+        if option_value.option.is_visual == "yes" do
+          option_value.name
+        else
+          nil
+        end
+      end)
+
+    # if Enum.at(visual_option_values, 0) == nil,
+    #   do: "",
+    #   else: "(#{visual_option_values |> Enum.join(" ")})"
+    "(#{visual_option_values |> Enum.join(" ")})"
   end
 end
