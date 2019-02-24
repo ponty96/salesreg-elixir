@@ -35,8 +35,8 @@ config :sales_reg, SalesReg.Repo,
   ssl: true
 
 config :sentry,
-  dsn: "https://450c8312e5094c859c0ff835ce5234d4@sentry.io/1369497",
-  environment_name: :prod,
+  dsn: "https://5b18bcdf49e54cc48fa881846afadd0a@sentry.io/1369436",
+  environment_name: Mix.env(),
   enable_source_code_context: true,
   root_source_code_path: File.cwd!(),
   tags: %{
@@ -48,7 +48,7 @@ config :sentry,
   in_app_module_whitelist: [SalesReg]
 
 config :cors_plug,
-  origins: [~r/https?.*yipcartstaging2019.com\d?\.com$/],
+  origins: [~r/https?.*yipcart.com\d?\.com$/],
   max_age: 8_666_400,
   methods: ["GET", "POST", "OPTIONS"],
   headers: [
