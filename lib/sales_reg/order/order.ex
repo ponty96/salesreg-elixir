@@ -385,6 +385,10 @@ defmodule SalesReg.Order do
     quantity * unit_price
   end
 
+  def float_to_binary(float) do
+    :erlang.float_to_binary(float, [:compact, { :decimals, 20 }])
+  end
+
   defp calc_items_amount(items) do
     Enum.map(items, fn item ->
       {quantity, _} = Float.parse(item.quantity)

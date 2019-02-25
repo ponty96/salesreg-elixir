@@ -95,7 +95,7 @@
 																							<td style="display:table-cell;border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= item.product.name %></td>
 																							<td style="display:table-cell;border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= item.unit_price %></td>
 																							<td style="display:table-cell;border-color:#DBDBDB;text-align:left;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= item.quantity %></td>
-																							<td style="display:table-cell;border-color:#DBDBDB;text-align:right;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= SalesReg.Order.calc_item_amount(item) %></td>
+																							<td style="display:table-cell;border-color:#DBDBDB;text-align:right;padding: 10px;border-style:solid;border-width:0;overflow:hidden;word-break:normal;border-bottom-width:1px;"><%= SalesReg.Order.float_to_binary(SalesReg.Order.calc_item_amount(item)) %></td>
 																						</tr>
 																					<% end %>
 																				<tr>
