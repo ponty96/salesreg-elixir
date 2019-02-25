@@ -192,7 +192,7 @@ defmodule SalesReg.Order do
       {:ok, receipt} ->
         receipt = preload_receipt(receipt)
 
-        M2C.send_payment_received_mail(sale)
+        M2C.send_payment_received_mail(sale, receipt)
 
         # send invoice payment notifice email to merchant
         Map.put_new(sale, :amount, amount)
@@ -221,7 +221,7 @@ defmodule SalesReg.Order do
       {:ok, receipt} ->
         receipt = Repo.preload(receipt, [:company, :invoice, :user, sale: [items: [:product]]])
 
-        M2C.send_payment_received_mail(sale)
+        M2C.send_payment_received_mail(sale, receipt)
 
         # send invoice payment notifice email to merchant
         Map.put_new(sale, :amount, amount)
