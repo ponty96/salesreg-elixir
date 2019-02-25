@@ -1,4 +1,8 @@
 defmodule SalesRegWeb.Services.Base do
+  def request(method, url, body, headers \\ [], opts \\ []) do
+    HTTPoison.request(method, url, body, headers ++ default_header, opts)
+  end
+
   def encode(data) do
     Poison.encode!(data)
   end
@@ -21,5 +25,9 @@ defmodule SalesRegWeb.Services.Base do
   ## recv_timeout => used when receiving a connection. Default is 5000(check HTTPoison docs) 
   def set_default_timeout(opts) do
     [timeout: 10_000, recv_timeout: 10_000] ++ opts
+  end
+
+  def default_header() do
+    [{"Content-Type", "application/json"}]
   end
 end
