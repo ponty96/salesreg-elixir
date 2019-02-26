@@ -46,7 +46,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     case create_receipt do
       {:ok, receipt} ->
         sale = Order.preload_receipt(receipt).sale
-        M2C.send_payment_received_mail(sale)
+        M2C.send_payment_received_mail(sale, receipt)
 
         {:ok, receipt}
 
