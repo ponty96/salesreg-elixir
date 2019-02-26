@@ -69,7 +69,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     |> Order.list_company_activities(params.contact_id, pagination_args(params))
   end
 
-  def create_delivery_fee(params, _res) do
+  def create_delivery_fee(%{delivery_fee: params}, _res) do
     Order.add_delivery_fee(params)
   end
 

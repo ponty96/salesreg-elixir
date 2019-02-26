@@ -75,19 +75,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
     ### Delivery Charge mutations
     @desc """
-      create delivery fee based on location 
+      create delivery fee
     """
     field :create_delivery_fee, :mutation_response do
-      arg(:price, non_null(:string))
-      arg(:location, non_null(:string))
-      arg(:user_id, non_null(:uuid))
-      arg(:company_id, non_null(:uuid))
+      arg(:delivery_fee, non_null(:delivery_fee_input))
 
       resolve(&OrderResolver.create_delivery_fee/2)
     end
 
     @desc """
-      delete a 
+      delete a delivery fee
     """
     field :delete_delivery_fee, :mutation_response do
       arg(:delivery_fee_id, non_null(:uuid))

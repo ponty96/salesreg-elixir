@@ -629,8 +629,9 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   """
   object :delivery_fee do
     field(:id, :uuid)
-    field(:price, :string)
-    field(:location, :string)
+    field(:fee, :string)
+    field(:state, :string)
+    field(:region, :string)
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
   end
@@ -1035,8 +1036,9 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   input_object :delivery_fee_input do
-    field(:price, non_null(:string))
-    field(:location, non_null(:string))
+    field(:fee, non_null(:string))
+    field(:state, non_null(:string))
+    field(:region, non_null(:string))
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
   end

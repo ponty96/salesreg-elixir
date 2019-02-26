@@ -6,8 +6,9 @@ defmodule SalesReg.Order.DeliveryFee do
   @foreign_key_type :binary_id
 
   schema "delivery_fees" do
-    field(:price, :string)
-    field(:location, :string)
+    field(:fee, :string)
+    field(:state, :string)
+    field(:region, :string)
 
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:user, SalesReg.Accounts.User)
@@ -16,8 +17,9 @@ defmodule SalesReg.Order.DeliveryFee do
   end
 
   @required_fields [
-    :price,
-    :location,
+    :fee,
+    :state,
+    :region,
     :user_id,
     :company_id
   ]
@@ -29,7 +31,10 @@ defmodule SalesReg.Order.DeliveryFee do
     |> validate_required(@required_fields)
     |> assoc_constraint(:user)
     |> assoc_constraint(:company)
-    |> unique_constraint(:location)
+    |> unique_constraint(:region,
+      name: :state_region_index,
+      message: "This region has already been taken for this state."
+    )
   end
 
   def delete_changeset(delivery_fee) do
