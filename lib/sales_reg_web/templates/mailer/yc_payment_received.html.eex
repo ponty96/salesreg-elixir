@@ -61,7 +61,7 @@
 																			<p>Hi <span><%= sale.contact.contact_name %></span>,</p>
 																			<p>You rock! Thanks for being there for us.</p>
 																			<p>We are really pleased to inform you that we have received your recent payment in respect to the above referenced invoice</p>
-																			<p>Feel free to <a href="#" style="text-decoration: none!important;"><span style="color:#127bcc">View Reciept</span></a></p>
+																			<p>Feel free to <a href="<%= SalesReg.Order.get_receipt_share_link(receipt) %>" style="text-decoration: none!important;"><span style="color:#127bcc">View Reciept</span></a></p>
 																			<p>Thank you very much. We appreciate this, you keep us in business.</p>
 																			<p>Best regards,<br><%= sale.company.owner.first_name %>.</p>
 																		</td>

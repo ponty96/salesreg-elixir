@@ -45,7 +45,7 @@
 																			<p>This is to inform you that the above referenced invoice is due for payment and the customer has been notified.</p>
 																			<p><strong>Invoice ID:</strong> <span><%= sale.invoice.ref_id %></span></p>
 																			<p><strong>Customer:</strong> <span><%= sale.contact.contact_name %></span></p>
-																			<p><strong>Amount Due:</strong> <span style="color: red">N<%= SalesReg.Order.calc_pay_outstanding(sale) %></span></p>
+																			<p><strong>Amount Due:</strong> <span style="color: red">N<%= SalesReg.Order.float_to_binary(SalesReg.Order.calc_pay_outstanding(sale)) %></span></p>
 																			<p><strong>Date Due:</strong> <span><%= sale.invoice.due_date %>/span></p>
 																			<p>Best regards,<br>YipCart team.</p>
 																		</td>
