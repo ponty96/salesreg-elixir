@@ -60,7 +60,7 @@
 																		<td style="padding: 50px 0 0 0;color: rgb(89,89,89)">
 																			<p>Dear <span><%= sale.contact.contact_name %></span>,</p>
 																			<p>Once again, thanks for your kind patronage.</p>
-																			<p>This is just to remind you about the <span style="color: red">N<%= SalesReg.Order.calc_pay_outstanding(sale) %></span> in respect of the above referenced invoice, which was due for payment on <%= sale.invoice.due_date %></p>
+																			<p>This is just to remind you about the <span style="color: red">N<%= SalesReg.Order.float_to_binary(SalesReg.Order.calc_pay_outstanding(sale)) %></span> in respect of the above referenced invoice, which was due for payment on <%= sale.invoice.due_date %></p>
 																			<p>Can you please <a href="<%= SalesReg.Order.get_invoice_share_link(sale.invoice) %>" style="text-decoration: none!important;"><span style="color:#127bcc">Pay invoice now</span></a></p>
 																			<p>Or let us know how soon you can complete payment.</p>
 																			<p>Best regards,<br><%= sale.company.owner.first_name %></p>
