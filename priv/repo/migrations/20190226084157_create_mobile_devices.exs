@@ -16,6 +16,6 @@ defmodule SalesReg.Repo.Migrations.CreateMobileDevices do
       timestamps()
     end
 
-    create(index(:mobile_devices, [:user]))
+    create(index(:mobile_devices, [:user_id]))
   end
 end

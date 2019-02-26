@@ -5,6 +5,7 @@ defmodule SalesReg.Repo.Migrations.CreateNotifications do
     create table(:notifications, primary_key: false) do
       add(:id, :binary_id, primary_key: true)
       add(:element, :string)
+      add(:element_id, :string)
       add(:action_type, :string)
       add(:delivery_channel, :string)
       add(:delivery_status, :string)
@@ -15,7 +16,7 @@ defmodule SalesReg.Repo.Migrations.CreateNotifications do
       timestamps()
     end
 
-    create(index(:notifications, [:company]))
-    create(index(:notifications, [:actor]))
+    create(index(:notifications, [:company_id]))
+    create(index(:notifications, [:actor_id]))
   end
 end

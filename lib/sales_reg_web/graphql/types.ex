@@ -621,6 +621,53 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   @desc """
+    Notification object type
+  """
+  object :notification do
+    field(:id, :uuid)
+    field(:action_type, :string)
+    field(:delivery_channel, :string)
+    field(:delivery_status, :string)
+    field(:element, :string)
+    field(:element_id, :uuid)
+    field(:read_status, :string)
+
+    field :element_data, :string do
+      resolve(fn _, _ ->
+        {:ok, Enum.random(["OR001", "For Jennifa", "IN001"])}
+      end)
+    end
+
+    field(:updated_at, :naive_datetime)
+    field(:inserted_at, :naive_datetime)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:actor, :user, resolve: dataloader(SalesReg.Accounts, :actor))
+
+    field(:notification_items, list_of(:notification_item),
+      resolve: dataloader(SaleReg.Notification, :notification_item)
+    )
+  end
+
+  connection(node_type: :notification)
+
+  @desc """
+    Notification Item object type
+  """
+  object :notification_item do
+    field(:id, :uuid)
+    field(:changed_to, :string)
+    field(:current, :string)
+    field(:item_type, :string)
+    field(:item_id, :string)
+
+    field(:updated_at, :naive_datetime)
+    field(:inserted_at, :naive_datetime)
+
+    field(:notification, :notification, resolve: dataloader(SaleReg.Notifications, :notification))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -658,7 +705,9 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       :activity,
       :legal_document,
       :bonanza,
-      :bonanza_item
+      :bonanza_item,
+      :notification,
+      :notification_item
     ])
 
     resolve_type(fn
@@ -688,6 +737,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       %LegalDocument{}, _ -> :legal_document
       %Bonanza{}, _ -> :bonanza
       %BonanzaItem{}, _ -> :bonanza_item
+      %Notification{}, _ -> :notification
+      %NotificationItem{}, _ -> :notification_item
     end)
   end
 
@@ -803,7 +854,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:type, non_null(:legal_document_type))
     field(:content, :string)
     field(:pdf_url, :string)
-    field(:company_id, non_null(:string))
+    field(:company_id, non_null(:uuid))
   end
 
   input_object :branch_input do

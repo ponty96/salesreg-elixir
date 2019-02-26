@@ -9,6 +9,7 @@ defmodule SalesReg.Notifications.Notification do
     field(:delivery_channel, :string, default: "push")
     field(:delivery_status, :string, default: "unsent")
     field(:element, :string)
+    field(:element_id, :string)
     field(:read_status, :string, default: "unread")
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:actor, SalesReg.Accounts.User)
@@ -18,7 +19,7 @@ defmodule SalesReg.Notifications.Notification do
   end
 
   @fields [:delivery_channel, :delivery_status, :read_status]
-  @required_fields [:element, :action_type, :actor_id, :company_id]
+  @required_fields [:element, :element_id, :action_type, :actor_id, :company_id]
 
   @doc false
   def changeset(notification, attrs) do

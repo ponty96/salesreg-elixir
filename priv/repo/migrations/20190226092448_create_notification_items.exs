@@ -7,13 +7,13 @@ defmodule SalesReg.Repo.Migrations.CreateNotificationItems do
       add(:item_type, :string)
       add(:current, :string)
       add(:changed_to, :string)
-      field(:item_id, :string)
+      add(:item_id, :string)
       add(:notification_id, references(:notifications, on_delete: :nothing, type: :binary_id))
 
       timestamps()
     end
 
-    create(index(:notification_items, [:notification]))
+    create(index(:notification_items, [:notification_id]))
     create(index(:notification_items, [:item_type, :item_id]))
   end
 end

@@ -1,0 +1,19 @@
+defmodule SalesRegWeb.GraphQL.Resolvers.NotificationResolver do
+  use SalesRegWeb, :context
+
+  # MUTATIONS
+  def change_notification_read_status(%{notification_id: id}, _res) do
+    Notifications.get_notification(id)
+    |> Notifications.update_notification(%{read_status: "read"})
+  end
+
+  # QUERIES
+  def list_company_notifications(%{company_id: company_id} = args, _res) do
+    [company_id: company_id]
+    |> Notifications.paginated_list_company_notifications(pagination_args(args))
+  end
+
+  defp pagination_args(args) do
+    Map.take(args, [:first, :after, :last, :before])
+  end
+end
