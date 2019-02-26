@@ -12,7 +12,7 @@ defmodule SalesReg.Notifications.MobileDevice do
     field(:mobile_os, :string)
     field(:notification_enabled, :string)
     field(:last_active, :string)
-    field(:user, :binary_id)
+    belongs_to(:user, SalesReg.Accounts.User)
 
     timestamps()
   end
