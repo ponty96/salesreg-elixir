@@ -645,7 +645,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:actor, :user, resolve: dataloader(SalesReg.Accounts, :actor))
 
     field(:notification_items, list_of(:notification_item),
-      resolve: dataloader(SalesReg.Notifications, :notification_item)
+      resolve: dataloader(SalesReg.Notifications, :notification_items)
     )
   end
 
