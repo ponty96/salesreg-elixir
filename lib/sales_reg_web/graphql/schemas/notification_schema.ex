@@ -31,5 +31,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.NotificationSchema do
       middleware(Authorize)
       resolve(&NotificationResolver.list_company_notifications/2)
     end
+    
+    @desc """
+      query all read notifications of a company
+    """
+    connection field(:list_unread_company_notifications, node_type: :notification) do
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&NotificationResolver.list_unread_company_notifications/2)
+    end
   end
 end

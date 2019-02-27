@@ -12,6 +12,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.NotificationResolver do
     [company_id: company_id]
     |> Notifications.paginated_list_company_notifications(pagination_args(args))
   end
+  
+  def list_unread_company_notifications(%{company_id: company_id} = args, _res) do
+    [company_id: company_id, read_status: "unread"]
+    |> Notifications.paginated_list_company_notifications(pagination_args(args))
+  end
 
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
