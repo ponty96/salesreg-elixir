@@ -18,6 +18,22 @@ defmodule SalesReg.Notifications do
     queryable
   end
 
+  def create_notification(params, {:order, order}, action_type) when is_atom(action_type) do
+    params
+    |> Map.put(:action_type, Atom.to_string(action_type))
+    |> Map.put(:element, "order")
+    |> Map.put(:element_id, order.id)
+    |> Notifications.add_notification()
+  end
+  
+  def create_notification(params, {:invoice, invoice}, action_type) when is_atom(action_type) do
+    params
+    |> Map.put(:action_type, Atom.to_string(action_type))
+    |> Map.put(:element, "invoice")
+    |> Map.put(:element_id, invoice.id)
+    |> Notifications.add_notification()
+  end
+
   def get_unread_company_notifications_count(clauses) do
     {:ok, notifications} = 
       clauses

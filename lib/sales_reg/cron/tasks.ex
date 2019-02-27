@@ -13,13 +13,17 @@ defmodule SalesReg.Tasks do
       end)
 
     Enum.map(invoices, fn invoice ->
-      Order.preload_order(invoice).sale
-      |> M2C.send_reminder()
-    end)
+      invoice = Order.preload_invoice(invoice)
+      sale = Order.preload_order(invoice).sale
 
-    Enum.map(invoices, fn invoice ->
-      Order.preload_order(invoice).sale
-      |> YC2C.send_invoice_due_notification()
+      %{
+        company_id: invoice.sale.company_id,
+        actor_id: invoice.sale.user_id
+      }
+      |> Notifications.create_notification({:invoice, invoice}, :due)
+
+      M2C.send_reminder(sale)
+      YC2C.send_invoice_due_notification(sale)
     end)
   end
 
