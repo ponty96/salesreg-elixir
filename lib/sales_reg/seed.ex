@@ -198,7 +198,7 @@ defmodule SalesReg.Seed do
 
   def create_notification(company_id, actor_id, action_type, element, element_id) do
     params = %{
-      element: "order",
+      element: element,
       element_id: element_id,
       action_type: action_type,
       company_id: company_id,
