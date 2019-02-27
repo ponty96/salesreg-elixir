@@ -61,7 +61,7 @@ defmodule SalesReg.Order do
           actor_id: sale.user_id
         }
         |> Notifications.create_notification({:order, sale}, :status_change)
-        
+
         {:ok, updated}
 
       {:error, error} ->
@@ -168,7 +168,8 @@ defmodule SalesReg.Order do
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
-    |> Multi.run(:create_invoice_notification, fn _repo, %{insert_sale: sale, insert_invoice: invoice} ->
+    |> Multi.run(:create_invoice_notification, fn _repo,
+                                                  %{insert_sale: sale, insert_invoice: invoice} ->
       %{
         company_id: sale.company_id,
         actor_id: sale.user_id

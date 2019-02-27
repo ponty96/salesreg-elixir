@@ -31,7 +31,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.NotificationSchema do
       middleware(Authorize)
       resolve(&NotificationResolver.list_company_notifications/2)
     end
-    
+
     @desc """
       query count for all unread notifications of a company
     """

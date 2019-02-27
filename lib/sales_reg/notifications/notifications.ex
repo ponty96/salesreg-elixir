@@ -25,7 +25,7 @@ defmodule SalesReg.Notifications do
     |> Map.put(:element_id, order.id)
     |> Notifications.add_notification()
   end
-  
+
   def create_notification(params, {:invoice, invoice}, action_type) when is_atom(action_type) do
     params
     |> Map.put(:action_type, Atom.to_string(action_type))
@@ -35,7 +35,7 @@ defmodule SalesReg.Notifications do
   end
 
   def get_unread_company_notifications_count(clauses) do
-    {:ok, notifications} = 
+    {:ok, notifications} =
       clauses
       |> Notifications.list_company_notifications()
 
