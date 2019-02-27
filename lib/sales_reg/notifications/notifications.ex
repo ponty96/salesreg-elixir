@@ -39,6 +39,6 @@ defmodule SalesReg.Notifications do
       clauses
       |> Notifications.list_company_notifications()
 
-    {:ok, Enum.count(notifications)}
+    {:ok, %{data: %{count: Enum.count(notifications)}}}
   end
 end

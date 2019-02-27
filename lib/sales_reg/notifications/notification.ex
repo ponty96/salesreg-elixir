@@ -27,6 +27,5 @@ defmodule SalesReg.Notifications.Notification do
     |> cast(attrs, @fields ++ @required_fields)
     |> validate_required(@required_fields)
     |> cast_assoc(:notification_items)
-    |> IO.inspect(label: "changeset")
   end
 end

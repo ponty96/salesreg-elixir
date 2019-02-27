@@ -206,16 +206,16 @@ end)
 #   SalesReg.Order.processed_sale_orders()
 #   |> Enum.random()
 
-# {:ok, invoice} = Seed.create_invoice(sale_order)
+{:ok, invoice} = Seed.create_invoice(order)
 
 # Seed.create_receipt(invoice.id, user.id, company.id)
 
-# Enum.map(1..10, fn _index ->
-#   Seed.create_notification(company.id, user.id, Enum.random(["status change", "created"]), "order", order.id)
-# end)
+Enum.map(1..10, fn _index ->
+  Seed.create_notification(company.id, user.id, Enum.random(["status change", "created"]), "order", order.id)
+end)
 
-# {:ok, invoice} = Seed.create_invoice(order)
+{:ok, invoice} = Seed.create_invoice(order)
 
-# Enum.map(1..10, fn _index ->
-#   Seed.create_notification(company.id, user.id, Enum.random(["created", "payment"]), "invoice", invoice.id)
-# end)
+Enum.map(1..10, fn _index ->
+  Seed.create_notification(company.id, user.id, Enum.random(["created", "payment"]), "invoice", invoice.id)
+end)
