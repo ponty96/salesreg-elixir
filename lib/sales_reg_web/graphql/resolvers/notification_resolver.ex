@@ -13,9 +13,9 @@ defmodule SalesRegWeb.GraphQL.Resolvers.NotificationResolver do
     |> Notifications.paginated_list_company_notifications(pagination_args(args))
   end
   
-  def list_unread_company_notifications(%{company_id: company_id} = args, _res) do
+  def get_unread_company_notifications_count(%{company_id: company_id}, _res) do
     [company_id: company_id, read_status: "unread"]
-    |> Notifications.paginated_list_company_notifications(pagination_args(args))
+    |> Notifications.get_unread_company_notifications_count()
   end
 
   defp pagination_args(args) do

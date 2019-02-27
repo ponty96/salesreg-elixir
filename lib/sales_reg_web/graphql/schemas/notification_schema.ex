@@ -33,13 +33,13 @@ defmodule SalesRegWeb.GraphQL.Schemas.NotificationSchema do
     end
     
     @desc """
-      query all read notifications of a company
+      query count for all unread notifications of a company
     """
-    connection field(:list_unread_company_notifications, node_type: :notification) do
+    field(:get_unread_company_notifications_count, :integer) do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
-      resolve(&NotificationResolver.list_unread_company_notifications/2)
+      resolve(&NotificationResolver.get_unread_company_notifications_count/2)
     end
   end
 end

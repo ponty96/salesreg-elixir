@@ -17,4 +17,12 @@ defmodule SalesReg.Notifications do
   def query(queryable, _) do
     queryable
   end
+
+  def get_unread_company_notifications_count(clauses) do
+    {:ok, notifications} = 
+      clauses
+      |> Notifications.list_company_notifications()
+
+    {:ok, Enum.count(notifications)}
+  end
 end
