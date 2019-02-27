@@ -550,7 +550,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:status, :string)
     field(:updated_at, :naive_datetime)
 
-    field(:template, list_of(:template), resolve: dataloader(SaleReg.Theme, :template))
+    field(:template, list_of(:template), resolve: dataloader(SalesReg.Theme, :template))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
@@ -645,7 +645,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:actor, :user, resolve: dataloader(SalesReg.Accounts, :actor))
 
     field(:notification_items, list_of(:notification_item),
-      resolve: dataloader(SaleReg.Notification, :notification_item)
+      resolve: dataloader(SalesReg.Notification, :notification_item)
     )
   end
 
