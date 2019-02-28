@@ -18,8 +18,8 @@ defmodule SalesReg.Notifications.Notification do
     timestamps()
   end
 
-  @fields [:delivery_channel, :delivery_status, :read_status]
-  @required_fields [:element, :element_id, :action_type, :actor_id, :company_id]
+  @fields [:delivery_channel, :delivery_status, :read_status, :element, :element_id]
+  @required_fields [:action_type, :actor_id, :company_id]
 
   @doc false
   def changeset(notification, attrs) do

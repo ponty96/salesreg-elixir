@@ -188,6 +188,27 @@ defmodule SalesReg.Store do
 
       order_item
     end)
+
+    product = get_product(Enum.random(order_items).product_id)
+    create_restock_notification(order_items, product)
+  end
+
+  def create_restock_notification(order_items, product) do
+    %{
+      company_id: product.company_id,
+      actor_id: product.user_id,
+      notification_items: gen_notification_item(order_items)
+    }
+    |> Notifications.create_notification({:product, ""}, :restock)
+  end
+
+  defp gen_notification_item(order_items) do
+    Enum.map(order_items, fn order_item ->
+      %{
+        item_type: "product",
+        item_id: order_item.product_id
+      }
+    end)
   end
 
   def update_product_inventory(:decrement, order_items) when is_list(order_items) do

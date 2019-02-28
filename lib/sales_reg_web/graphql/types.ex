@@ -29,7 +29,10 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
-    field(:mobile_device, :mobile_device, resolve: dataloader(SalesReg.Notifications, :mobile_devices))
+
+    field(:mobile_device, :mobile_device,
+      resolve: dataloader(SalesReg.Notifications, :mobile_devices)
+    )
   end
 
   @desc """
