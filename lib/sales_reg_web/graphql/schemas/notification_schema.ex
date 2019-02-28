@@ -10,13 +10,34 @@ defmodule SalesRegWeb.GraphQL.Schemas.NotificationSchema do
   ### MUTATIONS
   object :notification_mutations do
     @desc """
-      upsert a contact
+      change notification read status
     """
     field :change_notification_read_status, :mutation_response do
       arg(:notification_id, non_null(:uuid))
 
       middleware(Authorize)
       resolve(&NotificationResolver.change_notification_read_status/2)
+    end
+
+    @desc """
+      upsert mobile device
+    """
+    field :upsert_mobile_device, :mutation_response do
+      arg(:mobile_device, non_null(:mobile_device_input))
+
+      middleware(Authorize)
+      resolve(&NotificationResolver.upsert_mobile_device/2)
+    end
+
+    @desc """
+      disable mobile device notification
+    """
+    field :disable_mobile_device_notification, :mutation_response do
+      arg(:device_token, non_null(:string))
+      arg(:user_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&NotificationResolver.disable_mobile_device_notification/2)
     end
   end
 

@@ -7,6 +7,14 @@ defmodule SalesRegWeb.GraphQL.Resolvers.NotificationResolver do
     |> Notifications.update_notification(%{read_status: "read"})
   end
 
+  def upsert_mobile_device(%{mobile_device: params}, _res) do
+    Notifications.upsert_mobile_device(params)
+  end
+
+  def disable_mobile_device_notification(params, _res) do
+    Notifications.disable_mobile_device_notification(params)
+  end
+
   # QUERIES
   def list_company_notifications(%{company_id: company_id} = args, _res) do
     [company_id: company_id]

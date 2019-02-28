@@ -7,7 +7,8 @@ defmodule SalesReg.Notifications do
 
   use SalesReg.Context, [
     Notification,
-    NotificationItem
+    NotificationItem,
+    MobileDevice
   ]
 
   def data do
@@ -40,5 +41,41 @@ defmodule SalesReg.Notifications do
       |> Notifications.list_company_notifications()
 
     {:ok, %{data: %{count: Enum.count(notifications)}}}
+  end
+
+  def upsert_mobile_device(params) do
+    case get_mobile_device_by_device_token(params) do
+      %MobileDevice{} = mobile_device ->
+        mobile_device
+        |> Notifications.update_mobile_device(params)
+
+      nil ->
+        Notifications.add_mobile_device(params)
+    end
+  end
+
+  def disable_mobile_device_notification(params) do
+    case get_mobile_device_by_device_token(params) do
+      %MobileDevice{} = mobile_device ->
+        mobile_device
+        |> Notifications.update_mobile_device(%{notification_enabled: false})
+
+      nil ->
+        {:error,
+         [
+           %{
+             key: "mobile_device",
+             message: "A mobile device does not exist for this user"
+           }
+         ]}
+    end
+  end
+
+  defp get_mobile_device_by_device_token(params) do
+    from(m in MobileDevice,
+      where: m.user_id == ^params.user_id,
+      where: m.device_token == ^params.device_token
+    )
+    |> Repo.one()
   end
 end

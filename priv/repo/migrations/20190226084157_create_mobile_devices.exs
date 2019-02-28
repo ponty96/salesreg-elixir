@@ -9,7 +9,7 @@ defmodule SalesReg.Repo.Migrations.CreateMobileDevices do
       add(:build_number, :string)
       add(:device_token, :string)
       add(:app_version, :string)
-      add(:notification_enabled, :string)
+      add(:notification_enabled, :boolean)
       add(:last_active, :string)
       add(:user_id, references(:users, on_delete: :nothing, type: :binary_id))
 
@@ -17,5 +17,6 @@ defmodule SalesReg.Repo.Migrations.CreateMobileDevices do
     end
 
     create(index(:mobile_devices, [:user_id]))
+    create(unique_index(:mobile_devices, [:device_token]))
   end
 end

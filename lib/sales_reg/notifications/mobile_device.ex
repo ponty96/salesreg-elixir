@@ -10,7 +10,7 @@ defmodule SalesReg.Notifications.MobileDevice do
     field(:build_number, :string)
     field(:device_token, :string)
     field(:mobile_os, :string)
-    field(:notification_enabled, :string)
+    field(:notification_enabled, :boolean)
     field(:last_active, :string)
     belongs_to(:user, SalesReg.Accounts.User)
 
@@ -37,5 +37,6 @@ defmodule SalesReg.Notifications.MobileDevice do
     mobile_device
     |> cast(attrs, @fields ++ @required_fields)
     |> validate_required(@required_fields)
+    |> unique_constraint(:device_token)
   end
 end

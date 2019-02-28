@@ -29,6 +29,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:mobile_device, :mobile_device, resolve: dataloader(SalesReg.Notifications, :mobile_devices))
   end
 
   @desc """
@@ -668,6 +669,25 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   @desc """
+    Mobile Device object type
+  """
+  object :mobile_device do
+    field(:id, :uuid)
+    field(:mobile_os, :string)
+    field(:brand, :string)
+    field(:build_number, :string)
+    field(:device_token, :string)
+    field(:app_version, :string)
+    field(:notification_enabled, :boolean)
+    field(:last_active, :string)
+
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
+
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -707,7 +727,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       :bonanza,
       :bonanza_item,
       :notification,
-      :notification_item
+      :notification_item,
+      :mobile_device
     ])
 
     resolve_type(fn
@@ -739,6 +760,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       %BonanzaItem{}, _ -> :bonanza_item
       %Notification{}, _ -> :notification
       %NotificationItem{}, _ -> :notification_item
+      %MobileDevice{}, _ -> :mobile_device
     end)
   end
 
@@ -1066,6 +1088,17 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:price_slash_to, non_null(:string))
     field(:max_quantity, non_null(:string))
     field(:product_id, non_null(:uuid))
+  end
+
+  input_object :mobile_device_input do
+    field(:mobile_os, :string)
+    field(:brand, :string)
+    field(:build_number, :string)
+    field(:device_token, :string)
+    field(:app_version, :string)
+    field(:notification_enabled, non_null(:boolean))
+    field(:last_active, :string)
+    field(:user_id, non_null(:uuid))
   end
 
   #########################################################
