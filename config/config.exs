@@ -115,11 +115,11 @@ config :sales_reg, SalesReg.Scheduler,
     create_activity_when_order_due: [
       schedule: "@daily",
       task: {SalesReg.Tasks, :create_activity_when_order_due, []}
+    ],
+    send_notifications: [
+      schedule: "* * * * *",
+      task: {SalesReg.Tasks, :send_notifications, []}
     ]
-    # send_notifications: [
-    #   schedule: "* * * * *",
-    #   task: {SalesReg.Tasks, :send_notifications, []}
-    # ]
   ]
 
 config :sentry,
