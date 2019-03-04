@@ -106,7 +106,7 @@ defmodule SalesReg.Tasks do
       end)
       |> Enum.max()
     
-    [device_token] = 
+    [mobile_device] = 
       Enum.filter(mobile_devices, fn mobile_device ->
         mobile_device.notification_enabled == true and
         mobile_device.updated_at == last_updated_at
@@ -114,7 +114,7 @@ defmodule SalesReg.Tasks do
     
     data = construct_notification_data(notification)
     
-    device_token
+    mobile_device.device_token
     |> Pigeon.FCM.Notification.new(%{}, data)
     |> Pigeon.FCM.push()
     |> case do
