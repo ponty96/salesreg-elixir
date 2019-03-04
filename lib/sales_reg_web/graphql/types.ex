@@ -57,8 +57,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:reviews, list_of(:review), resolve: dataloader(SalesReg.Order, :reviews))
     field(:stars, list_of(:star), resolve: dataloader(SalesReg.Order, :stars))
 
-    field(:delivery_fee, list_of(:delivery_fee),
-      resolve: dataloader(SalesReg.Order, :delivery_fee)
+    field(:delivery_fees, list_of(:delivery_fee),
+      resolve: dataloader(SalesReg.Order, :delivery_fees)
     )
 
     field :sale_charge, :string do
