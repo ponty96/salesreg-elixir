@@ -11,7 +11,6 @@ defmodule SalesReg.Notifications.MobileDevice do
     field(:device_token, :string)
     field(:mobile_os, :string)
     field(:notification_enabled, :boolean)
-    field(:last_active, :string)
     belongs_to(:user, SalesReg.Accounts.User)
 
     timestamps()
@@ -23,8 +22,7 @@ defmodule SalesReg.Notifications.MobileDevice do
     :build_number,
     :device_token,
     :app_version,
-    :notification_enabled,
-    :last_active
+    :notification_enabled
   ]
 
   @required_fields [

@@ -682,7 +682,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:device_token, :string)
     field(:app_version, :string)
     field(:notification_enabled, :boolean)
-    field(:last_active, :string)
 
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
@@ -1100,7 +1099,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:device_token, :string)
     field(:app_version, :string)
     field(:notification_enabled, non_null(:boolean))
-    field(:last_active, :string)
     field(:user_id, non_null(:uuid))
   end
 

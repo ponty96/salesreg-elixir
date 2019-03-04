@@ -10,7 +10,6 @@ defmodule SalesReg.Repo.Migrations.CreateMobileDevices do
       add(:device_token, :string)
       add(:app_version, :string)
       add(:notification_enabled, :boolean)
-      add(:last_active, :string)
       add(:user_id, references(:users, on_delete: :nothing, type: :binary_id))
 
       timestamps()
