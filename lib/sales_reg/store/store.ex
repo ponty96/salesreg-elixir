@@ -210,6 +210,7 @@ defmodule SalesReg.Store do
     %{
       company_id: product.company_id,
       actor_id: product.user_id,
+      element: "product",
       notification_items: gen_restock_notification_items(order_items, type)
     }
     |> Notifications.create_notification({:product, ""}, :restock)

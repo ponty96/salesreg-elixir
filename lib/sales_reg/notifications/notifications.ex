@@ -77,6 +77,14 @@ defmodule SalesReg.Notifications do
     end
   end
 
+  def get_unsent_notifications() do
+    from(n in Notification,
+      where: n.delivery_status == "unsent",
+      preload: [:notification_items, actor: [:mobile_devices]]
+    )
+    |> Repo.all()
+  end
+
   defp get_mobile_device_by_device_token(params) do
     from(m in MobileDevice,
       where: m.user_id == ^params.user_id,

@@ -30,7 +30,5 @@ defmodule SalesReg.Notifications.Notification do
     |> validate_inclusion(:delivery_status, ["sent", "unsent"])
     |> validate_inclusion(:read_status, ["read", "unread"])
     |> validate_inclusion(:element, ["order", "billing", "invoice", "product", "special offer"])
-
-    # TO DO: validate inclusion for action_type
   end
 end

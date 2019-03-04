@@ -76,6 +76,13 @@ defmodule SalesReg.Tasks do
     |> create_mul_activities()
   end
 
+  def send_notifications() do
+    Notifications.get_unsent_notifications()
+    |> Enum.map(fn notification ->
+      send_user_notification(notification)
+    end)
+  end
+
   ### Private Functions
   defp create_mul_activities(invoices) do
     Enum.map(invoices, fn invoice ->
@@ -88,6 +95,42 @@ defmodule SalesReg.Tasks do
         invoice.sale.contact_id,
         invoice.company_id
       )
+    end)
+  end
+
+  defp send_user_notification(notification) do
+    data = construct_notification_data(notification)
+    
+    Enum.map(notification.mobile_devices, fn mobile_device ->
+      mobile_device.device_token
+    end)
+    |> Pigeon.FCM.Notification.new(%{}, data)
+    |> Pigeon.FCM.push()
+    |> case do
+      %{status: :success} -> 
+        notification
+        |> Notifications.update_notification(%{delivery_status: "sent"})
+      
+      _ ->
+        notification
+    end
+  end
+
+  defp construct_notification_data(notification) do
+    notification
+    |> Map.from_struct()
+    |> Map.drop([:__meta__, :actor, :company])
+    |> Map.put(:notification_items, transform_notification_items(notification))
+  end
+
+  defp transform_notification(%{notification_items: []}) do
+    []
+  end
+
+  defp transform_notification_items(%{notification_items: items}) do
+    Enum.map(items, fn item -> 
+      Map.from_struct(item)
+      |> Map.drop([:__meta__, :notification])
     end)
   end
 
