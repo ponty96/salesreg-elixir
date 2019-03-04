@@ -211,7 +211,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     @desc """
       get product by id
     """
-    field(:get_product_by_id, :sale) do
+    field(:get_product_by_id, :product) do
       arg(:product_id, non_null(:uuid))
 
       middleware(Authorize)
