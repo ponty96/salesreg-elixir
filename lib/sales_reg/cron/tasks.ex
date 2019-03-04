@@ -130,7 +130,7 @@ defmodule SalesReg.Tasks do
   defp construct_notification_data(notification) do
     notification
     |> Map.from_struct()
-    |> Map.drop([:__meta__, :actor, :company])
+    |> Map.drop([:__meta__, :actor, :company, :mobile_devices])
     |> Map.put(:notification_items, transform_notification_items(notification))
   end
 
