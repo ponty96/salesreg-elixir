@@ -1,4 +1,3 @@
-
 # Script for populating the database. You can run it as:
 #
 #     mix run priv/repo/seeds.exs
@@ -189,24 +188,34 @@ products =
 # random_vendors = Enum.take_random(vendors, 8)
 # random_customers = Enum.take_random(customers, 8)
 
-Seed.create_sales_order(company.id, user.id, customer.id, %{items: products, type: "product"})
+{:ok, order} = Seed.create_sales_order(company.id, user.id, customer.id, products)
 
 # Enum.map(random_customers, fn customer ->
 #   Seed.create_sales_order(company.id, user.id, customer.id, %{items: services, type: "service"})
 # end)
 
-# # Enum.map(random_customers, fn customer ->
-# #   Seed.create_sales_order(company.id, user.id, customer.id, products, services)
-# # end)
-
 Enum.map(1..10, fn _index ->
   Seed.create_bank(company.id)
 end)
+
+# # Enum.map(random_customers, fn customer ->
+# #   Seed.create_sales_order(company.id, user.id, customer.id, products, services)
+# # end)
 
 # sale_order =
 #   SalesReg.Order.processed_sale_orders()
 #   |> Enum.random()
 
-# {:ok, invoice} = Seed.create_invoice(sale_order)
+{:ok, invoice} = Seed.create_invoice(order)
 
 # Seed.create_receipt(invoice.id, user.id, company.id)
+
+Enum.map(1..10, fn _index ->
+  Seed.create_notification(company.id, user.id, Enum.random(["status change", "created"]), "order", order.id)
+end)
+
+{:ok, invoice} = Seed.create_invoice(order)
+
+Enum.map(1..10, fn _index ->
+  Seed.create_notification(company.id, user.id, Enum.random(["created", "payment"]), "invoice", invoice.id)
+end)

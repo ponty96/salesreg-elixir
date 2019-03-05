@@ -29,6 +29,10 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+
+    field(:mobile_device, :mobile_device,
+      resolve: dataloader(SalesReg.Notifications, :mobile_devices)
+    )
   end
 
   @desc """
@@ -550,7 +554,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:status, :string)
     field(:updated_at, :naive_datetime)
 
-    field(:template, list_of(:template), resolve: dataloader(SaleReg.Theme, :template))
+    field(:template, list_of(:template), resolve: dataloader(SalesReg.Theme, :template))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
@@ -621,6 +625,66 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   @desc """
+    Notification object type
+  """
+  object :notification do
+    field(:id, :uuid)
+    field(:action_type, :string)
+    field(:delivery_channel, :string)
+    field(:delivery_status, :string)
+    field(:element, :string)
+    field(:element_id, :uuid)
+    field(:read_status, :string)
+    field(:element_data, :string)
+
+    field(:updated_at, :naive_datetime)
+    field(:inserted_at, :naive_datetime)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:actor, :user, resolve: dataloader(SalesReg.Accounts, :actor))
+
+    field(:notification_items, list_of(:notification_item),
+      resolve: dataloader(SalesReg.Notifications, :notification_items)
+    )
+  end
+
+  connection(node_type: :notification)
+
+  @desc """
+    Notification Item object type
+  """
+  object :notification_item do
+    field(:id, :uuid)
+    field(:changed_to, :string)
+    field(:current, :string)
+    field(:item_type, :string)
+    field(:item_id, :string)
+
+    field(:updated_at, :naive_datetime)
+    field(:inserted_at, :naive_datetime)
+
+    field(:notification, :notification, resolve: dataloader(SaleReg.Notifications, :notification))
+  end
+
+  @desc """
+    Mobile Device object type
+  """
+  object :mobile_device do
+    field(:id, :uuid)
+    field(:mobile_os, :string)
+    field(:brand, :string)
+    field(:build_number, :string)
+    field(:device_token, :string)
+    field(:app_version, :string)
+    field(:notification_enabled, :boolean)
+
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
+
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -658,7 +722,10 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       :activity,
       :legal_document,
       :bonanza,
-      :bonanza_item
+      :bonanza_item,
+      :notification,
+      :notification_item,
+      :mobile_device
     ])
 
     resolve_type(fn
@@ -688,6 +755,9 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       %LegalDocument{}, _ -> :legal_document
       %Bonanza{}, _ -> :bonanza
       %BonanzaItem{}, _ -> :bonanza_item
+      %Notification{}, _ -> :notification
+      %NotificationItem{}, _ -> :notification_item
+      %MobileDevice{}, _ -> :mobile_device
     end)
   end
 
@@ -803,7 +873,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:type, non_null(:legal_document_type))
     field(:content, :string)
     field(:pdf_url, :string)
-    field(:company_id, non_null(:string))
+    field(:company_id, non_null(:uuid))
   end
 
   input_object :branch_input do
@@ -1015,6 +1085,16 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:price_slash_to, non_null(:string))
     field(:max_quantity, non_null(:string))
     field(:product_id, non_null(:uuid))
+  end
+
+  input_object :mobile_device_input do
+    field(:mobile_os, :string)
+    field(:brand, :string)
+    field(:build_number, :string)
+    field(:device_token, :string)
+    field(:app_version, :string)
+    field(:notification_enabled, non_null(:boolean))
+    field(:user_id, non_null(:uuid))
   end
 
   #########################################################
