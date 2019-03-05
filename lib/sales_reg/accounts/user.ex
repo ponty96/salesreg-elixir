@@ -23,6 +23,9 @@ defmodule SalesReg.Accounts.User do
     has_one(:company, Company, foreign_key: :owner_id)
     has_many(:contacts, SalesReg.Business.Contact)
 
+    has_many(:notifications, SalesReg.Notifications.Notification, foreign_key: :actor_id)
+    has_many(:mobile_devices, SalesReg.Notifications.MobileDevice)
+
     timestamps()
   end
 
