@@ -97,6 +97,26 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
     end
 
     @desc """
+      get invoice by id
+    """
+    field(:get_invoice_by_id, :invoice) do
+      arg(:invoice_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&OrderResolver.get_invoice_by_id/2)
+    end
+
+    @desc """
+      get sale by id
+    """
+    field(:get_sale_by_id, :sale) do
+      arg(:sale_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&OrderResolver.get_sale_by_id/2)
+    end
+
+    @desc """
       query for all activities of a company contact
     """
     connection field(:list_contact_activities, node_type: :activity) do

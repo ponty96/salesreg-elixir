@@ -13,13 +13,18 @@ defmodule SalesReg.Tasks do
       end)
 
     Enum.map(invoices, fn invoice ->
-      Order.preload_order(invoice).sale
-      |> M2C.send_reminder()
-    end)
+      invoice = Order.preload_invoice(invoice)
+      sale = Order.preload_order(invoice).sale
 
-    Enum.map(invoices, fn invoice ->
-      Order.preload_order(invoice).sale
-      |> YC2C.send_invoice_due_notification()
+      %{
+        company_id: invoice.sale.company_id,
+        actor_id: invoice.sale.user_id,
+        element_data: "Invoice with reference id #{invoice.ref_id} is due for payment today"
+      }
+      |> Notifications.create_notification({:invoice, invoice}, :due)
+
+      M2C.send_reminder(sale)
+      YC2C.send_invoice_due_notification(sale)
     end)
   end
 
@@ -72,6 +77,13 @@ defmodule SalesReg.Tasks do
     |> create_mul_activities()
   end
 
+  def send_notifications() do
+    Notifications.get_unsent_notifications()
+    |> Enum.map(fn notification ->
+      send_user_notification(notification)
+    end)
+  end
+
   ### Private Functions
   defp create_mul_activities(invoices) do
     Enum.map(invoices, fn invoice ->
@@ -84,6 +96,53 @@ defmodule SalesReg.Tasks do
         invoice.sale.contact_id,
         invoice.company_id
       )
+    end)
+  end
+
+  defp send_user_notification(notification) do
+    mobile_devices = notification.actor.mobile_devices
+
+    last_updated_at =
+      Enum.map(mobile_devices, fn mobile_device ->
+        mobile_device.updated_at
+      end)
+      |> Enum.max()
+
+    [mobile_device] =
+      Enum.filter(mobile_devices, fn mobile_device ->
+        mobile_device.notification_enabled == true and mobile_device.updated_at == last_updated_at
+      end)
+
+    data = construct_notification_data(notification)
+
+    mobile_device.device_token
+    |> Pigeon.FCM.Notification.new(%{}, data)
+    |> Pigeon.FCM.push()
+    |> case do
+      %{status: :success} ->
+        notification
+        |> Notifications.update_notification(%{delivery_status: "sent"})
+
+      _ ->
+        notification
+    end
+  end
+
+  defp construct_notification_data(notification) do
+    notification
+    |> Map.from_struct()
+    |> Map.drop([:__meta__, :actor, :company, :mobile_devices])
+    |> Map.put(:notification_items, transform_notification_items(notification))
+  end
+
+  defp transform_notification_items(%{notification_items: []}) do
+    []
+  end
+
+  defp transform_notification_items(%{notification_items: items}) do
+    Enum.map(items, fn item ->
+      Map.from_struct(item)
+      |> Map.drop([:__meta__, :notification])
     end)
   end
 
