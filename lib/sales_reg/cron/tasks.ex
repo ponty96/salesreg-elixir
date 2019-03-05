@@ -98,31 +98,31 @@ defmodule SalesReg.Tasks do
       )
     end)
   end
-  
+
   defp send_user_notification(notification) do
     mobile_devices = notification.actor.mobile_devices
-    last_updated_at = 
+
+    last_updated_at =
       Enum.map(mobile_devices, fn mobile_device ->
         mobile_device.updated_at
       end)
       |> Enum.max()
-    
-    [mobile_device] = 
+
+    [mobile_device] =
       Enum.filter(mobile_devices, fn mobile_device ->
-        mobile_device.notification_enabled == true and
-        mobile_device.updated_at == last_updated_at
+        mobile_device.notification_enabled == true and mobile_device.updated_at == last_updated_at
       end)
-    
+
     data = construct_notification_data(notification)
-    
+
     mobile_device.device_token
     |> Pigeon.FCM.Notification.new(%{}, data)
     |> Pigeon.FCM.push()
     |> case do
-      %{status: :success} -> 
+      %{status: :success} ->
         notification
         |> Notifications.update_notification(%{delivery_status: "sent"})
-      
+
       _ ->
         notification
     end
@@ -140,7 +140,7 @@ defmodule SalesReg.Tasks do
   end
 
   defp transform_notification_items(%{notification_items: items}) do
-    Enum.map(items, fn item -> 
+    Enum.map(items, fn item ->
       Map.from_struct(item)
       |> Map.drop([:__meta__, :notification])
     end)

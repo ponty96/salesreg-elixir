@@ -111,6 +111,7 @@ defmodule SalesReg.Order do
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
     |> Multi.run(:create_order_notification, fn _repo, %{insert_sale: sale} ->
       sale = preload_order(sale)
+
       %{
         company_id: sale.company_id,
         actor_id: sale.user_id,
@@ -134,6 +135,7 @@ defmodule SalesReg.Order do
     end)
     |> Multi.run(:create_order_notification, fn _repo, %{insert_sale: sale} ->
       sale = preload_order(sale)
+
       %{
         company_id: sale.company_id,
         actor_id: sale.user_id,
@@ -176,6 +178,7 @@ defmodule SalesReg.Order do
     |> Multi.run(:create_invoice_notification, fn _repo,
                                                   %{insert_sale: sale, insert_invoice: invoice} ->
       invoice = preload_invoice(invoice)
+
       %{
         company_id: sale.company_id,
         actor_id: sale.user_id,
