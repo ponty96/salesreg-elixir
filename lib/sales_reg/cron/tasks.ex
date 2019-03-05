@@ -18,7 +18,8 @@ defmodule SalesReg.Tasks do
 
       %{
         company_id: invoice.sale.company_id,
-        actor_id: invoice.sale.user_id
+        actor_id: invoice.sale.user_id,
+        element_data: "Invoice with reference id #{invoice.ref_id} is due for payment today"
       }
       |> Notifications.create_notification({:invoice, invoice}, :due)
 

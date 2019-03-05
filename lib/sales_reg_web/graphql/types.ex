@@ -635,12 +635,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:element, :string)
     field(:element_id, :uuid)
     field(:read_status, :string)
-
-    field :element_data, :string do
-      resolve(fn _, _ ->
-        {:ok, Enum.random(["OR001", "For Jennifa", "IN001"])}
-      end)
-    end
+    field(:element_data, :string)
 
     field(:updated_at, :naive_datetime)
     field(:inserted_at, :naive_datetime)

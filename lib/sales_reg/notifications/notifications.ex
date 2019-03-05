@@ -38,6 +38,7 @@ defmodule SalesReg.Notifications do
   def create_notification(params, {:product, _element}, action_type) do
     params
     |> Map.put(:action_type, Atom.to_string(action_type))
+    |> Map.put(:element, "product")
     |> Notifications.add_notification()
   end
 

@@ -10,6 +10,7 @@ defmodule SalesReg.Notifications.Notification do
     field(:delivery_status, :string, default: "unsent")
     field(:element, :string)
     field(:element_id, :string)
+    field(:element_data, :string)
     field(:read_status, :string, default: "unread")
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:actor, SalesReg.Accounts.User)
@@ -18,7 +19,7 @@ defmodule SalesReg.Notifications.Notification do
     timestamps()
   end
 
-  @fields [:delivery_channel, :delivery_status, :read_status, :element, :element_id]
+  @fields [:delivery_channel, :delivery_status, :read_status, :element, :element_id, :element_data]
   @required_fields [:action_type, :actor_id, :company_id]
 
   @doc false

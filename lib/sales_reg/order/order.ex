@@ -58,7 +58,8 @@ defmodule SalesReg.Order do
       {:ok, updated} ->
         %{
           company_id: sale.company_id,
-          actor_id: sale.user_id
+          actor_id: sale.user_id,
+          element_data: "Order #{sale.ref_id} status changed to #{new_status}"
         }
         |> Notifications.create_notification({:order, sale}, :status_change)
 
@@ -109,9 +110,11 @@ defmodule SalesReg.Order do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
     |> Multi.run(:create_order_notification, fn _repo, %{insert_sale: sale} ->
+      sale = preload_order(sale)
       %{
         company_id: sale.company_id,
-        actor_id: sale.user_id
+        actor_id: sale.user_id,
+        element_data: "A new order has been created for #{sale.contact.contact_name}"
       }
       |> Notifications.create_notification({:order, sale}, :created)
     end)
@@ -130,9 +133,11 @@ defmodule SalesReg.Order do
       |> Order.add_sale()
     end)
     |> Multi.run(:create_order_notification, fn _repo, %{insert_sale: sale} ->
+      sale = preload_order(sale)
       %{
         company_id: sale.company_id,
-        actor_id: sale.user_id
+        actor_id: sale.user_id,
+        element_data: "A new order has been created for #{sale.contact.contact_name}"
       }
       |> Notifications.create_notification({:order, sale}, :created)
     end)
@@ -170,9 +175,11 @@ defmodule SalesReg.Order do
     end)
     |> Multi.run(:create_invoice_notification, fn _repo,
                                                   %{insert_sale: sale, insert_invoice: invoice} ->
+      invoice = preload_invoice(invoice)
       %{
         company_id: sale.company_id,
-        actor_id: sale.user_id
+        actor_id: sale.user_id,
+        element_data: "An invoice has been created for #{invoice.sale.contact.contact_name}"
       }
       |> Notifications.create_notification({:invoice, invoice}, :created)
     end)
@@ -187,7 +194,8 @@ defmodule SalesReg.Order do
 
     %{
       company_id: invoice.sale.company_id,
-      actor_id: invoice.sale.user_id
+      actor_id: invoice.sale.user_id,
+      element_data: "A sum of ##{amount} was paid by #{invoice.sale.contact.contact_name}"
     }
     |> Notifications.create_notification({:invoice, invoice}, :payment)
 
