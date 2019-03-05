@@ -390,6 +390,13 @@ defmodule SalesReg.Order do
     :erlang.float_to_binary(float, [:compact, {:decimals, 20}])
   end
 
+  def nation_wide_delivery_fee_exists?(company_id) do
+    case Repo.get_by(DeliveryFee, company_id: company_id, state: "Nation wide") do
+      nil -> false
+      %DeliveryFee{} -> true
+    end
+  end
+
   defp calc_items_amount(items) do
     Enum.map(items, fn item ->
       {quantity, _} = Float.parse(item.quantity)

@@ -82,6 +82,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     |> Order.delete_delivery_fee()
   end
 
+  def nation_wide_delivery_fee_exists?(%{company_id: company_id}, _res) do
+    {:ok, %{exist: Order.nation_wide_delivery_fee_exists?(company_id)}}
+  end
+
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
   end

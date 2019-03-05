@@ -721,6 +721,10 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:user, non_null(:user))
   end
 
+  object :nation_wide_delivery do
+    field(:exist, :boolean)
+  end
+
   @desc "sorts the order from either ASC or DESC"
   enum :gender do
     value(:male, as: "MALE")

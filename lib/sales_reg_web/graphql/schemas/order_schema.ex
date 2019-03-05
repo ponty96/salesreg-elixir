@@ -136,5 +136,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       middleware(Authorize)
       resolve(&OrderResolver.list_company_delivery_fees/2)
     end
+
+    # @desc """
+    # query if company has delivery_fee for nation wide delivery
+    # """
+    field :company_allows_nationwide_delivery, :nation_wide_delivery do
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&OrderResolver.nation_wide_delivery_fee_exists?/2)
+    end
   end
 end
