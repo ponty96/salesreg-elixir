@@ -16,6 +16,6 @@ defmodule SalesReg.Repo.Migrations.CreateMobileDevices do
     end
 
     create(index(:mobile_devices, [:user_id]))
-    create(unique_index(:mobile_devices, [:device_token]))
+    create(unique_index(:mobile_devices, [:device_token, :user_id], name: :users_device_token_user_id_index))
   end
 end
