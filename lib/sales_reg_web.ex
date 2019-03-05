@@ -134,7 +134,11 @@ defmodule SalesRegWeb do
         Mailer,
         SpecialOffer,
         SpecialOffer.Bonanza,
-        SpecialOffer.BonanzaItem
+        SpecialOffer.BonanzaItem,
+        Notifications,
+        Notifications.Notification,
+        Notifications.NotificationItem,
+        Notifications.MobileDevice
       }
     end
   end

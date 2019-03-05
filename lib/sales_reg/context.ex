@@ -28,10 +28,10 @@ defmodule SalesReg.Context do
           res
         end
 
-        def unquote(String.to_atom("list_company_#{schema}s"))(company_id) do
+        def unquote(String.to_atom("list_company_#{schema}s"))(clauses) do
           res =
             unquote(module)
-            |> Query.where(company_id: ^company_id)
+            |> Query.where(^clauses)
             |> Query.order_by(desc: :updated_at)
             |> Repo.all()
 
