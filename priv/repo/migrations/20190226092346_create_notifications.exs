@@ -9,6 +9,7 @@ defmodule SalesReg.Repo.Migrations.CreateNotifications do
       add(:action_type, :string)
       add(:delivery_channel, :string)
       add(:delivery_status, :string)
+      add(:element_data, :string)
       add(:read_status, :string)
       add(:company_id, references(:companies, on_delete: :nothing, type: :binary_id))
       add(:actor_id, references(:users, on_delete: :nothing, type: :binary_id))
