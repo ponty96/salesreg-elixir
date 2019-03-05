@@ -35,6 +35,9 @@ defmodule SalesReg.Notifications.MobileDevice do
     mobile_device
     |> cast(attrs, @fields ++ @required_fields)
     |> validate_required(@required_fields)
-    |> unique_constraint(:device_token, name: :users_device_token_user_id_index, message: "This device token already exists for this user")
+    |> unique_constraint(:device_token,
+      name: :users_device_token_user_id_index,
+      message: "This device token already exists for this user"
+    )
   end
 end
