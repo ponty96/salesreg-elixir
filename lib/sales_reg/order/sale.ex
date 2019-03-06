@@ -16,6 +16,7 @@ defmodule SalesReg.Order.Sale do
     field(:discount, :string)
     field(:ref_id, :string)
     field(:charge, :string)
+    field(:delivery_fee, :string)
 
     field(:state, :string, virtual: true)
 
@@ -42,7 +43,7 @@ defmodule SalesReg.Order.Sale do
     :charge
   ]
 
-  @optional_fields [:status, :tax, :discount, :payment_method, :bonanza_id]
+  @optional_fields [:status, :tax, :discount, :payment_method, :bonanza_id, :delivery_fee]
 
   @doc false
   def changeset(sale, attrs) do

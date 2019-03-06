@@ -397,6 +397,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:tax, :string)
     field(:ref_id, :string)
     field(:charge, :string)
+    field(:delivery_fee, :string)
 
     field :amount, :float do
       resolve(fn _parent, %{source: sale} ->
@@ -954,6 +955,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:contact_id, :uuid)
     field(:company_id, non_null(:uuid))
     field(:bonanza_id, :uuid)
+    field(:delivery_fee, :string)
   end
 
   input_object :bank_input do
