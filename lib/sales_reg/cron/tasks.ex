@@ -2,6 +2,7 @@ defmodule SalesReg.Tasks do
   use SalesRegWeb, :context
   alias SalesReg.Mailer.YipcartToCustomers, as: YC2C
   alias SalesReg.Mailer.MerchantsToCustomers, as: M2C
+  require Logger
 
   # sends emails on the day orders are due for payment
   def mail_on_order_due_date() do
@@ -119,11 +120,13 @@ defmodule SalesReg.Tasks do
     |> Pigeon.FCM.Notification.new(%{}, data)
     |> Pigeon.FCM.push()
     |> case do
-      %{status: :success} ->
+      %{status: :success} = response ->
+        Logger.info "FCM response: #{inspect(response)}"
         notification
         |> Notifications.update_notification(%{delivery_status: "sent"})
 
-      _ ->
+      _reponse = response ->
+        Logger.info "FCM response: #{inspect(response)}"
         notification
     end
   end
