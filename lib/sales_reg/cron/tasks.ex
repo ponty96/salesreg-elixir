@@ -101,32 +101,22 @@ defmodule SalesReg.Tasks do
   end
 
   defp send_user_notification(notification) do
-    mobile_devices = notification.actor.mobile_devices
-
-    last_updated_at =
-      Enum.map(mobile_devices, fn mobile_device ->
-        mobile_device.updated_at
-      end)
-      |> Enum.max()
-
-    [mobile_device] =
-      Enum.filter(mobile_devices, fn mobile_device ->
-        mobile_device.notification_enabled == true and mobile_device.updated_at == last_updated_at
-      end)
-
-    data = construct_notification_data(notification)
-
-    mobile_device.device_token
-    |> Pigeon.FCM.Notification.new(%{}, data)
-    |> Pigeon.FCM.push()
-    |> case do
-      %{status: :success} = response ->
-        Logger.info "FCM response: #{inspect(response)}"
+    with %MobileDevice{} = mobile_device <- Notifications.get_last_updated_mobile_device(notification.actor_id),
+        data <- construct_notification_data(notification),
+        %Pigeon.FCM.Notification{status: :success} = fcm_response <- send_notification_to_mobile_device(mobile_device.device_token, data),
+        :ok <- Logger.info "FCM response: #{inspect(fcm_response)}" do
+      
+      notification
+      |> Notifications.update_notification(%{delivery_status: "sent"})
+    else
+      nil ->
         notification
-        |> Notifications.update_notification(%{delivery_status: "sent"})
 
-      _reponse = response ->
-        Logger.info "FCM response: #{inspect(response)}"
+      %Pigeon.FCM.Notification{status: _status} = fcm_response ->
+        Logger.info "FCM response: #{inspect(fcm_response)}"
+        notification
+
+      _ ->
         notification
     end
   end
@@ -136,6 +126,12 @@ defmodule SalesReg.Tasks do
     |> Map.from_struct()
     |> Map.drop([:__meta__, :actor, :company, :mobile_devices])
     |> Map.put(:notification_items, transform_notification_items(notification))
+  end
+
+  defp send_notification_to_mobile_device(device_token, data) do
+    device_token
+    |> Pigeon.FCM.Notification.new(%{}, data)
+    |> Pigeon.FCM.push()
   end
 
   defp transform_notification_items(%{notification_items: []}) do
