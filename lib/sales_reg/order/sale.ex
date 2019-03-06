@@ -16,7 +16,7 @@ defmodule SalesReg.Order.Sale do
     field(:discount, :string)
     field(:ref_id, :string)
     field(:charge, :string)
-    field(:delivery_fee, :string)
+    field(:delivery_fee, :string, default: "0")
 
     field(:state, :string, virtual: true)
 

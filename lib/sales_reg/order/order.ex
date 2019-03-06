@@ -277,7 +277,7 @@ defmodule SalesReg.Order do
 
   def cal_order_amount_before_charge(%Sale{} = sale) do
     sale = Repo.preload(sale, [:items])
-    calc_items_amount(sale.items)
+    calc_items_amount(sale.items) + Float.parse(sale.delivery_fee)
   end
 
   def calc_order_amount(%Sale{} = sale) do
@@ -286,7 +286,7 @@ defmodule SalesReg.Order do
 
   def cal_order_amount_before_charge(%Invoice{} = invoice) do
     invoice = Repo.preload(invoice, sale: :items)
-    calc_items_amount(invoice.sale.items)
+    calc_items_amount(invoice.sale.items) + Float.parse(invoice.sale.delivery_fee)
   end
 
   def calc_order_amount(%Invoice{} = invoice) do

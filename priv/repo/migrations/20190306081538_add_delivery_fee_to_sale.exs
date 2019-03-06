@@ -3,7 +3,7 @@ defmodule SalesReg.Repo.Migrations.AddDeliveryFeeToSale do
 
   def change do
     alter table(:sales) do
-      add(:delivery_fee, :string)
+      add(:delivery_fee, :string, default: "0")
     end
   end
 end

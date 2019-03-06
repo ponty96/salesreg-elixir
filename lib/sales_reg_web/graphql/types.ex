@@ -1109,6 +1109,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:items, non_null(list_of(:item_input)))
     field(:contact, :webstore_sale_contact_input)
     field(:location, :location_input)
+    field(:delivery_fee, :string)
   end
 
   input_object :webstore_sale_contact_input do
