@@ -82,6 +82,12 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
         {:ok, Business.get_company_share_url(company)}
       end)
     end
+
+    field :delivers_nationwide, :boolean do
+      resolve(fn _product, %{source: company} ->
+        {:ok, Order.nation_wide_delivery_fee_exists?(company.id)}
+      end)
+    end
   end
 
   @desc """
