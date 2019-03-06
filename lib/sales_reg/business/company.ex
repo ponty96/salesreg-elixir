@@ -34,6 +34,8 @@ defmodule SalesReg.Business.Company do
     has_many(:stars, SalesReg.Order.Star)
     has_many(:legal_documents, SalesReg.Business.LegalDocument)
 
+    has_many(:notifications, SalesReg.Notifications.Notification)
+
     timestamps()
   end
 

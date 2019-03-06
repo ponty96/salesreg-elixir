@@ -52,11 +52,18 @@ defmodule SalesReg.Order do
   end
 
   def update_status(:sale, order_id, new_status) do
-    sale_order = get_sale(order_id) |> preload_order()
-    sale_order = Map.put(sale_order, :state, sale_order.status)
+    sale = get_sale(order_id) |> preload_order()
+    sale = Map.put(sale, :state, sale.status)
 
-    case Machinery.transition_to(sale_order, OrderStateMachine, new_status) do
+    case Machinery.transition_to(sale, OrderStateMachine, new_status) do
       {:ok, updated} ->
+        %{
+          company_id: sale.company_id,
+          actor_id: sale.user_id,
+          element_data: "Order #{sale.ref_id} status changed to #{new_status}"
+        }
+        |> Notifications.create_notification({:order, sale}, :status_change)
+
         {:ok, updated}
 
       {:error, error} ->
@@ -103,6 +110,16 @@ defmodule SalesReg.Order do
   def create_sale(%{contact_id: _id} = params) do
     Multi.new()
     |> Multi.insert(:insert_sale, Sale.changeset(%Sale{}, params))
+    |> Multi.run(:create_order_notification, fn _repo, %{insert_sale: sale} ->
+      sale = preload_order(sale)
+
+      %{
+        company_id: sale.company_id,
+        actor_id: sale.user_id,
+        element_data: "A new order has been created for #{sale.contact.contact_name}"
+      }
+      |> Notifications.create_notification({:order, sale}, :created)
+    end)
     |> sale_multi_transac()
   end
 
@@ -116,6 +133,16 @@ defmodule SalesReg.Order do
       params
       |> Map.put_new(:contact_id, contact.id)
       |> Order.add_sale()
+    end)
+    |> Multi.run(:create_order_notification, fn _repo, %{insert_sale: sale} ->
+      sale = preload_order(sale)
+
+      %{
+        company_id: sale.company_id,
+        actor_id: sale.user_id,
+        element_data: "A new order has been created for #{sale.contact.contact_name}"
+      }
+      |> Notifications.create_notification({:order, sale}, :created)
     end)
     |> sale_multi_transac()
   end
@@ -149,6 +176,17 @@ defmodule SalesReg.Order do
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
+    |> Multi.run(:create_invoice_notification, fn _repo,
+                                                  %{insert_sale: sale, insert_invoice: invoice} ->
+      invoice = preload_invoice(invoice)
+
+      %{
+        company_id: sale.company_id,
+        actor_id: sale.user_id,
+        element_data: "An invoice has been created for #{invoice.sale.contact.contact_name}"
+      }
+      |> Notifications.create_notification({:invoice, invoice}, :created)
+    end)
     |> Repo.transaction()
     |> repo_transaction_resp()
   end
@@ -156,7 +194,14 @@ defmodule SalesReg.Order do
   def create_receipt(%{invoice_id: id, amount_paid: amount}) do
     invoice =
       Order.get_invoice(id)
-      |> Repo.preload([:sale])
+      |> preload_invoice()
+
+    %{
+      company_id: invoice.sale.company_id,
+      actor_id: invoice.sale.user_id,
+      element_data: "A sum of ##{amount} was paid by #{invoice.sale.contact.contact_name}"
+    }
+    |> Notifications.create_notification({:invoice, invoice}, :payment)
 
     insert_receipt(invoice.sale, invoice, amount, :cash)
   end
@@ -277,7 +322,7 @@ defmodule SalesReg.Order do
 
   def cal_order_amount_before_charge(%Sale{} = sale) do
     sale = Repo.preload(sale, [:items])
-    calc_items_amount(sale.items) + Float.parse(sale.delivery_fee)
+    calc_items_amount(sale.items) + (Float.parse(sale.delivery_fee) |> elem(0))
   end
 
   def calc_order_amount(%Sale{} = sale) do
@@ -286,7 +331,7 @@ defmodule SalesReg.Order do
 
   def cal_order_amount_before_charge(%Invoice{} = invoice) do
     invoice = Repo.preload(invoice, sale: :items)
-    calc_items_amount(invoice.sale.items) + Float.parse(invoice.sale.delivery_fee)
+    calc_items_amount(invoice.sale.items) + (Float.parse(invoice.sale.delivery_fee) |> elem(0))
   end
 
   def calc_order_amount(%Invoice{} = invoice) do

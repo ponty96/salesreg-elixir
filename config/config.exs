@@ -115,6 +115,10 @@ config :sales_reg, SalesReg.Scheduler,
     create_activity_when_order_due: [
       schedule: "@daily",
       task: {SalesReg.Tasks, :create_activity_when_order_due, []}
+    ],
+    send_notifications: [
+      schedule: "* * * * *",
+      task: {SalesReg.Tasks, :send_notifications, []}
     ]
   ]
 
@@ -141,6 +145,11 @@ config :sales_reg, SalesRegWeb.Services.Cloudfare,
     {"Content-Type", "application/json"},
     {"X-Auth-Email", "#{System.get_env("X_AUTH_EMAIL")}"}
   ]
+
+config :pigeon, :fcm,
+  fcm_default: %{
+    key: System.get_env("FCM_KEY")
+  }
 
 ###############################################################
 ### AWS (image upload functionality) config

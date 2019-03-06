@@ -86,6 +86,14 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     {:ok, %{exist: Order.nation_wide_delivery_fee_exists?(company_id)}}
   end
 
+  def get_invoice_by_id(%{invoice_id: id}, _res) do
+    {:ok, Order.get_invoice(id)}
+  end
+
+  def get_sale_by_id(%{sale_id: id}, _res) do
+    {:ok, Order.get_sale(id)}
+  end
+
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
   end

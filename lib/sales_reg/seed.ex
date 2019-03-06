@@ -50,7 +50,8 @@ defmodule SalesReg.Seed do
       facebook: "http://facebook.com/officialsandbox",
       instagram: "http://instagram.com/officialsandbox",
       twitter: "http://twitter.com/officialsandbox",
-      linkedin: "http://linkedin.com/officialsandbox"
+      linkedin: "http://linkedin.com/officialsandbox",
+      phone: gen_phone_params()
     }
 
     Business.create_company(user_id, company_params)
@@ -176,12 +177,12 @@ defmodule SalesReg.Seed do
 
   # SALES ORDER SEED
 
-  def create_sales_order(company_id, user_id, contact_id, items) do
+  def create_sales_order(company_id, user_id, contact_id, products) do
     create_sales_order(%{
       company_id: company_id,
       user_id: user_id,
       contact_id: contact_id,
-      items: items
+      products: products
     })
   end
 
@@ -195,12 +196,36 @@ defmodule SalesReg.Seed do
     Store.add_category(params)
   end
 
+  def create_notification(company_id, actor_id, action_type, element, element_id) do
+    params = %{
+      element: element,
+      element_id: element_id,
+      action_type: action_type,
+      company_id: company_id,
+      actor_id: actor_id,
+      notification_items: gen_notification_items()
+    }
+
+    Notifications.add_notification(params)
+  end
+
   def add_tag(company_id, name) do
     %{
       company_id: company_id,
       name: name
     }
     |> Store.add_tag()
+  end
+
+  defp gen_notification_items() do
+    Enum.map(1..3, fn _index ->
+      %{
+        changed_to: "",
+        current: "",
+        item_type: "product",
+        item_id: Enum.random(Repo.all(Product)).id
+      }
+    end)
   end
 
   defp create_sales_order(params) do
@@ -210,7 +235,7 @@ defmodule SalesReg.Seed do
       user_id: params.user_id,
       company_id: params.company_id,
       contact_id: params.contact_id,
-      items: params.items,
+      items: order_items(params.products),
       status: Enum.random(@seed_order_status)
     }
 
@@ -249,14 +274,14 @@ defmodule SalesReg.Seed do
     Theme.add_company_template(params)
   end
 
-  defp order_items(items, type) do
-    Enum.map(items, fn item ->
-      unit_price = Map.get(item, :price)
+  defp order_items(products) do
+    Enum.map(products, fn product ->
+      unit_price = Map.get(product, :price)
 
       %{
         "quantity" => "3",
         "unit_price" => unit_price,
-        "#{type}_id" => item.id
+        "product_id" => product.id
       }
     end)
   end

@@ -91,6 +91,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     {:ok, Store.load_related_products(company_id, product_id, params.limit, params.offset)}
   end
 
+  def get_product_by_id(%{product_id: id}, _res) do
+    {:ok, Store.get_product(id)}
+  end
+
   defp pagination_args(args) do
     Map.take(args, [:first, :after, :last, :before])
   end
