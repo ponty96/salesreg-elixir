@@ -86,14 +86,16 @@ defmodule SalesReg.Notifications do
     |> Repo.all()
   end
 
-  def get_last_updated_mobile_device(user_id) do    
+  def get_last_updated_mobile_device(user_id) do
     from(m in MobileDevice,
       where: m.user_id == ^user_id,
       where: m.notification_enabled == true,
-      where: m.updated_at == fragment(
-        "SELECT max(mobile_devices.updated_at) FROM mobile_devices WHERE mobile_devices.user_id = ? AND mobile_devices.notification_enabled = TRUE",
-        type(^user_id, :binary_id)
-      )
+      where:
+        m.updated_at ==
+          fragment(
+            "SELECT max(mobile_devices.updated_at) FROM mobile_devices WHERE mobile_devices.user_id = ? AND mobile_devices.notification_enabled = TRUE",
+            type(^user_id, :binary_id)
+          )
     )
     |> Repo.one()
   end

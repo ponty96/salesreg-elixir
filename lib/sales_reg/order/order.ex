@@ -431,7 +431,7 @@ defmodule SalesReg.Order do
   end
 
   def float_to_binary(float) do
-    :erlang.float_to_binary(float, [:compact, { :decimals, 20 }])
+    :erlang.float_to_binary(float, [:compact, {:decimals, 20}])
   end
 
   defp calc_items_amount(items) do

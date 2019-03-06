@@ -101,10 +101,12 @@ defmodule SalesReg.Tasks do
   end
 
   defp send_user_notification(notification) do
-    with %MobileDevice{} = mobile_device <- Notifications.get_last_updated_mobile_device(notification.actor_id),
+    with %MobileDevice{} = mobile_device <-
+           Notifications.get_last_updated_mobile_device(notification.actor_id),
         data <- construct_notification_data(notification),
-        %Pigeon.FCM.Notification{status: :success} = fcm_response <- send_notification_to_mobile_device(mobile_device.device_token, data),
-        :ok <- Logger.info "FCM response: #{inspect(fcm_response)}" do
+        %Pigeon.FCM.Notification{status: :success} = fcm_response <-
+          send_notification_to_mobile_device(mobile_device.device_token, data),
+        :ok <- Logger.info("FCM response: #{inspect(fcm_response)}") do
       
       notification
       |> Notifications.update_notification(%{delivery_status: "sent"})
@@ -113,7 +115,7 @@ defmodule SalesReg.Tasks do
         notification
 
       %Pigeon.FCM.Notification{status: _status} = fcm_response ->
-        Logger.info "FCM response: #{inspect(fcm_response)}"
+        Logger.info("FCM response: #{inspect(fcm_response)}")
         notification
 
       _ ->
