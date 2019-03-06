@@ -74,7 +74,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   end
 
   def list_company_delivery_fees(%{company_id: company_id}, _res) do
-    Order.list_company_delivery_fees(company_id)
+    [company_id: company_id]
+    |> Order.list_company_delivery_fees()
   end
 
   def delete_delivery_fee(%{delivery_fee_id: delivery_fee_id}, _res) do
