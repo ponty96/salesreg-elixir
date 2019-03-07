@@ -142,15 +142,6 @@ defmodule SalesReg.Tasks do
     Base.request(:post, url, body, headers)
   end
 
-  defp gen_notification_req_params(device_token, data) do
-    %{
-      "app_id" => System.get_env("ONESIGNAL_APP_ID"),
-      "include_android_reg_ids" => [device_token],
-      "data" => data,
-      "contents" => %{"en" => "English Message"}
-    }
-  end
-
   defp transform_notification_items(%{notification_items: []}) do
     []
   end
@@ -160,6 +151,15 @@ defmodule SalesReg.Tasks do
       Map.from_struct(item)
       |> Map.drop([:__meta__, :notification])
     end)
+  end
+
+  defp gen_notification_req_params(device_token, data) do
+    %{
+      "app_id" => System.get_env("ONESIGNAL_APP_ID"),
+      "include_android_reg_ids" => [device_token],
+      "data" => data,
+      "contents" => %{"en" => "English Message"}
+    }
   end
 
   defp now() do

@@ -146,11 +146,6 @@ config :sales_reg, SalesRegWeb.Services.Cloudfare,
     {"X-Auth-Email", "#{System.get_env("X_AUTH_EMAIL")}"}
   ]
 
-config :pigeon, :fcm,
-  fcm_default: %{
-    key: System.get_env("FCM_KEY")
-  }
-
 ###############################################################
 ### AWS (image upload functionality) config
 ###############################################################
