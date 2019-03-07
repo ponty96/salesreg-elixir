@@ -2,6 +2,7 @@ defmodule SalesReg.Tasks do
   use SalesRegWeb, :context
   alias SalesReg.Mailer.YipcartToCustomers, as: YC2C
   alias SalesReg.Mailer.MerchantsToCustomers, as: M2C
+  alias SalesRegWeb.Services.Base
   require Logger
 
   # sends emails on the day orders are due for payment
@@ -20,7 +21,7 @@ defmodule SalesReg.Tasks do
       %{
         company_id: invoice.sale.company_id,
         actor_id: invoice.sale.user_id,
-        element_data: "Invoice with reference id #{invoice.ref_id} is due for payment today"
+        message: "Invoice with reference id #{invoice.ref_id} is due for payment today"
       }
       |> Notifications.create_notification({:invoice, invoice}, :due)
 
@@ -101,29 +102,21 @@ defmodule SalesReg.Tasks do
   end
 
   defp send_user_notification(notification) do
-    mobile_devices = notification.actor.mobile_devices
-
-    last_updated_at =
-      Enum.map(mobile_devices, fn mobile_device ->
-        mobile_device.updated_at
-      end)
-      |> Enum.max()
-
-    [mobile_device] =
-      Enum.filter(mobile_devices, fn mobile_device ->
-        mobile_device.notification_enabled == true and mobile_device.updated_at == last_updated_at
-      end)
-
-    data = construct_notification_data(notification)
-
-    mobile_device.device_token
-    |> Pigeon.FCM.Notification.new(%{}, data)
-    |> Pigeon.FCM.push()
-    |> case do
-      %{status: :success} = response ->
-        Logger.info "FCM response: #{inspect(response)}"
+    with %MobileDevice{} = mobile_device <-
+           Notifications.get_last_updated_mobile_device(notification.actor_id),
+         data <- construct_notification_data(notification),
+         {:ok, :success, %{"id" => _id}} = response <-
+           send_notification_to_mobile_device(mobile_device.device_token, data, notification),
+         :ok <- Logger.info("OneSignal response: #{inspect(response)}") do
+      notification
+      |> Notifications.update_notification(%{delivery_status: "sent"})
+    else
+      nil ->
         notification
-        |> Notifications.update_notification(%{delivery_status: "sent"})
+
+      {:ok, _status, _body} = response ->
+        Logger.info("OneSignal response: #{inspect(response)}")
+        notification
 
       _reponse = response ->
         Logger.info "FCM response: #{inspect(response)}"
@@ -138,6 +131,19 @@ defmodule SalesReg.Tasks do
     |> Map.put(:notification_items, transform_notification_items(notification))
   end
 
+  defp send_notification_to_mobile_device(device_token, data, notification) do
+    url = "https://onesignal.com/api/v1/notifications"
+
+    body =
+      gen_notification_req_params(device_token, data, notification)
+      |> Base.encode()
+
+    headers = [{"Authorization", System.get_env("ONESIGNAL_API_KEY")}]
+
+    Base.request(:post, url, body, headers)
+    |> Base.process_response()
+  end
+
   defp transform_notification_items(%{notification_items: []}) do
     []
   end
@@ -147,6 +153,21 @@ defmodule SalesReg.Tasks do
       Map.from_struct(item)
       |> Map.drop([:__meta__, :notification])
     end)
+  end
+
+  defp gen_notification_req_params(device_token, data, notification) do
+    %{
+      "app_id" => System.get_env("ONESIGNAL_APP_ID"),
+      "include_android_reg_ids" => [device_token],
+      "data" => data,
+      "contents" => %{"en" => notification.message},
+      "headings" => %{"en" => gen_notification_heading(notification)}
+    }
+  end
+
+  defp gen_notification_heading(notification) do
+    (String.capitalize(notification.element) <> " " <> notification.action_type)
+    |> String.replace("_", " ")
   end
 
   defp now() do

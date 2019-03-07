@@ -10,7 +10,7 @@ defmodule SalesReg.Notifications.Notification do
     field(:delivery_status, :string, default: "unsent")
     field(:element, :string)
     field(:element_id, :string)
-    field(:element_data, :string)
+    field(:message, :string)
     field(:read_status, :string, default: "unread")
     belongs_to(:company, SalesReg.Business.Company)
     belongs_to(:actor, SalesReg.Accounts.User)
@@ -25,7 +25,7 @@ defmodule SalesReg.Notifications.Notification do
     :read_status,
     :element,
     :element_id,
-    :element_data
+    :message
   ]
   @required_fields [:action_type, :actor_id, :company_id]
 
