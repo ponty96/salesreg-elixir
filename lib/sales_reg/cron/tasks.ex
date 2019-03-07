@@ -2,6 +2,7 @@ defmodule SalesReg.Tasks do
   use SalesRegWeb, :context
   alias SalesReg.Mailer.YipcartToCustomers, as: YC2C
   alias SalesReg.Mailer.MerchantsToCustomers, as: M2C
+  alias SalesRegWeb.Services.Base
   require Logger
 
   # sends emails on the day orders are due for payment
@@ -104,9 +105,9 @@ defmodule SalesReg.Tasks do
     with %MobileDevice{} = mobile_device <-
            Notifications.get_last_updated_mobile_device(notification.actor_id),
         data <- construct_notification_data(notification),
-        %Pigeon.FCM.Notification{status: :success} = fcm_response <-
+        {:ok, :success, %{"id" => _id}} = response <- 
           send_notification_to_mobile_device(mobile_device.device_token, data),
-        :ok <- Logger.info("FCM response: #{inspect(fcm_response)}") do
+        :ok <- Logger.info("OneSignal response: #{inspect(response)}") do
       
       notification
       |> Notifications.update_notification(%{delivery_status: "sent"})
@@ -114,8 +115,8 @@ defmodule SalesReg.Tasks do
       nil ->
         notification
 
-      %Pigeon.FCM.Notification{status: _status} = fcm_response ->
-        Logger.info("FCM response: #{inspect(fcm_response)}")
+      {:ok, _status, _body} = response ->
+        Logger.info("OneSignal response: #{inspect(response)}")
         notification
 
       _ ->
@@ -131,9 +132,23 @@ defmodule SalesReg.Tasks do
   end
 
   defp send_notification_to_mobile_device(device_token, data) do
-    device_token
-    |> Pigeon.FCM.Notification.new(%{}, data)
-    |> Pigeon.FCM.push()
+    url = "https://onesignal.com/api/v1/notifications"
+    body = 
+      gen_notification_req_params(device_token, data)
+      |> Base.encode()
+    
+    headers = [{"Authorization", System.get_env("ONESIGNAL_API_KEY")}]
+    
+    Base.request(:post, url, body, headers)
+  end
+
+  defp gen_notification_req_params(device_token, data) do
+    %{
+      "app_id" => System.get_env("ONESIGNAL_APP_ID"),
+      "include_android_reg_ids" => [device_token],
+      "data" => data,
+      "contents" => %{"en" => "English Message"}
+    }
   end
 
   defp transform_notification_items(%{notification_items: []}) do
