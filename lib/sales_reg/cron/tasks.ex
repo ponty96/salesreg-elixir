@@ -106,7 +106,7 @@ defmodule SalesReg.Tasks do
            Notifications.get_last_updated_mobile_device(notification.actor_id),
         data <- construct_notification_data(notification),
         {:ok, :success, %{"id" => _id}} = response <- 
-          send_notification_to_mobile_device(mobile_device.device_token, data),
+          send_notification_to_mobile_device(mobile_device.device_token, data, notification),
         :ok <- Logger.info("OneSignal response: #{inspect(response)}") do
       
       notification
@@ -131,10 +131,10 @@ defmodule SalesReg.Tasks do
     |> Map.put(:notification_items, transform_notification_items(notification))
   end
 
-  defp send_notification_to_mobile_device(device_token, data) do
+  defp send_notification_to_mobile_device(device_token, data, notification) do
     url = "https://onesignal.com/api/v1/notifications"
     body = 
-      gen_notification_req_params(device_token, data)
+      gen_notification_req_params(device_token, data, notification)
       |> Base.encode()
     
     headers = [{"Authorization", System.get_env("ONESIGNAL_API_KEY")}]
@@ -153,13 +153,19 @@ defmodule SalesReg.Tasks do
     end)
   end
 
-  defp gen_notification_req_params(device_token, data) do
+  defp gen_notification_req_params(device_token, data, notification) do
     %{
       "app_id" => System.get_env("ONESIGNAL_APP_ID"),
       "include_android_reg_ids" => [device_token],
       "data" => data,
-      "contents" => %{"en" => "English Message"}
+      "contents" => %{"en" => notification.element_data},
+      "headings" => %{"en" => gen_notification_heading(notification)}
     }
+  end
+
+  defp gen_notification_heading(notification) do
+    String.capitalize(notification.element) <> " " <> notification.action_type
+    |> String.replace("_", " ")
   end
 
   defp now() do
