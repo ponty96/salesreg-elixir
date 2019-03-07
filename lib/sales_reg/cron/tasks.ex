@@ -21,7 +21,7 @@ defmodule SalesReg.Tasks do
       %{
         company_id: invoice.sale.company_id,
         actor_id: invoice.sale.user_id,
-        element_data: "Invoice with reference id #{invoice.ref_id} is due for payment today"
+        message: "Invoice with reference id #{invoice.ref_id} is due for payment today"
       }
       |> Notifications.create_notification({:invoice, invoice}, :due)
 
@@ -159,7 +159,7 @@ defmodule SalesReg.Tasks do
       "app_id" => System.get_env("ONESIGNAL_APP_ID"),
       "include_android_reg_ids" => [device_token],
       "data" => data,
-      "contents" => %{"en" => notification.element_data},
+      "contents" => %{"en" => notification.message},
       "headings" => %{"en" => gen_notification_heading(notification)}
     }
   end
