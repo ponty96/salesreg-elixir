@@ -5,12 +5,12 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
   def send_reminder(sale) do
     sale = Order.preload_order(sale)
     subject = "Payment Reminder Invoice ##{sale.invoice.ref_id}"
-    
+
     template =
       sale.company.id
       |> Theme.get_email_template_by_type("yc_email_reminder")
 
-    eval_html_body = 
+    eval_html_body =
       template.body
       |> EEx.eval_string(sale: sale)
 
@@ -26,7 +26,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
       sale.company.id
       |> Theme.get_email_template_by_type("yc_email_before_due")
 
-    eval_html_body = 
+    eval_html_body =
       template.body
       |> EEx.eval_string(sale: sale)
 
@@ -42,7 +42,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
       sale.company.id
       |> Theme.get_email_template_by_type("yc_email_delivered_order")
 
-    eval_html_body = 
+    eval_html_body =
       template.body
       |> EEx.eval_string(sale: sale)
 
@@ -58,7 +58,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
       sale.company.id
       |> Theme.get_email_template_by_type("yc_email_delivering_order")
 
-    eval_html_body = 
+    eval_html_body =
       template.body
       |> EEx.eval_string(sale: sale)
 
@@ -74,7 +74,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
       sale.company.id
       |> Theme.get_email_template_by_type("yc_email_early_due")
 
-    eval_html_body = 
+    eval_html_body =
       template.body
       |> EEx.eval_string(sale: sale)
 
@@ -90,7 +90,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
       sale.company.id
       |> Theme.get_email_template_by_type("yc_email_late_overdue")
 
-    eval_html_body = 
+    eval_html_body =
       template.body
       |> EEx.eval_string(sale: sale)
 
@@ -106,7 +106,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
       sale.company.id
       |> Theme.get_email_template_by_type("yc_email_pending_delivery")
 
-    eval_html_body = 
+    eval_html_body =
       template.body
       |> EEx.eval_string(sale: sale)
 
@@ -122,7 +122,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
       sale.company.id
       |> Theme.get_email_template_by_type("yc_email_pending_order")
 
-    eval_html_body = 
+    eval_html_body =
       template.body
       |> EEx.eval_string(sale: sale)
 
@@ -138,7 +138,7 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
       sale.company.id
       |> Theme.get_email_template_by_type("yc_email_received_order")
 
-    eval_html_body = 
+    eval_html_body =
       template.body
       |> EEx.eval_string(sale: sale)
 
@@ -149,15 +149,15 @@ defmodule SalesReg.Mailer.MerchantsToCustomers do
   def send_payment_received_mail(sale, receipt) do
     sale = Order.preload_order(sale)
     subject = "Payment on invoice ##{sale.invoice.ref_id}"
-    
+
     template =
       sale.company.id
       |> Theme.get_email_template_by_type("yc_payment_received")
 
-    eval_html_body = 
+    eval_html_body =
       template.body
       |> EEx.eval_string(sale: sale, receipt: receipt)
-    
+
     sale
     |> send_email(eval_html_body, subject)
   end

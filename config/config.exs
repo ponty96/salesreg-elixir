@@ -123,7 +123,7 @@ config :sales_reg, SalesReg.Scheduler,
   ]
 
 config :sentry,
-  dsn: "https://5b18bcdf49e54cc48fa881846afadd0a@sentry.io/1369436",
+  dsn: System.get_env("SENTRY_DSN"),
   included_environments: [:prod, :dev],
   environment_name: Mix.env()
 
@@ -145,11 +145,6 @@ config :sales_reg, SalesRegWeb.Services.Cloudfare,
     {"Content-Type", "application/json"},
     {"X-Auth-Email", "#{System.get_env("X_AUTH_EMAIL")}"}
   ]
-
-config :pigeon, :fcm,
-  fcm_default: %{
-    key: System.get_env("FCM_KEY")
-  }
 
 ###############################################################
 ### AWS (image upload functionality) config
