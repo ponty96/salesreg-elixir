@@ -118,7 +118,8 @@ defmodule SalesReg.Tasks do
         Logger.info("OneSignal response: #{inspect(response)}")
         notification
 
-      _ ->
+      _reponse = response ->
+        Logger.info "FCM response: #{inspect(response)}"
         notification
     end
   end
