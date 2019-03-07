@@ -207,7 +207,7 @@ defmodule SalesReg.Store do
     %{
       company_id: product.company_id,
       actor_id: product.user_id,
-      element_data: "#{Enum.count(order_items)} products were restocked",
+      message: "#{Enum.count(order_items)} products were restocked",
       notification_items: gen_restock_notification_items(order_items)
     }
     |> Notifications.create_notification({:product, ""}, :restock)
