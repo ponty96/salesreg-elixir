@@ -140,6 +140,7 @@ defmodule SalesReg.Tasks do
     headers = [{"Authorization", System.get_env("ONESIGNAL_API_KEY")}]
     
     Base.request(:post, url, body, headers)
+    |> Base.process_response()
   end
 
   defp transform_notification_items(%{notification_items: []}) do
