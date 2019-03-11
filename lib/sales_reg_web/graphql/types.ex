@@ -658,7 +658,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:element, :string)
     field(:element_id, :uuid)
     field(:read_status, :string)
-    field(:element_data, :string)
+    field(:message, :string)
 
     field(:updated_at, :naive_datetime)
     field(:inserted_at, :naive_datetime)

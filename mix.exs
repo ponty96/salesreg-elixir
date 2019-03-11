@@ -90,9 +90,7 @@ defmodule SalesReg.Mixfile do
       {:sentry, "~> 6.4"},
       {:httpoison, "~> 1.4"},
       {:poison, "~> 3.1"},
-      {:ecto_autoslug_field, "~> 1.0"},
-      {:pigeon, "~> 1.2.4"},
-      {:kadabra, "~> 0.4.4"}
+      {:ecto_autoslug_field, "~> 1.0"}
     ]
   end
 
