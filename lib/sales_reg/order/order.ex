@@ -195,13 +195,6 @@ defmodule SalesReg.Order do
       Order.get_invoice(id)
       |> preload_invoice()
 
-    %{
-      company_id: invoice.sale.company_id,
-      actor_id: invoice.sale.user_id,
-      message: "A sum of ##{amount} was paid by #{invoice.sale.contact.contact_name}"
-    }
-    |> Notifications.create_notification({:invoice, invoice}, :payment)
-
     insert_receipt(invoice.sale, invoice, amount, :cash)
   end
 
@@ -239,9 +232,16 @@ defmodule SalesReg.Order do
 
         M2C.send_payment_received_mail(sale, receipt)
 
-        # send invoice payment notifice email to merchant
+        # send invoice payment notice email to merchant
         Map.put_new(sale, :amount, amount)
         |> YC2C.send_invoice_payment_notice()
+
+        %{
+          company_id: sale.company_id,
+          actor_id: sale.user_id,
+          message: "A sum of ##{amount} was paid by #{receipt.sale.contact.contact_name}"
+        }
+        |> Notifications.create_notification({:invoice, invoice}, :payment)
 
         {:ok, receipt}
 
