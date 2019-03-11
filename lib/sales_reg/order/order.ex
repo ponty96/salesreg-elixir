@@ -16,7 +16,8 @@ defmodule SalesReg.Order do
     Receipt,
     Review,
     Star,
-    Activity
+    Activity,
+    DeliveryFee
   ]
 
   @receipt_html_path "lib/sales_reg_web/templates/mailer/yc_email_receipt_pdf.html.eex"
@@ -195,13 +196,6 @@ defmodule SalesReg.Order do
       Order.get_invoice(id)
       |> preload_invoice()
 
-    %{
-      company_id: invoice.sale.company_id,
-      actor_id: invoice.sale.user_id,
-      message: "A sum of ##{amount} was paid by #{invoice.sale.contact.contact_name}"
-    }
-    |> Notifications.create_notification({:invoice, invoice}, :payment)
-
     insert_receipt(invoice.sale, invoice, amount, :cash)
   end
 
@@ -239,9 +233,16 @@ defmodule SalesReg.Order do
 
         M2C.send_payment_received_mail(sale, receipt)
 
-        # send invoice payment notifice email to merchant
+        # send invoice payment notice email to merchant
         Map.put_new(sale, :amount, amount)
         |> YC2C.send_invoice_payment_notice()
+
+        %{
+          company_id: sale.company_id,
+          actor_id: sale.user_id,
+          message: "A sum of ##{amount} was paid by #{receipt.sale.contact.contact_name}"
+        }
+        |> Notifications.create_notification({:invoice, invoice}, :payment)
 
         {:ok, receipt}
 
@@ -252,7 +253,7 @@ defmodule SalesReg.Order do
 
   # Use this to persist receipt when the payment method is card
   def insert_receipt(sale, transaction_id, amount, :card) do
-    sale = Repo.preload(sale, [:invoice])
+    sale = preload_order(sale)
 
     add_receipt =
       %Receipt{}
@@ -264,13 +265,20 @@ defmodule SalesReg.Order do
 
     case add_receipt do
       {:ok, receipt} ->
-        receipt = Repo.preload(receipt, [:company, :invoice, :user, sale: [items: [:product]]])
+        receipt = preload_receipt(receipt)
 
         M2C.send_payment_received_mail(sale, receipt)
 
-        # send invoice payment notifice email to merchant
+        # send invoice payment notice email to merchant
         Map.put_new(sale, :amount, amount)
         |> YC2C.send_invoice_payment_notice()
+
+        %{
+          company_id: sale.company_id,
+          actor_id: sale.user_id,
+          message: "A sum of ##{amount} was paid by #{receipt.sale.contact.contact_name}"
+        }
+        |> Notifications.create_notification({:invoice, receipt.invoice}, :payment)
 
         {:ok, receipt}
 
@@ -321,7 +329,7 @@ defmodule SalesReg.Order do
 
   def cal_order_amount_before_charge(%Sale{} = sale) do
     sale = Repo.preload(sale, [:items])
-    calc_items_amount(sale.items)
+    calc_items_amount(sale.items) + (Float.parse(sale.delivery_fee) |> elem(0))
   end
 
   def calc_order_amount(%Sale{} = sale) do
@@ -330,7 +338,7 @@ defmodule SalesReg.Order do
 
   def cal_order_amount_before_charge(%Invoice{} = invoice) do
     invoice = Repo.preload(invoice, sale: :items)
-    calc_items_amount(invoice.sale.items)
+    calc_items_amount(invoice.sale.items) + (Float.parse(invoice.sale.delivery_fee) |> elem(0))
   end
 
   def calc_order_amount(%Invoice{} = invoice) do
@@ -432,6 +440,13 @@ defmodule SalesReg.Order do
 
   def float_to_binary(float) do
     :erlang.float_to_binary(float, [:compact, {:decimals, 20}])
+  end
+
+  def nation_wide_delivery_fee_exists?(company_id) do
+    case Repo.get_by(DeliveryFee, company_id: company_id, state: "Nation wide") do
+      nil -> false
+      %DeliveryFee{} -> true
+    end
   end
 
   defp calc_items_amount(items) do

@@ -61,6 +61,10 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:reviews, list_of(:review), resolve: dataloader(SalesReg.Order, :reviews))
     field(:stars, list_of(:star), resolve: dataloader(SalesReg.Order, :stars))
 
+    field(:delivery_fees, list_of(:delivery_fee),
+      resolve: dataloader(SalesReg.Order, :delivery_fees)
+    )
+
     field :sale_charge, :string do
       resolve(fn _, _ ->
         {:ok, "#{System.get_env("CHARGE")}"}
@@ -80,6 +84,12 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field :share_link, :string do
       resolve(fn _product, %{source: company} ->
         {:ok, Business.get_company_share_url(company)}
+      end)
+    end
+
+    field :delivers_nationwide, :boolean do
+      resolve(fn _product, %{source: company} ->
+        {:ok, Order.nation_wide_delivery_fee_exists?(company.id)}
       end)
     end
   end
@@ -397,6 +407,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:tax, :string)
     field(:ref_id, :string)
     field(:charge, :string)
+    field(:delivery_fee, :string)
 
     field :amount, :float do
       resolve(fn _parent, %{source: sale} ->
@@ -625,6 +636,18 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   @desc """
+    Delivery Fee Object type
+  """
+  object :delivery_fee do
+    field(:id, :uuid)
+    field(:fee, :string)
+    field(:state, :string)
+    field(:region, :string)
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
+  end
+
+  @desc """
     Notification object type
   """
   object :notification do
@@ -723,6 +746,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       :legal_document,
       :bonanza,
       :bonanza_item,
+      :delivery_fee,
       :notification,
       :notification_item,
       :mobile_device
@@ -755,6 +779,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       %LegalDocument{}, _ -> :legal_document
       %Bonanza{}, _ -> :bonanza
       %BonanzaItem{}, _ -> :bonanza_item
+      %DeliveryFee{}, _ -> :delivery_fee
       %Notification{}, _ -> :notification
       %NotificationItem{}, _ -> :notification_item
       %MobileDevice{}, _ -> :mobile_device
@@ -771,6 +796,10 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:refresh_token, :string)
     field(:message, :string)
     field(:user, non_null(:user))
+  end
+
+  object :nation_wide_delivery do
+    field(:exist, :boolean)
   end
 
   @desc "sorts the order from either ASC or DESC"
@@ -1002,6 +1031,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:contact_id, :uuid)
     field(:company_id, non_null(:uuid))
     field(:bonanza_id, :uuid)
+    field(:delivery_fee, :string)
   end
 
   input_object :bank_input do
@@ -1087,6 +1117,14 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:product_id, non_null(:uuid))
   end
 
+  input_object :delivery_fee_input do
+    field(:fee, non_null(:string))
+    field(:state, non_null(:string))
+    field(:region, non_null(:string))
+    field(:company_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
+  end
+
   input_object :mobile_device_input do
     field(:mobile_os, :string)
     field(:brand, :string)
@@ -1151,6 +1189,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:items, non_null(list_of(:item_input)))
     field(:contact, :webstore_sale_contact_input)
     field(:location, :location_input)
+    field(:delivery_fee, :string)
   end
 
   input_object :webstore_sale_contact_input do
