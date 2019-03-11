@@ -268,9 +268,16 @@ defmodule SalesReg.Order do
 
         M2C.send_payment_received_mail(sale, receipt)
 
-        # send invoice payment notifice email to merchant
+        # send invoice payment notice email to merchant
         Map.put_new(sale, :amount, amount)
         |> YC2C.send_invoice_payment_notice()
+
+        %{
+          company_id: sale.company_id,
+          actor_id: sale.user_id,
+          message: "A sum of ##{amount} was paid by #{receipt.sale.contact.contact_name}"
+        }
+        |> Notifications.create_notification({:invoice, invoice}, :payment)
 
         {:ok, receipt}
 
