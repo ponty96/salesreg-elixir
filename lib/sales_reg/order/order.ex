@@ -16,7 +16,8 @@ defmodule SalesReg.Order do
     Receipt,
     Review,
     Star,
-    Activity
+    Activity,
+    DeliveryFee
   ]
 
   @receipt_html_path "lib/sales_reg_web/templates/mailer/yc_email_receipt_pdf.html.eex"
@@ -328,7 +329,7 @@ defmodule SalesReg.Order do
 
   def cal_order_amount_before_charge(%Sale{} = sale) do
     sale = Repo.preload(sale, [:items])
-    calc_items_amount(sale.items)
+    calc_items_amount(sale.items) + (Float.parse(sale.delivery_fee) |> elem(0))
   end
 
   def calc_order_amount(%Sale{} = sale) do
@@ -337,7 +338,7 @@ defmodule SalesReg.Order do
 
   def cal_order_amount_before_charge(%Invoice{} = invoice) do
     invoice = Repo.preload(invoice, sale: :items)
-    calc_items_amount(invoice.sale.items)
+    calc_items_amount(invoice.sale.items) + (Float.parse(invoice.sale.delivery_fee) |> elem(0))
   end
 
   def calc_order_amount(%Invoice{} = invoice) do
@@ -439,6 +440,13 @@ defmodule SalesReg.Order do
 
   def float_to_binary(float) do
     :erlang.float_to_binary(float, [:compact, {:decimals, 20}])
+  end
+
+  def nation_wide_delivery_fee_exists?(company_id) do
+    case Repo.get_by(DeliveryFee, company_id: company_id, state: "Nation wide") do
+      nil -> false
+      %DeliveryFee{} -> true
+    end
   end
 
   defp calc_items_amount(items) do

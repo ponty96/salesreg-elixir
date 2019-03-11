@@ -122,6 +122,7 @@ defmodule SalesRegWeb do
         Order.Review,
         Order.Star,
         Order.Activity,
+        Order.DeliveryFee,
         Store.ProductGroup,
         Store.Option,
         Store.OptionValue,

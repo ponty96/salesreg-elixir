@@ -72,6 +72,26 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
       resolve(&OrderResolver.create_receipt/2)
     end
+
+    ### Delivery Charge mutations
+    @desc """
+      create delivery fee
+    """
+    field :create_delivery_fee, :mutation_response do
+      arg(:delivery_fee, non_null(:delivery_fee_input))
+
+      resolve(&OrderResolver.create_delivery_fee/2)
+    end
+
+    @desc """
+      delete a delivery fee
+    """
+    field :delete_delivery_fee, :mutation_response do
+      arg(:delivery_fee_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&OrderResolver.delete_delivery_fee/2)
+    end
   end
 
   ### QUERIES
@@ -125,6 +145,26 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
 
       middleware(Authorize)
       resolve(&OrderResolver.list_company_activities/2)
+    end
+
+    @desc """
+      query for all delivery fees of a company
+    """
+    field :list_company_delivery_fees, list_of(:delivery_fee) do
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&OrderResolver.list_company_delivery_fees/2)
+    end
+
+    # @desc """
+    # query if company has delivery_fee for nation wide delivery
+    # """
+    field :company_allows_nationwide_delivery, :nation_wide_delivery do
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&OrderResolver.nation_wide_delivery_fee_exists?/2)
     end
   end
 end
