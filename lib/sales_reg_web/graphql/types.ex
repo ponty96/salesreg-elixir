@@ -796,6 +796,30 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:refresh_token, :string)
     field(:message, :string)
     field(:user, non_null(:user))
+
+    field :s3_bucket, :string do
+      resolve(fn _, _ ->
+        {:ok, System.get_env("S3_BUCKET")}
+      end)
+    end
+
+    field :s3_region, :string do
+      resolve(fn _, _ ->
+        {:ok, System.get_env("S3_REGION")}
+      end)
+    end
+    
+    field :s3_access_key, :string do
+      resolve(fn _, _ ->
+        {:ok, System.get_env("S3_ACCESS_KEY")}
+      end)
+    end
+
+    field :s3_secret_key, :string do
+      resolve(fn _, _ ->
+        {:ok, System.get_env("S3_SECRET_KEY")}
+      end)
+    end
   end
 
   object :nation_wide_delivery do
