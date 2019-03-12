@@ -29,6 +29,10 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+
+    field(:mobile_device, :mobile_device,
+      resolve: dataloader(SalesReg.Notifications, :mobile_devices)
+    )
   end
 
   @desc """
@@ -57,6 +61,10 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:reviews, list_of(:review), resolve: dataloader(SalesReg.Order, :reviews))
     field(:stars, list_of(:star), resolve: dataloader(SalesReg.Order, :stars))
 
+    field(:delivery_fees, list_of(:delivery_fee),
+      resolve: dataloader(SalesReg.Order, :delivery_fees)
+    )
+
     field :sale_charge, :string do
       resolve(fn _, _ ->
         {:ok, "#{System.get_env("CHARGE")}"}
@@ -76,6 +84,12 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field :share_link, :string do
       resolve(fn _product, %{source: company} ->
         {:ok, Business.get_company_share_url(company)}
+      end)
+    end
+
+    field :delivers_nationwide, :boolean do
+      resolve(fn _product, %{source: company} ->
+        {:ok, Order.nation_wide_delivery_fee_exists?(company.id)}
       end)
     end
   end
@@ -393,6 +407,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:tax, :string)
     field(:ref_id, :string)
     field(:charge, :string)
+    field(:delivery_fee, :string)
 
     field :amount, :float do
       resolve(fn _parent, %{source: sale} ->
@@ -550,7 +565,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:status, :string)
     field(:updated_at, :naive_datetime)
 
-    field(:template, list_of(:template), resolve: dataloader(SaleReg.Theme, :template))
+    field(:template, list_of(:template), resolve: dataloader(SalesReg.Theme, :template))
     field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
   end
@@ -621,6 +636,78 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   @desc """
+    Delivery Fee Object type
+  """
+  object :delivery_fee do
+    field(:id, :uuid)
+    field(:fee, :string)
+    field(:state, :string)
+    field(:region, :string)
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
+  end
+
+  @desc """
+    Notification object type
+  """
+  object :notification do
+    field(:id, :uuid)
+    field(:action_type, :string)
+    field(:delivery_channel, :string)
+    field(:delivery_status, :string)
+    field(:element, :string)
+    field(:element_id, :uuid)
+    field(:read_status, :string)
+    field(:message, :string)
+
+    field(:updated_at, :naive_datetime)
+    field(:inserted_at, :naive_datetime)
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:actor, :user, resolve: dataloader(SalesReg.Accounts, :actor))
+
+    field(:notification_items, list_of(:notification_item),
+      resolve: dataloader(SalesReg.Notifications, :notification_items)
+    )
+  end
+
+  connection(node_type: :notification)
+
+  @desc """
+    Notification Item object type
+  """
+  object :notification_item do
+    field(:id, :uuid)
+    field(:changed_to, :string)
+    field(:current, :string)
+    field(:item_type, :string)
+    field(:item_id, :string)
+
+    field(:updated_at, :naive_datetime)
+    field(:inserted_at, :naive_datetime)
+
+    field(:notification, :notification, resolve: dataloader(SaleReg.Notifications, :notification))
+  end
+
+  @desc """
+    Mobile Device object type
+  """
+  object :mobile_device do
+    field(:id, :uuid)
+    field(:mobile_os, :string)
+    field(:brand, :string)
+    field(:build_number, :string)
+    field(:device_token, :string)
+    field(:app_version, :string)
+    field(:notification_enabled, :boolean)
+
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, :naive_datetime)
+
+    field(:user, :user, resolve: dataloader(SalesReg.Accounts, :user))
+  end
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -658,7 +745,11 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       :activity,
       :legal_document,
       :bonanza,
-      :bonanza_item
+      :bonanza_item,
+      :delivery_fee,
+      :notification,
+      :notification_item,
+      :mobile_device
     ])
 
     resolve_type(fn
@@ -688,6 +779,10 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       %LegalDocument{}, _ -> :legal_document
       %Bonanza{}, _ -> :bonanza
       %BonanzaItem{}, _ -> :bonanza_item
+      %DeliveryFee{}, _ -> :delivery_fee
+      %Notification{}, _ -> :notification
+      %NotificationItem{}, _ -> :notification_item
+      %MobileDevice{}, _ -> :mobile_device
     end)
   end
 
@@ -701,6 +796,10 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:refresh_token, :string)
     field(:message, :string)
     field(:user, non_null(:user))
+  end
+
+  object :nation_wide_delivery do
+    field(:exist, :boolean)
   end
 
   @desc "sorts the order from either ASC or DESC"
@@ -803,7 +902,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:type, non_null(:legal_document_type))
     field(:content, :string)
     field(:pdf_url, :string)
-    field(:company_id, non_null(:string))
+    field(:company_id, non_null(:uuid))
   end
 
   input_object :branch_input do
@@ -932,6 +1031,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:contact_id, :uuid)
     field(:company_id, non_null(:uuid))
     field(:bonanza_id, :uuid)
+    field(:delivery_fee, :string)
   end
 
   input_object :bank_input do
@@ -1017,6 +1117,24 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:product_id, non_null(:uuid))
   end
 
+  input_object :delivery_fee_input do
+    field(:fee, non_null(:string))
+    field(:state, non_null(:string))
+    field(:region, non_null(:string))
+    field(:company_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
+  end
+
+  input_object :mobile_device_input do
+    field(:mobile_os, :string)
+    field(:brand, :string)
+    field(:build_number, :string)
+    field(:device_token, :string)
+    field(:app_version, :string)
+    field(:notification_enabled, non_null(:boolean))
+    field(:user_id, non_null(:uuid))
+  end
+
   #########################################################
   # These are used only at the point of updating the
   # ID has to be supplied except for parent input objects
@@ -1071,6 +1189,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:items, non_null(list_of(:item_input)))
     field(:contact, :webstore_sale_contact_input)
     field(:location, :location_input)
+    field(:delivery_fee, :string)
   end
 
   input_object :webstore_sale_contact_input do

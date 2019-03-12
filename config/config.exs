@@ -115,11 +115,15 @@ config :sales_reg, SalesReg.Scheduler,
     create_activity_when_order_due: [
       schedule: "@daily",
       task: {SalesReg.Tasks, :create_activity_when_order_due, []}
+    ],
+    send_notifications: [
+      schedule: "* * * * *",
+      task: {SalesReg.Tasks, :send_notifications, []}
     ]
   ]
 
 config :sentry,
-  dsn: "https://5b18bcdf49e54cc48fa881846afadd0a@sentry.io/1369436",
+  dsn: System.get_env("SENTRY_DSN"),
   included_environments: [:prod, :dev],
   environment_name: Mix.env()
 

@@ -122,6 +122,7 @@ defmodule SalesRegWeb do
         Order.Review,
         Order.Star,
         Order.Activity,
+        Order.DeliveryFee,
         Store.ProductGroup,
         Store.Option,
         Store.OptionValue,
@@ -134,7 +135,11 @@ defmodule SalesRegWeb do
         Mailer,
         SpecialOffer,
         SpecialOffer.Bonanza,
-        SpecialOffer.BonanzaItem
+        SpecialOffer.BonanzaItem,
+        Notifications,
+        Notifications.Notification,
+        Notifications.NotificationItem,
+        Notifications.MobileDevice
       }
     end
   end
