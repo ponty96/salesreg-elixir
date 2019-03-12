@@ -207,5 +207,15 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       middleware(Authorize)
       resolve(&StoreResolver.list_related_products/2)
     end
+
+    @desc """
+      get product by id
+    """
+    field(:get_product_by_id, :product) do
+      arg(:product_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&StoreResolver.get_product_by_id/2)
+    end
   end
 end

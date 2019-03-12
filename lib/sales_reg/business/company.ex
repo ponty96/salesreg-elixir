@@ -28,10 +28,13 @@ defmodule SalesReg.Business.Company do
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
     has_one(:bank, SalesReg.Business.Bank, on_replace: :delete)
     has_one(:company_template, SalesReg.Theme.CompanyTemplate)
+    has_many(:delivery_fees, SalesReg.Order.DeliveryFee)
     has_many(:sales, SalesReg.Order.Sale)
     has_many(:reviews, SalesReg.Order.Review)
     has_many(:stars, SalesReg.Order.Star)
     has_many(:legal_documents, SalesReg.Business.LegalDocument)
+
+    has_many(:notifications, SalesReg.Notifications.Notification)
 
     timestamps()
   end
