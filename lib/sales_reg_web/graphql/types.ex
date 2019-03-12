@@ -25,6 +25,18 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:gender, :string)
     field(:last_name, :string)
     field(:profile_picture, :string)
+    
+    field :s3_access_key, :string do
+      resolve(fn _, _ ->
+        {:ok, System.get_env("S3_ACCESS_KEY")}
+      end)
+    end
+
+    field :s3_secret_key, :string do
+      resolve(fn _, _ ->
+        {:ok, System.get_env("S3_SECRET_KEY")}
+      end)
+    end
 
     field(:inserted_at, :naive_datetime)
     field(:updated_at, :naive_datetime)
@@ -796,6 +808,18 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:refresh_token, :string)
     field(:message, :string)
     field(:user, non_null(:user))
+    
+    field :s3_access_key, :string do
+      resolve(fn _, _ ->
+        {:ok, System.get_env("S3_ACCESS_KEY")}
+      end)
+    end
+
+    field :s3_secret_key, :string do
+      resolve(fn _, _ ->
+        {:ok, System.get_env("S3_SECRET_KEY")}
+      end)
+    end
   end
 
   object :nation_wide_delivery do
