@@ -38,6 +38,28 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     content: "This is the refund policy"
   }
 
+  def add_user_company_variables(user) do
+    %{
+      user: user.id,
+      company: %{
+        title: "company title",
+        contact_email: "someemail@gmail.com",
+        currency: "Dollars",
+        head_office: %{
+          city: "Akure",
+          country: "Nigeria",
+          state: "Ondo",
+          street1: "Roadblock",
+        },
+        slug: "company-slug",
+        phone: %{
+          type: "mobile",
+          number: "08131900893"
+        }
+      }
+    }
+  end
+
   describe "company tests" do
     # adds a user to a company
     @tag :add_user_company
@@ -47,20 +69,11 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
         |> Accounts.create_user()
 
       query_doc = """
-        addUserCompany(
-          user: "#{user.id}",
-          company: {
-            title: "company title",
-            contact_email: "someemail@gmail.com",
-            currency: "Dollars",
-            head_office: {
-              city: "Akure",
-              country: "Nigeria",
-              state: "Ondo",
-              street1: "Roadblock",
-            },
-          }
-        ){
+        mutation addUserCompany($user: Uuid!, $company: CompanyInput!){
+          addUserCompany(
+            user: $user,
+            company: $company
+          ){
             success,
             fieldErrors{
               key,
@@ -75,19 +88,18 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
               }
             }
           }
+        }
       """
 
       res =
         context.conn
-        |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "addUserCompany"))
+        |> post("/graphiql", Helpers.query_skeleton(query_doc, add_user_company_variables(user)))
 
       response = json_response(res, 200)["data"]["addUserCompany"]
 
-      assert response["data"]["title"] == "company title"
-      assert response["data"]["contact_email"] == "someemail@gmail.com"
-      assert response["data"]["currency"] == "Dollars"
       assert response["success"] == true
       assert response["fieldErrors"] == []
+      assert length(Business.all_company()) == 1
     end
 
     @tag :update_company

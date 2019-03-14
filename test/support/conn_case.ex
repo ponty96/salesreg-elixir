@@ -81,10 +81,10 @@ defmodule SalesRegWeb.ConnCase do
     login_params = %{email: user.email, password: user.password}
     conn = SalesRegWeb.GraphqlTestHelpers.authenticate(conn, login_params)
 
-    {:ok, company} =
-      user.id
-      |> SalesReg.Business.create_company(@company_params)
+    # {:ok, company} =
+    #   user.id
+    #   |> SalesReg.Business.create_company(@company_params)
 
-    %{user: user, conn: conn, company: company}
+    %{user: user, conn: conn}
   end
 end
