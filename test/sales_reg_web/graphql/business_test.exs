@@ -63,7 +63,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
 
   describe "company tests" do
     # adds a user to a company
-    @tag :add_user_company
+    @tag company: "add_user_company"
     test "add user company", context do
       query_doc = """
         mutation addUserCompany($user: Uuid!, $company: CompanyInput!){
@@ -100,7 +100,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     end
 
     # updates company
-    @tag :update_company
+    @tag company: "update_company"
     test "update company", context do
       {:ok, company} =
         context.user.id
@@ -141,38 +141,43 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
       assert company.id == response["data"]["id"]
     end
 
+    # updates company's cover photo
     @tag company: "update_company_cover_photo"
     test "update company cover photo", context do
+      {:ok, company} =
+        context.user.id
+        |> SalesReg.Business.create_company(@company_params)
+      
       query_doc = """
-      updateCompanyCoverPhoto(
-        coverPhoto:{
-          coverPhoto: "img1234",
-          companyId: "#{context.company.id}"
-        }){
-          fieldErrors{
-            key,
-            message
-          },
-          success,
-          data {
-            ... on Company{
-              id
+        mutation updateCompanyCoverPhoto($coverPhoto: CoverPhotoInput!){
+          updateCompanyCoverPhoto(
+            coverPhoto: $coverPhoto
+          ){
+            fieldErrors{
+              key,
+              message
+            },
+            success,
+            data {
+              ... on Company{
+                id,
+                coverPhoto
+              }
             }
           }
         }
       """
 
+      variables = %{coverPhoto: %{coverPhoto: "img1234", companyId: company.id}}
       res =
         context.conn
-        |> post(
-          "/graphiql",
-          Helpers.query_skeleton(:mutation, query_doc, "updateCompanyCoverPhoto")
-        )
+        |> post("/graphiql", Helpers.query_skeleton(query_doc, variables))
 
       response = json_response(res, 200)["data"]["updateCompanyCoverPhoto"]
 
       assert response["success"] == true
       assert response["fieldErrors"] == []
+      assert is_nil(response["data"]["coverPhoto"]) == false
     end
   end
 

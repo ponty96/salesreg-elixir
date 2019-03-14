@@ -27,3 +27,12 @@ config :sales_reg, SalesRegWeb.Services.Heroku,
     {"Accept", "application/vnd.heroku+json; version=3"},
     {"Authorization", "Bearer thisisarandomtokenfortest"}
   ]
+
+config :sales_reg, SalesRegWeb.Services.Cloudfare,
+  zone_id: "yipcart-test-zone-id",
+  api_base_url: "https://api.cloudflare.com/client/v4/zones/test",
+  default_header: [
+    {"X-Auth-Key", "yipcart-test-x-auth-key"},
+    {"Content-Type", "application/json"},
+    {"X-Auth-Email", "yipcart-test-x-auth-email"}
+  ]
