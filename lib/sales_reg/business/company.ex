@@ -40,7 +40,7 @@ defmodule SalesReg.Business.Company do
   end
 
   @required_fields [:title, :contact_email, :owner_id, :currency, :slug]
-  @optional_fields [:about, :description, :logo, :facebook, :twitter, :instagram, :linkedin]
+  @optional_fields [:about, :description, :logo, :facebook, :twitter, :instagram, :linkedin, :cover_photo]
 
   @doc false
   def changeset(company, attrs) do

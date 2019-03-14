@@ -12,6 +12,22 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     profile_picture: "picture.jpg"
   }
 
+  @company_params %{
+    title: "this is the title",
+    contact_email: "someemail@gmail.com",
+    currency: "Euro",
+    phone: %{
+      number: "+2348131900893"
+    },
+    slug: "sanbox",
+    head_office: %{
+      street1: "J11 Obaile housing estate",
+      city: "Akure",
+      state: "Ondo",
+      country: "NGN"
+    }
+  }
+
   @bank_params %{
     account_name: "Account Name",
     account_number: "0101010101",
@@ -41,22 +57,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
   def add_user_company_variables(user) do
     %{
       user: user.id,
-      company: %{
-        title: "company title",
-        contact_email: "someemail@gmail.com",
-        currency: "Dollars",
-        head_office: %{
-          city: "Akure",
-          country: "Nigeria",
-          state: "Ondo",
-          street1: "Roadblock",
-        },
-        slug: "company-slug",
-        phone: %{
-          type: "mobile",
-          number: "08131900893"
-        }
-      }
+      company: @company_params
     }
   end
 
@@ -64,10 +65,6 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     # adds a user to a company
     @tag :add_user_company
     test "add user company", context do
-      {:ok, user} =
-        @user_params
-        |> Accounts.create_user()
-
       query_doc = """
         mutation addUserCompany($user: Uuid!, $company: CompanyInput!){
           addUserCompany(
@@ -93,7 +90,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
 
       res =
         context.conn
-        |> post("/graphiql", Helpers.query_skeleton(query_doc, add_user_company_variables(user)))
+        |> post("/graphiql", Helpers.query_skeleton(query_doc, add_user_company_variables(context.user)))
 
       response = json_response(res, 200)["data"]["addUserCompany"]
 
@@ -102,53 +99,46 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
       assert length(Business.all_company()) == 1
     end
 
+    # updates company
     @tag :update_company
-    # # updates company
     test "update company", context do
+      {:ok, company} =
+        context.user.id
+        |> SalesReg.Business.create_company(@company_params)
+      
       query_doc = """
-        updateCompany(
-          id: "#{context.company.id}",
-          company: {
-            title: "updated title",
-            contact_email: "updatedemail@gmail.com",
-            currency: "Dollars",
-            head_office: {
-              city: "Akure",
-              country: "Nigeria",
-              state: "Ondo",
-              street1: "Roadblock",
+        mutation updateCompany($id: Uuid!, $company: CompanyInput!){
+          updateCompany(
+            id: $id,
+            company: $company
+          ){
+            success,
+            fieldErrors{
+              key,
+              message
             },
-          }
-        ){
-          success,
-          fieldErrors{
-            key,
-            message
-          },
-          data{
-            ... on Company{
-              id,
-              title,
-              contact_email,
-              currency
+            data{
+              ... on Company{
+                id,
+                title,
+                contact_email,
+                currency
+              }
             }
           }
         }
       """
-
+      variables = %{id: company.id, company: @company_params}
       res =
         context.conn
-        |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "updateCompany"))
+        |> post("/graphiql", Helpers.query_skeleton(query_doc, variables))
 
       response = json_response(res, 200)["data"]["updateCompany"]
-      company_id = context.company.id
 
-      assert response["data"]["id"] == company_id
-      assert response["data"]["title"] == "updated title"
-      assert response["data"]["contact_email"] == "updatedemail@gmail.com"
-      assert response["data"]["currency"] == "Dollars"
       assert response["success"] == true
       assert response["fieldErrors"] == []
+      assert length(Business.all_company()) == 1
+      assert company.id == response["data"]["id"]
     end
 
     @tag company: "update_company_cover_photo"

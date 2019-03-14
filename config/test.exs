@@ -17,3 +17,13 @@ config :sales_reg, SalesReg.Repo,
   database: "sales_reg_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :sales_reg, SalesRegWeb.Services.Heroku,
+  base_domain: "yipcart-test-domain.com",
+  app_id_or_name: "yipcart-id",
+  api_base_url: "https://api.heroku.com/apps/test",
+  default_header: [
+    {"Content-Type", "application/json"},
+    {"Accept", "application/vnd.heroku+json; version=3"},
+    {"Authorization", "Bearer thisisarandomtokenfortest"}
+  ]
