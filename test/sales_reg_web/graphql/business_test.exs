@@ -306,11 +306,6 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
           ){
             edges{
               node{
-                id,
-                isPrimary,
-                accountName,
-                accountNumber,
-                bankName,
                 company{
                   id
                 }
@@ -429,63 +424,47 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
       assert expense.id == response["data"]["id"]
     end
 
-    @tag :query_all_company_expenses
+    @tag expense: "query_all_company_expenses"
     test "query all company expenses", context do
+      {:ok, company} =
+        context.user.id
+        |> Business.create_company(@company_params)
+
       add_many_expenses =
         Enum.map(1..3, fn _index ->
-          {:ok, expense} =
-            context.user.id
-            |> Seed.add_expense(context.company.id)
-
-          expense
-          |> Helpers.transform_struct([
-            :id,
-            :title,
-            :date,
-            :total_amount,
-            :payment_method
-          ])
+          @expense_params
+          |> Map.put_new(:company_id, company.id)
+          |> Map.put_new(:paid_by_id, context.user.id)
+          |> Business.create_expense()
         end)
-        |> Enum.map(fn expense ->
-          total_amount =
-            expense["total_amount"]
-            |> Decimal.to_float()
-            |> Float.round(2)
-
-          %{expense | "total_amount" => total_amount}
-        end)
-        |> Enum.sort()
 
       query_doc = """
-      companyExpenses(
-        companyId: "#{context.company.id}"
-      ){
-        id,
-        title,
-        date,
-        totalAmount,
-        paymentMethod
-      }
+        query companyExpenses($companyId: Uuid!, $first: Int, $query: String!){
+          companyExpenses(
+            companyId: $companyId,
+            first: $first,
+            query: $query
+          ){
+            edges{
+              node{
+                company{
+                  id
+                }
+              }
+            }
+          }
+        }
       """
 
+      variables = %{companyId: company.id, first: 5, query: ""}
       res =
         context.conn
-        |> post("/graphiql", Helpers.query_skeleton(:query, query_doc, "companyExpenses"))
+        |> post("/graphiql", Helpers.query_skeleton(query_doc, variables))
 
-      response =
-        json_response(res, 200)["data"]["companyExpenses"]
-        |> Helpers.underscore_map_keys()
-        |> Enum.map(fn map ->
-          total_amount =
-            map["total_amount"]
-            |> String.to_float()
-            |> Float.round(2)
+      response = json_response(res, 200)["data"]["companyExpenses"]["edges"]
 
-          %{map | "total_amount" => total_amount}
-        end)
-        |> Enum.sort()
-
-      assert response == add_many_expenses
+      assert length(response) == 3
+      assert Enum.all?(response, &(&1["node"]["company"]["id"] == company.id))
     end
   end
 
