@@ -840,9 +840,9 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
   @desc "sorts the order from either ASC or DESC"
   enum :legal_document_type do
-    value(:policy, as: "policy")
-    value(:terms, as: "terms")
-    value(:information, as: "information")
+    value(:policy, as: "POLICY")
+    value(:terms, as: "TERMS")
+    value(:information, as: "INFORMATION")
   end
 
   @desc "sorts the order from either ASC or DESC"

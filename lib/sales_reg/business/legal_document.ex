@@ -5,7 +5,7 @@ defmodule SalesReg.Business.LegalDocument do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
-  @legal_document_type ["policy", "terms", "information"]
+  @legal_document_type ["POLICY", "TERMS", "INFORMATION"]
 
   schema "legal_documents" do
     field(:name, :string)
