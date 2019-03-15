@@ -241,8 +241,6 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
         context.conn
         |> post("/graphiql", Helpers.query_skeleton(query_doc, variables))
 
-      IO.inspect res, label: "resolution"
-
       response = json_response(res, 200)["data"]["upsertBank"]
 
       assert response["success"] == true
@@ -250,32 +248,42 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
       assert response["data"]["id"] == bank.id
     end
 
+    # Delete a Bank
+    @tag bank: "delete_bank"
     test "delete a bank", context do
+      {:ok, company} =
+        context.user.id
+        |> SalesReg.Business.create_company(@company_params)
+
       {:ok, bank} =
         @bank_params
-        |> Map.put_new(:company_id, context.company.id)
+        |> Map.put_new(:company_id, company.id)
         |> Business.create_bank()
 
       query_doc = """
-      deleteBank(
-        bankId: "#{bank.id}"
-      ){
-        success,
-        fieldErrors{
-          key,
-          message
+        mutation deleteBank($bankId: Uuid!){
+          deleteBank(
+            bankId: $bankId
+          ){
+            success,
+            fieldErrors{
+              key,
+              message
+            }
+          }
         }
-      }
       """
 
       res =
         context.conn
-        |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "deleteBank"))
+        |> post("/graphiql", Helpers.query_skeleton(query_doc, %{bankId: bank.id}))
 
       response = json_response(res, 200)["data"]["deleteBank"]
 
       assert response["success"] == true
       assert response["fieldErrors"] == []
+      assert length(Business.all_bank) == 0
+      assert Business.get_bank(bank.id) == nil
     end
 
     @tag :query_all_company_banks
