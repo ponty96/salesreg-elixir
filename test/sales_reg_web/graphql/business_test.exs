@@ -97,7 +97,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     test "update company", context do
       {:ok, company} =
         context.user.id
-        |> SalesReg.Business.create_company(@company_params)
+        |> Business.create_company(@company_params)
       
       query_doc = """
         mutation updateCompany($id: Uuid!, $company: CompanyInput!){
@@ -136,7 +136,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     test "update company cover photo", context do
       {:ok, company} =
         context.user.id
-        |> SalesReg.Business.create_company(@company_params)
+        |> Business.create_company(@company_params)
       
       query_doc = """
         mutation updateCompanyCoverPhoto($coverPhoto: CoverPhotoInput!){
@@ -176,7 +176,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     test "create a bank", context do
       {:ok, company} =
         context.user.id
-        |> SalesReg.Business.create_company(@company_params)
+        |> Business.create_company(@company_params)
 
       query_doc = """
         mutation upsertBank($bank: BankInput!){
@@ -209,7 +209,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     test "update a bank", context do
       {:ok, company} =
         context.user.id
-        |> SalesReg.Business.create_company(@company_params)
+        |> Business.create_company(@company_params)
 
       {:ok, bank} =
         @bank_params
@@ -253,7 +253,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     test "delete a bank", context do
       {:ok, company} =
         context.user.id
-        |> SalesReg.Business.create_company(@company_params)
+        |> Business.create_company(@company_params)
 
       {:ok, bank} =
         @bank_params
@@ -286,47 +286,50 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
       assert Business.get_bank(bank.id) == nil
     end
 
-    @tag :query_all_company_banks
+    @tag bank: "query_all_company_banks"
     test "query all company banks", context do
+      {:ok, company} =
+        context.user.id
+        |> Business.create_company(@company_params)
+
       add_many_banks =
         Enum.map(1..3, fn _index ->
-          {:ok, bank} =
-            context.company.id
-            |> Seed.create_bank()
-
-          bank
-          |> Helpers.transform_struct([
-            :id,
-            :is_primary,
-            :account_name,
-            :account_number,
-            :bank_name
-          ])
+          @bank_params
+          |> Map.put_new(:company_id, company.id)
+          |> Business.create_bank()
         end)
-        |> Enum.sort()
 
       query_doc = """
-      companyBanks(
-        companyId: "#{context.company.id}",
-      ){
-        id,
-        isPrimary,
-        accountName,
-        accountNumber,
-        bankName
-      }
+        query companyBanks($companyId: Uuid!, $first: Int){
+          companyBanks(
+            companyId: $companyId,
+            first: $first
+          ){
+            edges{
+              node{
+                id,
+                isPrimary,
+                accountName,
+                accountNumber,
+                bankName,
+                company{
+                  id
+                }
+              }
+            }
+          }
+        }
       """
 
+      variables = %{companyId: company.id, first: 5}
       res =
         context.conn
-        |> post("/graphiql", Helpers.query_skeleton(:query, query_doc, "companyBanks"))
+        |> post("/graphiql", Helpers.query_skeleton(query_doc, variables))
+      
+      response = json_response(res, 200)["data"]["companyBanks"]["edges"]
 
-      response =
-        json_response(res, 200)["data"]["companyBanks"]
-        |> Helpers.underscore_map_keys()
-        |> Enum.sort()
-
-      assert response == add_many_banks
+      assert length(response) == 3
+      assert Enum.all?(response, &(&1["node"]["company"]["id"] == company.id))
     end
   end
 
