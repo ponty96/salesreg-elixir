@@ -76,14 +76,6 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
             fieldErrors{
               key,
               message
-            },
-            data{
-              ... on Company{
-                id,
-                title,
-                contact_email,
-                currency
-              }
             }
           }
         }
@@ -120,10 +112,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
             },
             data{
               ... on Company{
-                id,
-                title,
-                contact_email,
-                currency
+                id
               }
             }
           }
@@ -161,7 +150,6 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
             success,
             data {
               ... on Company{
-                id,
                 coverPhoto
               }
             }
@@ -183,7 +171,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
   end
 
   describe "Bank tests" do
-    # Upsert a Bank
+    # Create a Bank
     @tag bank: "create_bank"
     test "create a bank", context do
       {:ok, company} =
@@ -199,15 +187,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
               key,
               message
             },
-            success,
-            data {
-              ...on Bank{
-                accountName,
-                accountNumber,
-                bankName,
-                isPrimary
-              }
-            }
+            success
           }
         }
       """
@@ -224,49 +204,50 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
       assert length(Business.all_bank()) == 1
     end
 
+    # Update a Bank
+    @tag bank: "update_bank"
     test "update a bank", context do
+      {:ok, company} =
+        context.user.id
+        |> SalesReg.Business.create_company(@company_params)
+
       {:ok, bank} =
         @bank_params
-        |> Map.put_new(:company_id, context.company.id)
+        |> Map.put_new(:company_id, company.id)
         |> Business.create_bank()
 
       query_doc = """
-      upsertBank(
-        bank: {
-          accountName: "Updated Account Name",
-          accountNumber: "1010101010",
-          bankName: "Updated Bank Name",
-          companyId: "#{context.company.id}",
-          is_primary: false
-        }, bankId: "#{bank.id}"){
-          fieldErrors {
-            key,
-            message
-          },
-          success,
-          data {
-            ...on Bank{
-              accountName,
-              accountNumber,
-              bankName,
-              isPrimary
+        mutation upsertBank($bankId: Uuid!, $bank: BankInput!){
+          upsertBank(
+            bank: $bank,
+            bankId: $bankId
+          ){
+            fieldErrors {
+              key,
+              message
+            },
+            success,
+            data {
+              ...on Bank{
+                id
+              }
             }
           }
         }
       """
-
+      
+      variables = %{bankId: bank.id, bank: Map.put_new(@bank_params, :company_id, company.id)}
       res =
         context.conn
-        |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "upsertBank"))
+        |> post("/graphiql", Helpers.query_skeleton(query_doc, variables))
+
+      IO.inspect res, label: "resolution"
 
       response = json_response(res, 200)["data"]["upsertBank"]
 
-      assert response["data"]["isPrimary"] == false
-      assert response["data"]["bankName"] == "Updated Bank Name"
-      assert response["data"]["accountNumber"] == "1010101010"
-      assert response["data"]["accountName"] == "Updated Account Name"
       assert response["success"] == true
       assert response["fieldErrors"] == []
+      assert response["data"]["id"] == bank.id
     end
 
     test "delete a bank", context do
