@@ -31,7 +31,8 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
   @bank_params %{
     account_name: "Account Name",
     account_number: "0101010101",
-    bank_name: "Bank Name"
+    bank_name: "Bank Name",
+    bank_code: "Bank Code"
   }
 
   @expense_params %{
@@ -185,42 +186,42 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     # Upsert a Bank
     @tag bank: "create_bank"
     test "create a bank", context do
+      {:ok, company} =
+        context.user.id
+        |> SalesReg.Business.create_company(@company_params)
+
       query_doc = """
-      upsertBank(
-        bank: {
-          accountName: "Account Name",
-          accountNumber: "0101010101",
-          bankName: "Bank Name",
-          companyId: "#{context.company.id}"
-        }){
-          fieldErrors {
-            key,
-            message
-          },
-          success,
-          data {
-            ...on Bank{
-              accountName,
-              accountNumber,
-              bankName,
-              isPrimary
+        mutation upsertBank($bank: BankInput!){
+          upsertBank(
+            bank: $bank
+          ){
+            fieldErrors {
+              key,
+              message
+            },
+            success,
+            data {
+              ...on Bank{
+                accountName,
+                accountNumber,
+                bankName,
+                isPrimary
+              }
             }
           }
         }
       """
+      variables = %{bank: Map.put_new(@bank_params, :company_id, company.id)}
 
       res =
         context.conn
-        |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "upsertBank"))
-
+        |> post("/graphiql", Helpers.query_skeleton(query_doc, variables))
+      
       response = json_response(res, 200)["data"]["upsertBank"]
 
-      assert response["data"]["isPrimary"] == true
-      assert response["data"]["bankName"] == "Bank Name"
-      assert response["data"]["accountNumber"] == "0101010101"
-      assert response["data"]["accountName"] == "Account Name"
       assert response["success"] == true
       assert response["fieldErrors"] == []
+      assert length(Business.all_bank()) == 1
     end
 
     test "update a bank", context do
