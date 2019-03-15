@@ -50,7 +50,7 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
 
   @legal_document_params %{
     name: "Refund Policy",
-    type: "policy",
+    type: "POLICY",
     content: "This is the refund policy"
   }
 
@@ -468,69 +468,30 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     end
   end
 
-  describe "Tag test" do
-    @tag :query_all_company_tags
-    test "query all company tags", context do
-      add_many_tags =
-        Enum.map(["#tbt", "#tgif"], fn hashtag ->
-          {:ok, tag} = Seed.add_tag(context.company.id, hashtag)
-
-          tag
-          |> Helpers.transform_struct([:id, :name])
-        end)
-        |> Enum.sort()
-
-      query_doc = """
-      companyTags(
-        companyId: "#{context.company.id}",
-      ){
-        id,
-        name
-      }
-      """
-
-      res =
-        context.conn
-        |> post("/graphiql", Helpers.query_skeleton(:query, query_doc, "companyTags"))
-
-      response =
-        json_response(res, 200)["data"]["companyTags"]
-        |> Enum.sort()
-
-      assert response == add_many_tags
-    end
-  end
-
   describe "legal_document tests" do
     # Upsert a legal_document
     @tag legal_document: "create_legal_document"
     test "create a legal_document", context do
+      {:ok, company} =
+        context.user.id
+        |> Business.create_company(@company_params)
+
       query_doc = """
-      upsertLegalDocument(
-        legalDocument: {
-          name: "Refund policy",
-          type: POLICY,
-          content: "This is the refund policy",
-          companyId: "#{context.company.id}"
-        }){
-          fieldErrors {
-            key,
-            message
-          },
-          success,
-          data {
-            ... on Company{
-              id
+        mutation upsertLegalDocument($legalDocument: LegalDocumentInput!){
+          upsertLegalDocument(legalDocument: $legalDocument){
+            success,
+            fieldErrors{
+              key,
+              message
             }
           }
         }
       """
-
+      variables = %{legalDocument: Map.put_new(@legal_document_params, :company_id, company.id)}
       res =
         context.conn
-        |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "upsertLegalDocument"))
-
-      IO.inspect(res.resp_body, label: "response body")
+        |> post("/graphiql", Helpers.query_skeleton(query_doc, variables))
+        
       response = json_response(res, 200)["data"]["upsertLegalDocument"]
 
       assert response["success"] == true
