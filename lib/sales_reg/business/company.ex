@@ -40,7 +40,7 @@ defmodule SalesReg.Business.Company do
   end
 
   @required_fields [:title, :contact_email, :owner_id, :currency, :slug]
-  @optional_fields [:about, :description, :logo, :facebook, :twitter, :instagram, :linkedin]
+  @optional_fields [:about, :description, :logo, :facebook, :twitter, :instagram, :linkedin, :cover_photo]
 
   @doc false
   def changeset(company, attrs) do
@@ -49,6 +49,7 @@ defmodule SalesReg.Business.Company do
     |> change(attrs)
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> unique_constraint(:owner_id, message: "Sorry, but you already have a business with us")
+    |> validate_format(:contact_email, ~r/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,63}$/)
     |> foreign_key_constraint(:owner_id)
     |> cast_assoc(:phone)
     |> cast_assoc(:legal_documents)

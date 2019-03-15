@@ -49,13 +49,19 @@ defmodule SalesRegWeb.Services.Flutterwave do
   defp request(method, endpoint, body, opts \\ []) do
     header = [{"Content-Type", "application/json"}]
 
-    HTTPoison.request(
-      method,
-      endpoint,
-      body,
-      header,
-      Base.set_default_timeout(opts)
-    )
+    if Mix.env() == :prod do
+      HTTPoison.request(
+        method,
+        endpoint,
+        body,
+        header,
+        Base.set_default_timeout(opts)
+      )
+    else
+      {:ok, body} = Poison.encode(%{"data" => %{"subaccount_id" => "12345", "id" => "0001"}})
+
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}}
+    end
   end
 
   defp process_url(endpoint) do
@@ -76,10 +82,12 @@ defmodule SalesRegWeb.Services.Flutterwave do
   end
 
   defp get_flutterwave_key do
-    System.get_env("FLUTTERWAVE_SECRET_KEY")
+    # A fallback value is used here incase of test environment
+    System.get_env("FLUTTERWAVE_SECRET_KEY") || "flutterwave-test-secret-key"
   end
 
   defp get_flutterwave_api do
-    System.get_env("FLUTTERWAVE_API")
+    # A fallback value is used here incase of test environemt
+    System.get_env("FLUTTERWAVE_API") || "flutterwave-test-api"
   end
 end
