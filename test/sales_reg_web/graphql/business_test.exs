@@ -375,65 +375,58 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
       assert length(Business.all_expense()) == 1
     end
 
-    @tag :update_expense
+    @tag expense: "update_expense"
     test "update expense", context do
+      {:ok, company} =
+        context.user.id
+        |> Business.create_company(@company_params)
+
       {:ok, expense} =
         @expense_params
-        |> Map.put_new(:company_id, context.company.id)
+        |> Map.put_new(:company_id, company.id)
         |> Map.put_new(:paid_by_id, context.user.id)
-        |> Business.add_expense()
+        |> Business.create_expense()
 
       query_doc = """
-      upsertExpense(
-        expense: {
-          companyId: "#{context.company.id}",
-          date: "11-9-2018",
-          expenseItems: [
-            {
-              amount: 20.007,
-              itemName: "Samsung"
+        mutation upsertExpense($expense: ExpenseInput!, $expenseId: Uuid){
+          upsertExpense(
+            expense: $expense,
+            expenseId: $expenseId
+          ){
+            success,
+            fieldErrors{
+              key,
+              message
             },
-            {
-              amount: 30.0884,
-              itemName: "Dell"
-            }
-          ],
-          paidById: "#{context.user.id}",
-          paymentMethod: CARD,
-          title: "update expense title",
-          totalAmount: 50.0954
-        }, expenseId: "#{expense.id}"
-      ){
-          success,
-          fieldErrors{
-            key,
-            message
-          },
-          data {
-            ... on Expense{
-              id,
-              paymentMethod,
-              title,
-              totalAmount,
-              date
+            data {
+              ... on Expense{
+                id,
+                paymentMethod,
+                title,
+                totalAmount,
+                date
+              }
             }
           }
         }
       """
+      variables = %{expense: 
+        Map.put_new(@expense_params, :company_id, company.id)
+        |> Map.put_new(:paid_by_id, context.user.id),
+
+        expenseId: expense.id
+      }
 
       res =
         context.conn
-        |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "upsertExpense"))
+        |> post("/graphiql", Helpers.query_skeleton(query_doc, variables))
 
       response = json_response(res, 200)["data"]["upsertExpense"]
 
-      assert response["data"]["id"] == expense.id
-      assert response["data"]["date"] == "11-9-2018"
-      assert response["data"]["paymentMethod"] == "card"
-      assert response["data"]["title"] == "update expense title"
-      assert response["data"]["totalAmount"] == "50.0954"
       assert response["success"] == true
       assert response["fieldErrors"] == []
+      assert length(Business.all_expense()) == 1
+      assert expense.id == response["data"]["id"]
     end
 
     @tag :query_all_company_expenses

@@ -92,8 +92,6 @@ defmodule SalesReg.Business.Expense do
   end
 
   defp total_amount(expense, changeset) do
-    IO.inspect(changeset, label: "changeset")
-
     case changeset do
       %{changes: %{total_amount: total_amount}} ->
         total_amount
