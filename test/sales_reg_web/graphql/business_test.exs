@@ -547,36 +547,39 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
 
     @tag legal_document: "delete_legal_document"
     test "delete a legal_document", context do
+      {:ok, company} =
+        context.user.id
+        |> Business.create_company(@company_params)
+
       {:ok, legal_document} =
         @legal_document_params
-        |> Map.put_new(:company_id, context.company.id)
+        |> Map.put_new(:company_id, company.id)
         |> Business.add_legal_document()
 
       query_doc = """
-      deleteLegalDocument(
-        legalDocumentId: "#{legal_document.id}"
-        ){
-        success,
-        fieldErrors{
-          key,
-          message
+        mutation deleteLegalDocument($legalDocumentId: Uuid!){
+          deleteLegalDocument(
+            legalDocumentId: $legalDocumentId
+          ){
+            success,
+            fieldErrors{
+              key,
+              message
+            }
           }
-        data {
-          ... on Company{
-            id
-          }
-        }
         }
       """
 
       res =
         context.conn
-        |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "deleteLegalDocument"))
+        |> post("/graphiql", Helpers.query_skeleton(query_doc, %{legalDocumentId: legal_document.id}))
 
       response = json_response(res, 200)["data"]["deleteLegalDocument"]
 
       assert response["success"] == true
       assert response["fieldErrors"] == []
+      assert length(Business.all_legal_document) == 0
+      assert Business.get_bank(legal_document.id) == nil
     end
   end
 end
