@@ -9,5 +9,8 @@
     "stylelint": "node_modules/.bin/stylelint 'css/**/*.s+(a|c)ss'",
     "watch": "node_modules/.bin/webpack --config webpack.dev.js --watch-stdin --progress --color",
     "analyzer": "node_modules/.bin/webpack --config webpack.dev.js --env.runAnalyzer=true --watch-stdin --progress --color"
+  },
+  "dependencies": {
+    "moment": "^2.24.0"
   }
 }
