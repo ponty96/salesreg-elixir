@@ -808,7 +808,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
         {:ok, System.get_env("S3_REGION")}
       end)
     end
-    
+
     field :s3_access_key, :string do
       resolve(fn _, _ ->
         {:ok, System.get_env("S3_ACCESS_KEY")}

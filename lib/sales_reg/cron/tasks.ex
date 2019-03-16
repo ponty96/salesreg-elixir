@@ -119,7 +119,7 @@ defmodule SalesReg.Tasks do
         notification
 
       _reponse = response ->
-        Logger.info "FCM response: #{inspect(response)}"
+        Logger.info("FCM response: #{inspect(response)}")
         notification
     end
   end

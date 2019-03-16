@@ -92,6 +92,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       middleware(Authorize)
       resolve(&OrderResolver.delete_delivery_fee/2)
     end
+
+    
   end
 
   ### QUERIES
