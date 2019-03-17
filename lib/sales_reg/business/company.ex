@@ -33,6 +33,7 @@ defmodule SalesReg.Business.Company do
     has_many(:reviews, SalesReg.Order.Review)
     has_many(:stars, SalesReg.Order.Star)
     has_many(:legal_documents, SalesReg.Business.LegalDocument)
+    has_many(:delivery_dates, SalesReg.Order.DeliveryDate)
 
     has_many(:notifications, SalesReg.Notifications.Notification)
 

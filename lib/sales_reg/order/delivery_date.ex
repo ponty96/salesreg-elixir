@@ -7,7 +7,7 @@ defmodule SalesReg.Order.DeliveryDate do
 
   schema "delivery_dates" do
     field(:date, :string)
-    field(:confirmed, :boolean)
+    field(:confirmed, :boolean, default: false)
 
     belongs_to(:sale, SalesReg.Order.Sale)
     belongs_to(:company, SalesReg.Business.Company)

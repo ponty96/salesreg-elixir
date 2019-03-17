@@ -5,7 +5,7 @@ defmodule SalesReg.Repo.Migrations.CreateDeliveryDate do
     create table(:delivery_dates, primary_key: false) do
       add(:id, :binary_id, primary_key: true)
       add(:date, :string)
-      add(:confirmed, :boolean)
+      add(:confirmed, :boolean, default: false)
 
       add(:sale_id, references(:sales, on_delete: :nothing,type: :binary_id))
       add(:company_id, references(:companies, on_delete: :nothing, type: :binary_id))
