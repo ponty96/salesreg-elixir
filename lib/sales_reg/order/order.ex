@@ -17,7 +17,8 @@ defmodule SalesReg.Order do
     Review,
     Star,
     Activity,
-    DeliveryFee
+    DeliveryFee,
+    DeliveryDate
   ]
 
   @receipt_html_path "lib/sales_reg_web/templates/mailer/yc_email_receipt_pdf.html.eex"
@@ -447,6 +448,11 @@ defmodule SalesReg.Order do
       nil -> false
       %DeliveryFee{} -> true
     end
+  end
+
+  def confirm_delivery_date(delivery_date_id) do
+    delivery_date = Repo.get(DeliveryDate, delivery_date_id)
+    Order.update_delivery_date(delivery_date, %{confirmed: true})
   end
 
   defp calc_items_amount(items) do

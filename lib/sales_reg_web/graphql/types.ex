@@ -647,6 +647,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
   end
 
+ 
   @desc """
     Notification object type
   """
@@ -708,6 +709,18 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   @desc """
+    Delivery Date Object type
+  """
+  object :delivery_date do
+    field(:id, :uuid)
+    field(:date, :string)
+    field(:confirmed, :boolean)
+    field(:sale, :sale, resolve: dataloader(SalesReg.Order, :sale))
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:user, :user, resolve: dataloader(SalesReg.Business, :user))
+  end  
+
+  @desc """
     Consistent Type for Mutation Response
   """
   object :mutation_response do
@@ -749,7 +762,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       :delivery_fee,
       :notification,
       :notification_item,
-      :mobile_device
+      :mobile_device,
+      :delivery_date
     ])
 
     resolve_type(fn
@@ -783,6 +797,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       %Notification{}, _ -> :notification
       %NotificationItem{}, _ -> :notification_item
       %MobileDevice{}, _ -> :mobile_device
+      %DeliveryDate{}, _ -> :delivery_date
     end)
   end
 
@@ -1148,6 +1163,14 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:company_id, non_null(:uuid))
     field(:user_id, non_null(:uuid))
   end
+
+  input_object :delivery_date_input do
+    field(:date, non_null(:string))
+    field(:sale_id, non_null(:string))
+    field(:company_id, non_null(:uuid))
+    field(:user_id, non_null(:uuid))
+  end
+
 
   input_object :mobile_device_input do
     field(:mobile_os, :string)

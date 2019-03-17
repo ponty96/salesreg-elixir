@@ -123,6 +123,7 @@ defmodule SalesRegWeb do
         Order.Star,
         Order.Activity,
         Order.DeliveryFee,
+        Order.DeliveryDate,
         Store.ProductGroup,
         Store.Option,
         Store.OptionValue,

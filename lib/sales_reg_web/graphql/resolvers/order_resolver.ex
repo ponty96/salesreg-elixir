@@ -87,6 +87,19 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     {:ok, %{exist: Order.nation_wide_delivery_fee_exists?(company_id)}}
   end
 
+  def create_delivery_date(%{delivery_date: params}, _res) do
+    Order.add_delivery_date(params)
+  end
+
+  def confirm_delivery_date(%{delivery_date_id: delivery_date_id}, _res) do
+    Order.confirm_delivery_date(delivery_date_id)
+  end
+
+  def update_delivery_date(%{delivery_date: params, delivery_date_id: id}, _res) do
+    Order.get_delivery_date(id)
+    |> Order.update_delivery_date(params)
+  end
+  
   def get_invoice_by_id(%{invoice_id: id}, _res) do
     {:ok, Order.get_invoice(id)}
   end

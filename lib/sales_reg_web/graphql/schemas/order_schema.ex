@@ -93,7 +93,35 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       resolve(&OrderResolver.delete_delivery_fee/2)
     end
 
-    
+    @desc """
+    create a delivery date
+    """
+    field :create_delivery_date, :mutation_response do
+      arg(:delivery_date, non_null(:delivery_date_input))
+
+    resolve(&OrderResolver.create_delivery_date/2)
+    end
+
+    @desc """
+      confirm delivery date
+    """
+    field :confirm_delivery_date, :mutation_response do
+      arg(:delivery_date_id, non_null(:uuid))
+
+    middleware(Authorize)
+    resolve(&OrderResolver.confirm_delivery_date/2)
+    end
+
+    @desc """
+      update delivery date
+    """
+    field :update_delivery_date, :mutation_response do
+      arg(:delivery_date, non_null(:delivery_date_input))
+    arg(:delivery_date_id, non_null(:uuid))
+
+    middleware(Authorize)
+    resolve(&OrderResolver.update_delivery_date/2)
+    end
   end
 
   ### QUERIES
