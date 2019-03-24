@@ -94,7 +94,8 @@ defmodule SalesReg.Mixfile do
 
       # code
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
-      {:dialyzex, "~> 1.2.0", only: :dev}
+      {:dialyzex, "~> 1.2.0", only: :dev},
+      {:pre_commit, "~> 0.3.4", only: :dev}
     ]
   end
 
