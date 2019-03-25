@@ -586,6 +586,10 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
         {:ok, Order.preload_activity(activity).invoice.ref_id}
       end)
     end
+
+    field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
+    field(:invoice, :invoice, resolve: dataloader(SalesReg.Order, :invoice))
+    field(:contact, :contact, resolve: dataloader(SalesReg.Business, :contact))
   end
 
   connection(node_type: :activity)
