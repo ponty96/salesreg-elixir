@@ -155,12 +155,9 @@ defmodule SalesReg.Order do
         {:ok, contact}
 
       _ ->
-        {:ok, contact} =
-          %Contact{}
-          |> Contact.through_order_changeset(params)
-          |> Repo.insert()
-
-        {:ok, contact}
+        %Contact{}
+        |> Contact.through_order_changeset(params)
+        |> Repo.insert()
     end
   end
 
@@ -475,8 +472,8 @@ defmodule SalesReg.Order do
       {:error, :get_contact, value, _map} ->
         {:error, value}
 
-      {:error, _failed_operation, _failed_value, changeset} ->
-        {:error, changeset}
+      {:error, _failed_operation, failed_value, _changeset} ->
+        {:error, failed_value}
     end
   end
 
