@@ -273,7 +273,7 @@ defmodule SalesReg.Store do
 
     case Repo.transaction(opts) do
       {:ok, %{product: product}} -> {:ok, product}
-      {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
+      {:error, _failed_operation, failed_value, _changeset} -> {:error, failed_value}
     end
   end
 
@@ -373,7 +373,7 @@ defmodule SalesReg.Store do
 
     case Repo.transaction(opts) do
       {:ok, %{update_product_grp: update_product_grp}} -> {:ok, update_product_grp}
-      {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
+      {:error, _failed_operation, failed_value, _changeset} -> {:error, failed_value}
     end
   end
 
@@ -637,7 +637,7 @@ defmodule SalesReg.Store do
 
     case Repo.transaction(opts) do
       {:ok, %{product: product}} -> {:ok, product}
-      {:error, _failed_operation, _failed_value, changeset} -> {:error, changeset}
+      {:error, _failed_operation, failed_value, _changeset} -> {:error, failed_value}
     end
   end
 
