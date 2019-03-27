@@ -80,7 +80,7 @@ defmodule SalesReg.Mailer.YipcartToCustomers do
 
   defp send_email(contact_email, html_body, subject) do
     new_email(
-      from: "hello@yipcart.com",
+      from: "no-reply@yipcart.com",
       to: contact_email,
       subject: subject,
       html_body: html_body
