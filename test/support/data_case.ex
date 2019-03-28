@@ -16,6 +16,7 @@ defmodule SalesReg.DataCase do
 
   using do
     quote do
+      alias Ecto.Adapters.SQL.Sandbox
       alias SalesReg.Repo
 
       import Ecto
@@ -26,10 +27,10 @@ defmodule SalesReg.DataCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(SalesReg.Repo)
+    :ok = Sandbox.checkout(SalesReg.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(SalesReg.Repo, {:shared, self()})
+      Sandbox.mode(SalesReg.Repo, {:shared, self()})
     end
 
     :ok

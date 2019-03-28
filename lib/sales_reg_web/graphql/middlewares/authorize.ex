@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.GraphQL.MiddleWares.Authorize do
+  @moduledoc """
+  Absinthe user authorization middleware
+  """
   @behaviour Absinthe.Middleware
 
   def call(resolution, _config) do

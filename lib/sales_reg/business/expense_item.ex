@@ -1,4 +1,7 @@
 defmodule SalesReg.Business.ExpenseItem do
+  @moduledoc """
+  Expense Item Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

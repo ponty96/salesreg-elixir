@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.Plug.TemplateHandler do
+  @moduledoc """
+  Template handler module
+  """
   @behaviour Plug
   import Plug.Conn
   require Logger

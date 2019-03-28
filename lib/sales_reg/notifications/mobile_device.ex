@@ -1,4 +1,7 @@
 defmodule SalesReg.Notifications.MobileDevice do
+  @moduledoc """
+    MobileDevice Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

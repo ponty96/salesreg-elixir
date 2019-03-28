@@ -3,9 +3,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.ThemeSchema do
     GraphQL Schemas for Theme
   """
   use Absinthe.Schema.Notation
+  alias SalesRegWeb.GraphQL.MiddleWares.Authorize
   use Absinthe.Relay.Schema.Notation, :classic
   alias SalesRegWeb.GraphQL.Resolvers.ThemeResolver
-  alias SalesRegWeb.GraphQL.MiddleWares.Authorize
 
   ### QUERIES
   object :theme_queries do

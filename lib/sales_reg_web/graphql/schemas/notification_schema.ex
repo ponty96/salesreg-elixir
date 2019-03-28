@@ -4,8 +4,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.NotificationSchema do
   """
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
-  alias SalesRegWeb.GraphQL.Resolvers.NotificationResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  alias SalesRegWeb.GraphQL.Resolvers.NotificationResolver
 
   ### MUTATIONS
   object :notification_mutations do

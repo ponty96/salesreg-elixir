@@ -1,11 +1,12 @@
 defmodule SalesReg.Context do
   @moduledoc false
+  alias Absinthe.Relay.Connection
   alias SalesReg.Repo
 
   defmacro __using__(modules) do
     quote bind_quoted: [modules: modules] do
-      alias SalesReg.Repo
       alias Ecto.Query
+      alias SalesReg.Repo
 
       for module <- modules do
         schema =
@@ -42,7 +43,7 @@ defmodule SalesReg.Context do
           unquote(module)
           |> Query.where(^clauses)
           |> Query.order_by(desc: :updated_at)
-          |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
+          |> Connection.from_query(&Repo.all/1, args)
         end
 
         def unquote(String.to_atom("search_company_#{schema}s"))(clauses, query, field, args) do
@@ -60,7 +61,7 @@ defmodule SalesReg.Context do
             )
           )
           |> order_by(desc: :updated_at)
-          |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
+          |> Connection.from_query(&Repo.all/1, args)
         end
 
         def unquote(String.to_atom("add_#{schema}"))(%{} = params) do
@@ -91,7 +92,7 @@ defmodule SalesReg.Context do
           end
         end
 
-        def unquote(String.to_atom("all_#{schema}"))() do
+        def unquote(String.to_atom("all_#{schema}")) do
           module = unquote(module)
 
           if module do

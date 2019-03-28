@@ -1,4 +1,7 @@
 defmodule SalesReg.Theme.Template do
+  @moduledoc """
+  Template Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
