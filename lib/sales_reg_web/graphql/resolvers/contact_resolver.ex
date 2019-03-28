@@ -1,9 +1,13 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.ContactResolver do
+  @moduledoc """
+  Contact Resolver
+  """
   use SalesRegWeb, :context
 
   # MUTATIONS
   def upsert_contact(%{contact: params, contact_id: id}, _res) do
-    Business.get_contact(id)
+    id
+    |> Business.get_contact()
     |> Business.update_contact(params)
   end
 
@@ -13,7 +17,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.ContactResolver do
   end
 
   def delete_contact(%{contact_id: contact_id}, _res) do
-    Business.get_contact(contact_id)
+    contact_id
+    |> Business.get_contact()
     |> Business.delete_contact()
   end
 

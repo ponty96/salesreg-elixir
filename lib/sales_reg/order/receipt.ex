@@ -1,4 +1,7 @@
 defmodule SalesReg.Order.Receipt do
+  @moduledoc """
+  Receipt Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias SalesReg.Business

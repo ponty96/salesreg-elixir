@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
+  @moduledoc """
+  WebStore Resolver
+  """
   use SalesRegWeb, :context
 
   def company_details(_params, resolution) do
@@ -6,7 +9,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
     {:ok, company}
   end
 
-  def home_page_query(params, resolution) do
+  def home_page_query(_params, resolution) do
     company = resolution.context.company
 
     home_data = %{
@@ -30,7 +33,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
     category = Store.get_category_by_slug(slug)
 
     {%{entries: products}, product_page} =
-      Store.category_products(category.id, p_page) |> Map.split([:entries])
+      category.id |> Store.category_products(p_page) |> Map.split([:entries])
 
     {:ok,
      %{
@@ -49,7 +52,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.WebStoreResolver do
     company = resolution.context.company
 
     {%{entries: products}, product_page} =
-      Store.filter_webstore_products(company.id, %{page: p_page}) |> Map.split([:entries])
+      company.id |> Store.filter_webstore_products(%{page: p_page}) |> Map.split([:entries])
 
     {:ok,
      %{

@@ -4,8 +4,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.SpecialOfferSchema do
   """
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
-  alias SalesRegWeb.GraphQL.Resolvers.SpecialOfferResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  alias SalesRegWeb.GraphQL.Resolvers.SpecialOfferResolver
 
   ## MUTATIONS
   object :special_offer_mutations do

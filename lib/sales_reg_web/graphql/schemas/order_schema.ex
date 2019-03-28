@@ -4,8 +4,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
   """
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
-  alias SalesRegWeb.GraphQL.Resolvers.OrderResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  alias SalesRegWeb.GraphQL.Resolvers.OrderResolver
 
   ### MUTATIONS
   object :order_mutations do

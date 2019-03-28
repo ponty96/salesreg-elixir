@@ -4,13 +4,11 @@ defmodule SalesReg.Business do
   """
   use SalesRegWeb, :context
   alias Dataloader.Ecto, as: DataloaderEcto
-  alias SalesReg.Mailer.YipcartToCustomers, as: YC2C
+  alias SalesReg.Mailer.YipcartToMerchants, as: YC2C
 
-  alias SalesRegWeb.Services.{
-    Heroku,
-    Cloudfare,
-    Flutterwave
-  }
+  alias SalesRegWeb.Services.Cloudfare
+  alias SalesRegWeb.Services.Flutterwave
+  alias SalesRegWeb.Services.Heroku
 
   require Logger
 
@@ -56,9 +54,8 @@ defmodule SalesReg.Business do
            company_id: company.id,
            user_id: user_id
          },
-         {:ok, company_template} <- Theme.add_company_template(company_template_params),
+         {:ok, _company_template} <- Theme.add_company_template(company_template_params),
          {_int, _result} <- insert_company_email_temps(company.id),
-         # TODO send email in task supervisor process
          %Bamboo.Email{} <- YC2C.send_welcome_mail(company) do
       {:ok, company}
     else
@@ -73,7 +70,7 @@ defmodule SalesReg.Business do
            type: "head_office",
            location: Map.get(company_params, :head_office)
          },
-         {:ok, branch} <- update_company_head_office(company.id, branch_params) do
+         {:ok, _branch} <- update_company_head_office(company.id, branch_params) do
       {:ok, company}
     else
       {:error, changeset} -> {:error, changeset}
@@ -90,7 +87,8 @@ defmodule SalesReg.Business do
   end
 
   def update_company_cover_photo(%{cover_photo: _cover_photo, company_id: id} = params) do
-    Business.get_company(id)
+    id
+    |> Business.get_company()
     |> Business.update_company(params)
   end
 
@@ -115,7 +113,7 @@ defmodule SalesReg.Business do
     Repo.insert_all(CompanyEmailTemplate, templates)
   end
 
-  def get_company_share_domain() do
+  def get_company_share_domain do
     System.get_env("SHORT_URL") || "https://ycartstag.me"
   end
 
@@ -215,14 +213,16 @@ defmodule SalesReg.Business do
   end
 
   def search_customers_by_name(%{company_id: company_id, name: name}) do
-    Context.search_schema_by_field(Contact, {name, company_id}, :contact_name)
+    Contact
+    |> Context.search_schema_by_field({name, company_id}, :contact_name)
     |> Enum.filter(fn contact ->
       contact.type == "customer"
     end)
   end
 
   def create_expense(%{expense_items: _items} = params) do
-    put_items_amount(params)
+    params
+    |> put_items_amount()
     |> Business.add_expense()
   end
 
@@ -274,7 +274,8 @@ defmodule SalesReg.Business do
 
   defp return_file_content(type) do
     {:ok, binary} =
-      Path.expand("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
+      ("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
+      |> Path.expand()
       |> File.read()
 
     binary
@@ -298,59 +299,6 @@ defmodule SalesReg.Business do
     end
 
     calc_expense_amount(t, acc + val.(h.amount))
-  end
-
-  def insert_company_email_temps(company_id) do
-    templates =
-      Enum.map(@email_types, fn type ->
-        %{
-          body: return_file_content(type),
-          type: type,
-          company_id: company_id
-        }
-      end)
-
-    Repo.insert_all(CompanyEmailTemplate, templates)
-  end
-
-  defp return_file_content(type) do
-    {:ok, binary} =
-      Path.expand("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
-      |> File.read()
-
-    binary
-  end
-
-  # The business name is the slug of the company
-  defp create_business_subdomain(business_name) do
-    Task.Supervisor.start_child(TaskSupervisor, fn ->
-      base_domain =
-        Application.get_env(:sales_reg, Heroku)
-        |> Keyword.get(:base_domain)
-
-      hostname = String.downcase(business_name) <> "." <> base_domain
-
-      with :ok <-
-             Logger.info(fn -> "Creating new domain on heroku with hostname: #{hostname}" end),
-           {:ok, :success, data} <- Heroku.create_domain(hostname),
-           {:ok, :success, data} <-
-             Cloudfare.create_dns_record(
-               "CNAME",
-               data["hostname"],
-               data["cname"],
-               %{"ttl" => 1}
-             ) do
-        {:ok, :success, data}
-      else
-        {:ok, :fail, data} ->
-          Logger.debug(fn -> "The Server did perform the transaction: #{data["cname"]}" end)
-          {:ok, :fail, data}
-
-        {:error, reason} ->
-          Logger.error(fn -> "An error occurred: #{reason}" end)
-          {:error, reason}
-      end
-    end)
   end
 
   defp create_subaccount(params) do

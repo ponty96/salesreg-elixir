@@ -3,8 +3,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.UserSchema do
     GraphQL Schemas for User
   """
   use Absinthe.Schema.Notation
-  alias SalesRegWeb.GraphQL.Resolvers.UserResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  alias SalesRegWeb.GraphQL.Resolvers.UserResolver
 
   @desc """
   query a user

@@ -1,10 +1,13 @@
 defmodule SalesReg.Store.Product do
+  @moduledoc """
+  Product Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
-  alias SalesReg.Store.Category
+  alias SalesReg.Business
   alias SalesReg.Repo
   alias SalesReg.Store
-  alias SalesReg.Business
+  alias SalesReg.Store.Category
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -106,7 +109,7 @@ defmodule SalesReg.Store.Product do
 
       _ ->
         "#{product.product_group.title} (#{
-          Enum.map(product.option_values, &(&1.name || "?")) |> Enum.join(" ")
+          product.option_values |> Enum.map(&(&1.name || "?")) |> Enum.join(" ")
         })"
     end
   end
@@ -130,23 +133,27 @@ defmodule SalesReg.Store.Product do
   end
 
   defp add_product_slug(changeset, attrs) do
-    title = Map.get(attrs, :title) |> String.split(" ") |> Enum.join("-")
+    title = attrs |> Map.get(:title) |> String.split(" ") |> Enum.join("-")
 
-    hash_from_product_grp_uuid = Map.get(attrs, :product_group_id) |> hash_from_product_grp_uuid
+    hash_from_product_grp_uuid = attrs |> Map.get(:product_group_id) |> hash_from_product_grp_uuid
 
-    option_values = Map.get(attrs, :option_values)
+    option_values = attrs |> Map.get(:option_values)
 
-    slug =
+    string_representative_of_option_values =
       case option_values do
         [] ->
           "#{title}-#{hash_from_product_grp_uuid}"
 
         _ ->
           "#{title}-#{
-            Enum.map(option_values, &(remove_space(&1.name) || ""))
+            option_values
+            |> Enum.map(&(remove_space(&1.name) || ""))
             |> Enum.join("-")
           }-#{hash_from_product_grp_uuid}"
       end
+
+    slug =
+      string_representative_of_option_values
       |> String.downcase()
       |> URI.encode()
 
@@ -160,12 +167,13 @@ defmodule SalesReg.Store.Product do
   end
 
   defp remove_space(string) do
-    String.split(string, " ") |> Enum.join("-")
+    string |> String.split(" ") |> Enum.join("-")
   end
 
   defp visual_option_values_names(option_values) do
     visual_option_values =
-      Enum.map(option_values, fn option_value ->
+      option_values
+      |> Enum.map(fn option_value ->
         if option_value.option.is_visual == "yes" do
           option_value.name
         else

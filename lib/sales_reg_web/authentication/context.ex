@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.AbsintheContext do
+  @moduledoc """
+  Absinthe Context Module
+  """
   @behaviour Plug
   import Plug.Conn
   alias SalesRegWeb.TokenImpl

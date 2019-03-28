@@ -4,8 +4,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
   """
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
-  alias SalesRegWeb.GraphQL.Resolvers.StoreResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  alias SalesRegWeb.GraphQL.Resolvers.StoreResolver
 
   ### MUTATIONS
   object :store_mutations do
@@ -196,7 +196,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
     end
 
     @desc """
-      list related products 
+      list related products
     """
     field :list_related_products, list_of(:product) do
       arg(:product_id, non_null(:uuid))

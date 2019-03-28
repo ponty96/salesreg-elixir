@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.Plug.SubdomainHandler do
+  @moduledoc """
+  Subdomain handler module confirms if company in request header exists
+  """
   @behaviour Plug
   import Plug.Conn
   require Logger

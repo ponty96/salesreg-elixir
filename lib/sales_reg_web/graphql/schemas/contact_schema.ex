@@ -4,8 +4,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.ContactSchema do
   """
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
-  alias SalesRegWeb.GraphQL.Resolvers.ContactResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  alias SalesRegWeb.GraphQL.Resolvers.ContactResolver
 
   ### MUTATIONS
   object :contact_mutations do

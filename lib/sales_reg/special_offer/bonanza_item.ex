@@ -1,4 +1,7 @@
 defmodule SalesReg.SpecialOffer.BonanzaItem do
+  @moduledoc """
+  Bonanza Item Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

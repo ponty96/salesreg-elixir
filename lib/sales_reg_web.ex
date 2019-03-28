@@ -67,27 +67,27 @@ defmodule SalesRegWeb do
       import Ecto.{Query, Changeset}
 
       alias Ecto.Multi
+      alias Ecto.Queryable
+      alias Plug.Conn
+      alias SalesReg.Context
       alias SalesReg.Repo
       alias SalesReg.Search
       alias SalesReg.Seed
-      alias SalesReg.Context
       alias SalesRegWeb.Authentication
-      alias Plug.Conn
       alias SalesRegWeb.TokenImpl
-      alias Ecto.Queryable
       SalesRegWeb.shared_aliases()
     end
   end
 
   def graphql_context do
     quote do
+      alias Ecto.Queryable
+      alias SalesReg.Context
       alias SalesReg.Repo
       alias SalesReg.Search
       alias SalesReg.Seed
-      alias SalesReg.Context
       alias SalesRegWeb.Authentication
 
-      alias Ecto.Queryable
       SalesRegWeb.shared_aliases()
     end
   end
@@ -96,51 +96,56 @@ defmodule SalesRegWeb do
     quote do
       alias Ecto.Queryable
 
-      alias SalesReg.{
-        Accounts,
-        Accounts.User,
-        Business,
-        Contact,
-        Business.Company,
-        Business.Branch,
-        Business.Contact,
-        Business.Location,
-        Business.Phone,
-        Business.Bank,
-        Business.Expense,
-        Business.ExpenseItem,
-        Business.LegalDocument,
-        Store,
-        Store.Product,
-        Store.Category,
-        Store.Tag,
-        Order,
-        Order.Item,
-        Order.Sale,
-        Order.Invoice,
-        Order.Receipt,
-        Order.Review,
-        Order.Star,
-        Order.Activity,
-        Order.DeliveryFee,
-        Store.ProductGroup,
-        Store.Option,
-        Store.OptionValue,
-        TaskSupervisor,
-        Theme,
-        Theme.Template,
-        Theme.CompanyTemplate,
-        Theme.CompanyEmailTemplate,
-        Email,
-        Mailer,
-        SpecialOffer,
-        SpecialOffer.Bonanza,
-        SpecialOffer.BonanzaItem,
-        Notifications,
-        Notifications.Notification,
-        Notifications.NotificationItem,
-        Notifications.MobileDevice
-      }
+      alias SalesReg.Accounts
+      alias SalesReg.Accounts.User
+      alias SalesReg.Business
+      alias SalesReg.Business.Bank
+      alias SalesReg.Business.Branch
+      alias SalesReg.Business.Company
+      alias SalesReg.Business.Contact
+      alias SalesReg.Business.Expense
+      alias SalesReg.Business.ExpenseItem
+      alias SalesReg.Business.LegalDocument
+      alias SalesReg.Business.Location
+      alias SalesReg.Business.Phone
+
+      alias SalesReg.Contact
+      alias SalesReg.Email
+      alias SalesReg.Mailer
+
+      alias SalesReg.Notifications
+      alias SalesReg.Notifications.MobileDevice
+      alias SalesReg.Notifications.Notification
+      alias SalesReg.Notifications.NotificationItem
+
+      alias SalesReg.Order
+      alias SalesReg.Order.Activity
+      alias SalesReg.Order.DeliveryFee
+      alias SalesReg.Order.Invoice
+      alias SalesReg.Order.Item
+      alias SalesReg.Order.Receipt
+      alias SalesReg.Order.Review
+      alias SalesReg.Order.Sale
+      alias SalesReg.Order.Star
+
+      alias SalesReg.SpecialOffer
+      alias SalesReg.SpecialOffer.Bonanza
+      alias SalesReg.SpecialOffer.BonanzaItem
+
+      alias SalesReg.Store
+      alias SalesReg.Store.Category
+      alias SalesReg.Store.Option
+      alias SalesReg.Store.OptionValue
+      alias SalesReg.Store.Product
+      alias SalesReg.Store.ProductGroup
+      alias SalesReg.Store.Tag
+
+      alias SalesReg.TaskSupervisor
+
+      alias SalesReg.Theme
+      alias SalesReg.Theme.CompanyEmailTemplate
+      alias SalesReg.Theme.CompanyTemplate
+      alias SalesReg.Theme.Template
     end
   end
 

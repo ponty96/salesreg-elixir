@@ -21,15 +21,13 @@ defmodule SalesRegWeb.ConnCase do
       use Phoenix.ConnTest
       import SalesRegWeb.Router.Helpers
 
-      alias SalesReg.{
-        Business,
-        Accounts,
-        Seed,
-        Store
-      }
+      alias Ecto.Adapters.SQL.Sandbox
+      alias SalesReg.Accounts
+      alias SalesReg.Business
+      alias SalesReg.Seed
+      alias SalesReg.Store
 
       alias SalesRegWeb.GraphqlTestHelpers, as: Helpers
-      alias SalesReg.Seed
 
       # The default endpoint for testing
       @endpoint SalesRegWeb.Endpoint
@@ -37,10 +35,10 @@ defmodule SalesRegWeb.ConnCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(SalesReg.Repo)
+    :ok = Sandbox.checkout(SalesReg.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(SalesReg.Repo, {:shared, self()})
+      Sandbox.mode(SalesReg.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}

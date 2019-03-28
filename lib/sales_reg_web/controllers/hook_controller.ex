@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.HookController do
+  @moduledoc """
+  Web Hook Controller module
+  """
   use SalesRegWeb, :controller
   alias SalesReg.WebhookHandler
   alias SalesRegWeb.Services.Base
@@ -6,11 +9,13 @@ defmodule SalesRegWeb.HookController do
   def hook(conn, %{"status" => "successful"} = params) do
     with true <- transaction_exist?(params),
          {:ok, _receipt} <- WebhookHandler.insert_receipt(params) do
-      put_status(conn, 200)
+      conn
+      |> put_status(200)
       |> json("Successful")
     else
       _ ->
-        put_status(conn, 200)
+        conn
+        |> put_status(200)
         |> json("Unsuccessful")
     end
   end

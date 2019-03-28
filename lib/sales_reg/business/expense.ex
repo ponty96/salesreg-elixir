@@ -1,4 +1,7 @@
 defmodule SalesReg.Business.Expense do
+  @moduledoc """
+  Expense Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -58,7 +61,8 @@ defmodule SalesReg.Business.Expense do
          expense
        ) do
     total_amount =
-      total_amount(expense, changeset)
+      expense
+      |> total_amount(changeset)
       |> Decimal.to_float()
       |> Float.round(2)
 
@@ -92,8 +96,6 @@ defmodule SalesReg.Business.Expense do
   end
 
   defp total_amount(expense, changeset) do
-    IO.inspect(changeset, label: "changeset")
-
     case changeset do
       %{changes: %{total_amount: total_amount}} ->
         total_amount

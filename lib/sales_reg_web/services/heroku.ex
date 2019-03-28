@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.Services.Heroku do
+  @moduledoc """
+  Heroku HTTP Client
+  """
   alias SalesRegWeb.Services.Base
 
   def create_domain(hostname) do
@@ -40,7 +43,7 @@ defmodule SalesRegWeb.Services.Heroku do
     end
   end
 
-  defp process_url() do
+  defp process_url do
     base_url = get_config_key_val(:api_base_url)
     app_id_or_name = get_config_key_val(:app_id_or_name)
 

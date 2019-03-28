@@ -1,4 +1,7 @@
 defmodule SalesReg.Business.LegalDocument do
+  @moduledoc """
+  Legal Document Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
