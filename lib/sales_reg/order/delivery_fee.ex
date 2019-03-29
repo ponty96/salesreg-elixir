@@ -1,4 +1,7 @@
 defmodule SalesReg.Order.DeliveryFee do
+  @moduledoc """
+  Delivery Fee Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

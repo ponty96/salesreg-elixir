@@ -1,4 +1,7 @@
 defmodule SalesReg.ImageUpload do
+  @moduledoc """
+  Arc Image Upload Module
+  """
   use Arc.Definition
 
   # Include ecto support (requires package arc_ecto installed):
@@ -22,31 +25,6 @@ defmodule SalesReg.ImageUpload do
   def transform(:original, _), do: :noaction
   # Define a thumbnail transformation
   def transform(:thumb, _), do: :noaction
-
-  # def transform(:thumb, {%{file_name: name}, _}) do
-  #   case String.downcase(Path.extname(name)) do
-  #     ".pdf" ->
-  #       {:convert,
-  #          fn input, output ->
-  #            "-strip -thumbnail 100x100^ -verbose -density 150 -trim #{input}[0] -quality 100 -flatten -sharpen 0x1.0 png:#{
-  #              output
-  #            }"
-  #          end, :png}
-
-  #     ".png" ->
-  #       {:convert, 
-  #         "-strip -thumbnail 100x100^ -gravity center -extent 100x100"}
-
-  #     ".jpg" ->
-  #       {:convert, "-strip -thumbnail 120x120^ -gravity center -extent 120x120"}
-
-  #     ".jpeg" ->
-  #       {:convert, "-strip -thumbnail 120x120^ -gravity center -extent 120x120"}
-
-  #     _ ->
-  #       {:convert, "-strip -thumbnail 100x100^ -gravity center -extent 100x100 -format png", :png}
-  #   end
-  # end
 
   def filename(_version, {file, _scope}) do
     file_name = Path.basename(file.file_name, Path.extname(file.file_name))

@@ -1,9 +1,13 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.NotificationResolver do
+  @moduledoc """
+  Notification Resolver
+  """
   use SalesRegWeb, :context
 
   # MUTATIONS
   def change_notification_read_status(%{notification_id: id}, _res) do
-    Notifications.get_notification(id)
+    id
+    |> Notifications.get_notification()
     |> Notifications.update_notification(%{read_status: "read"})
   end
 

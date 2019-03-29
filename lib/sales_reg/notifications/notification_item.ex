@@ -1,4 +1,7 @@
 defmodule SalesReg.Notifications.NotificationItem do
+  @moduledoc """
+    Notification Item Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

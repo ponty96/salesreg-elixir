@@ -1,9 +1,12 @@
 defmodule SalesReg.Store.Category do
+  @moduledoc """
+  Category Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias SalesReg.Store.Product
   alias SalesReg.Repo
+  alias SalesReg.Store.Product
 
   @placeholder_image 'http://app.yipcart.com/images/yipcart-item-category.png'
 
@@ -60,10 +63,11 @@ defmodule SalesReg.Store.Category do
   end
 
   defp add_slug(changeset, attrs) do
-    title = Map.get(attrs, :title) |> String.split(" ") |> Enum.join("-")
+    title = attrs |> Map.get(:title) |> String.split(" ") |> Enum.join("-")
 
     hash =
-      Map.get(attrs, :company_id)
+      attrs
+      |> Map.get(:company_id)
       |> String.split("-")
       |> List.last()
 

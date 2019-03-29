@@ -1,4 +1,7 @@
 defmodule SalesReg.Order.Invoice do
+  @moduledoc """
+  Invoice Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias SalesReg.Business
@@ -47,7 +50,8 @@ defmodule SalesReg.Order.Invoice do
   defp before_update_callback(changeset, attrs) do
     if Enum.count(changeset.changes) > 1 do
       ref_id =
-        SalesReg.Order.put_ref_id(SalesReg.Order.Sale, attrs)
+        SalesReg.Order.Sale
+        |> SalesReg.Order.put_ref_id(attrs)
         |> Map.get(:ref_id)
 
       changeset

@@ -1,4 +1,7 @@
-defmodule SalesReg.Mailer.YipcartToCustomers do
+defmodule SalesReg.Mailer.YipcartToMerchants do
+  @moduledoc """
+    Module handling sending emails to merchants
+  """
   use SalesRegWeb, :context
   import Bamboo.Email
 
@@ -72,7 +75,8 @@ defmodule SalesReg.Mailer.YipcartToCustomers do
 
   defp return_file_content(type) do
     {:ok, binary} =
-      Path.expand("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
+      ("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
+      |> Path.expand()
       |> File.read()
 
     binary

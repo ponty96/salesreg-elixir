@@ -1,15 +1,23 @@
 defmodule SalesReg.Seed do
+  @moduledoc """
+  Seed Module
+  """
   use SalesRegWeb, :context
 
-  alias Faker.{Phone.EnGb, Internet, Commerce, Avatar, Industry, Name, Address}
-  alias Faker.Company.En, as: CompanyEn
-  alias Faker.Name.En, as: NameEn
+  alias Faker.Address
+  alias Faker.Avatar
+  alias Faker.Commerce
   alias Faker.Commerce.En, as: CommerceEn
+  alias Faker.Company.En, as: CompanyEn
   alias Faker.Date, as: FakerDate
+  alias Faker.Industry
+  alias Faker.Internet
+  alias Faker.Name
+  alias Faker.Name.En, as: NameEn
+  alias Faker.Phone.EnGb
 
   @location_types ["office", "home"]
   @phone_types ["home", "mobile", "work"]
-  @currency ["Dollars", "Naira", "Euro", "Pounds"]
   @marital_status ["Single", "Married", "Widowed"]
   @banks ["076", "011", "063", "058"]
   @likes ["honesty", "integrity", "principled"]
@@ -17,9 +25,8 @@ defmodule SalesReg.Seed do
   @payment_method ["cash", "card"]
   @seed_order_status ["pending", "processed", "delivering"]
   @gender ["MALE", "FEMALE"]
-  @company_template_status ["active", "inactive"]
 
-  def create_user() do
+  def create_user do
     user_params = %{
       "date_of_birth" => "15-08-1991",
       "email" => "ayo.aregbede@gmail.com",
@@ -100,7 +107,8 @@ defmodule SalesReg.Seed do
   def create_receipt(invoice_id, user_id, company_id) do
     current_date = Date.utc_today() |> Date.to_string()
 
-    gen_receipt_details(invoice_id, user_id, company_id)
+    invoice_id
+    |> gen_receipt_details(user_id, company_id)
     |> Map.put_new(:time_paid, current_date)
     |> Order.add_receipt()
   end
@@ -109,7 +117,7 @@ defmodule SalesReg.Seed do
     Enum.sum(Enum.map(expense_items, fn expense_item -> expense_item["amount"] end))
   end
 
-  defp expenses_items() do
+  defp expenses_items do
     Enum.map(1..5, fn _index ->
       %{
         "item_name" => CommerceEn.product_name_product(),
@@ -118,7 +126,7 @@ defmodule SalesReg.Seed do
     end)
   end
 
-  defp gen_location_params() do
+  defp gen_location_params do
     %{
       "city" => Address.city(),
       "country" => Address.country(),
@@ -131,14 +139,14 @@ defmodule SalesReg.Seed do
     }
   end
 
-  defp gen_phone_params() do
+  defp gen_phone_params do
     %{
       "number" => "#{EnGb.mobile_number()}",
       "type" => Enum.random(@phone_types)
     }
   end
 
-  def gen_bank_details() do
+  def gen_bank_details do
     %{
       account_name: NameEn.name(),
       account_number: "#{Enum.random(0_152_637_490..0_163_759_275)}",
@@ -160,7 +168,8 @@ defmodule SalesReg.Seed do
   defp past_date(type) do
     case type do
       :dob ->
-        FakerDate.date_of_birth(16..99)
+        16..99
+        |> FakerDate.date_of_birth()
         |> Date.to_string()
 
       :marr_anni ->
@@ -217,7 +226,7 @@ defmodule SalesReg.Seed do
     |> Store.add_tag()
   end
 
-  defp gen_notification_items() do
+  defp gen_notification_items do
     Enum.map(1..3, fn _index ->
       %{
         changed_to: "",
@@ -253,7 +262,7 @@ defmodule SalesReg.Seed do
     SalesReg.Order.add_invoice(params)
   end
 
-  def add_template() do
+  def add_template do
     params = %{
       "title" => "Default Templates",
       "slug" => "yc1-template",
@@ -288,9 +297,10 @@ defmodule SalesReg.Seed do
 
   defp order_total_cost(order_items) do
     amounts =
-      Enum.map(order_items, fn item ->
-        unit_price = Decimal.new(item["unit_price"]) |> Decimal.to_float()
-        quantity = Decimal.new(item["quantity"]) |> Decimal.to_float()
+      order_items
+      |> Enum.map(fn item ->
+        unit_price = item["unit_price"] |> Decimal.new() |> Decimal.to_float()
+        quantity = item["quantity"] |> Decimal.new() |> Decimal.to_float()
         unit_price * quantity
       end)
 

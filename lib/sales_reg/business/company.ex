@@ -1,4 +1,7 @@
 defmodule SalesReg.Business.Company do
+  @moduledoc """
+  Company Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias SalesReg.Repo
