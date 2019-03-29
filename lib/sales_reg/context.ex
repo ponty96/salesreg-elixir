@@ -92,7 +92,7 @@ defmodule SalesReg.Context do
           end
         end
 
-        def unquote(String.to_atom("all_#{schema}")) do
+        def unquote(String.to_atom("all_#{schema}"))() do
           module = unquote(module)
 
           if module do

@@ -109,7 +109,6 @@ defmodule SalesRegWeb do
       alias SalesReg.Business.Location
       alias SalesReg.Business.Phone
 
-      alias SalesReg.Contact
       alias SalesReg.Email
       alias SalesReg.Mailer
 
