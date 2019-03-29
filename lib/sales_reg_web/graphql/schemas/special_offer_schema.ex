@@ -5,6 +5,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.SpecialOfferSchema do
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  alias SalesRegWeb.GraphQL.MiddleWares.Policy
   alias SalesRegWeb.GraphQL.Resolvers.SpecialOfferResolver
 
   ## MUTATIONS
@@ -17,6 +18,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.SpecialOfferSchema do
       arg(:bonanza_id, :uuid)
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&SpecialOfferResolver.upsert_bonanza/2)
     end
   end
@@ -29,6 +31,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.SpecialOfferSchema do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&SpecialOfferResolver.list_company_bonanzas/2)
     end
   end

@@ -3,10 +3,8 @@ defmodule SalesRegWeb.GraphQL.Schemas do
   use Absinthe.Schema
   use Absinthe.Relay.Schema, :classic
 
-  alias SalesRegWeb.GraphQL.MiddleWares.{
-    ChangesetErrors,
-    MutationResponse
-  }
+  alias SalesRegWeb.GraphQL.MiddleWares.ChangesetErrors
+  alias SalesRegWeb.GraphQL.MiddleWares.MutationResponse
 
   alias Absinthe.Middleware.Dataloader, as: AbsintheDataloader
   alias Absinthe.Plugin, as: AbsinthePluginDefault

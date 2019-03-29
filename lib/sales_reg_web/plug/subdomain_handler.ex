@@ -12,8 +12,9 @@ defmodule SalesRegWeb.Plug.SubdomainHandler do
 
   def call(conn, _default) do
     headers = Enum.into(conn.req_headers, %{})
+    conn = handle_request(headers, conn)
 
-    handle_request(headers, conn)
+    assign_user(headers, conn)
   end
 
   defp handle_request(%{"request-endpoint" => endpoint}, conn) do
@@ -23,6 +24,18 @@ defmodule SalesRegWeb.Plug.SubdomainHandler do
     |> String.split(".")
     |> Enum.at(0)
     |> business?(conn)
+  end
+
+  defp assign_user(%{"companyid" => company_id, "userid" => user_id}, conn) do
+    conn
+    |> assign(:company_id, company_id)
+    |> assign(:user_id, user_id)
+  end
+
+  defp assign_user(_headers, conn) do
+    conn
+    |> assign(:company_id, "")
+    |> assign(:user_id, "")
   end
 
   defp handle_request(_headers, conn), do: assign(conn, :company, %{})

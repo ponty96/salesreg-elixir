@@ -5,6 +5,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  alias SalesRegWeb.GraphQL.MiddleWares.Policy
   alias SalesRegWeb.GraphQL.Resolvers.BusinessResolver
 
   ### MUTATIONS
@@ -29,6 +30,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       arg(:company, non_null(:company_input))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&BusinessResolver.update_company/2)
     end
 
@@ -39,6 +41,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       arg(:cover_photo, non_null(:cover_photo_input))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&BusinessResolver.update_company_cover_photo/2)
     end
 
@@ -50,6 +53,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       arg(:legal_document_id, :uuid)
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&BusinessResolver.upsert_legal_document/2)
     end
 
@@ -60,6 +64,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       arg(:legal_document_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&BusinessResolver.delete_legal_document/2)
     end
   end
@@ -74,6 +79,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       arg(:bank_id, :uuid)
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&BusinessResolver.upsert_bank/2)
     end
 
@@ -84,6 +90,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       arg(:bank_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&BusinessResolver.delete_bank/2)
     end
   end
@@ -98,6 +105,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       arg(:expense_id, :uuid)
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&BusinessResolver.upsert_expense/2)
     end
 
@@ -108,6 +116,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       arg(:expense_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&BusinessResolver.delete_expense/2)
     end
   end
@@ -122,6 +131,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&BusinessResolver.list_company_banks/2)
     end
   end
@@ -136,6 +146,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.BusinessSchema do
       arg(:query, non_null(:string))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&BusinessResolver.company_expenses/2)
     end
   end
