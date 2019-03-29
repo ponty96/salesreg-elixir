@@ -27,8 +27,11 @@ defmodule SalesRegWeb.AbsintheContext do
   def build_context(conn) do
     with [token] <- get_req_header(conn, "authorization"),
          company <- conn.assigns[:company],
+         user_id <- conn.assigns[:user_id],
+         company_id <- conn.assigns[:company_id],
          {:ok, current_user} <- authorize(token) do
-      {:ok, %{current_user: current_user, company: company}}
+      {:ok,
+       %{current_user: current_user, company: company, user_id: user_id, company_id: company_id}}
     else
       _error ->
         company = conn.assigns[:company]
