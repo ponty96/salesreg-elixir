@@ -5,6 +5,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.NotificationSchema do
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  alias SalesRegWeb.GraphQL.MiddleWares.Policy
   alias SalesRegWeb.GraphQL.Resolvers.NotificationResolver
 
   ### MUTATIONS
@@ -16,6 +17,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.NotificationSchema do
       arg(:notification_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&NotificationResolver.change_notification_read_status/2)
     end
 
@@ -26,6 +28,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.NotificationSchema do
       arg(:mobile_device, non_null(:mobile_device_input))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&NotificationResolver.upsert_mobile_device/2)
     end
 
@@ -37,6 +40,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.NotificationSchema do
       arg(:user_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&NotificationResolver.disable_mobile_device_notification/2)
     end
   end
@@ -50,6 +54,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.NotificationSchema do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&NotificationResolver.list_company_notifications/2)
     end
 
@@ -60,6 +65,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.NotificationSchema do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&NotificationResolver.get_unread_company_notifications_count/2)
     end
   end
