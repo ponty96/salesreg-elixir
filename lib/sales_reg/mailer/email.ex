@@ -1,4 +1,8 @@
 defmodule SalesReg.Email do
+  @moduledoc """
+    Email Sending Module
+  """
+
   # use SalesRegWeb, :context
   # import Bamboo.Email
   # require Logger
@@ -94,7 +98,7 @@ defmodule SalesReg.Email do
   #     "yc_email_late_overdue" ->
   #       "Payment reminder invoice ##{sale.invoice.ref_id}"
 
-  #     "yc_email_received_order" -> 
+  #     "yc_email_received_order" ->
   #       "Order Received"
 
   #     "yc_email_reminder" ->

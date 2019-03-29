@@ -384,7 +384,8 @@ defmodule SalesRegWeb.GraphqlOrderTest do
         end)
 
       add_many_sales =
-        Enum.map(1..3, fn _index ->
+        1..3
+        |> Enum.map(fn _index ->
           {:ok, order} =
             company.id
             |> Seed.create_sales_order(user.id, contact.id, items)
@@ -409,7 +410,8 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       response = json_response(res, 200)["data"]["listCompanySales"]["edges"]
 
       response =
-        Enum.map(response, fn %{"node" => map} ->
+        response
+        |> Enum.map(fn %{"node" => map} ->
           map
         end)
         |> Helpers.underscore_map_keys()
@@ -431,7 +433,8 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       {:ok, sale} = Seed.create_sales_order(company.id, user.id, contact.id, items)
 
       invoices =
-        Enum.map(1..3, fn _index ->
+        1..3
+        |> Enum.map(fn _index ->
           {:ok, invoice} = Seed.create_invoice(sale)
 
           invoice
@@ -452,7 +455,8 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       response = json_response(res, 200)["data"]["listCompanyInvoices"]["edges"]
 
       response =
-        Enum.map(response, fn %{"node" => map} ->
+        response
+        |> Enum.map(fn %{"node" => map} ->
           map
         end)
         |> Helpers.underscore_map_keys()
@@ -484,7 +488,8 @@ defmodule SalesRegWeb.GraphqlOrderTest do
         |> Order.list_company_activities(contact.id, %{first: 3})
 
       activities =
-        Enum.map(edges, fn activity ->
+        edges
+        |> Enum.map(fn activity ->
           activity.node
           |> Helpers.transform_struct([
             :id,
@@ -503,7 +508,8 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       response = json_response(res, 200)["data"]["listContactActivities"]["edges"]
 
       response =
-        Enum.map(response, fn %{"node" => map} ->
+        response
+        |> Enum.map(fn %{"node" => map} ->
           map
         end)
         |> Helpers.underscore_map_keys()

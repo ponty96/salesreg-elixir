@@ -1,4 +1,7 @@
 defmodule SalesReg.Order.Activity do
+  @moduledoc """
+  Activity Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

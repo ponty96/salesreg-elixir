@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.AuthPipeline do
+  @moduledoc """
+  Auth Plug Pipeline Module
+  """
   use Guardian.Plug.Pipeline,
     otp_app: :sales_reg,
     module: SalesRegWeb.Guardian,

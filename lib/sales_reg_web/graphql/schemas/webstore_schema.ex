@@ -4,8 +4,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
   """
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
-  alias SalesRegWeb.GraphQL.Resolvers.WebStoreResolver
   alias SalesRegWeb.GraphQL.Resolvers.StoreResolver
+  alias SalesRegWeb.GraphQL.Resolvers.WebStoreResolver
 
   # WEBSTORE HOME PAGE
   object :web_store_queries do

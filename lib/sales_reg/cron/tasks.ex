@@ -1,12 +1,15 @@
 defmodule SalesReg.Tasks do
+  @moduledoc """
+  Cron Tasks Module
+  """
   use SalesRegWeb, :context
-  alias SalesReg.Mailer.YipcartToCustomers, as: YC2C
   alias SalesReg.Mailer.MerchantsToCustomers, as: M2C
+  alias SalesReg.Mailer.YipcartToMerchants, as: YC2C
   alias SalesRegWeb.Services.Base
   require Logger
 
   # sends emails on the day orders are due for payment
-  def mail_on_order_due_date() do
+  def mail_on_order_due_date do
     invoices =
       Order.all_invoice()
       |> Enum.filter(fn invoice ->
@@ -31,7 +34,7 @@ defmodule SalesReg.Tasks do
   end
 
   # sends emails 3 days before the orders are due for payment
-  def mail_before_order_due_date() do
+  def mail_before_order_due_date do
     Order.all_invoice()
     |> Enum.filter(fn invoice ->
       due_date = Mailer.naive_date(invoice.due_date)
@@ -44,7 +47,7 @@ defmodule SalesReg.Tasks do
   end
 
   # sends emails 3 days after the orders are due for payment
-  def mail_after_order_due_date() do
+  def mail_after_order_due_date do
     Order.all_invoice()
     |> Enum.filter(fn invoice ->
       due_date = Mailer.naive_date(invoice.due_date)
@@ -57,7 +60,7 @@ defmodule SalesReg.Tasks do
   end
 
   # sends emails 7 days after the orders are due for payment
-  def mail_after_order_overdue() do
+  def mail_after_order_overdue do
     Order.all_invoice()
     |> Enum.filter(fn invoice ->
       due_date = Mailer.naive_date(invoice.due_date)
@@ -70,7 +73,7 @@ defmodule SalesReg.Tasks do
   end
 
   # create activities when order is due
-  def create_activity_when_order_due() do
+  def create_activity_when_order_due do
     Order.all_invoice()
     |> Enum.filter(fn invoice ->
       {:ok, due_date} = Timex.parse(invoice.due_date, "{YYYY}-{0M}-{D}")
@@ -79,7 +82,7 @@ defmodule SalesReg.Tasks do
     |> create_mul_activities()
   end
 
-  def send_notifications() do
+  def send_notifications do
     Notifications.get_unsent_notifications()
     |> Enum.map(fn notification ->
       send_user_notification(notification)
@@ -119,7 +122,7 @@ defmodule SalesReg.Tasks do
         notification
 
       _reponse = response ->
-        Logger.info "FCM response: #{inspect(response)}"
+        Logger.info("FCM response: #{inspect(response)}")
         notification
     end
   end
@@ -135,12 +138,14 @@ defmodule SalesReg.Tasks do
     url = "https://onesignal.com/api/v1/notifications"
 
     body =
-      gen_notification_req_params(device_token, data, notification)
+      device_token
+      |> gen_notification_req_params(data, notification)
       |> Base.encode()
 
     headers = [{"Authorization", System.get_env("ONESIGNAL_API_KEY")}]
 
-    Base.request(:post, url, body, headers)
+    :post
+    |> Base.request(url, body, headers)
     |> Base.process_response()
   end
 
@@ -150,7 +155,8 @@ defmodule SalesReg.Tasks do
 
   defp transform_notification_items(%{notification_items: items}) do
     Enum.map(items, fn item ->
-      Map.from_struct(item)
+      item
+      |> Map.from_struct()
       |> Map.drop([:__meta__, :notification])
     end)
   end
@@ -170,7 +176,7 @@ defmodule SalesReg.Tasks do
     |> String.replace("_", " ")
   end
 
-  defp now() do
+  defp now do
     DateTime.to_naive(Timex.now())
   end
 end

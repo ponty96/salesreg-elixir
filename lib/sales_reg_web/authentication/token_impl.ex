@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.TokenImpl do
+  @moduledoc """
+  Guardian Token handler
+  """
   alias SalesReg.Accounts
 
   use Guardian, otp_app: :sales_reg

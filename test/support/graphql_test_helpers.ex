@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.GraphqlTestHelpers do
+  @moduledoc """
+   GraphQL test helper
+  """
   alias SalesRegWeb.Authentication
 
   def query_skeleton(:query, query_doc, query_name) do
@@ -38,10 +41,9 @@ defmodule SalesRegWeb.GraphqlTestHelpers do
     struct
     |> Map.from_struct()
     |> Map.take(fields)
-    |> Enum.map(fn {key, val} ->
+    |> Enum.into(%{}, fn {key, val} ->
       {Atom.to_string(key), val}
     end)
-    |> Enum.into(%{})
   end
 
   def underscore_map_keys(schema_list) do

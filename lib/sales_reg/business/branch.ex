@@ -1,4 +1,7 @@
 defmodule SalesReg.Business.Branch do
+  @moduledoc """
+  Branch Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias SalesReg.Repo

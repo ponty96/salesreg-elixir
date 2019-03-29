@@ -4,8 +4,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.ContactSchema do
   """
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
-  alias SalesRegWeb.GraphQL.Resolvers.ContactResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  alias SalesRegWeb.GraphQL.MiddleWares.Policy
+  alias SalesRegWeb.GraphQL.Resolvers.ContactResolver
 
   ### MUTATIONS
   object :contact_mutations do
@@ -17,6 +18,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.ContactSchema do
       arg(:contact_id, :uuid)
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&ContactResolver.upsert_contact/2)
     end
 
@@ -27,6 +29,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.ContactSchema do
       arg(:contact_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&ContactResolver.delete_contact/2)
     end
   end
@@ -42,6 +45,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.ContactSchema do
       arg(:query, :string)
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&ContactResolver.list_company_contacts/2)
     end
 
@@ -53,6 +57,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.ContactSchema do
       arg(:name, non_null(:string))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&ContactResolver.search_customers_by_name/2)
     end
   end
