@@ -1,0 +1,13 @@
+<div style="max-width: 50%; margin:100px auto">
+  <img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/yp-logo-color-faq.svg"
+    style="width:100px; height:auto" alt="yipcart logo" />
+  <h4>Your account has been created!</h4>
+  <p>Thanks for signing up with Yipcart, please follow this link to activate your account</p>
+  <a href=<%= confirm_email_link %>> <%= confirm_email_link %> </a>
+  <p style="margin-top:20px">Have fun and don't hesitate to contact us with your feedback</p>
+
+  <div style="margin-top:70px;">
+    <p>The Yipcart Team.</p>
+    <a href="https://www.yipcart.com">https://Yipcart.com</a>
+  </div>
+</div>

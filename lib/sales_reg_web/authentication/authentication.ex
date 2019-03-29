@@ -5,24 +5,20 @@ defmodule SalesRegWeb.Authentication do
   use SalesRegWeb, :context
 
   def login(user_params) do
-    user = Accounts.get_user_by_email(String.downcase(user_params.email))
-    password = user_params.password
-
-    case user do
-      %User{} ->
-        if check_password(user, password) == true do
-          {:ok, token, _} = TokenImpl.encode_and_sign(user, %{}, token_type: "access")
-
-          {:ok, {old_token, _old_claim}, {new_token, _new_claim}} =
-            TokenImpl.exchange(token, "access", "refresh", ttl: {30, :days})
-
-          {:ok, %{user: user, access_token: old_token, refresh_token: new_token}}
-        else
-          {:error, [%{key: "email", message: "Email | Password Incorrect"}]}
-        end
-
+    with %User{} = user <- Accounts.get_user_by_email(user_params.email),
+        true <- check_password(user, user_params.password),
+        :ok <- handle_user_company_response(user) do
+      
+      sign_in(user)
+    else
       nil ->
         {:error, [%{key: "email", message: "Something went wrong. Try again!"}]}
+      
+      false ->
+        {:error, [%{key: "email", message: "Email | Password Incorrect"}]}
+
+      :error ->
+        {:error, [%{key: "email", message: "Confirm your email to continue"}]}
     end
   end
 
@@ -110,6 +106,28 @@ defmodule SalesRegWeb.Authentication do
   def authenticate(%Ueberauth.Auth{provider: :identity} = auth) do
     Accounts.get_user_by_email(auth.uid)
     |> authorize(auth)
+  end
+
+  def sign_in(user) do
+    {:ok, token, _} = 
+      TokenImpl.encode_and_sign(user, %{}, token_type: "access")
+    {:ok, {old_token, _old_claim}, {new_token, _new_claim}} =
+      TokenImpl.exchange(token, "access", "refresh", ttl: {30, :days})
+
+    {:ok, %{user: user, access_token: old_token, refresh_token: new_token}}
+  end
+
+  defp handle_user_company_response(user) do
+    case Accounts.get_user_company(user) do
+      %Company{} ->
+        if user.confirmed_email? == true do
+          :ok
+        else 
+          :error
+        end
+      nil ->
+        :ok
+    end
   end
 
   defp tokens_exist?(access_token, refresh_token) do

@@ -14,6 +14,8 @@ defmodule SalesReg.Accounts.User do
     field(:gender, :string)
     field(:last_name, :string)
     field(:hashed_password, :string)
+    field(:confirmed_email?, :boolean, default: false)
+    field(:hashed_str, :string)
 
     # required for registration
     field(:password, :string, virtual: true)
@@ -30,7 +32,7 @@ defmodule SalesReg.Accounts.User do
   end
 
   @required_fields [:email]
-  @registration_fields [:password, :password_confirmation]
+  @registration_fields [:password, :password_confirmation, :hashed_str]
 
   @fields [:profile_picture, :date_of_birth]
   @update_fields [:first_name, :last_name, :gender]
@@ -41,6 +43,12 @@ defmodule SalesReg.Accounts.User do
     |> change(attrs)
     |> cast(attrs, @update_fields ++ @fields)
     |> validate_required(@update_fields ++ [:date_of_birth])
+  end
+
+  def confirm_email_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:confirmed_email?])
+    |> validate_required([:confirmed_email?])
   end
 
   def registration_changeset(user, attrs) do

@@ -115,6 +115,14 @@ defmodule SalesReg.Business do
     Repo.insert_all(CompanyEmailTemplate, templates)
   end
 
+  def return_file_content(type) do
+    {:ok, binary} =
+      Path.expand("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
+      |> File.read()
+
+    binary
+  end
+
   def get_company_share_domain() do
     System.get_env("SHORT_URL") || "https://ycartstag.me"
   end
@@ -272,14 +280,6 @@ defmodule SalesReg.Business do
     end)
   end
 
-  defp return_file_content(type) do
-    {:ok, binary} =
-      Path.expand("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
-      |> File.read()
-
-    binary
-  end
-
   defp put_items_amount(params) do
     total_amount =
       params.expense_items
@@ -298,27 +298,6 @@ defmodule SalesReg.Business do
     end
 
     calc_expense_amount(t, acc + val.(h.amount))
-  end
-
-  def insert_company_email_temps(company_id) do
-    templates =
-      Enum.map(@email_types, fn type ->
-        %{
-          body: return_file_content(type),
-          type: type,
-          company_id: company_id
-        }
-      end)
-
-    Repo.insert_all(CompanyEmailTemplate, templates)
-  end
-
-  defp return_file_content(type) do
-    {:ok, binary} =
-      Path.expand("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
-      |> File.read()
-
-    binary
   end
 
   # The business name is the slug of the company

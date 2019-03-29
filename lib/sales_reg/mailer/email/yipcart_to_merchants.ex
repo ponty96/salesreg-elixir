@@ -70,13 +70,7 @@ defmodule SalesReg.Mailer.YipcartToCustomers do
     |> send_email(html_body, subject)
   end
 
-  defp return_file_content(type) do
-    {:ok, binary} =
-      Path.expand("./lib/sales_reg_web/templates/mailer/#{type}" <> ".html.eex")
-      |> File.read()
-
-    binary
-  end
+  defdelegate return_file_content(type), to: Business, as: :return_file_content
 
   defp send_email(contact_email, html_body, subject) do
     new_email(
