@@ -4,6 +4,7 @@ defmodule SalesReg.Order.Receipt do
   """
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Base
   alias SalesReg.Business
   alias SalesReg.Repo
 
@@ -11,7 +12,7 @@ defmodule SalesReg.Order.Receipt do
   @foreign_key_type :binary_id
 
   schema "receipts" do
-    field(:amount_paid, :string)
+    field(:amount_paid, :decimal)
     field(:time_paid, :string)
     field(:payment_method, :string, default: "card")
     field(:pdf_url, :string)
@@ -39,7 +40,10 @@ defmodule SalesReg.Order.Receipt do
   @optional_fields [:pdf_url, :transaction_id]
 
   def changeset(receipt, attrs) do
-    new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Receipt, attrs)
+    new_attrs =
+      SalesReg.Order.Receipt
+      |> SalesReg.Order.put_ref_id(attrs)
+      |> Base.transform_string_keys_to_numbers([:amount_paid])
 
     receipt
     |> cast(new_attrs, @required_fields ++ @optional_fields)
@@ -47,7 +51,10 @@ defmodule SalesReg.Order.Receipt do
   end
 
   def via_cash_changeset(receipt, attrs) do
-    new_attrs = SalesReg.Order.put_ref_id(SalesReg.Order.Invoice, attrs)
+    new_attrs =
+      SalesReg.Order.Invoice
+      |> SalesReg.Order.put_ref_id(attrs)
+      |> Base.transform_string_keys_to_numbers([:amount_paid])
 
     receipt
     |> cast(new_attrs, @required_fields ++ @optional_fields)
