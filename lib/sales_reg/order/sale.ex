@@ -4,6 +4,7 @@ defmodule SalesReg.Order.Sale do
   """
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Base
   alias SalesReg.Business
   alias SalesReg.Repo
 
@@ -15,11 +16,11 @@ defmodule SalesReg.Order.Sale do
     field(:date, :string)
     field(:status, :string, default: "pending")
     field(:payment_method, :string)
-    field(:tax, :string)
-    field(:discount, :string)
+    field(:tax, :decimal)
+    field(:discount, :decimal)
     field(:ref_id, :string)
-    field(:charge, :string)
-    field(:delivery_fee, :string, default: "0")
+    field(:charge, :decimal)
+    field(:delivery_fee, :decimal, default: Decimal.new(0.0))
 
     field(:state, :string, virtual: true)
 
@@ -46,13 +47,23 @@ defmodule SalesReg.Order.Sale do
     :charge
   ]
 
-  @optional_fields [:status, :tax, :discount, :payment_method, :bonanza_id, :delivery_fee]
+  @optional_fields [
+    :status,
+    :tax,
+    :discount,
+    :payment_method,
+    :bonanza_id,
+    :delivery_fee
+  ]
 
   @doc false
   def changeset(sale, attrs) do
+    new_attrs =
+      Base.transform_string_keys_to_numbers(attrs, [:discount, :charge, :delivery_fee, :tax])
+
     sale
     |> Repo.preload([:items, :location])
-    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> before_update_callback(attrs)
     |> validate_required(@required_fields)
     |> cast_assoc(:items)

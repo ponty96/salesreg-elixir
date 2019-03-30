@@ -4,12 +4,13 @@ defmodule SalesReg.Order.DeliveryFee do
   """
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Base
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
   schema "delivery_fees" do
-    field(:fee, :string)
+    field(:fee, :decimal)
     field(:state, :string)
     field(:region, :string)
 
@@ -29,8 +30,10 @@ defmodule SalesReg.Order.DeliveryFee do
   @optional_fields []
 
   def changeset(delivery_fee, attrs) do
+    new_attrs = Base.transform_string_keys_to_numbers(attrs, [:fee])
+
     delivery_fee
-    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:user)
     |> assoc_constraint(:company)

@@ -4,12 +4,13 @@ defmodule SalesReg.SpecialOffer.BonanzaItem do
   """
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Base
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "bonanza_items" do
-    field(:price_slash_to, :string)
-    field(:max_quantity, :string)
+    field(:price_slash_to, :decimal)
+    field(:max_quantity, :decimal)
 
     belongs_to(:product, SalesReg.Store.Product)
     belongs_to(:bonanza, SalesReg.SpecialOffer.Bonanza)
@@ -27,8 +28,10 @@ defmodule SalesReg.SpecialOffer.BonanzaItem do
 
   @doc false
   def changeset(bonanza, attrs) do
+    new_attrs = Base.transform_string_keys_to_numbers(attrs, [:price_slash_to, :max_quantity])
+
     bonanza
-    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:product)
   end

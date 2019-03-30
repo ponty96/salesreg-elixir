@@ -4,6 +4,7 @@ defmodule SalesReg.Store.Product do
   """
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Base
   alias SalesReg.Business
   alias SalesReg.Repo
   alias SalesReg.Store
@@ -14,10 +15,10 @@ defmodule SalesReg.Store.Product do
   schema "products" do
     field(:description, :string)
     field(:name, :string)
-    field(:sku, :string)
-    field(:minimum_sku, :string)
-    field(:cost_price, :string)
-    field(:price, :string)
+    field(:sku, :decimal)
+    field(:minimum_sku, :decimal)
+    field(:cost_price, :decimal)
+    field(:price, :decimal)
     field(:featured_image, :string)
     field(:images, {:array, :string})
     field(:is_featured, :boolean)
@@ -73,11 +74,14 @@ defmodule SalesReg.Store.Product do
   ]
   @doc false
   def changeset(product, attrs) do
+    new_attrs =
+      Base.transform_string_keys_to_numbers(attrs, [:sku, :minimum_sku, :price, :cost_price])
+
     product
     |> Repo.preload(:categories)
     |> Repo.preload(:tags)
     |> Repo.preload(:option_values)
-    |> cast(attrs, @fields ++ @required_fields)
+    |> cast(new_attrs, @fields ++ @required_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
