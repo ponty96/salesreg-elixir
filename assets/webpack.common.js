@@ -1,11 +1,7 @@
 const CleanWebpackPlugin = require('clean-webpack-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const ProvidePlugin = require('webpack/lib/ProvidePlugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const path = require('path')
-const glob = require('glob')
-const PurifyCSSPlugin = require('purifycss-webpack')
-const autoprefixer = require('autoprefixer')
 const webpack = require('webpack')
 const {
   CheckerPlugin
@@ -13,7 +9,7 @@ const {
 
 module.exports = {
   entry: {
-    app: ['./js/app.js', './css/app.scss']
+    app: ['./js/app.tsx', './css/app.scss']
   },
 
   output: {
@@ -27,9 +23,9 @@ module.exports = {
 
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
-    modules: ['node_modules', __dirname + '/web/static/js'],
+    modules: ['node_modules', __dirname + '/static/js'],
     alias: {
-      jquery: path.resolve(__dirname + '/node_modules/jquery/src/jquery.js')
+      "@": path.resolve('./js')
     }
   },
 
