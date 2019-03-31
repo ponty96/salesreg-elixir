@@ -28,6 +28,7 @@ defmodule SalesReg.Order.DeliveryFee do
     :company_id
   ]
   @optional_fields []
+  @number_fields [:fee]
 
   def changeset(delivery_fee, attrs) do
     new_attrs = Base.transform_string_keys_to_numbers(attrs, [:fee])
@@ -41,6 +42,7 @@ defmodule SalesReg.Order.DeliveryFee do
       name: :state_region_index,
       message: "This region has already been taken for this state."
     )
+    |> Base.validate_changeset_number_values(@number_fields)
   end
 
   def delete_changeset(delivery_fee) do

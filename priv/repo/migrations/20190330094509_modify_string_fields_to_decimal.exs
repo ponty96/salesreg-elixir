@@ -19,7 +19,7 @@ defmodule SalesReg.Repo.Migrations.ModifyStringFieldsToDecimal do
     execute(
       """
         ALTER TABLE items
-        ALTER COLUMN quantity TYPE numeric USING quantity::numeric(10,2),
+        ALTER COLUMN quantity TYPE numeric USING quantity::int,
         ALTER COLUMN unit_price TYPE numeric USING unit_price::numeric(10,2);
       """
     )
@@ -47,15 +47,15 @@ defmodule SalesReg.Repo.Migrations.ModifyStringFieldsToDecimal do
       """
         ALTER TABLE bonanza_items
         ALTER COLUMN price_slash_to TYPE numeric USING price_slash_to::numeric(10,2),
-        ALTER COLUMN max_quantity TYPE numeric USING max_quantity::numeric(10,2);
+        ALTER COLUMN max_quantity TYPE numeric USING max_quantity::int;
       """
     )
 
     execute(
       """
         ALTER TABLE products
-        ALTER COLUMN sku TYPE numeric USING sku::numeric(10,2),
-        ALTER COLUMN minimum_sku TYPE numeric USING minimum_sku::numeric(10,2),
+        ALTER COLUMN sku TYPE numeric USING sku::int,
+        ALTER COLUMN minimum_sku TYPE numeric USING minimum_sku::int,
         ALTER COLUMN cost_price TYPE numeric USING cost_price::numeric(10,2),
         ALTER COLUMN price TYPE numeric USING price::numeric(10,2);
       """

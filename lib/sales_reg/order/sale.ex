@@ -56,10 +56,11 @@ defmodule SalesReg.Order.Sale do
     :delivery_fee
   ]
 
+  @number_fields [:tax, :discount, :charge, :delivery_fee]
+
   @doc false
   def changeset(sale, attrs) do
-    new_attrs =
-      Base.transform_string_keys_to_numbers(attrs, [:discount, :charge, :delivery_fee, :tax])
+    new_attrs = Base.transform_string_keys_to_numbers(attrs, @number_fields)
 
     sale
     |> Repo.preload([:items, :location])
@@ -73,6 +74,7 @@ defmodule SalesReg.Order.Sale do
     |> assoc_constraint(:contact)
     # |> validate_payment_method()
     |> validate_inclusion(:status, @order_status)
+    |> Base.validate_changeset_number_values(@number_fields)
   end
 
   # defp validate_payment_method(changeset) do
