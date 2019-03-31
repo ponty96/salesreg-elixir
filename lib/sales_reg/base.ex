@@ -23,12 +23,10 @@ defmodule SalesReg.Base do
       when is_map(changeset) and is_list(keys) do
     changeset.changes
     |> Map.take(keys)
-    |> Enum.map(fn {key, val} ->
-      if val <= 0 do
-        key
-      end
+    |> Enum.filter(fn {_key, val} ->
+      val <= 0
     end)
-    |> Enum.reduce(changeset, fn key, acc ->
+    |> Enum.reduce(changeset, fn {key, _val}, acc ->
       Changeset.add_error(acc, key, "Value must be greater than one")
     end)
   end
