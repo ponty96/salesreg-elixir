@@ -10,7 +10,7 @@ defmodule SalesReg.SpecialOffer.BonanzaItem do
   @foreign_key_type :binary_id
   schema "bonanza_items" do
     field(:price_slash_to, :decimal)
-    field(:max_quantity, :decimal)
+    field(:max_quantity, :integer)
 
     belongs_to(:product, SalesReg.Store.Product)
     belongs_to(:bonanza, SalesReg.SpecialOffer.Bonanza)
@@ -25,15 +25,20 @@ defmodule SalesReg.SpecialOffer.BonanzaItem do
   ]
 
   @optional_fields []
+  @number_fields [:price_slash_to, :max_quantity]
 
   @doc false
   def changeset(bonanza, attrs) do
-    new_attrs = Base.transform_string_keys_to_numbers(attrs, [:price_slash_to, :max_quantity])
+    new_attrs =
+      attrs
+      |> Base.transform_string_keys_to_numbers([:price_slash_to])
+      |> Base.convert_string_keys_integer([:max_quantity])
 
     bonanza
     |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:product)
+    |> Base.validate_changeset_number_values(@number_fields)
   end
 
   def delete_changeset(bonanza_item) do

@@ -30,6 +30,7 @@ defmodule SalesReg.Order.Activity do
     :company_id
   ]
   @optional_fields []
+  @number_fields [:amount]
 
   def changeset(activity, attrs) do
     new_attrs = Base.transform_string_keys_to_numbers(attrs, [:amount])
@@ -41,5 +42,6 @@ defmodule SalesReg.Order.Activity do
     |> assoc_constraint(:contact)
     |> assoc_constraint(:company)
     |> validate_inclusion(:type, @types)
+    |> Base.validate_changeset_number_values(@number_fields)
   end
 end

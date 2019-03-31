@@ -15,8 +15,8 @@ defmodule SalesReg.Store.Product do
   schema "products" do
     field(:description, :string)
     field(:name, :string)
-    field(:sku, :decimal)
-    field(:minimum_sku, :decimal)
+    field(:sku, :integer)
+    field(:minimum_sku, :integer)
     field(:cost_price, :decimal)
     field(:price, :decimal)
     field(:featured_image, :string)
@@ -72,10 +72,15 @@ defmodule SalesReg.Store.Product do
     :featured_image,
     :product_group_id
   ]
+
+  @number_fields [:sku, :minimum_sku, :cost_price, :price]
+  
   @doc false
   def changeset(product, attrs) do
     new_attrs =
-      Base.transform_string_keys_to_numbers(attrs, [:sku, :minimum_sku, :price, :cost_price])
+      attrs
+      |> Base.transform_string_keys_to_numbers([:price, :cost_price])
+      |> Base.convert_string_keys_integer([:sku, :minimum_sku])
 
     product
     |> Repo.preload(:categories)
@@ -91,6 +96,7 @@ defmodule SalesReg.Store.Product do
     |> no_assoc_constraint(:items, message: "This product is still associated with sales")
     |> add_product_slug(attrs)
     |> unique_constraint(:slug)
+    |> Base.validate_changeset_number_values(@number_fields)
   end
 
   @doc false
