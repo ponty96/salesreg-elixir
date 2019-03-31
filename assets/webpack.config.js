@@ -1,51 +1,58 @@
-const env =  process.env.NODE_ENV
-const path =  require('path');
-const ExtractTextPlugin =  require("extract-text-webpack-plugin");
+const env = process.env.NODE_ENV;
+const path = require('path');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 module.exports = {
-	entry: ['./js/app.js', './css/app.scss'],
+	entry: [ './js/app.js', './css/app.scss' ],
 	output: {
-		path: path.resolve(__dirname, "../priv/static"),
-		filename: "js/app.js"
+		path: path.resolve(__dirname, '../priv/static'),
+		filename: 'js/app.js'
 	},
 	resolve: {
-		extensions: [".ts", ".tsx", ".js", ".jsx"],
-		modules: ["deps", "node_modules"]
+		extensions: [ '.ts', '.tsx', '.js', '.jsx' ],
+		modules: [ 'deps', 'node_modules' ]
 	},
 	module: {
-		rules: [{
-			test: /\.scss$/,
-			use: ExtractTextPlugin.extract({
-				use: [{
-					loader: "css-loader",
+		rules: [
+			{
+				test: /\.scss$/,
+				use: ExtractTextPlugin.extract({
+					use: [
+						{
+							loader: 'css-loader',
+							options: {
+								minimize: true,
+								sourceMap: env === 'production'
+							}
+						},
+						{
+							loader: 'sass-loader',
+							options: {
+								includePaths: [ path.resolve('node_modules') ]
+							}
+						}
+					],
+					fallback: 'style-loader'
+				})
+			},
+			{
+				test: /\.tsx?$/,
+				loader: 'awesome-typescript-loader'
+			},
+			{
+				test: /\.js$/,
+				exclude: /(node_modules|bower_components)/,
+				use: {
+					loader: 'babel-loader',
 					options: {
-						minimize: true,
-						sourceMap: env ===  'production',
+						presets: [ '@babel/preset-env' ]
 					}
-				}, {
-					loader: "sass-loader",
-					options: {
-						includePaths: [path.resolve('node_modules')]
-					}
-				}],
-				fallback: "style-loader"
-			})
-		}, {
-			test: /\.tsx?$/,
-			loader: "awesome-typescript-loader"
-		}, {
-			test: /\.js$/,
-			exclude: /(node_modules|bower_components)/,
-			use: {
-				'loader': 'babel-loader',
-				options: {
-					presets: ['@babel/preset-env']
 				}
 			}
-		}]
+		]
 	},
 	plugins: [
-		new  ExtractTextPlugin({
-		filename: "css/app.css"
-	})
+		new ExtractTextPlugin({
+			filename: 'css/app.css'
+		})
 	]
 };

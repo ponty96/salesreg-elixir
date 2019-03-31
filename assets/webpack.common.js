@@ -114,7 +114,7 @@ module.exports = {
 	},
 	plugins: [
 		new CheckerPlugin(),
-		new CleanWebpackPlugin([ 'priv/static' ]),
+		new CleanWebpackPlugin([ path.resolve(__dirname, '../priv/static') ]),
 		new CopyWebpackPlugin([
 			{
 				from: __dirname + '/static/'
