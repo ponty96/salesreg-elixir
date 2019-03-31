@@ -74,7 +74,7 @@ defmodule SalesReg.Store.Product do
   ]
 
   @number_fields [:sku, :minimum_sku, :cost_price, :price]
-  
+
   @doc false
   def changeset(product, attrs) do
     new_attrs =
