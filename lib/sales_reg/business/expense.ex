@@ -16,7 +16,10 @@ defmodule SalesReg.Business.Expense do
     field(:date, :date)
     field(:total_amount, :decimal)
     field(:items_amount, :decimal, virtual: true)
+
     field(:total_in_group, :decimal, virtual: true)
+    field(:grouped_by, :decimal, virtual: true)
+
     field(:payment_method, :string)
 
     belongs_to(:paid_by, SalesReg.Accounts.User, foreign_key: :paid_by_id)

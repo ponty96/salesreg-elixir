@@ -13,8 +13,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.AnalyticsSchema do
       query for dashboard expense info
     """
     field :expense_dashboard_info, :expense_dashboard_data do
-      arg(:start_date, :date)
-      arg(:end_date, :date)
+      arg(:query, :graph_query_input)
 
       middleware(Authorize)
       middleware(Policy)
