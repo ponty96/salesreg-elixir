@@ -4,6 +4,7 @@ defmodule SalesReg.Order.Activity do
   """
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Base
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -12,7 +13,7 @@ defmodule SalesReg.Order.Activity do
 
   schema "activities" do
     field(:type, :string)
-    field(:amount, :string)
+    field(:amount, :decimal)
 
     belongs_to(:invoice, SalesReg.Order.Invoice)
     belongs_to(:contact, SalesReg.Business.Contact)
@@ -29,14 +30,18 @@ defmodule SalesReg.Order.Activity do
     :company_id
   ]
   @optional_fields []
+  @number_fields [:amount]
 
   def changeset(activity, attrs) do
+    new_attrs = Base.transform_string_keys_to_numbers(attrs, [:amount])
+
     activity
-    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast(new_attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:invoice)
     |> assoc_constraint(:contact)
     |> assoc_constraint(:company)
     |> validate_inclusion(:type, @types)
+    |> Base.validate_changeset_number_values(@number_fields)
   end
 end

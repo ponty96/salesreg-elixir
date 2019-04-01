@@ -4,6 +4,7 @@ defmodule SalesReg.Store.Product do
   """
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Base
   alias SalesReg.Business
   alias SalesReg.Repo
   alias SalesReg.Store
@@ -14,10 +15,10 @@ defmodule SalesReg.Store.Product do
   schema "products" do
     field(:description, :string)
     field(:name, :string)
-    field(:sku, :string)
-    field(:minimum_sku, :string)
-    field(:cost_price, :string)
-    field(:price, :string)
+    field(:sku, :integer)
+    field(:minimum_sku, :integer)
+    field(:cost_price, :decimal)
+    field(:price, :decimal)
     field(:featured_image, :string)
     field(:images, {:array, :string})
     field(:is_featured, :boolean)
@@ -71,13 +72,21 @@ defmodule SalesReg.Store.Product do
     :featured_image,
     :product_group_id
   ]
+
+  @number_fields [:sku, :minimum_sku, :cost_price, :price]
+
   @doc false
   def changeset(product, attrs) do
+    new_attrs =
+      attrs
+      |> Base.transform_string_keys_to_numbers([:price, :cost_price])
+      |> Base.convert_string_keys_integer([:sku, :minimum_sku])
+
     product
     |> Repo.preload(:categories)
     |> Repo.preload(:tags)
     |> Repo.preload(:option_values)
-    |> cast(attrs, @fields ++ @required_fields)
+    |> cast(new_attrs, @fields ++ @required_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
@@ -87,6 +96,7 @@ defmodule SalesReg.Store.Product do
     |> no_assoc_constraint(:items, message: "This product is still associated with sales")
     |> add_product_slug(attrs)
     |> unique_constraint(:slug)
+    |> Base.validate_changeset_number_values(@number_fields)
   end
 
   @doc false

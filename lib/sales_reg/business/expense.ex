@@ -7,6 +7,7 @@ defmodule SalesReg.Business.Expense do
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+  alias SalesReg.Base
   alias SalesReg.Business.Company
   alias SalesReg.Repo
 
@@ -37,6 +38,7 @@ defmodule SalesReg.Business.Expense do
     :company_id
   ]
   @optional_fields [:items_amount]
+  @number_fields [:total_amount, :items_amount]
 
   @doc false
   def changeset(expense, attrs) do
@@ -47,6 +49,7 @@ defmodule SalesReg.Business.Expense do
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
     |> assoc_constraint(:paid_by)
+    |> Base.validate_changeset_number_values(@number_fields)
     |> validate_total_amount(expense)
   end
 
