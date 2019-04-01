@@ -1233,5 +1233,20 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   object :expense_aggregate do
     field(:title, :string)
     field(:total_in_group, :float)
+    field(:grouped_by, :string)
+  end
+
+  input_object :graph_query_input do
+    field(:start_date, non_null(:date))
+    field(:end_date, non_null(:date))
+    field(:group_by, non_null(:graph_group_by), default_value: "day")
+  end
+
+  @desc ""
+  enum :graph_group_by do
+    value(:daily, as: "day")
+    value(:weekly, as: "week")
+    value(:monthly, as: "month")
+    value(:yearly, as: "year")
   end
 end

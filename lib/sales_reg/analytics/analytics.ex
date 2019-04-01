@@ -4,8 +4,7 @@ defmodule SalesReg.Analytics do
   """
   use SalesRegWeb, :context
 
-  def dashboard_info(:expense, start_date, end_date, company_id) do
-    fields = [:title]
+  def dashboard_info(:expense, start_date, end_date, group_by, company_id) do
     query = expenses_within_range(start_date, end_date, company_id)
 
     total_expense =
@@ -16,15 +15,18 @@ defmodule SalesReg.Analytics do
     top_expenses =
       Repo.all(
         from(e in query,
-          select: merge(map(e, ^fields), %{total_in_group: sum(e.total_amount)}),
-          group_by: e.title,
-          order_by: [desc: sum(e.total_amount)],
-          limit: 5
+          select: %{
+            total_in_group: sum(e.total_amount),
+            grouped_by: min(e.date),
+            title: max(e.title)
+          },
+          group_by: [fragment("date_trunc(?, ?)", ^group_by, e.date)],
+          order_by: [desc: sum(e.total_amount)]
         )
       )
 
     top_expenses = top_expenses |> convert_decimal_items_to_float(:total_in_group)
-    {:ok, %{total_expense: total_expense, top_expenses: top_expenses}}
+    {:ok, %{total_expense: total_expense, top_expenses: top_expenses, group_by: group_by}}
   end
 
   defp expenses_within_range(start_date, end_date, company_id) do
