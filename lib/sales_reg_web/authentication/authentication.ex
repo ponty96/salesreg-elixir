@@ -6,19 +6,21 @@ defmodule SalesRegWeb.Authentication do
 
   def login(user_params) do
     with %User{} = user <- Accounts.get_user_by_email(user_params.email),
-        true <- check_password(user, user_params.password),
-        :ok <- handle_user_company_response(user) do
-      
-      sign_in(user)
+         true <- check_password(user, user_params.password) do
+      # rel_date is the naive date time of April 1st 2019
+      {:ok, rel_date} = NaiveDateTime.new(2019, 4, 1, 0, 0, 0)
+
+      if NaiveDateTime.diff(rel_date, user.inserted_at) > 0 do
+        sign_in(user)
+      else
+        handle_user_company_response(user)
+      end
     else
       nil ->
         {:error, [%{key: "email", message: "Something went wrong. Try again!"}]}
-      
+
       false ->
         {:error, [%{key: "email", message: "Email | Password Incorrect"}]}
-
-      :error ->
-        {:error, [%{key: "email", message: "Confirm your email to continue"}]}
     end
   end
 
@@ -109,8 +111,8 @@ defmodule SalesRegWeb.Authentication do
   end
 
   def sign_in(user) do
-    {:ok, token, _} = 
-      TokenImpl.encode_and_sign(user, %{}, token_type: "access")
+    {:ok, token, _} = TokenImpl.encode_and_sign(user, %{}, token_type: "access")
+
     {:ok, {old_token, _old_claim}, {new_token, _new_claim}} =
       TokenImpl.exchange(token, "access", "refresh", ttl: {30, :days})
 
@@ -121,12 +123,13 @@ defmodule SalesRegWeb.Authentication do
     case Accounts.get_user_company(user) do
       %Company{} ->
         if user.confirmed_email? == true do
-          :ok
-        else 
-          :error
+          sign_in(user)
+        else
+          {:error, [%{key: "email", message: "Confirm your email to continue"}]}
         end
+
       nil ->
-        :ok
+        sign_in(user)
     end
   end
 

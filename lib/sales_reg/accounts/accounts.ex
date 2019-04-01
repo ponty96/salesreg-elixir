@@ -14,23 +14,26 @@ defmodule SalesReg.Accounts do
   end
 
   def register_user(user_params) do
-    user_params = 
+    user_params =
       user_params
       |> Map.put_new(:hashed_str, gen_hash(user_params.first_name))
-    
+
     case create_user(user_params) do
       {:ok, user} ->
-        query_params_str = %{
-          "email" => user.email,
-          "hash" => user.hashed_str
-        } |> URI.encode_query()
-        
+        query_params_str =
+          %{
+            "email" => user.email,
+            "hash" => user.hashed_str
+          }
+          |> URI.encode_query()
+
         link = "#{System.get_env("APP_URL")}confirm-email?#{query_params_str}"
         sub = "Confirm email"
+
         html_body =
           return_file_content("yc_email_confirm_email")
           |> EEx.eval_string(confirm_email_link: link)
-        
+
         Email.send_email(user.email, sub, html_body)
         Authentication.sign_in(user)
 
@@ -41,8 +44,7 @@ defmodule SalesReg.Accounts do
 
   def confirm_user_email(params) do
     with %User{} = user <- get_user_by_email(params["email"]),
-        true <- validate_hash(params, user) do
-
+         true <- validate_hash(params, user) do
       user
       |> User.confirm_email_changeset(%{confirmed_email?: true})
       |> Repo.update()
