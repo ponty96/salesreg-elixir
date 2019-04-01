@@ -4,6 +4,7 @@ defmodule SalesReg.Business.ExpenseItem do
   """
   use Ecto.Schema
   import Ecto.Changeset
+  alias SalesReg.Base
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -19,11 +20,13 @@ defmodule SalesReg.Business.ExpenseItem do
 
   @required_fields [:item_name, :amount]
   @optional_fields [:expense_id]
+  @number_fields[:amount]
 
   @doc false
   def changeset(expense_item, attrs) do
     expense_item
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
+    |> Base.validate_changeset_number_values(@number_fields)
   end
 end

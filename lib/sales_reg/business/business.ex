@@ -290,6 +290,7 @@ defmodule SalesReg.Business do
   end
 
   defp calc_expense_amount([], 0), do: 0.0
+
   defp calc_expense_amount([], acc), do: Float.round(acc, 2)
 
   defp calc_expense_amount([h | t], acc) do
