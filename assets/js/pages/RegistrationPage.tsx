@@ -19,12 +19,12 @@ class RegistrationPage extends React.Component<any, any> {
 
         return (
             <div className="panel-wrapper">
-                <a href="//www.yipcart.com" class="yipcart-logo">YipCart</a>
-                <div className="feature-panel feature-panel--enterprise" style={{width: '50%'}}>
+                {/* <a href="//www.yipcart.com" class="yipcart-logo">YipCart</a> */}
+                <div className="feature-panel feature-panel--enterprise woman-picture1" style={{width: '50%'}}>
                     <div className="enterprise-panel__content">
                         <h2 className="enterprise-panel__header">
                             <small className="enterprise-panel__subheader">
-                                YipCart Lite
+                            <img src="/images/yp-white-logo.svg" className="enterprise-panel__logos" />
 							</small>
                             Management tool, built for African SME
 						</h2>
@@ -34,7 +34,7 @@ class RegistrationPage extends React.Component<any, any> {
                     </div>
                     <div className="enterprise-panel__footer">
                         <p className="enterprise-panel__footer__lead">
-                            TRUSTED BY THE WORLD'S SMARTEST COMPANIES
+                            ...
 						</p>
                         {/* <img src="/" className="enterprise-panel__logos" /> */}
                     </div>
@@ -77,6 +77,7 @@ class RegistrationPage extends React.Component<any, any> {
                                         <TextField
                                             id="outlined-with-placeholder"
                                             label="Full name"
+                                            type="text"
                                             placeholder="Segun Ayomide"
                                             margin="normal"
                                             variant="outlined"
@@ -86,6 +87,7 @@ class RegistrationPage extends React.Component<any, any> {
                                         <TextField
                                             id="outlined-with-placeholder"
                                             label="Email address"
+                                            type="email"
                                             placeholder="gbenga@badmos.com"
                                             margin="normal"
                                             variant="outlined"
@@ -95,6 +97,7 @@ class RegistrationPage extends React.Component<any, any> {
                                         <TextField
                                             id="outlined-with-placeholder"
                                             label="Password"
+                                            type="password"
                                             placeholder="type password"
                                             margin="normal"
                                             variant="outlined"

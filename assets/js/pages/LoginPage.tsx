@@ -18,12 +18,12 @@ class LoginPage extends React.Component< any, any> {
 
 		return (
 			<div className="panel-wrapper">
-				<a href="//www.yipcart.com" class="yipcart-logo">YipCart</a>
-				<div className="feature-panel feature-panel--enterprise" >
+				{/* <a href="//www.yipcart.com" class="yipcart-logo">YipCart</a> */}
+				<div className="feature-panel feature-panel--enterprise">
 					<div className="enterprise-panel__content">
 						<h2 className="enterprise-panel__header">
 							<small className="enterprise-panel__subheader">
-								YipCart Lite
+							<img src="/images/yp-white-logo.svg" className="enterprise-panel__logos" />
 							</small>
 							Management tool, built for African SME
 						</h2>
@@ -33,7 +33,7 @@ class LoginPage extends React.Component< any, any> {
 					</div>
 					<div className="enterprise-panel__footer">
 						<p className="enterprise-panel__footer__lead">
-							TRUSTED BY THE WORLD'S SMARTEST COMPANIES
+							...
 						</p>
 						{/* <img src="/" className="enterprise-panel__logos" /> */}
 					</div>
@@ -70,6 +70,7 @@ class LoginPage extends React.Component< any, any> {
 										<TextField
 										id="outlined-with-placeholder"
 										label="Email address"
+										type="text"
 										placeholder="gbenga@badmos.com"
 										margin="normal"
 										variant="outlined"
@@ -80,6 +81,7 @@ class LoginPage extends React.Component< any, any> {
 									<div>
 										<TextField
 										id="outlined-with-placeholder"
+										type="password"
 										label="Password"
 										placeholder="type password"
 										margin="normal"
