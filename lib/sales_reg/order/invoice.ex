@@ -11,7 +11,7 @@ defmodule SalesReg.Order.Invoice do
   @foreign_key_type :binary_id
 
   schema "invoices" do
-    field(:due_date, :string)
+    field(:due_date, :date)
     field(:pdf_url, :string)
     field(:ref_id, :string)
 

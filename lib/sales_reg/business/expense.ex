@@ -13,7 +13,7 @@ defmodule SalesReg.Business.Expense do
 
   schema "expenses" do
     field(:title, :string)
-    field(:date, :string)
+    field(:date, :date)
     field(:total_amount, :decimal)
     field(:items_amount, :decimal, virtual: true)
     field(:payment_method, :string)

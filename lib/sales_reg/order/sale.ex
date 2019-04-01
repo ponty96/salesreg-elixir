@@ -13,7 +13,7 @@ defmodule SalesReg.Order.Sale do
 
   @order_status ["pending", "processed", "delivering", "recalled", "delivered"]
   schema "sales" do
-    field(:date, :string)
+    field(:date, :date)
     field(:status, :string, default: "pending")
     field(:payment_method, :string)
     field(:tax, :decimal)

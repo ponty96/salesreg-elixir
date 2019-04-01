@@ -20,7 +20,7 @@ defmodule SalesReg.Business.ExpenseItem do
 
   @required_fields [:item_name, :amount]
   @optional_fields [:expense_id]
-  @number_fields[:amount]
+  @number_fields [:amount]
 
   @doc false
   def changeset(expense_item, attrs) do
