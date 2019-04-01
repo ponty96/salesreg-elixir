@@ -19,7 +19,7 @@ class RegistrationPage extends React.Component<any, any> {
 
         return (
             <div className="panel-wrapper">
-                <a href="//www.invisionapp.com" class="invision-logo">YipCart</a>
+                <a href="//www.yipcart.com" class="yipcart-logo">YipCart</a>
                 <div className="feature-panel feature-panel--enterprise" style={{width: '50%'}}>
                     <div className="enterprise-panel__content">
                         <h2 className="enterprise-panel__header">
@@ -36,7 +36,7 @@ class RegistrationPage extends React.Component<any, any> {
                         <p className="enterprise-panel__footer__lead">
                             TRUSTED BY THE WORLD'S SMARTEST COMPANIES
 						</p>
-                        <img src="/images/phoenix.png" className="enterprise-panel__logos" />
+                        {/* <img src="/" className="enterprise-panel__logos" /> */}
                     </div>
                 </div>
 
@@ -62,18 +62,18 @@ class RegistrationPage extends React.Component<any, any> {
 
                                 <form className="main-panel__form" action="/login/authenticate" method="post" novalidate="">
 
-                                    <h1 className="main-panel__heading"  style={{display: 'none'}}>
+                                    <h1 className="main-panel__heading">
                                         Register today for free.
                                         <small className="main-panel__subheading">
                                             Start using YipCart today and bla bla bla.
                                         </small>
                                     </h1>
 
-                                    <h1 className="main-panel__heading">
+                                    <h1 className="main-panel__heading" style={{display: 'none'}}>
                                         Hi Adeola, tell us about your business
                                     </h1>
 
-                                    <div className="step1of2Form" style={{display: 'none'}}>
+                                    <div className="step1of2Form">
                                         <TextField
                                             id="outlined-with-placeholder"
                                             label="Full name"
@@ -108,7 +108,7 @@ class RegistrationPage extends React.Component<any, any> {
                                         </small>
                                     </div>
 
-                                    <div className="step2of2Form">
+                                    <div className="step2of2Form"  style={{display: 'none'}}>
                                         <TextField
                                             id="outlined-with-placeholder"
                                             label="Business name"
@@ -159,12 +159,12 @@ class RegistrationPage extends React.Component<any, any> {
                                     </div>
 
                                     <div className="d-flex align-item-center flex-wrap">
-                                        <Button variant="outlined" color="primary" className={classes.button} style={{marginRight: '2rem'}}>
+                                        <Button variant="outlined" color="primary" className={classes.button} style={{marginRight: '2rem' , display: 'none'}}>
                                             Back
 										</Button>
 
                                         <Button variant="contained" color="primary" className={classes.button}>
-                                            Create Account
+                                            Continue
 										</Button>
                                     </div>
                                 </form>

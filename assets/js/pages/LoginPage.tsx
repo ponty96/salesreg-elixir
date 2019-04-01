@@ -18,7 +18,7 @@ class LoginPage extends React.Component< any, any> {
 
 		return (
 			<div className="panel-wrapper">
-				<a href="//www.invisionapp.com" class="invision-logo">YipCart</a>
+				<a href="//www.yipcart.com" class="yipcart-logo">YipCart</a>
 				<div className="feature-panel feature-panel--enterprise" >
 					<div className="enterprise-panel__content">
 						<h2 className="enterprise-panel__header">
@@ -35,7 +35,7 @@ class LoginPage extends React.Component< any, any> {
 						<p className="enterprise-panel__footer__lead">
 							TRUSTED BY THE WORLD'S SMARTEST COMPANIES
 						</p>
-						<img src="/images/phoenix.png" className="enterprise-panel__logos" />
+						{/* <img src="/" className="enterprise-panel__logos" /> */}
 					</div>
 				</div>
 

@@ -63,7 +63,7 @@ button {
   text-align: center;
 }
 
-.invision-logo {
+.yipcart-logo {
   display: block;
   position: absolute;
   z-index: 1;
@@ -79,11 +79,11 @@ button {
 
 
 @media (min-width: 1076px) {
-  .invision-logo {
-    background-image: url(/images/yp-white-logo.svg);
+  .yipcart-logo {
+    background-image: url(/images/yp-white-logo-icon.png);
   }
-  .invision-logo--single {
-    background-image: url(/assets/apps/d/img/login-signup/invision-logo-gray.png);
+  .yipcart-logo--single {
+    background-image: url(/images/yp-white-logo.svg);
   }
 }
 
@@ -99,7 +99,7 @@ button {
 
 .main-panel, .panel-wrapper {
   position: relative;
-  height: 100%
+//   height: 100%
 }
 
 .form__help {
@@ -148,7 +148,7 @@ button {
     margin-left: 460px;
   }
   .registrationPage {
-    margin-left: 50%;
+      margin-left: 50%;
   }
 }
 
@@ -190,7 +190,7 @@ button {
 }
 
 @media (min-width: 600px) {
-  .invision-logo {
+  .yipcart-logo {
     left: 38px;
   }
   .main-panel__switch {
@@ -462,19 +462,113 @@ button {
   letter-spacing: 0.91px;
 }
 
-.invision-logo-inversed {
+.yipcart-logo-inversed {
   display: block;
   position: absolute;
   z-index: 1;
   top: 38px;
   width: 30px;
   height: 30px;
-  background: url(/assets/apps/d/img/login-signup/invision-logo-inversed-white.png) no-repeat;
+  background: url(/images/yp-white-logo-icon.svg) no-repeat;
   background-size: 100%;
   color: transparent;
   font-size: 1px;
 }
 
+.sso-alternate {
+  font-size: 13px;
+  color: #596377;
+  letter-spacing: 0;
+  text-decoration: underline;
+}
+
+.sso-knocking__title {
+  font-size: 11px;
+}
+
+.sso-knocking__options {
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.sso-knocking__option-item {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  margin-left: 5px;
+  margin-right: 5px;
+  border-radius: 36px;
+  background-size: 16px 16px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #fff;
+  -webkit-transition: -webkit-box-shadow .2s ease;
+  -o-transition: box-shadow .2s ease;
+  transition: box-shadow .2s ease;
+  transition: box-shadow .2s ease, -webkit-box-shadow .2s ease;
+  cursor: pointer;
+  &:hover {
+    -webkit-box-shadow: 0 3px 15px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0 3px 15px 0 rgba(0, 0, 0, 0.25);
+  }
+}
+
+.sso-knocking__option-item--google {
+  background-image: url(/assets/apps/d/img/login-signup/sso-google-logo.png);
+}
+
+.sso-knocking__option-item--okta {
+  background-image: url(/assets/apps/d/img/login-signup/sso-okta-logo.png);
+  background-size: 18px 18px;
+}
+
+.sso-knocking__option-item--ping {
+  background-image: url(/assets/apps/d/img/login-signup/sso-ping-logo.png);
+}
+
+.sso-knocking__option-item--onelogin {
+  background-image: url(/assets/apps/d/img/login-signup/sso-onelogin-logo.png);
+  background-size: 18px 18px;
+}
+
+.sso-knock-modal {
+  position: fixed;
+  z-index: 1;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.87);
+  .content {
+    width: 760px;
+    margin: 0 auto;
+    padding: 75px 20px;
+    background: #FFF;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+  }
+  .title {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 30px;
+    font-weight: 400;
+    color: #434C5F;
+  }
+}
 
 .button {
   border-radius: 100px;
