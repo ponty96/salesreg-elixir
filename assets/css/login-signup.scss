@@ -1,0 +1,878 @@
+
+
+button {
+  border: 0;
+  outline: 0;
+  &:active, &:focus {
+    border: 0;
+    outline: 0;
+  }
+}
+
+.form__button, .form__label {
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  color: #5f697a;
+}
+
+.alert, .form__group {
+  margin-bottom: 23px;
+}
+
+.form__label, button {
+  font-family: brandon-grotesque, "Open Sans", open-sans, sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+button {
+  font-weight: 700;
+}
+
+.text--left {
+  text-align: left;
+}
+
+.text--center {
+  text-align: center;
+}
+
+.text--right {
+  text-align: right;
+}
+
+.form__legal, .main-panel--single .main-panel__heading, .main-panel__footer, .saml-button, .sso-knock-modal .content, .sso-knocking__options, .sso-knocking__title {
+  text-align: center;
+}
+
+.invision-logo {
+  display: block;
+  position: absolute;
+  z-index: 1;
+  top: 38px;
+  left: 5%;
+  width: 40px;
+  height: 40px;
+  background: url(/images/yp-white-logo-icon.svg);
+  background-size: 100%;
+  color: transparent;
+  font-size: 1px;
+}
+
+
+@media (min-width: 1076px) {
+  .invision-logo {
+    background-image: url(/images/yp-white-logo.svg);
+  }
+  .invision-logo--single {
+    background-image: url(/assets/apps/d/img/login-signup/invision-logo-gray.png);
+  }
+}
+
+
+.enterprise-panel__footer__lead, .enterprise-panel__header, .form__button, .main-panel__switch__button {
+  font-family: brandon-grotesque, "Open Sans", open-sans, sans-serif;
+}
+
+.form__select.form__select--empty select {
+  color: #C6CCD7;
+}
+
+
+.main-panel, .panel-wrapper {
+  position: relative;
+  height: 100%
+}
+
+.form__help {
+  &:focus, &:hover {
+    color: #434C5E;
+  }
+}
+
+.form__button--alternate {
+  background-color: #11B683;
+}
+
+.form__legal {
+  color: #8C96A9;
+  a {
+    color: #8C96A9;
+    &:hover {
+      color: #8C96A9;
+    }
+    text-decoration: underline;
+  }
+  margin-bottom: 0;
+  padding-bottom: 30px;
+}
+
+.alert-dynamic {
+  color: #E73737;
+}
+
+.alert-error {
+  color: #E73737;
+  display: none;
+}
+
+.alert-dynamic {
+  display: block;
+}
+
+.panel-wrapper {
+  display: block;
+  width: 100%;
+}
+
+@media (min-width: 1076px) {
+  .main-panel {
+    margin-left: 460px;
+  }
+  .registrationPage {
+    margin-left: 50%;
+  }
+}
+
+@media (min-width: 1076px) and (min-height: 600px) {
+  .panel-wrapper {
+    height: 100%;
+  }
+  .main-panel {
+    height: 100%;
+    overflow: auto;
+  }
+}
+
+.main-panel__switch {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  right: 0;
+  top: 0;
+  margin-top: 38px;
+  margin-bottom: 46px;
+  margin-right: 5%;
+  font-size: 13px;
+  color: #596377;
+  letter-spacing: 0;
+  line-height: 36px;
+  text-decoration: none !important;
+}
+
+.main-panel__switch__text {
+  display: none;
+}
+
+.main-panel__switch__button {
+    display: inline-block;
+    border: 1px solid #C6CCD7 !important;
+    padding: 0.3rem 1.5rem !important;
+    margin-left: 2rem !important;
+}
+
+@media (min-width: 600px) {
+  .invision-logo {
+    left: 38px;
+  }
+  .main-panel__switch {
+    margin-right: 38px;
+  }
+  .main-panel__switch__text {
+    display: inline;
+  }
+  .main-panel__switch__button {
+    display: inline;
+  }
+}
+
+.main-panel__table {
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+
+.main-panel__table-cell {
+  position: relative;
+  display: table-cell;
+  vertical-align: middle;
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+
+.main-panel__content {
+  clear: both;
+  width: 90%;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.main-panel__footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 20px;
+  width: 100%;
+  border-top: 1px solid #D4D9E2;
+}
+
+.main-panel__heading {
+  font-size: 28px;
+  font-weight: 400;
+  color: #434C5F;
+  margin-bottom: 50px;
+  &.referral .main-panel__subheading .emphasizeOffer {
+    color: #11B683;
+    font-weight: 700;
+  }
+}
+
+.main-panel__subheading {
+  display: block;
+  margin-top: 10px;
+  font-size: 16px;
+  color: #596377;
+}
+
+@media (min-width: 1076px) {
+  .main-panel--single {
+    margin-left: 0;
+  }
+}
+
+.main-panel__badge {
+  display: block;
+  width: 82px;
+  height: 82px;
+  margin: 0 auto;
+  border-radius: 6px;
+}
+
+.main-panel__badge--default {
+  background-image: url(/assets/apps/d/img/login-signup/InVision_logo.png);
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min--moz-device-pixel-ratio: 2), (-o-min-device-pixel-ratio: 2 / 1), (min-device-pixel-ratio: 2), (min-resolution: 192dpi), (min-resolution: 2dppx) {
+  .main-panel__badge--default {
+    background-image: url(/assets/apps/d/img/login-signup/InVision_logo@2x.png);
+    background-size: 82px 82px;
+  }
+}
+
+.feature-panel {
+  display: none;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 460px;
+  min-height: 600px;
+  height: 100%;
+  overflow: hidden;
+  background: rgba(36, 40, 56, 0.65);
+}
+
+@media (min-width: 1076px) {
+  .feature-panel {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+  }
+}
+
+@media (min-height: 600px) {
+  .feature-panel {
+    position: fixed;
+  }
+}
+
+.feature-panel--enterprise {
+  background: url(/images/yip-login-image.jpg);
+  background-size: cover;
+  text-align: center;
+}
+
+.enterprise-panel__footer {
+  position: absolute;
+  bottom: 40px;
+  left: 55px;
+  right: 55px;
+}
+
+.enterprise-panel__footer__lead {
+  margin-bottom: 28px;
+  opacity: .39;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #FFF;
+  letter-spacing: 0.91px;
+}
+
+.enterprise-panel__content {
+  padding: 0 55px;
+}
+
+.enterprise-panel__header {
+  margin-bottom: 33px;
+  opacity: .89;
+  font-weight: 600;
+  font-size: 20px;
+  color: #FFF;
+  letter-spacing: 1.42px;
+  text-transform: uppercase;
+}
+
+.enterprise-panel__button, .sso-knocking__title {
+  font-family: brandon-grotesque, "Open Sans", open-sans, sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.enterprise-panel__subheader {
+  display: block;
+  margin-bottom: 17px;
+  font-size: 12px;
+  color: #FFF;
+  letter-spacing: 1.09px;
+}
+
+.enterprise-panel__caption {
+  margin-bottom: 35px;
+  opacity: .69;
+  font-style: italic;
+  font-size: 15px;
+  color: #FFF;
+  line-height: 25px;
+}
+
+.enterprise-panel__button {
+  display: inline-block;
+  border: 2px solid #F36;
+  border-radius: 100px;
+  font-size: 10px;
+  color: #F36;
+  letter-spacing: 1px;
+  padding: 0 36px;
+  height: 36px;
+  line-height: 36px;
+  text-decoration: none;
+  &:focus, &:hover {
+    text-decoration: none;
+    color: #FFF;
+    background-color: #F36;
+  }
+}
+
+.feature-panel--sign-up {
+  background-image: url(/assets/apps/d/img/login-signup/signup-photo.jpg);
+  background-size: cover;
+}
+
+.feature-panel--quotes {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  &:before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 480px;
+    background-image: -webkit-linear-gradient(91deg, #141516 7%, rgba(43, 51, 65, 0) 100%);
+    background-image: -o-linear-gradient(91deg, #141516 7%, rgba(43, 51, 65, 0) 100%);
+    background-image: linear-gradient(-1deg, #141516 7%, rgba(43, 51, 65, 0) 100%);
+  }
+}
+
+.feature-panel--benefits-container {
+  padding: 0 40px;
+  display: none;
+}
+
+.feature-panel--benefits {
+  background: url(/assets/apps/d/img/login-signup/signup-benefits-bg.png);
+  background-size: cover;
+  color: #fff;
+  padding: 0 40px;
+}
+
+.feature-panel--benefits__header {
+  font-size: 20px;
+}
+
+.feature-panel--benefits__list {
+  color: #F36;
+  list-style-position: inside;
+  list-style-type: square;
+  margin-top: 30px;
+  padding-left: 0;
+  li {
+    font-size: 25px;
+    line-height: 25px;
+    margin-bottom: 10px;
+  }
+  span {
+    color: #fff;
+    font-size: 15px;
+    margin-left: -10px;
+    vertical-align: top;
+  }
+}
+
+.feature-panel--benefits__footer {
+  position: absolute;
+  bottom: 40px;
+  left: 55px;
+  right: 55px;
+}
+
+.feature-panel--benefits__footer__lead {
+  margin-bottom: 10px;
+  opacity: .6;
+  font-family: brandon-grotesque, "Open Sans", open-sans, sans-serif;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #FFF;
+  letter-spacing: 0.91px;
+}
+
+.invision-logo-inversed {
+  display: block;
+  position: absolute;
+  z-index: 1;
+  top: 38px;
+  width: 30px;
+  height: 30px;
+  background: url(/assets/apps/d/img/login-signup/invision-logo-inversed-white.png) no-repeat;
+  background-size: 100%;
+  color: transparent;
+  font-size: 1px;
+}
+
+
+.button {
+  border-radius: 100px;
+  font-family: brandon-grotesque, "Open Sans", open-sans, sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.sso-knock-modal {
+  .back {
+    border-radius: 100px;
+    font-family: brandon-grotesque, "Open Sans", open-sans, sans-serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .message {
+    width: 430px;
+    margin: 15px auto;
+    line-height: 24px;
+    font-size: 16px;
+    color: #8C96A9;
+  }
+  .back {
+    display: block;
+    margin: 50px auto 30px;
+    background: #11B683;
+    height: 50px;
+    line-height: 50px;
+    width: 200px;
+    font-size: 12px;
+    color: #FFF;
+    cursor: pointer;
+    -webkit-transition: border .2s ease, -webkit-box-shadow .2s ease;
+    -o-transition: box-shadow .2s ease, border .2s ease;
+    transition: box-shadow .2s ease, border .2s ease;
+    transition: box-shadow 0.2s ease, border 0.2s ease, -webkit-box-shadow 0.2s ease;
+    &:focus, &:hover {
+      -webkit-box-shadow: 0 3px 15px 0 rgba(0, 0, 0, 0.25);
+      box-shadow: 0 3px 15px 0 rgba(0, 0, 0, 0.25);
+    }
+  }
+  .contact {
+    margin-top: 55px;
+    margin-bottom: 0;
+    font-size: 14px;
+    a {
+      color: #1E8FE1;
+      text-decoration: underline;
+    }
+  }
+}
+
+.button {
+  text-decoration: none;
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.studio-download {
+  text-decoration: none;
+}
+
+.button {
+  display: inline-block;
+  background: #1E8FE1;
+  font-size: 10px;
+  color: #FFF;
+  padding: 0 36px;
+  height: 36px;
+  line-height: 36px;
+  -webkit-transition: all .2s ease;
+  -o-transition: all .2s ease;
+  transition: all 0.2s ease;
+}
+
+.sign-up__quote__logo--netflix, .sign-up__quote__logo--twitter, .sign-up__quote__logo--uber {
+  background-size: 100%;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.button {
+  &:hover {
+    -webkit-box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0 3px 12px 0 rgba(0, 0, 0, 0.25);
+  }
+  &:active {
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.button--link {
+  color: #596377;
+  background-color: transparent;
+  &:active, &:hover {
+    color: #434C5E;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    background-color: transparent;
+  }
+}
+
+.alert--success {
+  color: #14B876;
+}
+
+.alert--error {
+  color: #b94a48;
+}
+
+.quotes--twitter {
+  background-image: url(/assets/apps/d/img/login-signup/mike-davidson.jpg);
+}
+
+@media only screen and (min-device-pixel-ratio: 2), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2 / 1), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+  .quotes--twitter {
+    background-image: url(/assets/apps/d/img/login-signup/mike-davidson@2x.jpg);
+  }
+}
+
+.quotes--uber {
+  background-image: url(/assets/apps/d/img/login-signup/molly-nix.jpg);
+}
+
+@media only screen and (min-device-pixel-ratio: 2), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2 / 1), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+  .quotes--uber {
+    background-image: url(/assets/apps/d/img/login-signup/molly-nix@2x.jpg);
+  }
+}
+
+.quotes--netflix {
+  background-image: url(/assets/apps/d/img/login-signup/andy-law.jpg);
+}
+
+@media only screen and (min-device-pixel-ratio: 2), only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2 / 1), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+  .quotes--netflix {
+    background-image: url(/assets/apps/d/img/login-signup/andy-law@2x.jpg);
+  }
+}
+
+.quotes__pagination {
+  position: absolute;
+  width: 50%;
+  bottom: 40px;
+  right: 40px;
+  margin: 0;
+  text-align: right;
+}
+
+.pagination__page {
+  cursor: pointer;
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 20px;
+  border-radius: 100%;
+  background-color: rgba(255, 255, 255, 0.5);
+  -webkit-transition: background-color .2s ease;
+  -o-transition: background-color .2s ease;
+  transition: background-color 0.2s ease;
+  &.selected {
+    background-color: #fff;
+  }
+}
+
+.sign-up__quote {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0 40px;
+  &.selected {
+    display: block;
+  }
+}
+
+.sign-up__quote__excerpt {
+  position: relative;
+  margin-bottom: 40px;
+  font-size: 16px;
+  font-style: italic;
+  color: #FFF;
+  line-height: 26px;
+  opacity: 0.8;
+}
+
+.sign-up__quote__name {
+  opacity: .8;
+  font-weight: 600;
+  font-size: 11px;
+  color: #FFF;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.sign-up__quote__logo {
+  margin-bottom: 40px;
+}
+
+.sign-up__quote__logo--twitter {
+  display: block;
+  width: 39px;
+  height: 32px;
+  background-image: url(/assets/apps/d/img/login-signup/twitter-logo.png);
+}
+
+.sign-up__quote__logo--uber {
+  display: block;
+  width: 119px;
+  height: 24px;
+  background-image: url(/assets/apps/d/img/login-signup/uber-logo.png);
+}
+
+.sign-up__quote__logo--netflix {
+  display: block;
+  width: 110px;
+  height: 31px;
+  background-image: url(/assets/apps/d/img/login-signup/netflix-logo.png);
+}
+
+.hidden {
+  display: none;
+}
+
+.truncate-text {
+  overflow: hidden;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.enterprise-select-brand-title {
+  font-size: 28px;
+  font-weight: 400;
+  color: #434C5F;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.new-enterprise-select-brand {
+  border-radius: 5px;
+  width: 90%;
+  max-width: 540px;
+  margin: 0 auto;
+  form {
+    margin: 0;
+    padding: 0;
+  }
+  .new-brand-select {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    li {
+      padding: 24px;
+      color: #3e4b59;
+      cursor: pointer;
+      font: 400 16px/1em 'Open Sans';
+      margin-bottom: 16px;
+      background: #fff;
+      border-radius: 5px;
+      -webkit-box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+      box-shadow: 0 -1px 1px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+      height: 96px;
+      position: relative;
+      div, i {
+        display: inline-block;
+        margin: 0;
+        vertical-align: middle;
+      }
+      p {
+        display: inline-block;
+        margin: 0;
+        vertical-align: middle;
+        max-width: 167px;
+        overflow: hidden;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        line-height: 20px;
+        font-weight: 400;
+        color: #434C5E;
+        small {
+          overflow: hidden;
+          -o-text-overflow: ellipsis;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          color: #8C96A9;
+          display: block;
+          font-size: 13px;
+          font-weight: 400;
+        }
+      }
+      .brand-logo {
+        width: 48px;
+        height: 48px;
+        margin-right: 20px;
+        background: #fff;
+        border-radius: 3px;
+        overflow: hidden;
+        &.no-logo {
+          background: #ccc;
+        }
+        img {
+          max-width: 48px;
+          max-height: 48px;
+        }
+        &.my-inv {
+          background: 0 0;
+        }
+      }
+      input {
+        display: none;
+      }
+      .form__button {
+        display: inline;
+        margin: 0;
+        padding: 0;
+        height: 36px;
+        width: 115px;
+        border-radius: 100px;
+        border: 1px solid #a3aebf;
+        font-family: brandon-grotesque, "Open Sans", open-sans, sans-serif;
+        font-size: 10px;
+        text-align: center;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        background-color: #fff;
+        color: #596377;
+        cursor: pointer;
+        line-height: 0;
+        position: absolute;
+        right: 24px;
+        top: 30px;
+      }
+      &:focus, &:hover {
+        background: #fff;
+        border-radius: 5px;
+        -webkit-box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
+      }
+      &:focus .form__button, &:hover .form__button {
+        background-color: #11B683;
+        border-color: #11B683;
+        color: #fff;
+      }
+      &:focus .form__button {
+        &:focus, &:hover {
+          -webkit-box-shadow: 0 0;
+          box-shadow: 0 0;
+        }
+      }
+      &:hover .form__button {
+        &:focus, &:hover {
+          -webkit-box-shadow: 0 0;
+          box-shadow: 0 0;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 400px) {
+  .new-enterprise-select-brand .new-brand-select li p {
+    max-width: 250px;
+  }
+}
+
+@media (min-width: 600px) {
+  .new-enterprise-select-brand .new-brand-select li p {
+    max-width: 290px;
+  }
+}
+
+@media (max-width: 600px) {
+  .new-enterprise-select-brand .new-brand-select li .form__button {
+    display: none;
+  }
+}
+
+.studio-download {
+  position: absolute;
+  bottom: 0;
+  margin: 25px 0;
+  width: 90%;
+  max-width: 540px;
+  color: #6C7689;
+  font-size: 13px;
+  line-height: 17px;
+  span {
+    padding: 0 8px;
+  }
+  svg {
+    top: 3px;
+    position: relative;
+  }
+}

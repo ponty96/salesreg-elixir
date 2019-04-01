@@ -11,14 +11,10 @@
     <title>Hello Yipcart!</title>
   </head>
 
-  <body>
-    <div class="container" id="body">
-
-      <main role="main">
+  <body id="body">
+    <main role="main">
         <%= render @view_module, @view_template, assigns %>
       </main>
-
-    </div> <!-- /container -->
     <script src="<%= static_path(@conn, "/js/vendor.js") %>"></script>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>

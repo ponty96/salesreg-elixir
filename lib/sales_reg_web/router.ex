@@ -56,9 +56,13 @@ defmodule SalesRegWeb.Router do
     end
   end
 
+ 
+
   scope "/", SalesRegWeb do
     pipe_through(:browser)
     # get("/:business_slug/c/:category_slug", ForwardController, :forward_category)
+    get("/app/*path", PageController, :index)
+
     get("/", PageController, :index)
     get("/:business_slug/bz/:bonanza_id", ForwardController, :forward_bonanza)
     get("/:business_slug/in/:invoice_id", ForwardController, :forward_invoice)
