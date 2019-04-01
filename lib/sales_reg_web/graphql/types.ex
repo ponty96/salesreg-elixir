@@ -1221,4 +1221,17 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:email, non_null(:string))
     field(:address, :location_input)
   end
+
+  ###
+  # ANALYTICS DATA
+  ###
+  object :expense_dashboard_data do
+    field(:total_expense, :float)
+    field(:top_expenses, list_of(:expense_aggregate))
+  end
+
+  object :expense_aggregate do
+    field(:title, :string)
+    field(:total_in_group, :float)
+  end
 end
