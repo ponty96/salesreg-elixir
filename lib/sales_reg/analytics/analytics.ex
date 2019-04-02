@@ -79,6 +79,76 @@ defmodule SalesReg.Analytics do
      }}
   end
 
+  def dashboard_info(:income, start_date, end_date, group_by, company_id) do
+    incomes_in_range_query =
+      start_date
+      |> income_within_range(end_date, company_id)
+
+    total_income =
+      incomes_in_range_query
+      |> Repo.aggregate(:sum, :amount_paid)
+      |> to_float()
+
+    items_query = income_items_query(start_date, end_date, company_id)
+
+    amount_due_query =
+      from(i in items_query,
+        select: sum(i.quantity * i.unit_price)
+      )
+
+    amount_due =
+      amount_due_query
+      |> Repo.all()
+      |> Enum.at(0)
+
+    total_products = Repo.aggregate(items_query, :sum, :quantity)
+
+    top_products =
+      Repo.all(
+        from(i in items_query,
+          select: %{product_id: i.product_id, title: "", amount: sum(i.quantity * i.unit_price)},
+          group_by: i.product_id,
+          order_by: [desc: sum(i.quantity * i.unit_price)]
+        )
+      )
+
+    data_points =
+      Repo.all(
+        from(inc in incomes_in_range_query,
+          select: %{
+            total: sum(inc.amount_paid),
+            date: min(inc.time_paid)
+          },
+          group_by: [fragment("date_trunc(?, ?)", ^group_by, inc.time_paid)],
+          order_by: [desc: count(inc.amount_paid)]
+        )
+      )
+
+    {:ok,
+     %{
+       total_income: total_income,
+       total_products: total_products,
+       top_products: top_products,
+       amount_due: amount_due,
+       data_points: data_points
+     }}
+  end
+
+  defp income_items_query(start_date, end_date, company_id) do
+    from(i in Item,
+      join: s in Sale,
+      on: s.id == i.sale_id and s.company_id == ^company_id,
+      where: s.date <= ^end_date and s.date > ^start_date
+    )
+  end
+
+  defp income_within_range(start_date, end_date, company_id) do
+    from(sch in Receipt,
+      where: sch.time_paid <= ^end_date and sch.time_paid > ^start_date,
+      where: sch.company_id == ^company_id
+    )
+  end
+
   defp schemas_within_range(schema, start_date, end_date, company_id) do
     from(sch in schema,
       where: sch.date <= ^end_date and sch.date > ^start_date,

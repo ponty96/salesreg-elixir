@@ -1246,6 +1246,21 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:count, :integer)
   end
 
+  object :income_dashboard_data do
+    field(:total_income, :float)
+    field(:total_products, :integer)
+    field(:top_products, list_of(:top_income_top_product))
+    field(:amount_due, :float)
+
+    field(:data_points, list_of(:data_point))
+  end
+
+  object :top_income_top_product do
+    field(:title, :string)
+    field(:amount, :float)
+    field(:product_id, :uuid)
+  end
+
   object :data_point do
     field(:date, :date)
     field(:total, :float)
