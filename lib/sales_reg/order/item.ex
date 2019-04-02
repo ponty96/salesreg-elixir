@@ -12,6 +12,8 @@ defmodule SalesReg.Order.Item do
     field(:quantity, :integer)
     field(:unit_price, :decimal)
 
+    # field(:amount, :decimal, virtual: true)
+
     belongs_to(:sale, SalesReg.Order.Sale)
     belongs_to(:product, SalesReg.Store.Product)
 
