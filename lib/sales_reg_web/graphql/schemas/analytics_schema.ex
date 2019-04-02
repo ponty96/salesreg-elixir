@@ -19,5 +19,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.AnalyticsSchema do
       middleware(Policy)
       resolve(&AnalyticsResolver.expense_dashboard_info/2)
     end
+
+    @desc """
+      query for dashboard order info
+    """
+    field :order_dashboard_info, :order_dashboard_data do
+      arg(:query, :graph_query_input)
+
+      middleware(Authorize)
+      middleware(Policy)
+      resolve(&AnalyticsResolver.order_dashboard_info/2)
+    end
   end
 end

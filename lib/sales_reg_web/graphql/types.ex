@@ -1228,12 +1228,27 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   object :expense_dashboard_data do
     field(:total_expense, :float)
     field(:top_expenses, list_of(:expense_aggregate))
+    field(:data_points, list_of(:data_point))
   end
 
   object :expense_aggregate do
     field(:title, :string)
     field(:total_in_group, :float)
-    field(:grouped_by, :string)
+  end
+
+  object :order_dashboard_data do
+    field(:order_statuses, list_of(:agg_order_status))
+    field(:data_points, list_of(:data_point))
+  end
+
+  object :agg_order_status do
+    field(:status, :string)
+    field(:count, :integer)
+  end
+
+  object :data_point do
+    field(:date, :date)
+    field(:total, :float)
   end
 
   input_object :graph_query_input do
