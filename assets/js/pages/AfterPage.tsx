@@ -18,7 +18,7 @@ class AfterRegistration extends React.Component<any, any> {
     return (
       <div className="panel-wrapper">
         {/* <a href="//www.yipcart.com" class="yipcart-logo">YipCart</a> */}
-        <div className="feature-panel feature-panel--enterprise woman-picture1" style={{ width: '50%' }}>
+        <div className="feature-panel feature-panel--enterprise woman-picture1">
           <div className="enterprise-panel__content">
             <h2 className="enterprise-panel__header">
               <small className="enterprise-panel__subheader">
@@ -38,7 +38,7 @@ class AfterRegistration extends React.Component<any, any> {
           </div>
         </div>
 
-        <div className="main-panel registrationPage">
+        <div className="main-panel">
           <div className="main-panel__table">
             <div className="main-panel__table-cell">
               <div className="main-panel__content">
