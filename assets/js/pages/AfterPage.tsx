@@ -1,19 +1,9 @@
 import * as React from 'react';
-import { Link } from "react-router-dom";
-import { withStyles, Theme } from '@material-ui/core/styles';
-import Icon from '@material-ui/core/Icon';
 
-const styles = (theme: Theme) => ({
-  button: {
-    marginTop: '1rem',
-  },
-
-});
 
 class AfterRegistration extends React.Component<any, any> {
   render() {
 
-    const { classes } = this.props;
 
     return (
       <div className="panel-wrapper">
@@ -63,4 +53,4 @@ class AfterRegistration extends React.Component<any, any> {
     );
   }
 }
-export default withStyles(styles)(AfterRegistration);
+export default (AfterRegistration);
