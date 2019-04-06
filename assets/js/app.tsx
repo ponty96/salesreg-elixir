@@ -6,7 +6,7 @@ import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
 import AfterPage from '@/pages/AfterPage';
 import RegistrationPage from '@/pages/RegistrationPage';
-import yipAdminLayout from '@/pages/yipAdminLayout';
+import yipAdminLayout from '@/pages/YipAdminLayout';
 import { ThemeProvider } from "@/ThemeProvider"
 
 const App = () => (
