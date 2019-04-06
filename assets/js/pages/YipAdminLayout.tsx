@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-class yipAdminLayout extends React.Component<any, any> {
+class YipAdminLayout extends React.Component<any, any> {
     render() {
 
         return (
@@ -171,4 +171,4 @@ class yipAdminLayout extends React.Component<any, any> {
     }
 }
 
-export default (yipAdminLayout);
+export default (YipAdminLayout);
