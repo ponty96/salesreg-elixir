@@ -106,7 +106,7 @@
 								<tr>
 									<td>
 										<center>
-											<a href="<%= SalesReg.Business.get_company_share_url(sale.company) %>" target="_blank">
+											<a href="<%= SalesReg.Business.get_company_share_url(sale.company.slug) %>" target="_blank">
 												<img src="<%= sale.company.logo %>" width="114" height="40" alt="YipCart" class="CToWUd">
 											</a>
 										</center>
@@ -194,7 +194,7 @@
 											<tbody>
 											<tr style="display: flex;align-items: center;justify-content: center;">
 												<td style="display:inline-flex;text-align:center;margin:0 auto" align="center">
-													<a href="<%= SalesReg.Business.get_company_share_url(sale.company) %>" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">VISIT&nbsp;<%= SalesReg.Business.get_company_share_url(sale.company) %></a>
+													<a href="<%= SalesReg.Business.get_company_share_url(sale.company.slug) %>" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">VISIT&nbsp;<%= SalesReg.Business.get_company_share_url(sale.company.slug) %></a>
 													<img src="https://s3.us-east-2.amazonaws.com/yipcart-static-resources/vertical-line-footer-icon.png" width="34" height="24" style="vertical-align:bottom;">
 													<%# <a href="#" style="display:block;font-size:10px!important;text-decoration:none!important;color:#9fa1a7!important;font-weight:700!important;line-height:24px!important" target="_blank">UNSUBSCRIBE</a> %>
 												</td>
