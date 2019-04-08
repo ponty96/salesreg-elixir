@@ -83,7 +83,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
     field :share_link, :string do
       resolve(fn _product, %{source: company} ->
-        {:ok, Business.get_company_share_url(company)}
+        {:ok, Business.get_company_share_url(company.slug)}
       end)
     end
 

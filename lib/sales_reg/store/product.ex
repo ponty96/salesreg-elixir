@@ -139,7 +139,7 @@ defmodule SalesReg.Store.Product do
 
   def get_product_share_link(product) do
     product = Repo.preload(product, [:company])
-    "#{Business.get_company_share_domain()}/#{product.company.slug}/p/#{product.slug}"
+    "#{Business.get_company_share_url(product.company.slug)}/p/#{product.slug}"
   end
 
   defp add_product_slug(changeset, attrs) do
