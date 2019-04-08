@@ -1,20 +1,24 @@
 defmodule SalesReg.Store.Product do
+  @moduledoc """
+  Product Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
-  alias SalesReg.Store.Category
+  alias SalesReg.Base
+  alias SalesReg.Business
   alias SalesReg.Repo
   alias SalesReg.Store
-  alias SalesReg.Business
+  alias SalesReg.Store.Category
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "products" do
     field(:description, :string)
     field(:name, :string)
-    field(:sku, :string)
-    field(:minimum_sku, :string)
-    field(:cost_price, :string)
-    field(:price, :string)
+    field(:sku, :integer)
+    field(:minimum_sku, :integer)
+    field(:cost_price, :decimal)
+    field(:price, :decimal)
     field(:featured_image, :string)
     field(:images, {:array, :string})
     field(:is_featured, :boolean)
@@ -68,13 +72,21 @@ defmodule SalesReg.Store.Product do
     :featured_image,
     :product_group_id
   ]
+
+  @number_fields [:sku, :minimum_sku, :cost_price, :price]
+
   @doc false
   def changeset(product, attrs) do
+    new_attrs =
+      attrs
+      |> Base.transform_string_keys_to_numbers([:price, :cost_price])
+      |> Base.convert_string_keys_integer([:sku, :minimum_sku])
+
     product
     |> Repo.preload(:categories)
     |> Repo.preload(:tags)
     |> Repo.preload(:option_values)
-    |> cast(attrs, @fields ++ @required_fields)
+    |> cast(new_attrs, @fields ++ @required_fields)
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
     |> assoc_constraint(:user)
@@ -84,6 +96,7 @@ defmodule SalesReg.Store.Product do
     |> no_assoc_constraint(:items, message: "This product is still associated with sales")
     |> add_product_slug(attrs)
     |> unique_constraint(:slug)
+    |> Base.validate_changeset_number_values(@number_fields)
   end
 
   @doc false
@@ -106,7 +119,7 @@ defmodule SalesReg.Store.Product do
 
       _ ->
         "#{product.product_group.title} (#{
-          Enum.map(product.option_values, &(&1.name || "?")) |> Enum.join(" ")
+          product.option_values |> Enum.map(&(&1.name || "?")) |> Enum.join(" ")
         })"
     end
   end
@@ -126,27 +139,31 @@ defmodule SalesReg.Store.Product do
 
   def get_product_share_link(product) do
     product = Repo.preload(product, [:company])
-    "#{Business.get_company_share_domain()}/#{product.company.slug}/p/#{product.slug}"
+    "#{Business.get_company_share_url(product.company.slug)}/p/#{product.slug}"
   end
 
   defp add_product_slug(changeset, attrs) do
-    title = Map.get(attrs, :title) |> String.split(" ") |> Enum.join("-")
+    title = attrs |> Map.get(:title) |> String.split(" ") |> Enum.join("-")
 
-    hash_from_product_grp_uuid = Map.get(attrs, :product_group_id) |> hash_from_product_grp_uuid
+    hash_from_product_grp_uuid = attrs |> Map.get(:product_group_id) |> hash_from_product_grp_uuid
 
-    option_values = Map.get(attrs, :option_values)
+    option_values = attrs |> Map.get(:option_values)
 
-    slug =
+    string_representative_of_option_values =
       case option_values do
         [] ->
           "#{title}-#{hash_from_product_grp_uuid}"
 
         _ ->
           "#{title}-#{
-            Enum.map(option_values, &(remove_space(&1.name) || ""))
+            option_values
+            |> Enum.map(&(remove_space(&1.name) || ""))
             |> Enum.join("-")
           }-#{hash_from_product_grp_uuid}"
       end
+
+    slug =
+      string_representative_of_option_values
       |> String.downcase()
       |> URI.encode()
 
@@ -160,12 +177,13 @@ defmodule SalesReg.Store.Product do
   end
 
   defp remove_space(string) do
-    String.split(string, " ") |> Enum.join("-")
+    string |> String.split(" ") |> Enum.join("-")
   end
 
   defp visual_option_values_names(option_values) do
     visual_option_values =
-      Enum.map(option_values, fn option_value ->
+      option_values
+      |> Enum.map(fn option_value ->
         if option_value.option.is_visual == "yes" do
           option_value.name
         else

@@ -1,4 +1,7 @@
 defmodule SalesReg.Store.OptionValue do
+  @moduledoc """
+  Option Value Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

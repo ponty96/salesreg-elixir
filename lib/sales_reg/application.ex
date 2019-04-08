@@ -1,4 +1,7 @@
 defmodule SalesReg.Application do
+  @moduledoc """
+    Application Module
+  """
   use Application
 
   # See https://hexdocs.pm/elixir/Application.html

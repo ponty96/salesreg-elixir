@@ -1,9 +1,13 @@
 defmodule SalesReg.Business.Expense do
+  @moduledoc """
+  Expense Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
+  alias SalesReg.Base
   alias SalesReg.Business.Company
   alias SalesReg.Repo
 
@@ -34,6 +38,7 @@ defmodule SalesReg.Business.Expense do
     :company_id
   ]
   @optional_fields [:items_amount]
+  @number_fields [:total_amount, :items_amount]
 
   @doc false
   def changeset(expense, attrs) do
@@ -44,6 +49,7 @@ defmodule SalesReg.Business.Expense do
     |> validate_required(@required_fields)
     |> assoc_constraint(:company)
     |> assoc_constraint(:paid_by)
+    |> Base.validate_changeset_number_values(@number_fields)
     |> validate_total_amount(expense)
   end
 
@@ -58,7 +64,8 @@ defmodule SalesReg.Business.Expense do
          expense
        ) do
     total_amount =
-      total_amount(expense, changeset)
+      expense
+      |> total_amount(changeset)
       |> Decimal.to_float()
       |> Float.round(2)
 
@@ -92,8 +99,6 @@ defmodule SalesReg.Business.Expense do
   end
 
   defp total_amount(expense, changeset) do
-    IO.inspect(changeset, label: "changeset")
-
     case changeset do
       %{changes: %{total_amount: total_amount}} ->
         total_amount

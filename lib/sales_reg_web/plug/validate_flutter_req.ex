@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.Plug.ValidateFlutterRequest do
+  @moduledoc """
+  Plug to validate flutterwave request
+  """
   @behaviour Plug
   import Plug.Conn
 

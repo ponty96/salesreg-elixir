@@ -33,9 +33,9 @@ defmodule SalesRegWeb.Authentication do
     |> Conn.configure_session(renew: true)
   end
 
-  # This function returns a new access token and refresh token if the access token has 
+  # This function returns a new access token and refresh token if the access token has
   # expired but the refresh token has not expired, else if both has expired, the user
-  # is logged out (revoked), else, the original access token and refresh token is 
+  # is logged out (revoked), else, the original access token and refresh token is
   # sent back
   def verify_tokens(%{access_token: access_token, refresh_token: refresh_token}) do
     case tokens_exist?(access_token, refresh_token) do
@@ -71,7 +71,7 @@ defmodule SalesRegWeb.Authentication do
 
   # This function returns a new refresh token (the expiration date is extendend)
   # while keeping all the jwt claims intact if it has not expired, else the token
-  # is deleted from the database - user is logged out. 
+  # is deleted from the database - user is logged out.
   def refresh_token(%{refresh_token: token}) do
     case decode_and_verify(token, "refresh") do
       {:ok, claims} ->
@@ -108,7 +108,8 @@ defmodule SalesRegWeb.Authentication do
   end
 
   def authenticate(%Ueberauth.Auth{provider: :identity} = auth) do
-    Accounts.get_user_by_email(auth.uid)
+    auth.uid
+    |> Accounts.get_user_by_email()
     |> authorize(auth)
   end
 
@@ -143,7 +144,8 @@ defmodule SalesRegWeb.Authentication do
   end
 
   defp authorize(user, auth) do
-    check_password(user, auth.credentials.other.password)
+    user
+    |> check_password(auth.credentials.other.password)
     |> resolve_authorization(user)
   end
 

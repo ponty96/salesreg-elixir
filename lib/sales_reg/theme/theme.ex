@@ -20,7 +20,7 @@ defmodule SalesReg.Theme do
     queryable
   end
 
-  def list_templates() do
+  def list_templates do
     Template
     |> Repo.all()
   end
@@ -46,7 +46,8 @@ defmodule SalesReg.Theme do
   end
 
   def upsert_template(%{template: params, template_id: id}) do
-    Theme.get_template(id)
+    id
+    |> Theme.get_template()
     |> Theme.update_template(params)
   end
 

@@ -1,4 +1,7 @@
 defmodule SalesReg.Theme.CompanyTemplate do
+  @moduledoc """
+  CompanyTemplate Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias SalesReg.Repo

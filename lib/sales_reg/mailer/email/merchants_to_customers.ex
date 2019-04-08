@@ -1,4 +1,7 @@
 defmodule SalesReg.Mailer.MerchantsToCustomers do
+  @moduledoc """
+    Module handling sending emails to customers for merchants
+  """
   use SalesRegWeb, :context
   import Bamboo.Email
 

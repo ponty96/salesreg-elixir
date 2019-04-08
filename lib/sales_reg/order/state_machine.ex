@@ -1,4 +1,7 @@
 defmodule SalesReg.Order.OrderStateMachine do
+  @moduledoc """
+  State machine for Sale Schema status
+  """
   use SalesRegWeb, :context
   alias SalesReg.Mailer.MerchantsToCustomers, as: M2C
 

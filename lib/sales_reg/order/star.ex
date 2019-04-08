@@ -1,4 +1,7 @@
 defmodule SalesReg.Order.Star do
+  @moduledoc """
+  Star Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias SalesReg.Repo
