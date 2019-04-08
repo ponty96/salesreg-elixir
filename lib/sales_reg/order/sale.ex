@@ -13,7 +13,7 @@ defmodule SalesReg.Order.Sale do
 
   @order_status ["pending", "processed", "delivering", "recalled", "delivered"]
   schema "sales" do
-    field(:date, :string)
+    field(:date, :date)
     field(:status, :string, default: "pending")
     field(:payment_method, :string)
     field(:tax, :decimal)
@@ -96,7 +96,7 @@ defmodule SalesReg.Order.Sale do
 
   def get_sale_share_link(sale) do
     sale = Repo.preload(sale, [:company])
-    "#{Business.get_company_share_domain()}/#{sale.company.slug}/s/#{sale.id}"
+    "#{Business.get_company_share_url(sale.company.slug)}/s/#{sale.id}"
   end
 
   defp before_update_callback(changeset, attrs) do
