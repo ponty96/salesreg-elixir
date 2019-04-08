@@ -164,6 +164,44 @@ class YipAdminLayout extends React.Component<any, any> {
                                 </div>
                             </div>
                         </div>
+
+                        <div className="row">
+                            <div className="col-12">
+                                <div className="YipCart-Card">
+                                    <div className="YipCart-CalloutCard__Container">
+                                        <div className="YipCart-Card__Section">
+                                            <div className="YipCart-CalloutCard">
+                                                <div className="YipCart-CalloutCard__Content">
+                                                    <div className="YipCart-CalloutCard__Title">
+                                                        <h2 className="YipCart-Heading">Download our mobile app</h2>
+                                                    </div>
+                                                    <div className="YipCart-TextContainer">
+                                                        <p>Download our mobile app on Google Play Store and Apple Store. We are currently working on the web admin platform blablabla Download our mobile app on Google Play Store and Apple Store. We are currently working on the web admin</p>
+                                                    </div>
+                                                    <div className="YipCart-CalloutCard__Buttons">
+                                                        <a href="https://play.google.com/store/apps/details?id=com.yipcart.yipcart"
+                                                           title="Get It the Google Store" target="_blank"
+                                                           className="app-button"
+                                                           style={{ backgroundImage: 'url(https://s3.us-east-2.amazonaws.com/yipcart-static-resources/download-on-google-play.png)' }}>
+                                                        </a>
+
+                                                        <a href="https://play.google.com/store/apps/details?id=com.yipcart.yipcart"
+                                                           title="Get It the Apple Store" target="_blank"
+                                                           className="app-button"
+                                                           style={{ backgroundImage: 'url(https://s3.us-east-2.amazonaws.com/yipcart-static-resources/download-on-appstore.svg)' }}>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <img
+                                                    src="/images/mobile-beta-app-icon.svg"
+                                                    alt=""
+                                                    className="YipCart-CalloutCard__Image" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </main>
             </div>
