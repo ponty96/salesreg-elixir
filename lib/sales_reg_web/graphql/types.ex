@@ -92,6 +92,12 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
         {:ok, Order.nation_wide_delivery_fee_exists?(company.id)}
       end)
     end
+
+    field :delivers_nationwide, :boolean do
+      resolve(fn _product, %{source: company} ->
+        {:ok, Order.nation_wide_delivery_fee_exists?(company.id)}
+      end)
+    end
   end
 
   @desc """
@@ -808,7 +814,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
         {:ok, System.get_env("S3_REGION")}
       end)
     end
-
     field :s3_access_key, :string do
       resolve(fn _, _ ->
         {:ok, System.get_env("S3_ACCESS_KEY")}
