@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.Services.Flutterwave do
+  @moduledoc """
+  Flutterwave HTTP Client
+  """
   alias SalesRegWeb.Services.Base
 
   def create_subaccount(params) do
@@ -25,7 +28,7 @@ defmodule SalesRegWeb.Services.Flutterwave do
     |> Base.process_response()
   end
 
-  def list_subaccount() do
+  def list_subaccount do
     endpoint = process_url("v2/gpx/subaccounts?seckey=#{get_flutterwave_key()}")
 
     request(:get, endpoint, "")

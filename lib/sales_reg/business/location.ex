@@ -1,4 +1,7 @@
 defmodule SalesReg.Business.Location do
+  @moduledoc """
+  Location Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

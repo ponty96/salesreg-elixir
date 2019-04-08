@@ -1,4 +1,7 @@
 defmodule SalesReg.Accounts.User do
+  @moduledoc """
+  User Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

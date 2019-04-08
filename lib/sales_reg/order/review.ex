@@ -1,4 +1,7 @@
 defmodule SalesReg.Order.Review do
+  @moduledoc """
+  Review Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias SalesReg.Repo

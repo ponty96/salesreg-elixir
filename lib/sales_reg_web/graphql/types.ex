@@ -8,8 +8,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   use SalesRegWeb, :graphql_context
   import Absinthe.Resolution.Helpers
 
-  alias SalesReg.Accounts.User
   alias Ecto.UUID
+  alias SalesReg.Accounts.User
 
   import_types(Absinthe.Type.Custom)
 
@@ -83,7 +83,13 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
     field :share_link, :string do
       resolve(fn _product, %{source: company} ->
-        {:ok, Business.get_company_share_url(company)}
+        {:ok, Business.get_company_share_url(company.slug)}
+      end)
+    end
+
+    field :delivers_nationwide, :boolean do
+      resolve(fn _product, %{source: company} ->
+        {:ok, Order.nation_wide_delivery_fee_exists?(company.id)}
       end)
     end
 
@@ -808,7 +814,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
         {:ok, System.get_env("S3_REGION")}
       end)
     end
-    
     field :s3_access_key, :string do
       resolve(fn _, _ ->
         {:ok, System.get_env("S3_ACCESS_KEY")}

@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
+  @moduledoc """
+  Store Resolver
+  """
   use SalesRegWeb, :context
   require SalesReg.Context
 
@@ -20,7 +23,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
 
   # category
   def upsert_category(%{category: params, category_id: id}, _res) do
-    Store.get_category(id)
+    id
+    |> Store.get_category()
     |> Store.update_category(params)
   end
 
@@ -30,7 +34,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
 
   # option
   def upsert_option(%{option: params, option_id: id}, _res) do
-    Store.get_option(id)
+    id
+    |> Store.get_option()
     |> Store.update_option(params)
   end
 

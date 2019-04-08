@@ -1,4 +1,7 @@
 defmodule SalesReg.Business.Contact do
+  @moduledoc """
+  Contact Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

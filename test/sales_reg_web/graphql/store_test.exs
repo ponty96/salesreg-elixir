@@ -1,10 +1,10 @@
 defmodule SalesRegWeb.GraphqlStoreTest do
   use SalesRegWeb.ConnCase
-  alias SalesReg.Store
+  alias Faker.Avatar
+  alias Faker.Commerce
   alias Faker.Commerce.En, as: CommerceEn
   alias Faker.Company.En, as: CompanyEn
-  alias Faker.Commerce
-  alias Faker.Avatar
+  alias SalesReg.Store
 
   setup %{company: company, user: user} do
     categories =
@@ -238,7 +238,8 @@ defmodule SalesRegWeb.GraphqlStoreTest do
 
       add_variant_variables = %{
         params:
-          product_mutation_variables_with_variant(company, user)
+          company
+          |> product_mutation_variables_with_variant(user)
           |> Map.put(:product_group_id, data["productGroup"]["id"])
       }
 
@@ -283,7 +284,8 @@ defmodule SalesRegWeb.GraphqlStoreTest do
 
     add_variant_variables = %{
       params:
-        product_mutation_variables_with_variant(company, user)
+        company
+        |> product_mutation_variables_with_variant(user)
         |> Map.put(:product_group_id, data["productGroup"]["id"])
         |> Map.update(:product, %{}, fn product ->
           Map.put(product, :id, response["data"]["id"])
@@ -399,7 +401,8 @@ defmodule SalesRegWeb.GraphqlStoreTest do
     """
 
     options =
-      Store.list_company_options(company.id)
+      company.id
+      |> Store.list_company_options()
       |> elem(1)
       |> Enum.take_random(4)
       |> Enum.map(& &1.id)
@@ -534,7 +537,8 @@ defmodule SalesRegWeb.GraphqlStoreTest do
       {:ok, company} = Seed.create_company(user.id)
 
       add_many_categories =
-        Enum.map(1..3, fn _index ->
+        1..3
+        |> Enum.map(fn _index ->
           {:ok, category} =
             company.id
             |> Seed.add_category(user.id)
@@ -564,10 +568,11 @@ defmodule SalesRegWeb.GraphqlStoreTest do
         conn
         |> post("/graphiql", Helpers.query_skeleton(query_doc, variables))
 
-      response =
-        json_response(res, 200)["data"]["listCompanyCategories"]
-        |> Helpers.underscore_map_keys()
-        |> Enum.sort()
+      response = json_response(res, 200)["data"]["listCompanyCategories"]
+
+      response
+      |> Helpers.underscore_map_keys()
+      |> Enum.sort()
 
       assert response == add_many_categories
     end

@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.Plug.AssignUser do
+  @moduledoc """
+  Module that assigns current user to plug
+  """
   use SalesRegWeb, :context
 
   import Comeonin.Bcrypt

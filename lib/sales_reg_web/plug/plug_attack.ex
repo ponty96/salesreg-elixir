@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.PlugAttack do
+  @moduledoc """
+  Plug Attack Module
+  """
   import Plug.Conn
   use PlugAttack
 

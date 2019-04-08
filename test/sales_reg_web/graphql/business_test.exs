@@ -292,7 +292,8 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     @tag :query_all_company_banks
     test "query all company banks", context do
       add_many_banks =
-        Enum.map(1..3, fn _index ->
+        1..3
+        |> Enum.map(fn _index ->
           {:ok, bank} =
             context.company.id
             |> Seed.create_bank()
@@ -452,7 +453,8 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     @tag :query_all_company_expenses
     test "query all company expenses", context do
       add_many_expenses =
-        Enum.map(1..3, fn _index ->
+        1..3
+        |> Enum.map(fn _index ->
           {:ok, expense} =
             context.user.id
             |> Seed.add_expense(context.company.id)
@@ -513,7 +515,8 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
     @tag :query_all_company_tags
     test "query all company tags", context do
       add_many_tags =
-        Enum.map(["#tbt", "#tgif"], fn hashtag ->
+        ["#tbt", "#tgif"]
+        |> Enum.map(fn hashtag ->
           {:ok, tag} = Seed.add_tag(context.company.id, hashtag)
 
           tag
@@ -571,7 +574,6 @@ defmodule SalesRegWeb.GraphqlBusinessTest do
         context.conn
         |> post("/graphiql", Helpers.query_skeleton(:mutation, query_doc, "upsertLegalDocument"))
 
-      IO.inspect(res.resp_body, label: "response body")
       response = json_response(res, 200)["data"]["upsertLegalDocument"]
 
       assert response["success"] == true
