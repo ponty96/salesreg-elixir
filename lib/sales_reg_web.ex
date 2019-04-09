@@ -98,6 +98,9 @@ defmodule SalesRegWeb do
 
       alias SalesReg.Accounts
       alias SalesReg.Accounts.User
+
+      alias SalesReg.Analytics
+
       alias SalesReg.Business
       alias SalesReg.Business.Bank
       alias SalesReg.Business.Branch
