@@ -1226,4 +1226,62 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:email, non_null(:string))
     field(:address, :location_input)
   end
+
+  ###
+  # ANALYTICS DATA
+  ###
+  object :expense_dashboard_data do
+    field(:total_expense, :float)
+    field(:top_expenses, list_of(:expense_aggregate))
+    field(:data_points, list_of(:data_point))
+  end
+
+  object :expense_aggregate do
+    field(:title, :string)
+    field(:total_in_group, :float)
+  end
+
+  object :order_dashboard_data do
+    field(:order_statuses, list_of(:agg_order_status))
+    field(:data_points, list_of(:data_point))
+  end
+
+  object :agg_order_status do
+    field(:status, :string)
+    field(:count, :integer)
+  end
+
+  object :income_dashboard_data do
+    field(:total_income, :float)
+    field(:total_products, :integer)
+    field(:top_products, list_of(:top_income_top_product))
+    field(:amount_due, :float)
+
+    field(:data_points, list_of(:data_point))
+  end
+
+  object :top_income_top_product do
+    field(:title, :string)
+    field(:amount, :float)
+    field(:product_id, :uuid)
+  end
+
+  object :data_point do
+    field(:date, :date)
+    field(:total, :float)
+  end
+
+  input_object :graph_query_input do
+    field(:start_date, non_null(:date))
+    field(:end_date, non_null(:date))
+    field(:group_by, non_null(:graph_group_by), default_value: "day")
+  end
+
+  @desc ""
+  enum :graph_group_by do
+    value(:daily, as: "day")
+    value(:weekly, as: "week")
+    value(:monthly, as: "month")
+    value(:yearly, as: "year")
+  end
 end
