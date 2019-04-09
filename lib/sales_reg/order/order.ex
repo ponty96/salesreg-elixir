@@ -460,6 +460,10 @@ defmodule SalesReg.Order do
     end
   end
 
+  def sale_charge do
+    System.get_env("CHARGE") |> Decimal.new()
+  end
+
   defp calc_items_amount(items) do
     items
     |> Enum.map(fn item ->

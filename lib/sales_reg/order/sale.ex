@@ -6,6 +6,7 @@ defmodule SalesReg.Order.Sale do
   import Ecto.Changeset
   alias SalesReg.Base
   alias SalesReg.Business
+  alias SalesReg.Order
   alias SalesReg.Repo
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -108,7 +109,7 @@ defmodule SalesReg.Order.Sale do
 
       changeset
       |> put_change(:ref_id, ref_id)
-      |> put_change(:charge, "#{System.get_env("CHARGE")}")
+      |> put_change(:charge, Order.sale_charge() |> Decimal.new())
     else
       changeset
     end
