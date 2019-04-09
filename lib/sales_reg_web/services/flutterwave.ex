@@ -2,6 +2,7 @@ defmodule SalesRegWeb.Services.Flutterwave do
   @moduledoc """
   Flutterwave HTTP Client
   """
+  alias SalesReg.Order
   alias SalesRegWeb.Services.Base
 
   def create_subaccount(params) do
@@ -74,7 +75,7 @@ defmodule SalesRegWeb.Services.Flutterwave do
       "business_mobile" => params.business_mobile,
       "seckey" => get_flutterwave_key(),
       "split_type" => "percentage",
-      "split_value" => "#{System.get_env("CHARGE")}"
+      "split_value" => "#{Order.sale_charge()}"
     }
   end
 
