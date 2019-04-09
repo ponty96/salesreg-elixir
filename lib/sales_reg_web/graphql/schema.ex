@@ -19,6 +19,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
   import_types(__MODULE__.WebStoreSchema)
   import_types(__MODULE__.SpecialOfferSchema)
   import_types(__MODULE__.NotificationSchema)
+  import_types(__MODULE__.AnalyticsSchema)
 
   query do
     import_fields(:single_user)
@@ -31,6 +32,7 @@ defmodule SalesRegWeb.GraphQL.Schemas do
     import_fields(:web_store_queries)
     import_fields(:special_offer_queries)
     import_fields(:notification_queries)
+    import_fields(:dashboard_infos)
   end
 
   mutation do
