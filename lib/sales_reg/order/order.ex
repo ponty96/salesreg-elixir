@@ -173,17 +173,19 @@ defmodule SalesReg.Order do
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
-    |> Multi.run(:create_invoice_notification, fn _repo,
-                                                  %{insert_sale: sale, insert_invoice: invoice} ->
-      invoice = preload_invoice(invoice)
+    |> Multi.run(
+      :create_invoice_notification,
+      fn _repo, %{insert_sale: sale, insert_invoice: invoice} ->
+        invoice = preload_invoice(invoice)
 
-      %{
-        company_id: sale.company_id,
-        actor_id: sale.user_id,
-        message: "An invoice has been created for #{invoice.sale.contact.contact_name}"
-      }
-      |> Notifications.create_notification({:invoice, invoice}, :created)
-    end)
+        %{
+          company_id: sale.company_id,
+          actor_id: sale.user_id,
+          message: "An invoice has been created for #{invoice.sale.contact.contact_name}"
+        }
+        |> Notifications.create_notification({:invoice, invoice}, :created)
+      end
+    )
     |> Repo.transaction()
     |> repo_transaction_resp()
   end
@@ -331,7 +333,7 @@ defmodule SalesReg.Order do
 
   def cal_order_amount_before_charge(%Sale{} = sale) do
     sale = Repo.preload(sale, [:items])
-    delivery_fee = sale.delivery_fee |> Float.parse() |> elem(0)
+    delivery_fee = sale.delivery_fee |> Decimal.to_float()
     calc_items_amount(sale.items) + delivery_fee
   end
 
@@ -341,7 +343,7 @@ defmodule SalesReg.Order do
 
   def cal_order_amount_before_charge(%Invoice{} = invoice) do
     invoice = Repo.preload(invoice, sale: :items)
-    delivery_fee = invoice.sale.delivery_fee |> Float.parse() |> elem(0)
+    delivery_fee = invoice.sale.delivery_fee |> Decimal.to_float()
     calc_items_amount(invoice.sale.items) + delivery_fee
   end
 
@@ -442,10 +444,9 @@ defmodule SalesReg.Order do
   end
 
   def calc_item_amount(item) do
-    {quantity, _} = Float.parse(item.quantity)
-    {unit_price, _} = Float.parse(item.unit_price)
+    unit_price = Decimal.to_float(item.unit_price)
 
-    quantity * unit_price
+    item.quantity * unit_price
   end
 
   def float_to_binary(float) do
@@ -462,10 +463,9 @@ defmodule SalesReg.Order do
   defp calc_items_amount(items) do
     items
     |> Enum.map(fn item ->
-      {quantity, _} = Float.parse(item.quantity)
-      {unit_price, _} = Float.parse(item.unit_price)
+      unit_price = Decimal.to_float(item.unit_price)
 
-      quantity * unit_price
+      item.quantity * unit_price
     end)
     |> Enum.sum()
   end
@@ -473,7 +473,7 @@ defmodule SalesReg.Order do
   defp calc_amount_paid(receipts) do
     receipts
     |> Enum.map(fn receipt ->
-      {amount_paid, _} = Float.parse(receipt.amount_paid)
+      amount_paid = Decimal.to_float(receipt.amount_paid)
       amount_paid
     end)
     |> Enum.sum()
