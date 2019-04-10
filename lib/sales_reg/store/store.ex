@@ -522,6 +522,12 @@ defmodule SalesReg.Store do
     |> Repo.get_by(slug: slug)
   end
 
+  def get_product_name_by_id(id) do
+    Product
+    |> Repo.get(id)
+    |> Store.get_product_name()
+  end
+
   defp add_type_field(products) do
     Enum.map(products, fn prod ->
       %{prod | name: get_product_name(prod)}
