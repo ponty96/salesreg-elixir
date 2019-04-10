@@ -129,7 +129,9 @@ defmodule SalesReg.Analytics do
         group_by: i.product_id,
         order_by: [desc: sum(i.quantity * i.unit_price)]
       )
-    )
+    ) |> Enum.map(fn %{product_id: id} ->
+        Store.get_product_name_by_id(id)
+    end)
   end
 
   defp income_amount_due(items_query) do
