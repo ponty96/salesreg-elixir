@@ -57,7 +57,7 @@ defmodule SalesReg.Order.Sale do
     :delivery_fee
   ]
 
-  @number_fields [:tax, :discount, :charge, :delivery_fee]
+  @number_fields [:discount, :charge, :delivery_fee]
 
   @doc false
   def changeset(sale, attrs) do
