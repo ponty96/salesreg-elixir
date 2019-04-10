@@ -39,7 +39,7 @@ defmodule SalesReg.Order.DeliveryFee do
     |> assoc_constraint(:user)
     |> assoc_constraint(:company)
     |> unique_constraint(:region,
-      name: :state_region_index,
+      name: :company_state_region_index,
       message: "This region has already been taken for this state."
     )
     |> Base.validate_changeset_number_values(@number_fields)
