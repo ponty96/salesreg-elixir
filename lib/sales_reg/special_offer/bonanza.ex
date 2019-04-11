@@ -1,4 +1,7 @@
 defmodule SalesReg.SpecialOffer.Bonanza do
+  @moduledoc """
+  Bonanza Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias SalesReg.Business
@@ -51,6 +54,6 @@ defmodule SalesReg.SpecialOffer.Bonanza do
 
   def get_bonanza_share_url(bonanza) do
     bonanza = Repo.preload(bonanza, [:company])
-    "#{Business.get_company_share_domain()}/#{bonanza.company.slug}/bz/#{bonanza.id}"
+    "#{Business.get_company_share_url(bonanza.company.slug)}/bz/#{bonanza.id}"
   end
 end

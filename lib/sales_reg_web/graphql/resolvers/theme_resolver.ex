@@ -1,12 +1,16 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.ThemeResolver do
+  @moduledoc """
+  Theme Resolver Module
+  """
   use SalesRegWeb, :context
+  alias Absinthe.Relay.Connection
   alias SalesReg.Theme
 
   def list_templates(args \\ %{}, _res) do
     {:ok, templates} = Theme.list_templates()
 
     templates
-    |> Absinthe.Relay.Connection.from_list(pagination_args(args))
+    |> Connection.from_list(pagination_args(args))
   end
 
   def get_company_template_by_company_id(%{company_id: company_id}, _res) do

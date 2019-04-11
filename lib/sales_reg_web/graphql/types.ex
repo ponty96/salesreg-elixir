@@ -8,8 +8,8 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   use SalesRegWeb, :graphql_context
   import Absinthe.Resolution.Helpers
 
-  alias SalesReg.Accounts.User
   alias Ecto.UUID
+  alias SalesReg.Accounts.User
 
   import_types(Absinthe.Type.Custom)
 
@@ -67,7 +67,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
     field :sale_charge, :string do
       resolve(fn _, _ ->
-        {:ok, "#{System.get_env("CHARGE")}"}
+        {:ok, "#{Order.sale_charge()}"}
       end)
     end
 
@@ -83,7 +83,13 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
     field :share_link, :string do
       resolve(fn _product, %{source: company} ->
-        {:ok, Business.get_company_share_url(company)}
+        {:ok, Business.get_company_share_url(company.slug)}
+      end)
+    end
+
+    field :delivers_nationwide, :boolean do
+      resolve(fn _product, %{source: company} ->
+        {:ok, Order.nation_wide_delivery_fee_exists?(company.id)}
       end)
     end
 
@@ -808,7 +814,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
         {:ok, System.get_env("S3_REGION")}
       end)
     end
-    
+
     field :s3_access_key, :string do
       resolve(fn _, _ ->
         {:ok, System.get_env("S3_ACCESS_KEY")}
@@ -1220,5 +1226,63 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:contact_name, non_null(:string))
     field(:email, non_null(:string))
     field(:address, :location_input)
+  end
+
+  ###
+  # ANALYTICS DATA
+  ###
+  object :expense_dashboard_data do
+    field(:total_expense, :float)
+    field(:top_expenses, list_of(:expense_aggregate))
+    field(:data_points, list_of(:data_point))
+  end
+
+  object :expense_aggregate do
+    field(:title, :string)
+    field(:total_in_group, :float)
+  end
+
+  object :order_dashboard_data do
+    field(:order_statuses, list_of(:agg_order_status))
+    field(:data_points, list_of(:data_point))
+  end
+
+  object :agg_order_status do
+    field(:status, :string)
+    field(:count, :integer)
+  end
+
+  object :income_dashboard_data do
+    field(:total_income, :float)
+    field(:total_products, :integer)
+    field(:top_products, list_of(:top_income_top_product))
+    field(:amount_due, :float)
+
+    field(:data_points, list_of(:data_point))
+  end
+
+  object :top_income_top_product do
+    field(:title, :string)
+    field(:amount, :float)
+    field(:product_id, :uuid)
+  end
+
+  object :data_point do
+    field(:date, :date)
+    field(:total, :float)
+  end
+
+  input_object :graph_query_input do
+    field(:start_date, non_null(:date))
+    field(:end_date, non_null(:date))
+    field(:group_by, non_null(:graph_group_by), default_value: "day")
+  end
+
+  @desc ""
+  enum :graph_group_by do
+    value(:daily, as: "day")
+    value(:weekly, as: "week")
+    value(:monthly, as: "month")
+    value(:yearly, as: "year")
   end
 end

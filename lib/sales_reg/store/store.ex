@@ -15,6 +15,7 @@ defmodule SalesReg.Store do
     Invoice
   ]
 
+  alias Absinthe.Relay.Connection
   alias Ecto.UUID
 
   defdelegate category_image(category), to: Category
@@ -78,14 +79,7 @@ defmodule SalesReg.Store do
     |> select([pg, p], [pg])
     |> Repo.all()
     |> Enum.map(fn [prod_group] ->
-      add_type_field = fn products ->
-        Enum.map(products, fn prod ->
-          %{prod | name: get_product_name(prod)}
-          |> Map.put_new(:type, "Product")
-        end)
-      end
-
-      add_type_field.(prod_group.products)
+      add_type_field(prod_group.products)
     end)
     |> List.flatten()
   end
@@ -93,15 +87,18 @@ defmodule SalesReg.Store do
   def load_products(company_id, query, args) do
     query_regex = "%" <> query <> "%"
 
-    from(p in Product,
-      join: pg in ProductGroup,
-      on: p.product_group_id == pg.id,
-      where: ilike(pg.title, ^query_regex),
-      where: p.company_id == ^company_id,
-      order_by: [desc: :updated_at],
-      select: p
-    )
-    |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
+    query =
+      from(p in Product,
+        join: pg in ProductGroup,
+        on: p.product_group_id == pg.id,
+        where: ilike(pg.title, ^query_regex),
+        where: p.company_id == ^company_id,
+        order_by: [desc: :updated_at],
+        select: p
+      )
+
+    query
+    |> Connection.from_query(&Repo.all/1, args)
   end
 
   def load_related_products(company_id, product_id, limit \\ 12, offset \\ 0) do
@@ -181,20 +178,23 @@ defmodule SalesReg.Store do
 
   # PRODUCT INVENTORY
   def update_product_inventory(:increment, order_items) when is_list(order_items) do
-    Enum.map(order_items, fn order_item ->
-      if order_item.product_id do
-        increment_product_sku(order_item.product_id, order_item.quantity)
-      end
+    order_items =
+      order_items
+      |> Enum.map(fn order_item ->
+        if order_item.product_id do
+          increment_product_sku(order_item.product_id, order_item.quantity)
+        end
 
-      order_item
-    end)
+        order_item
+      end)
 
     product = get_product(Enum.random(order_items).product_id)
     create_restock_notification(order_items, product)
   end
 
   def update_product_inventory(:decrement, order_items) when is_list(order_items) do
-    Enum.map(order_items, fn order_item ->
+    order_items
+    |> Enum.map(fn order_item ->
       if order_item.product_id do
         decrement_product_sku(order_item.product_id, order_item.quantity)
       end
@@ -415,21 +415,24 @@ defmodule SalesReg.Store do
   def search_company_categories(company_id, query, args) do
     query_regex = "%" <> query <> "%"
 
-    from(c in Category,
-      join: pc in "products_categories",
-      on: pc.category_id == c.id,
-      where: c.company_id == ^company_id,
-      where: ilike(c.title, ^query_regex),
-      order_by:
-        fragment(
-          "ts_rank(to_tsvector(?), plainto_tsquery(?)) DESC",
-          c.title,
-          ^query
-        ),
-      distinct: c.id,
-      preload: [:products]
-    )
-    |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
+    query =
+      from(c in Category,
+        join: pc in "products_categories",
+        on: pc.category_id == c.id,
+        where: c.company_id == ^company_id,
+        where: ilike(c.title, ^query_regex),
+        order_by:
+          fragment(
+            "ts_rank(to_tsvector(?), plainto_tsquery(?)) DESC",
+            c.title,
+            ^query
+          ),
+        distinct: c.id,
+        preload: [:products]
+      )
+
+    query
+    |> Connection.from_query(&Repo.all/1, args)
   end
 
   def category_products(category_id, page) do
@@ -447,20 +450,26 @@ defmodule SalesReg.Store do
   end
 
   def filter_webstore_products(company_id, filter_params) do
-    from(p in Product,
-      where: p.company_id == ^company_id,
-      select: p
-    )
+    query =
+      from(p in Product,
+        where: p.company_id == ^company_id,
+        select: p
+      )
+
+    query
     |> distinct_visual_variants()
     |> Repo.paginate(page: Map.get(filter_params, :page))
   end
 
   def list_featured_products(company_id) do
-    from(p in Product,
-      where: p.company_id == ^company_id and p.is_featured == true,
-      select: p,
-      limit: 10
-    )
+    query =
+      from(p in Product,
+        where: p.company_id == ^company_id and p.is_featured == true,
+        select: p,
+        limit: 10
+      )
+
+    query
     |> distinct_visual_variants()
     |> Repo.all()
     |> Enum.map(&store_item_preloads(&1))
@@ -474,7 +483,8 @@ defmodule SalesReg.Store do
         order_by: fragment("RANDOM()")
       )
 
-    Repo.all(query)
+    query
+    |> Repo.all()
     |> Enum.map(&store_item_preloads(&1))
     |> Enum.at(0)
   end
@@ -510,6 +520,19 @@ defmodule SalesReg.Store do
   def get_category_by_slug(slug) do
     Category
     |> Repo.get_by(slug: slug)
+  end
+
+  def get_product_name_by_id(id) do
+    Product
+    |> Repo.get(id)
+    |> Store.get_product_name()
+  end
+
+  defp add_type_field(products) do
+    Enum.map(products, fn prod ->
+      %{prod | name: get_product_name(prod)}
+      |> Map.put_new(:type, "Product")
+    end)
   end
 
   defp all_categories(categories_ids) do
@@ -673,18 +696,26 @@ defmodule SalesReg.Store do
     Enum.map(options_values, & &1.option_id)
   end
 
-  defp get_product_grp(id), do: get_product_group(id) |> Repo.preload(:options)
+  defp get_product_grp(id), do: id |> get_product_group() |> Repo.preload(:options)
 
   defp compare_and_get_disconnected_options([], _new_options_ids), do: []
 
   defp compare_and_get_disconnected_options(current_options_structs, new_options_ids) do
     options_ids = Enum.map(current_options_structs, & &1.id)
-    MapSet.difference(MapSet.new(options_ids), MapSet.new(new_options_ids)) |> MapSet.to_list()
+
+    options_ids
+    |> MapSet.new()
+    |> MapSet.difference(MapSet.new(new_options_ids))
+    |> MapSet.to_list()
   end
 
   defp compare_and_get_unique_new_options(current_options_structs, new_options_ids) do
     options_ids = Enum.map(current_options_structs, & &1.id)
-    MapSet.difference(MapSet.new(new_options_ids), MapSet.new(options_ids)) |> MapSet.to_list()
+
+    new_options_ids
+    |> MapSet.new()
+    |> MapSet.difference(MapSet.new(options_ids))
+    |> MapSet.to_list()
   end
 
   defp build_option_values(option_ids, company_id) do
@@ -737,7 +768,6 @@ defmodule SalesReg.Store do
           WHEN array_length(ARRAY(SELECT to_jsonb(row(option_id, name, ?)) FROM option_values WHERE option_values.product_id = ? AND (SELECT is_visual FROM options WHERE options.id = option_id) = ?), 1) > 0
 
           THEN ARRAY(SELECT to_jsonb(row(option_id, name, ?)) FROM option_values WHERE option_values.product_id = ? AND (SELECT is_visual FROM options WHERE options.id = option_values.option_id) = ?)
-
 
           WHEN array_length(ARRAY(SELECT to_jsonb(row(option_id, ?)) FROM option_values WHERE option_values.product_id = ? AND (SELECT is_visual FROM options WHERE options.id = option_id) = ?), 1) > 0
 

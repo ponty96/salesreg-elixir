@@ -5,10 +5,11 @@ defmodule SalesReg.Order do
 
   import Ecto.Query, warn: false
   use SalesRegWeb, :context
+  alias Absinthe.Relay.Connection
   alias Dataloader.Ecto, as: DataloaderEcto
-  alias SalesReg.Order.OrderStateMachine
-  alias SalesReg.Mailer.YipcartToCustomers, as: YC2C
   alias SalesReg.Mailer.MerchantsToCustomers, as: M2C
+  alias SalesReg.Mailer.YipcartToMerchants, as: YC2C
+  alias SalesReg.Order.OrderStateMachine
 
   use SalesReg.Context, [
     Sale,
@@ -52,7 +53,7 @@ defmodule SalesReg.Order do
   end
 
   def update_status(:sale, order_id, new_status) do
-    sale = get_sale(order_id) |> preload_order()
+    sale = order_id |> get_sale() |> preload_order()
     sale = Map.put(sale, :state, sale.status)
 
     case Machinery.transition_to(sale, OrderStateMachine, new_status) do
@@ -67,12 +68,11 @@ defmodule SalesReg.Order do
         {:ok, updated}
 
       {:error, error} ->
-        IO.inspect(error, label: "transition state error")
         {:error, error}
     end
   end
 
-  def processed_sale_orders() do
+  def processed_sale_orders do
     Sale
     |> where([s], s.status == "processed")
     |> Repo.all()
@@ -84,7 +84,7 @@ defmodule SalesReg.Order do
           contact_id: _contact_id,
           product_id: _product_id,
           company_id: _company_id,
-          text: text
+          text: _text
         } = params
       ) do
     create_star_or_review(params, fn attrs ->
@@ -173,24 +173,27 @@ defmodule SalesReg.Order do
     |> Multi.run(:insert_invoice, fn _repo, %{insert_sale: sale} ->
       insert_invoice(sale)
     end)
-    |> Multi.run(:create_invoice_notification, fn _repo,
-                                                  %{insert_sale: sale, insert_invoice: invoice} ->
-      invoice = preload_invoice(invoice)
+    |> Multi.run(
+      :create_invoice_notification,
+      fn _repo, %{insert_sale: sale, insert_invoice: invoice} ->
+        invoice = preload_invoice(invoice)
 
-      %{
-        company_id: sale.company_id,
-        actor_id: sale.user_id,
-        message: "An invoice has been created for #{invoice.sale.contact.contact_name}"
-      }
-      |> Notifications.create_notification({:invoice, invoice}, :created)
-    end)
+        %{
+          company_id: sale.company_id,
+          actor_id: sale.user_id,
+          message: "An invoice has been created for #{invoice.sale.contact.contact_name}"
+        }
+        |> Notifications.create_notification({:invoice, invoice}, :created)
+      end
+    )
     |> Repo.transaction()
     |> repo_transaction_resp()
   end
 
   def create_receipt(%{invoice_id: id, amount_paid: amount}) do
     invoice =
-      Order.get_invoice(id)
+      id
+      |> Order.get_invoice()
       |> preload_invoice()
 
     insert_receipt(invoice.sale, invoice, amount, :cash)
@@ -231,7 +234,8 @@ defmodule SalesReg.Order do
         M2C.send_payment_received_mail(sale, receipt)
 
         # send invoice payment notice email to merchant
-        Map.put_new(sale, :amount, amount)
+        sale
+        |> Map.put_new(:amount, amount)
         |> YC2C.send_invoice_payment_notice()
 
         %{
@@ -252,12 +256,14 @@ defmodule SalesReg.Order do
   def insert_receipt(sale, transaction_id, amount, :card) do
     sale = preload_order(sale)
 
+    receipt_params =
+      sale
+      |> build_receipt_params(sale.invoice, amount)
+      |> Map.put_new(:transaction_id, transaction_id)
+
     add_receipt =
       %Receipt{}
-      |> Receipt.via_cash_changeset(
-        build_receipt_params(sale, sale.invoice, amount)
-        |> Map.put_new(:transaction_id, transaction_id)
-      )
+      |> Receipt.via_cash_changeset(receipt_params)
       |> Repo.insert()
 
     case add_receipt do
@@ -267,7 +273,8 @@ defmodule SalesReg.Order do
         M2C.send_payment_received_mail(sale, receipt)
 
         # send invoice payment notice email to merchant
-        Map.put_new(sale, :amount, amount)
+        sale
+        |> Map.put_new(:amount, amount)
         |> YC2C.send_invoice_payment_notice()
 
         %{
@@ -326,7 +333,8 @@ defmodule SalesReg.Order do
 
   def cal_order_amount_before_charge(%Sale{} = sale) do
     sale = Repo.preload(sale, [:items])
-    calc_items_amount(sale.items) + (Float.parse(sale.delivery_fee) |> elem(0))
+    delivery_fee = sale.delivery_fee |> Decimal.to_float()
+    calc_items_amount(sale.items) + delivery_fee
   end
 
   def calc_order_amount(%Sale{} = sale) do
@@ -335,7 +343,8 @@ defmodule SalesReg.Order do
 
   def cal_order_amount_before_charge(%Invoice{} = invoice) do
     invoice = Repo.preload(invoice, sale: :items)
-    calc_items_amount(invoice.sale.items) + (Float.parse(invoice.sale.delivery_fee) |> elem(0))
+    delivery_fee = invoice.sale.delivery_fee |> Decimal.to_float()
+    calc_items_amount(invoice.sale.items) + delivery_fee
   end
 
   def calc_order_amount(%Invoice{} = invoice) do
@@ -387,12 +396,14 @@ defmodule SalesReg.Order do
   end
 
   def calc_product_total_quantity_sold(product_id) do
-    Repo.all(
+    query =
       from(item in Item,
         where: item.product_id == ^product_id,
         preload: [:sale]
       )
-    )
+
+    query
+    |> Repo.all()
     |> Enum.filter(&(&1.sale.status == "delivered"))
     |> Enum.map(&String.to_integer(&1.quantity))
     |> Enum.sum()
@@ -400,13 +411,14 @@ defmodule SalesReg.Order do
 
   def put_ref_id(schema, attrs) do
     resources =
-      from(
-        s in schema,
-        order_by: s.inserted_at
+      Repo.all(
+        from(
+          s in schema,
+          order_by: s.inserted_at
+        )
       )
-      |> Repo.all()
 
-    if Enum.count(resources) == 0 do
+    if Enum.empty?(resources) do
       Map.put_new(attrs, :ref_id, "1")
     else
       last_resource_ref_id = List.last(resources).ref_id
@@ -420,19 +432,21 @@ defmodule SalesReg.Order do
   end
 
   def list_company_activities(company_id, contact_id, args) do
-    from(ac in Activity,
-      where: ac.company_id == ^company_id,
-      where: ac.contact_id == ^contact_id,
-      select: ac
-    )
-    |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
+    query =
+      from(ac in Activity,
+        where: ac.company_id == ^company_id,
+        where: ac.contact_id == ^contact_id,
+        select: ac
+      )
+
+    query
+    |> Connection.from_query(&Repo.all/1, args)
   end
 
   def calc_item_amount(item) do
-    {quantity, _} = Float.parse(item.quantity)
-    {unit_price, _} = Float.parse(item.unit_price)
+    unit_price = Decimal.to_float(item.unit_price)
 
-    quantity * unit_price
+    item.quantity * unit_price
   end
 
   def float_to_binary(float) do
@@ -446,19 +460,24 @@ defmodule SalesReg.Order do
     end
   end
 
-  defp calc_items_amount(items) do
-    Enum.map(items, fn item ->
-      {quantity, _} = Float.parse(item.quantity)
-      {unit_price, _} = Float.parse(item.unit_price)
+  def sale_charge do
+    System.get_env("CHARGE") |> Decimal.new()
+  end
 
-      quantity * unit_price
+  defp calc_items_amount(items) do
+    items
+    |> Enum.map(fn item ->
+      unit_price = Decimal.to_float(item.unit_price)
+
+      item.quantity * unit_price
     end)
     |> Enum.sum()
   end
 
   defp calc_amount_paid(receipts) do
-    Enum.map(receipts, fn receipt ->
-      {amount_paid, _} = Float.parse(receipt.amount_paid)
+    receipts
+    |> Enum.map(fn receipt ->
+      amount_paid = Decimal.to_float(receipt.amount_paid)
       amount_paid
     end)
     |> Enum.sum()
@@ -498,14 +517,6 @@ defmodule SalesReg.Order do
       company_id: sale.company_id,
       sale_id: sale.id
     }
-  end
-
-  defp build_resource_html(%Receipt{} = receipt) do
-    EEx.eval_file(@receipt_html_path, receipt: receipt)
-  end
-
-  defp build_resource_html(%Invoice{} = invoice) do
-    EEx.eval_file(@invoice_html_path, invoice: invoice)
   end
 
   defp create_star_or_review(params, callback) do

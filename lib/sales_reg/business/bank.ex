@@ -1,4 +1,7 @@
 defmodule SalesReg.Business.Bank do
+  @moduledoc """
+  Bank Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
