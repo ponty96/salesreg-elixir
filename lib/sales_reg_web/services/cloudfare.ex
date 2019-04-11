@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.Services.Cloudfare do
+  @moduledoc """
+  Cloudflare HTTP Client
+  """
   alias SalesRegWeb.Services.Base
 
   def create_dns_record(type, name, content, optional_params \\ %{})
@@ -47,7 +50,7 @@ defmodule SalesRegWeb.Services.Cloudfare do
     end
   end
 
-  defp process_url() do
+  defp process_url do
     base_url = get_config_key_val(:api_base_url)
     zone_id = get_config_key_val(:zone_id)
 

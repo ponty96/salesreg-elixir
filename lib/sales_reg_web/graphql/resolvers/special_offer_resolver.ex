@@ -1,8 +1,12 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.SpecialOfferResolver do
+  @moduledoc """
+  Special Offer Resolver
+  """
   use SalesRegWeb, :context
 
   def upsert_bonanza(%{bonanza_id: id, bonanza: bonanza_params}, _res) do
-    SpecialOffer.get_bonanza(id)
+    id
+    |> SpecialOffer.get_bonanza()
     |> SpecialOffer.update_bonanza(bonanza_params)
   end
 

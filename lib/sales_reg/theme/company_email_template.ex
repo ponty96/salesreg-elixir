@@ -1,4 +1,7 @@
 defmodule SalesReg.Theme.CompanyEmailTemplate do
+  @moduledoc """
+  CompanyEmailTemplate Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

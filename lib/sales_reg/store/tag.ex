@@ -1,4 +1,7 @@
 defmodule SalesReg.Store.Tag do
+  @moduledoc """
+  Tag Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias SalesReg.Store.Product

@@ -1,4 +1,7 @@
 defmodule SalesReg.FieldTypes.CaseInsensitive do
+  @moduledoc """
+    Case Insensitive Ecto Field Type
+  """
   @behaviour Ecto.Type
   def type, do: :string
 

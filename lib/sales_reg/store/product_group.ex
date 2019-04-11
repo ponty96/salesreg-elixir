@@ -1,9 +1,12 @@
 defmodule SalesReg.Store.ProductGroup do
+  @moduledoc """
+  Product Group Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias SalesReg.Store
   alias SalesReg.Repo
+  alias SalesReg.Store
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
