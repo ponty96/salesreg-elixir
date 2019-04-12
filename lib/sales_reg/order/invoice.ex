@@ -45,7 +45,7 @@ defmodule SalesReg.Order.Invoice do
 
   def get_invoice_share_link(invoice) do
     invoice = Repo.preload(invoice, [:company])
-    "#{Business.get_company_share_url(invoice.company.slug)}/in/#{invoice.id}"
+    "#{Business.get_company_share_url(invoice.company.slug)}/invoices/#{invoice.id}"
   end
 
   defp before_update_callback(changeset, attrs) do
