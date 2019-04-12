@@ -97,7 +97,7 @@ defmodule SalesReg.Order.Sale do
 
   def get_sale_share_link(sale) do
     sale = Repo.preload(sale, [:company])
-    "#{Business.get_company_share_url(sale.company.slug)}/s/#{sale.id}"
+    "#{Business.get_company_share_url(sale.company.slug)}/sales/#{sale.id}"
   end
 
   defp before_update_callback(changeset, attrs) do
