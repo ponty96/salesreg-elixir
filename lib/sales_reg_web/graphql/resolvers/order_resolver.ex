@@ -15,6 +15,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
     Order.create_sale(params)
   end
 
+  def delete_sale(%{sale_id: id}, _res) do
+    Order.delete_sale(id)
+  end
+
   def list_company_sales(%{company_id: company_id} = args, _res) do
     [company_id: company_id]
     |> Order.paginated_list_company_sales(pagination_args(args))

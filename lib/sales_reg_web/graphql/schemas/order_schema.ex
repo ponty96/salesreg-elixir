@@ -24,6 +24,17 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
     end
 
     @desc """
+    delete a sale order
+    """
+    field :delete_sale_order, :mutation_response do
+      arg(:sale_id, non_null(:uuid))
+
+      middleware(Authorize)
+      middleware(Policy)
+      resolve(&OrderResolver.delete_sale/2)
+    end
+
+    @desc """
     update an order's status
     """
     field :update_order_status, :mutation_response do
