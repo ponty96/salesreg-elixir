@@ -154,6 +154,18 @@ defmodule SalesReg.Order do
     |> sale_multi_transac()
   end
 
+  def update_sale_details(id, params) do
+    sale = preload_order(get_sale(id))
+    
+    if sale.status == "pending" and sale.invoice.receipts == [] do
+      id
+      |> Order.get_sale()
+      |> Order.update_sale(params)
+    else
+      {:error, [%{key: "sale", message: "Sale cannot be edited."}]}
+    end
+  end
+
   def create_contact_if_not_exist(params) do
     contact = Business.get_contact_by_email(params.email)
 
