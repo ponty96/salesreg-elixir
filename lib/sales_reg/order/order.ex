@@ -339,21 +339,11 @@ defmodule SalesReg.Order do
 
     case sale do
       %Sale{} ->
-        Multi.new()
-        |> Multi.run(
-          :delete_invoice_receipts,
-          fn _repo, _changes ->
-            {:ok, delete_invoice_receipts(sale.invoice)}
-          end
-        )
-        |> Multi.delete_all(:delete_invoice, Ecto.assoc(sale, :invoice))
-        |> Multi.delete_all(:delete_stars, Ecto.assoc(sale, :stars))
-        |> Multi.delete_all(:delete_reviews, Ecto.assoc(sale, :reviews))
-        |> Multi.delete_all(:delete_items, Ecto.assoc(sale, :items))
-        |> Multi.delete_all(:delete_location, Ecto.assoc(sale, :location))
-        |> Multi.delete(:delete_sale, sale)
-        |> Repo.transaction()
-        |> delete_sale_transaction_resp()
+        if sale.status == "pending" and sale.invoice.receipts == [] do
+          delete_all_sale_assoc(sale)
+        else
+          {:error, [%{key: "sale", message: "Sale cannot be deleted."}]}
+        end
 
       nil ->
         {:error, [%{key: "sale", message: "Sale does not exist."}]}
@@ -514,6 +504,24 @@ defmodule SalesReg.Order do
       amount_paid
     end)
     |> Enum.sum()
+  end
+
+  defp delete_all_sale_assoc(%Sale{} = sale) do
+    Multi.new()
+    |> Multi.run(
+      :delete_invoice_receipts,
+      fn _repo, _changes ->
+        {:ok, delete_invoice_receipts(sale.invoice)}
+      end
+    )
+    |> Multi.delete_all(:delete_invoice, Ecto.assoc(sale, :invoice))
+    |> Multi.delete_all(:delete_stars, Ecto.assoc(sale, :stars))
+    |> Multi.delete_all(:delete_reviews, Ecto.assoc(sale, :reviews))
+    |> Multi.delete_all(:delete_items, Ecto.assoc(sale, :items))
+    |> Multi.delete_all(:delete_location, Ecto.assoc(sale, :location))
+    |> Multi.delete(:delete_sale, sale)
+    |> Repo.transaction()
+    |> delete_sale_transaction_resp    
   end
 
   defp repo_transaction_resp(repo_transaction) do
