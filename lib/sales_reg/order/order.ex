@@ -405,7 +405,7 @@ defmodule SalesReg.Order do
     query
     |> Repo.all()
     |> Enum.filter(&(&1.sale.status == "delivered"))
-    |> Enum.map(&String.to_integer(&1.quantity))
+    |> Enum.map(fn item -> item.quantity end)
     |> Enum.sum()
   end
 
