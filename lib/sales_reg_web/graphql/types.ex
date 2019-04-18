@@ -1041,6 +1041,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   input_object :item_input do
+    field(:id, :uuid)
     field(:product_id, :uuid)
     field(:quantity, non_null(:string))
     field(:unit_price, non_null(:string))
