@@ -942,6 +942,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   input_object :location_input do
+    field(:id, :uuid)
     field(:city, non_null(:string))
     field(:country, non_null(:string))
     field(:lat, :string)
