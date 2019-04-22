@@ -577,17 +577,15 @@ defmodule SalesReg.Store do
   # PRODUCT INVENTORY
   defp increment_product_sku(product_id, quantity) do
     product = get_product_for_inventory(product_id)
-    params = 
-      parse_product_params(product, %{sku: "#{product.sku + quantity}"})
+    params = parse_product_params(product, %{sku: "#{product.sku + quantity}"})
 
     update_product(product, params)
   end
 
   defp decrement_product_sku(product_id, quantity) do
     product = get_product_for_inventory(product_id)
-    params = 
-      parse_product_params(product, %{sku: "#{product.sku - quantity}"})
-    
+    params = parse_product_params(product, %{sku: "#{product.sku - quantity}"})
+
     update_product(product, params)
   end
 
