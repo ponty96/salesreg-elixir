@@ -208,7 +208,7 @@ end)
 
 {:ok, invoice} = Seed.create_invoice(order)
 
-# Seed.create_receipt(invoice.id, user.id, company.id)
+Seed.create_receipt(invoice.id, user.id, company.id, order.id)
 
 Enum.map(1..10, fn _index ->
   Seed.create_notification(company.id, user.id, Enum.random(["status change", "created"]), "order", order.id)
