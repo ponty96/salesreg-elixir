@@ -49,7 +49,9 @@ defmodule SalesReg.Accounts.User do
   def registration_changeset(user, attrs) do
     user
     |> cast(attrs, @required_fields ++ @registration_fields ++ @update_fields)
-    |> validate_required(@required_fields ++ @registration_fields ++ @update_fields)
+    |> validate_required(
+      @required_fields ++ @registration_fields ++ (@update_fields -- [:gender])
+    )
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
     |> validate_password()
