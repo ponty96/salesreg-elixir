@@ -449,6 +449,10 @@ defmodule SalesReg.Order do
     item.quantity * unit_price
   end
 
+  def calc_sale_price_considering_discount(sale) do
+    cal_order_amount_before_charge(sale) - Decimal.to_float(sale.discount)
+  end
+
   def float_to_binary(float) do
     :erlang.float_to_binary(float, [:compact, {:decimals, 20}])
   end
