@@ -123,15 +123,16 @@ defmodule SalesReg.Analytics do
   end
 
   defp income_top_products(items_query) do
-    query = 
-      from(i in items_query,
-        select: %{product_id: i.product_id, title: "", amount: sum(i.quantity * i.unit_price)},
-        group_by: i.product_id,
-        order_by: [desc: sum(i.quantity * i.unit_price)]
+    query =
+      Repo.all(
+        from(i in items_query,
+          select: %{product_id: i.product_id, title: "", amount: sum(i.quantity * i.unit_price)},
+          group_by: i.product_id,
+          order_by: [desc: sum(i.quantity * i.unit_price)]
+        )
       )
-    
+
     query
-    |> Repo.all()
     |> Enum.map(fn product ->
       title = Store.get_product_name_by_id(product.product_id)
       %{product | title: title}

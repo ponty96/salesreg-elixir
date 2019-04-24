@@ -577,20 +577,14 @@ defmodule SalesReg.Store do
   # PRODUCT INVENTORY
   defp increment_product_sku(product_id, quantity) do
     product = get_product_for_inventory(product_id)
-    quantity = String.to_integer(quantity)
-    product_sku = String.to_integer(product.sku)
-
-    params = parse_product_params(product, %{sku: "#{product_sku + quantity}"})
+    params = parse_product_params(product, %{sku: "#{product.sku + quantity}"})
 
     update_product(product, params)
   end
 
   defp decrement_product_sku(product_id, quantity) do
     product = get_product_for_inventory(product_id)
-    quantity = String.to_integer(quantity)
-    product_sku = String.to_integer(product.sku)
-
-    params = parse_product_params(product, %{sku: "#{product_sku - quantity}"})
+    params = parse_product_params(product, %{sku: "#{product.sku - quantity}"})
 
     update_product(product, params)
   end
