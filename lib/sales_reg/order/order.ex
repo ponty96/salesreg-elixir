@@ -246,29 +246,7 @@ defmodule SalesReg.Order do
       |> Receipt.via_cash_changeset(build_receipt_params(sale, invoice, amount))
       |> Repo.insert()
 
-    case add_receipt do
-      {:ok, receipt} ->
-        receipt = preload_receipt(receipt)
-
-        M2C.send_payment_received_mail(sale, receipt)
-
-        # send invoice payment notice email to merchant
-        sale
-        |> Map.put_new(:amount, amount)
-        |> YC2C.send_invoice_payment_notice()
-
-        %{
-          company_id: sale.company_id,
-          actor_id: sale.user_id,
-          message: "A sum of ##{amount} was paid by #{receipt.sale.contact.contact_name}"
-        }
-        |> Notifications.create_notification({:invoice, invoice}, :payment)
-
-        {:ok, receipt}
-
-      {:error, _reason} = error_tuple ->
-        error_tuple
-    end
+    handle_receipt_response(add_receipt, sale, amount)
   end
 
   # Use this to persist receipt when the payment method is card
@@ -280,34 +258,9 @@ defmodule SalesReg.Order do
       |> build_receipt_params(sale.invoice, amount)
       |> Map.put_new(:transaction_id, transaction_id)
 
-    add_receipt =
-      %Receipt{}
-      |> Receipt.via_cash_changeset(receipt_params)
-      |> Repo.insert()
-
-    case add_receipt do
-      {:ok, receipt} ->
-        receipt = preload_receipt(receipt)
-
-        M2C.send_payment_received_mail(sale, receipt)
-
-        # send invoice payment notice email to merchant
-        sale
-        |> Map.put_new(:amount, amount)
-        |> YC2C.send_invoice_payment_notice()
-
-        %{
-          company_id: sale.company_id,
-          actor_id: sale.user_id,
-          message: "A sum of ##{amount} was paid by #{receipt.sale.contact.contact_name}"
-        }
-        |> Notifications.create_notification({:invoice, receipt.invoice}, :payment)
-
-        {:ok, receipt}
-
-      {:error, _reason} = error_tuple ->
-        error_tuple
-    end
+    receipt_params
+    |> add_receipt()
+    |> handle_receipt_response(sale, amount)
   end
 
   def create_activities(receipt) do
@@ -440,7 +393,7 @@ defmodule SalesReg.Order do
     query
     |> Repo.all()
     |> Enum.filter(&(&1.sale.status == "delivered"))
-    |> Enum.map(&String.to_integer(&1.quantity))
+    |> Enum.map(fn item -> item.quantity end)
     |> Enum.sum()
   end
 
@@ -482,6 +435,10 @@ defmodule SalesReg.Order do
     unit_price = Decimal.to_float(item.unit_price)
 
     item.quantity * unit_price
+  end
+
+  def calc_sale_price_considering_discount(sale) do
+    cal_order_amount_before_charge(sale) - Decimal.to_float(sale.discount)
   end
 
   def float_to_binary(float) do
@@ -580,6 +537,32 @@ defmodule SalesReg.Order do
       company_id: sale.company_id,
       sale_id: sale.id
     }
+  end
+
+  defp handle_receipt_response(add_receipt, sale, amount) do
+    case add_receipt do
+      {:ok, receipt} ->
+        receipt = preload_receipt(receipt)
+
+        M2C.send_payment_received_mail(sale, receipt)
+
+        # send invoice payment notice email to merchant
+        sale
+        |> Map.put_new(:amount, amount)
+        |> YC2C.send_invoice_payment_notice()
+
+        %{
+          company_id: sale.company_id,
+          actor_id: sale.user_id,
+          message: "A sum of ##{amount} was paid by #{receipt.sale.contact.contact_name}"
+        }
+        |> Notifications.create_notification({:invoice, receipt.invoice}, :payment)
+
+        {:ok, receipt}
+
+      {:error, _reason} = error_tuple ->
+        error_tuple
+    end
   end
 
   defp create_star_or_review(params, callback) do
