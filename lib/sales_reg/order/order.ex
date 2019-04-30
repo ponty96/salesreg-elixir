@@ -37,7 +37,14 @@ defmodule SalesReg.Order do
   end
 
   def preload_order(order) do
-    Repo.preload(order, [:contact, company: [:owner], items: [:product], invoice: [:receipts]])
+    Repo.preload(order, [
+      :contact,
+      :stars,
+      :reviews,
+      company: [:owner],
+      items: [:product],
+      invoice: [:receipts]
+    ])
   end
 
   def preload_invoice(invoice) do
@@ -147,6 +154,18 @@ defmodule SalesReg.Order do
     |> sale_multi_transac()
   end
 
+  def update_sale_details(id, params) do
+    sale = preload_order(get_sale(id))
+    
+    if sale.status == "pending" and sale.invoice.receipts == [] do
+      id
+      |> Order.get_sale()
+      |> Order.update_sale(params)
+    else
+      {:error, [%{key: "sale", message: "Sale cannot be edited."}]}
+    end
+  end
+
   def create_contact_if_not_exist(params) do
     contact = Business.get_contact_by_email(params.email)
 
@@ -227,29 +246,7 @@ defmodule SalesReg.Order do
       |> Receipt.via_cash_changeset(build_receipt_params(sale, invoice, amount))
       |> Repo.insert()
 
-    case add_receipt do
-      {:ok, receipt} ->
-        receipt = preload_receipt(receipt)
-
-        M2C.send_payment_received_mail(sale, receipt)
-
-        # send invoice payment notice email to merchant
-        sale
-        |> Map.put_new(:amount, amount)
-        |> YC2C.send_invoice_payment_notice()
-
-        %{
-          company_id: sale.company_id,
-          actor_id: sale.user_id,
-          message: "A sum of ##{amount} was paid by #{receipt.sale.contact.contact_name}"
-        }
-        |> Notifications.create_notification({:invoice, invoice}, :payment)
-
-        {:ok, receipt}
-
-      {:error, _reason} = error_tuple ->
-        error_tuple
-    end
+    handle_receipt_response(add_receipt, sale, amount)
   end
 
   # Use this to persist receipt when the payment method is card
@@ -261,34 +258,9 @@ defmodule SalesReg.Order do
       |> build_receipt_params(sale.invoice, amount)
       |> Map.put_new(:transaction_id, transaction_id)
 
-    add_receipt =
-      %Receipt{}
-      |> Receipt.via_cash_changeset(receipt_params)
-      |> Repo.insert()
-
-    case add_receipt do
-      {:ok, receipt} ->
-        receipt = preload_receipt(receipt)
-
-        M2C.send_payment_received_mail(sale, receipt)
-
-        # send invoice payment notice email to merchant
-        sale
-        |> Map.put_new(:amount, amount)
-        |> YC2C.send_invoice_payment_notice()
-
-        %{
-          company_id: sale.company_id,
-          actor_id: sale.user_id,
-          message: "A sum of ##{amount} was paid by #{receipt.sale.contact.contact_name}"
-        }
-        |> Notifications.create_notification({:invoice, receipt.invoice}, :payment)
-
-        {:ok, receipt}
-
-      {:error, _reason} = error_tuple ->
-        error_tuple
-    end
+    receipt_params
+    |> add_receipt()
+    |> handle_receipt_response(sale, amount)
   end
 
   def create_activities(receipt) do
@@ -325,6 +297,22 @@ defmodule SalesReg.Order do
     }
 
     Order.add_activity(attrs)
+  end
+
+  def delete_sale(id) do
+    sale = preload_order(get_sale(id))
+
+    case sale do
+      %Sale{} ->
+        if sale.status == "pending" and sale.invoice.receipts == [] do
+          delete_all_sale_assoc(sale)
+        else
+          {:error, [%{key: "sale", message: "Sale cannot be deleted."}]}
+        end
+
+      nil ->
+        {:error, [%{key: "sale", message: "Sale does not exist."}]}
+    end
   end
 
   def get_receipt_by_transac_id(transaction_id) do
@@ -449,6 +437,10 @@ defmodule SalesReg.Order do
     item.quantity * unit_price
   end
 
+  def calc_sale_price_considering_discount(sale) do
+    cal_order_amount_before_charge(sale) - Decimal.to_float(sale.discount)
+  end
+
   def float_to_binary(float) do
     :erlang.float_to_binary(float, [:compact, {:decimals, 20}])
   end
@@ -483,6 +475,24 @@ defmodule SalesReg.Order do
     |> Enum.sum()
   end
 
+  defp delete_all_sale_assoc(%Sale{} = sale) do
+    Multi.new()
+    |> Multi.run(
+      :delete_invoice_receipts,
+      fn _repo, _changes ->
+        {:ok, delete_invoice_receipts(sale.invoice)}
+      end
+    )
+    |> Multi.delete_all(:delete_invoice, Ecto.assoc(sale, :invoice))
+    |> Multi.delete_all(:delete_stars, Ecto.assoc(sale, :stars))
+    |> Multi.delete_all(:delete_reviews, Ecto.assoc(sale, :reviews))
+    |> Multi.delete_all(:delete_items, Ecto.assoc(sale, :items))
+    |> Multi.delete_all(:delete_location, Ecto.assoc(sale, :location))
+    |> Multi.delete(:delete_sale, sale)
+    |> Repo.transaction()
+    |> delete_sale_transaction_resp    
+  end
+
   defp repo_transaction_resp(repo_transaction) do
     case repo_transaction do
       {:ok, %{insert_sale: sale}} ->
@@ -490,6 +500,16 @@ defmodule SalesReg.Order do
 
       {:error, :get_contact, value, _map} ->
         {:error, value}
+
+      {:error, _failed_operation, failed_value, _changeset} ->
+        {:error, failed_value}
+    end
+  end
+
+  defp delete_sale_transaction_resp(repo_transac) do
+    case repo_transac do
+      {:ok, _} ->
+        {:ok, %Sale{}}
 
       {:error, _failed_operation, failed_value, _changeset} ->
         {:error, failed_value}
@@ -517,6 +537,32 @@ defmodule SalesReg.Order do
       company_id: sale.company_id,
       sale_id: sale.id
     }
+  end
+
+  defp handle_receipt_response(add_receipt, sale, amount) do
+    case add_receipt do
+      {:ok, receipt} ->
+        receipt = preload_receipt(receipt)
+
+        M2C.send_payment_received_mail(sale, receipt)
+
+        # send invoice payment notice email to merchant
+        sale
+        |> Map.put_new(:amount, amount)
+        |> YC2C.send_invoice_payment_notice()
+
+        %{
+          company_id: sale.company_id,
+          actor_id: sale.user_id,
+          message: "A sum of ##{amount} was paid by #{receipt.sale.contact.contact_name}"
+        }
+        |> Notifications.create_notification({:invoice, receipt.invoice}, :payment)
+
+        {:ok, receipt}
+
+      {:error, _reason} = error_tuple ->
+        error_tuple
+    end
   end
 
   defp create_star_or_review(params, callback) do
@@ -558,5 +604,18 @@ defmodule SalesReg.Order do
 
   defp charge_to_float(charge) do
     charge |> Float.parse() |> elem(0)
+  end
+
+  defp delete_invoice_receipts(invoice) when is_map(invoice) do
+    Repo.preload(invoice, [:receipts]).receipts
+    |> Enum.each(fn receipt ->
+      Repo.delete(receipt)
+    end)
+
+    invoice
+  end
+
+  defp delete_invoice_receipts(invoice) do
+    %Invoice{}
   end
 end

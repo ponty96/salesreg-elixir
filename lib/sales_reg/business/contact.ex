@@ -101,6 +101,7 @@ defmodule SalesReg.Business.Contact do
     case get_field(changeset, :type) do
       "customer" -> changeset
       "vendor" -> changeset
+      "prospect" -> changeset
       _ -> add_error(changeset, :type, "Invalid contact type")
     end
   end

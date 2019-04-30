@@ -895,7 +895,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:date_of_birth, :string)
     field(:email, non_null(:string))
     field(:first_name, non_null(:string))
-    field(:gender, non_null(:gender))
+    field(:gender, :gender)
     field(:last_name, non_null(:string))
     field(:password, non_null(:string))
     field(:password_confirmation, non_null(:string))
@@ -905,7 +905,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   input_object :update_user_input do
     field(:date_of_birth, non_null(:string))
     field(:first_name, non_null(:string))
-    field(:gender, non_null(:gender))
+    field(:gender, :gender)
     field(:last_name, non_null(:string))
     field(:profile_picture, :string)
   end
@@ -942,6 +942,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   input_object :location_input do
+    field(:id, :uuid)
     field(:city, non_null(:string))
     field(:country, non_null(:string))
     field(:lat, :string)
@@ -1041,6 +1042,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   end
 
   input_object :item_input do
+    field(:id, :uuid)
     field(:product_id, :uuid)
     field(:quantity, non_null(:string))
     field(:unit_price, non_null(:string))
