@@ -26,7 +26,7 @@ defmodule SalesReg.Order.Sale do
     field(:state, :string, virtual: true)
 
     has_one(:invoice, SalesReg.Order.Invoice)
-    has_one(:location, SalesReg.Business.Location)
+    has_one(:location, SalesReg.Business.Location, on_replace: :delete)
     has_many(:items, SalesReg.Order.Item, on_replace: :delete)
     has_many(:reviews, SalesReg.Order.Review)
     has_many(:stars, SalesReg.Order.Star)

@@ -6,13 +6,15 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   alias SalesReg.Mailer.MerchantsToCustomers, as: M2C
 
   def upsert_sale(%{sale: params, sale_id: id}, _res) do
-    id
-    |> Order.get_sale()
-    |> Order.update_sale(params)
+    Order.update_sale_details(id, params)
   end
 
   def upsert_sale(%{sale: params}, _res) do
     Order.create_sale(params)
+  end
+
+  def delete_sale(%{sale_id: id}, _res) do
+    Order.delete_sale(id)
   end
 
   def list_company_sales(%{company_id: company_id} = args, _res) do
