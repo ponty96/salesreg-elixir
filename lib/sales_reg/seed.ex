@@ -1,15 +1,23 @@
 defmodule SalesReg.Seed do
+  @moduledoc """
+  Seed Module
+  """
   use SalesRegWeb, :context
 
-  alias Faker.{Phone.EnGb, Internet, Commerce, Avatar, Industry, Name, Address}
-  alias Faker.Company.En, as: CompanyEn
-  alias Faker.Name.En, as: NameEn
+  alias Faker.Address
+  alias Faker.Avatar
+  alias Faker.Commerce
   alias Faker.Commerce.En, as: CommerceEn
+  alias Faker.Company.En, as: CompanyEn
   alias Faker.Date, as: FakerDate
+  alias Faker.Industry
+  alias Faker.Internet
+  alias Faker.Name
+  alias Faker.Name.En, as: NameEn
+  alias Faker.Phone.EnGb
 
   @location_types ["office", "home"]
   @phone_types ["home", "mobile", "work"]
-  @currency ["Dollars", "Naira", "Euro", "Pounds"]
   @marital_status ["Single", "Married", "Widowed"]
   @banks ["076", "011", "063", "058"]
   @likes ["honesty", "integrity", "principled"]
@@ -17,9 +25,8 @@ defmodule SalesReg.Seed do
   @payment_method ["cash", "card"]
   @seed_order_status ["pending", "processed", "delivering"]
   @gender ["MALE", "FEMALE"]
-  @company_template_status ["active", "inactive"]
 
-  def create_user() do
+  def create_user do
     user_params = %{
       "date_of_birth" => "15-08-1991",
       "email" => "ayo.aregbede@gmail.com",
@@ -50,7 +57,8 @@ defmodule SalesReg.Seed do
       facebook: "http://facebook.com/officialsandbox",
       instagram: "http://instagram.com/officialsandbox",
       twitter: "http://twitter.com/officialsandbox",
-      linkedin: "http://linkedin.com/officialsandbox"
+      linkedin: "http://linkedin.com/officialsandbox",
+      phone: gen_phone_params()
     }
 
     Business.create_company(user_id, company_params)
@@ -96,11 +104,13 @@ defmodule SalesReg.Seed do
     |> Business.create_bank()
   end
 
-  def create_receipt(invoice_id, user_id, company_id) do
+  def create_receipt(invoice_id, user_id, company_id, sale_id) do
     current_date = Date.utc_today() |> Date.to_string()
 
-    gen_receipt_details(invoice_id, user_id, company_id)
+    invoice_id
+    |> gen_receipt_details(user_id, company_id)
     |> Map.put_new(:time_paid, current_date)
+    |> Map.put_new(:sale_id, sale_id)
     |> Order.add_receipt()
   end
 
@@ -108,7 +118,7 @@ defmodule SalesReg.Seed do
     Enum.sum(Enum.map(expense_items, fn expense_item -> expense_item["amount"] end))
   end
 
-  defp expenses_items() do
+  defp expenses_items do
     Enum.map(1..5, fn _index ->
       %{
         "item_name" => CommerceEn.product_name_product(),
@@ -117,7 +127,7 @@ defmodule SalesReg.Seed do
     end)
   end
 
-  defp gen_location_params() do
+  defp gen_location_params do
     %{
       "city" => Address.city(),
       "country" => Address.country(),
@@ -130,14 +140,14 @@ defmodule SalesReg.Seed do
     }
   end
 
-  defp gen_phone_params() do
+  defp gen_phone_params do
     %{
       "number" => "#{EnGb.mobile_number()}",
       "type" => Enum.random(@phone_types)
     }
   end
 
-  def gen_bank_details() do
+  def gen_bank_details do
     %{
       account_name: NameEn.name(),
       account_number: "#{Enum.random(0_152_637_490..0_163_759_275)}",
@@ -159,7 +169,8 @@ defmodule SalesReg.Seed do
   defp past_date(type) do
     case type do
       :dob ->
-        FakerDate.date_of_birth(16..99)
+        16..99
+        |> FakerDate.date_of_birth()
         |> Date.to_string()
 
       :marr_anni ->
@@ -176,12 +187,12 @@ defmodule SalesReg.Seed do
 
   # SALES ORDER SEED
 
-  def create_sales_order(company_id, user_id, contact_id, items) do
+  def create_sales_order(company_id, user_id, contact_id, products) do
     create_sales_order(%{
       company_id: company_id,
       user_id: user_id,
       contact_id: contact_id,
-      items: items
+      products: products
     })
   end
 
@@ -195,12 +206,36 @@ defmodule SalesReg.Seed do
     Store.add_category(params)
   end
 
+  def create_notification(company_id, actor_id, action_type, element, element_id) do
+    params = %{
+      element: element,
+      element_id: element_id,
+      action_type: action_type,
+      company_id: company_id,
+      actor_id: actor_id,
+      notification_items: gen_notification_items()
+    }
+
+    Notifications.add_notification(params)
+  end
+
   def add_tag(company_id, name) do
     %{
       company_id: company_id,
       name: name
     }
     |> Store.add_tag()
+  end
+
+  defp gen_notification_items do
+    Enum.map(1..3, fn _index ->
+      %{
+        changed_to: "",
+        current: "",
+        item_type: "product",
+        item_id: Enum.random(Repo.all(Product)).id
+      }
+    end)
   end
 
   defp create_sales_order(params) do
@@ -210,7 +245,7 @@ defmodule SalesReg.Seed do
       user_id: params.user_id,
       company_id: params.company_id,
       contact_id: params.contact_id,
-      items: params.items,
+      items: order_items(params.products),
       status: Enum.random(@seed_order_status)
     }
 
@@ -228,7 +263,7 @@ defmodule SalesReg.Seed do
     SalesReg.Order.add_invoice(params)
   end
 
-  def add_template() do
+  def add_template do
     params = %{
       "title" => "Default Templates",
       "slug" => "yc1-template",
@@ -249,23 +284,24 @@ defmodule SalesReg.Seed do
     Theme.add_company_template(params)
   end
 
-  defp order_items(items, type) do
-    Enum.map(items, fn item ->
-      unit_price = Map.get(item, :price)
+  defp order_items(products) do
+    Enum.map(products, fn product ->
+      unit_price = Map.get(product, :price)
 
       %{
         "quantity" => "3",
         "unit_price" => unit_price,
-        "#{type}_id" => item.id
+        "product_id" => product.id
       }
     end)
   end
 
   defp order_total_cost(order_items) do
     amounts =
-      Enum.map(order_items, fn item ->
-        unit_price = Decimal.new(item["unit_price"]) |> Decimal.to_float()
-        quantity = Decimal.new(item["quantity"]) |> Decimal.to_float()
+      order_items
+      |> Enum.map(fn item ->
+        unit_price = item["unit_price"] |> Decimal.new() |> Decimal.to_float()
+        quantity = item["quantity"] |> Decimal.new() |> Decimal.to_float()
         unit_price * quantity
       end)
 
@@ -282,11 +318,15 @@ defmodule SalesReg.Seed do
       "http://shfcs.org/en/wp-content/uploads/2015/11/MedRes_Product-presentation-2.jpg"
   }
 
+  def add_product_without_variant(params, company_id, user_id),
+    do: add_product_without_variant(params, company_id, user_id, [])
+
   def add_product_without_variant(params, company_id, user_id, categories) do
     {:ok, prod_grp} = insert_prod_grp(company_id)
 
     params
     |> product_params(company_id, user_id, prod_grp.id, categories)
+    |> Map.put(:title, prod_grp.title)
     |> Map.put(:option_values, [])
     |> Map.put(:tags, [])
     |> Store.add_product()

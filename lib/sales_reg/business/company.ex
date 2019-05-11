@@ -1,4 +1,7 @@
 defmodule SalesReg.Business.Company do
+  @moduledoc """
+  Company Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
   alias SalesReg.Repo
@@ -28,10 +31,13 @@ defmodule SalesReg.Business.Company do
     has_one(:phone, SalesReg.Business.Phone, on_replace: :delete)
     has_one(:bank, SalesReg.Business.Bank, on_replace: :delete)
     has_one(:company_template, SalesReg.Theme.CompanyTemplate)
+    has_many(:delivery_fees, SalesReg.Order.DeliveryFee)
     has_many(:sales, SalesReg.Order.Sale)
     has_many(:reviews, SalesReg.Order.Review)
     has_many(:stars, SalesReg.Order.Star)
     has_many(:legal_documents, SalesReg.Business.LegalDocument)
+
+    has_many(:notifications, SalesReg.Notifications.Notification)
 
     timestamps()
   end
@@ -50,6 +56,6 @@ defmodule SalesReg.Business.Company do
     |> cast_assoc(:phone)
     |> cast_assoc(:legal_documents)
     |> validate_required(@required_fields)
-    |> validate_format(:slug, ~r/^[a-zA-Z\d][a-zA-Z\d-_]+[a-zA-Z\d]$/)
+    |> validate_format(:slug, ~r/^[a-zA-Z\d][a-zA-Z\d-]+[a-zA-Z\d]$/)
   end
 end

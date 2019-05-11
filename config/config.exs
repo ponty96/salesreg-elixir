@@ -115,12 +115,17 @@ config :sales_reg, SalesReg.Scheduler,
     create_activity_when_order_due: [
       schedule: "@daily",
       task: {SalesReg.Tasks, :create_activity_when_order_due, []}
+    ],
+    send_notifications: [
+      schedule: "* * * * *",
+      task: {SalesReg.Tasks, :send_notifications, []}
     ]
   ]
 
-config :sentry, dsn: "https://450c8312e5094c859c0ff835ce5234d4@sentry.io/1369497",
+config :sentry,
+  dsn: System.get_env("SENTRY_DSN"),
   included_environments: [:prod, :dev],
-  environment_name: Mix.env
+  environment_name: Mix.env()
 
 config :sales_reg, SalesRegWeb.Services.Heroku,
   base_domain: System.get_env("BASE_DOMAIN"),
@@ -160,6 +165,8 @@ config :sales_reg, SalesRegWeb.Services.Cloudfare,
 ##############################################################
 ### Ends here
 ##############################################################
+
+config :pre_commit, commands: ["format", "credo --strict"]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

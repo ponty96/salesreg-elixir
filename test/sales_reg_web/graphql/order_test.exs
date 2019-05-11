@@ -20,7 +20,7 @@ defmodule SalesRegWeb.GraphqlOrderTest do
           paymentMethod,
           status
         }
-      } 
+      }
     }
   }
   """
@@ -214,8 +214,8 @@ defmodule SalesRegWeb.GraphqlOrderTest do
 
   # MUTATIONS
   describe "Order Mutation Tests" do
-    # tests that a sales order, order status and invoice due date is successfully 
-    # created and updated respectively 
+    # tests that a sales order, order status and invoice due date is successfully
+    # created and updated respectively
     @tag order: "order_and_invoice_tests"
     test "Order and Invoice tests", %{company: company, user: user, conn: conn} do
       {:ok, product} = Seed.add_product_without_variant(@product_params, company.id, user.id)
@@ -237,7 +237,6 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       assert response["success"] == true
       assert response["fieldErrors"] == []
       refute data["items"] == []
-      assert "#{data["amountPaid"]}" == @valid_sales_order_params.amount_paid
       assert data["date"] == @valid_sales_order_params.date
       assert String.upcase(data["paymentMethod"]) == @valid_sales_order_params.payment_method
       assert data["status"] == "pending"
@@ -369,8 +368,6 @@ defmodule SalesRegWeb.GraphqlOrderTest do
 
       assert response["success"] == true
       assert response["fieldErrors"] == []
-      assert data["amountPaid"] == "100"
-      assert data["paymentMethod"] == "CASH"
     end
   end
 
@@ -387,7 +384,8 @@ defmodule SalesRegWeb.GraphqlOrderTest do
         end)
 
       add_many_sales =
-        Enum.map(1..3, fn _index ->
+        1..3
+        |> Enum.map(fn _index ->
           {:ok, order} =
             company.id
             |> Seed.create_sales_order(user.id, contact.id, items)
@@ -412,7 +410,8 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       response = json_response(res, 200)["data"]["listCompanySales"]["edges"]
 
       response =
-        Enum.map(response, fn %{"node" => map} ->
+        response
+        |> Enum.map(fn %{"node" => map} ->
           map
         end)
         |> Helpers.underscore_map_keys()
@@ -434,7 +433,8 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       {:ok, sale} = Seed.create_sales_order(company.id, user.id, contact.id, items)
 
       invoices =
-        Enum.map(1..3, fn _index ->
+        1..3
+        |> Enum.map(fn _index ->
           {:ok, invoice} = Seed.create_invoice(sale)
 
           invoice
@@ -455,7 +455,8 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       response = json_response(res, 200)["data"]["listCompanyInvoices"]["edges"]
 
       response =
-        Enum.map(response, fn %{"node" => map} ->
+        response
+        |> Enum.map(fn %{"node" => map} ->
           map
         end)
         |> Helpers.underscore_map_keys()
@@ -487,7 +488,8 @@ defmodule SalesRegWeb.GraphqlOrderTest do
         |> Order.list_company_activities(contact.id, %{first: 3})
 
       activities =
-        Enum.map(edges, fn activity ->
+        edges
+        |> Enum.map(fn activity ->
           activity.node
           |> Helpers.transform_struct([
             :id,
@@ -506,7 +508,8 @@ defmodule SalesRegWeb.GraphqlOrderTest do
       response = json_response(res, 200)["data"]["listContactActivities"]["edges"]
 
       response =
-        Enum.map(response, fn %{"node" => map} ->
+        response
+        |> Enum.map(fn %{"node" => map} ->
           map
         end)
         |> Helpers.underscore_map_keys()

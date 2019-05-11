@@ -4,8 +4,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
   """
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
-  alias SalesRegWeb.GraphQL.Resolvers.StoreResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  alias SalesRegWeb.GraphQL.MiddleWares.Policy
+  alias SalesRegWeb.GraphQL.Resolvers.StoreResolver
 
   ### MUTATIONS
   object :store_mutations do
@@ -28,6 +29,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:params, non_null(:product_group_input))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.create_product/2)
     end
 
@@ -39,6 +41,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:options, non_null(list_of(:uuid)))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.update_product_group_options/2)
     end
 
@@ -50,6 +53,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:product_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.update_product/2)
     end
 
@@ -61,6 +65,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:category_id, :uuid)
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.upsert_category/2)
     end
 
@@ -72,6 +77,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:option_id, :uuid)
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.upsert_option/2)
     end
 
@@ -82,6 +88,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:product_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.delete_product/2)
     end
 
@@ -92,6 +99,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:category_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.delete_category/2)
     end
 
@@ -102,6 +110,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:option_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.delete_option/2)
     end
 
@@ -112,6 +121,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:items, list_of(:restock_item_input))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.restock_products/2)
     end
   end
@@ -126,6 +136,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:query, non_null(:string))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.search_company_products/2)
     end
 
@@ -137,6 +148,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:query, non_null(:string))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.search_company_categories/2)
     end
 
@@ -148,6 +160,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:query, non_null(:string))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.search_company_options/2)
     end
 
@@ -159,6 +172,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.search_product_groups_by_title/2)
     end
 
@@ -170,6 +184,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.search_options_by_name/2)
     end
 
@@ -181,6 +196,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.search_categories_by_title/2)
     end
 
@@ -192,11 +208,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.search_products_by_name/2)
     end
 
     @desc """
-      list related products 
+      list related products
     """
     field :list_related_products, list_of(:product) do
       arg(:product_id, non_null(:uuid))
@@ -205,7 +222,19 @@ defmodule SalesRegWeb.GraphQL.Schemas.StoreSchema do
       arg(:offset, non_null(:integer))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&StoreResolver.list_related_products/2)
+    end
+
+    @desc """
+      get product by id
+    """
+    field(:get_product_by_id, :product) do
+      arg(:product_id, non_null(:uuid))
+
+      middleware(Authorize)
+      middleware(Policy)
+      resolve(&StoreResolver.get_product_by_id/2)
     end
   end
 end

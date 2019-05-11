@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
+  @moduledoc """
+  Business Resolver
+  """
   use SalesRegWeb, :context
 
   def register_company(%{user: user_id, company: company_params}, _resolution) do
@@ -19,7 +22,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
   end
 
   def upsert_bank(%{bank: params, bank_id: id}, _res) do
-    Business.get_bank(id)
+    id
+    |> Business.get_bank()
     |> Business.update_bank_details(params)
   end
 
@@ -28,30 +32,19 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
   end
 
   def delete_bank(%{bank_id: bank_id}, _res) do
-    Business.get_bank(bank_id)
+    bank_id
+    |> Business.get_bank()
     |> Business.delete_bank()
   end
 
   def list_company_banks(%{company_id: id} = args, _res) do
-    {:ok, paginated_result} =
-      [company_id: id]
-      |> Business.paginated_list_company_banks(pagination_args(args))
-
-    %{edges: edges} = paginated_result
-
-    {:ok,
-     %{
-       paginated_result
-       | edges:
-           Enum.sort(
-             edges,
-             &(&1.node.is_primary >= &2.node.is_primary)
-           )
-     }}
+    [company_id: id]
+    |> Business.paginated_list_company_banks(pagination_args(args))
   end
 
   def upsert_expense(%{expense: params, expense_id: id}, _res) do
-    Business.get_expense(id)
+    id
+    |> Business.get_expense()
     |> Business.update_expense_details(params)
   end
 
@@ -65,12 +58,14 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
   end
 
   def delete_expense(%{expense_id: expense_id}, _res) do
-    Business.get_expense(expense_id)
+    expense_id
+    |> Business.get_expense()
     |> Business.delete_expense()
   end
 
   def upsert_legal_document(%{legal_document: params, legal_document_id: id}, _res) do
-    Business.get_legal_document(id)
+    id
+    |> Business.get_legal_document()
     |> Business.update_legal_document(params)
     |> handle_legal_document_upsert_res
   end
@@ -82,7 +77,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
   end
 
   def delete_legal_document(%{legal_document_id: legal_document_id}, _res) do
-    Business.get_legal_document(legal_document_id)
+    legal_document_id
+    |> Business.get_legal_document()
     |> Business.delete_legal_document()
     |> handle_legal_document_upsert_res()
   end
@@ -94,7 +90,11 @@ defmodule SalesRegWeb.GraphQL.Resolvers.BusinessResolver do
   defp handle_legal_document_upsert_res(res) do
     case res do
       {:ok, legal_document} ->
-        company = Repo.preload(legal_document, :company) |> Map.get(:company)
+        company =
+          legal_document
+          |> Repo.preload(:company)
+          |> Map.get(:company)
+
         {:ok, company}
 
       {:error, error} ->

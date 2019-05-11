@@ -1,5 +1,9 @@
 defmodule SalesReg.Order.OrderStateMachine do
+  @moduledoc """
+  State machine for Sale Schema status
+  """
   use SalesRegWeb, :context
+  alias SalesReg.Mailer.MerchantsToCustomers, as: M2C
 
   use Machinery,
     # The first state declared will be considered
@@ -39,21 +43,21 @@ defmodule SalesReg.Order.OrderStateMachine do
   # send email when order is pending
   def after_transition(%Sale{} = order, "pending") do
     # Write code to handle errors
-    Email.send_email(order, "yc_email_pending_order")
+    M2C.send_pending_order_mail(order)
     order
   end
 
   # send email to customer when sale order is delivering
   def after_transition(%Sale{} = order, "delivering") do
     # Write code to handle errors
-    Email.send_email(order, "yc_email_delivering_order")
+    M2C.send_delivering_order_mail(order)
     order
   end
 
   # send email to customer when order is delivered
   def after_transition(%Sale{} = order, "delivered") do
     # Write code to handle errors
-    Email.send_email(order, "yc_email_delivered_order")
+    M2C.send_delivered_order_mail(order)
     order
   end
 end

@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.UserResolver do
+  @moduledoc """
+  User Resolver Module
+  """
   use SalesRegWeb, :context
   alias SalesRegWeb.TokenImpl
 

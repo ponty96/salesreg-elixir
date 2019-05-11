@@ -1,4 +1,7 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
+  @moduledoc """
+  Store Resolver
+  """
   use SalesRegWeb, :context
   require SalesReg.Context
 
@@ -7,8 +10,7 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   end
 
   def update_product(%{product: params, product_id: id}, _res) do
-    Store.get_product(id)
-    |> Store.update_product(params)
+    Store.update_product_details(id, params)
   end
 
   def update_product_group_options(params, _res) do
@@ -21,7 +23,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
 
   # category
   def upsert_category(%{category: params, category_id: id}, _res) do
-    Store.get_category(id)
+    id
+    |> Store.get_category()
     |> Store.update_category(params)
   end
 
@@ -31,7 +34,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
 
   # option
   def upsert_option(%{option: params, option_id: id}, _res) do
-    Store.get_option(id)
+    id
+    |> Store.get_option()
     |> Store.update_option(params)
   end
 
@@ -90,6 +94,10 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
 
   def list_related_products(%{product_id: product_id, company_id: company_id} = params, _res) do
     {:ok, Store.load_related_products(company_id, product_id, params.limit, params.offset)}
+  end
+
+  def get_product_by_id(%{product_id: id}, _res) do
+    {:ok, Store.get_product(id)}
   end
 
   defp pagination_args(args) do

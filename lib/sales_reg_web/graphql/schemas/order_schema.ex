@@ -4,8 +4,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
   """
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
-  alias SalesRegWeb.GraphQL.Resolvers.OrderResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  alias SalesRegWeb.GraphQL.MiddleWares.Policy
+  alias SalesRegWeb.GraphQL.Resolvers.OrderResolver
 
   ### MUTATIONS
   object :order_mutations do
@@ -18,7 +19,19 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       arg(:sale_id, :uuid)
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&OrderResolver.upsert_sale/2)
+    end
+
+    @desc """
+    delete a sale order
+    """
+    field :delete_sale_order, :mutation_response do
+      arg(:sale_id, non_null(:uuid))
+
+      middleware(Authorize)
+      middleware(Policy)
+      resolve(&OrderResolver.delete_sale/2)
     end
 
     @desc """
@@ -30,6 +43,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       arg(:order_type, :string)
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&OrderResolver.update_order_status/2)
     end
 
@@ -41,6 +55,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       arg(:invoice_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&OrderResolver.update_invoice_due_date/2)
     end
 
@@ -70,7 +85,32 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       arg(:invoice_id, non_null(:uuid))
       arg(:amount_paid, non_null(:string))
 
+      middleware(Authorize)
+      middleware(Policy)
       resolve(&OrderResolver.create_receipt/2)
+    end
+
+    ### Delivery Charge mutations
+    @desc """
+      create delivery fee
+    """
+    field :create_delivery_fee, :mutation_response do
+      arg(:delivery_fee, non_null(:delivery_fee_input))
+
+      middleware(Authorize)
+      middleware(Policy)
+      resolve(&OrderResolver.create_delivery_fee/2)
+    end
+
+    @desc """
+      delete a delivery fee
+    """
+    field :delete_delivery_fee, :mutation_response do
+      arg(:delivery_fee_id, non_null(:uuid))
+
+      middleware(Authorize)
+      middleware(Policy)
+      resolve(&OrderResolver.delete_delivery_fee/2)
     end
   end
 
@@ -83,6 +123,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&OrderResolver.list_company_sales/2)
     end
 
@@ -93,7 +134,30 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       arg(:company_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&OrderResolver.list_company_invoices/2)
+    end
+
+    @desc """
+      get invoice by id
+    """
+    field(:get_invoice_by_id, :invoice) do
+      arg(:invoice_id, non_null(:uuid))
+
+      middleware(Authorize)
+      middleware(Policy)
+      resolve(&OrderResolver.get_invoice_by_id/2)
+    end
+
+    @desc """
+      get sale by id
+    """
+    field(:get_sale_by_id, :sale) do
+      arg(:sale_id, non_null(:uuid))
+
+      middleware(Authorize)
+      middleware(Policy)
+      resolve(&OrderResolver.get_sale_by_id/2)
     end
 
     @desc """
@@ -104,7 +168,30 @@ defmodule SalesRegWeb.GraphQL.Schemas.OrderSchema do
       arg(:contact_id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&OrderResolver.list_company_activities/2)
+    end
+
+    @desc """
+      query for all delivery fees of a company
+    """
+    field :list_company_delivery_fees, list_of(:delivery_fee) do
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      middleware(Policy)
+      resolve(&OrderResolver.list_company_delivery_fees/2)
+    end
+
+    # @desc """
+    # query if company has delivery_fee for nation wide delivery
+    # """
+    field :company_allows_nationwide_delivery, :nation_wide_delivery do
+      arg(:company_id, non_null(:uuid))
+
+      middleware(Authorize)
+      middleware(Policy)
+      resolve(&OrderResolver.nation_wide_delivery_fee_exists?/2)
     end
   end
 end

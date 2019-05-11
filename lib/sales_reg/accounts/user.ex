@@ -1,4 +1,7 @@
 defmodule SalesReg.Accounts.User do
+  @moduledoc """
+  User Schema Module
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -23,6 +26,9 @@ defmodule SalesReg.Accounts.User do
     has_one(:company, Company, foreign_key: :owner_id)
     has_many(:contacts, SalesReg.Business.Contact)
 
+    has_many(:notifications, SalesReg.Notifications.Notification, foreign_key: :actor_id)
+    has_many(:mobile_devices, SalesReg.Notifications.MobileDevice)
+
     timestamps()
   end
 
@@ -43,7 +49,9 @@ defmodule SalesReg.Accounts.User do
   def registration_changeset(user, attrs) do
     user
     |> cast(attrs, @required_fields ++ @registration_fields ++ @update_fields)
-    |> validate_required(@required_fields ++ @registration_fields ++ @update_fields)
+    |> validate_required(
+      @required_fields ++ @registration_fields ++ (@update_fields -- [:gender])
+    )
     |> validate_format(:email, ~r/@/)
     |> unique_constraint(:email)
     |> validate_password()

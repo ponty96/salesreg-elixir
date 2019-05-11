@@ -4,9 +4,8 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
   """
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
-  alias SalesRegWeb.GraphQL.Resolvers.WebStoreResolver
   alias SalesRegWeb.GraphQL.Resolvers.StoreResolver
-  alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  alias SalesRegWeb.GraphQL.Resolvers.WebStoreResolver
 
   # WEBSTORE HOME PAGE
   object :web_store_queries do
@@ -19,12 +18,12 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
     end
 
     field :product_page_query, :product_group do
-      arg(:id, :uuid)
+      arg(:slug, :string)
       resolve(&WebStoreResolver.product_page_query/2)
     end
 
     field :category_page_query, :category_page do
-      arg(:id, non_null(:uuid))
+      arg(:slug, non_null(:string))
       arg(:product_page, :string)
 
       resolve(&WebStoreResolver.category_page_query/2)
@@ -34,6 +33,24 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
       arg(:product_page, :string)
 
       resolve(&WebStoreResolver.store_page_query/2)
+    end
+
+    field :sale_page_query, :sale do
+      arg(:sale_id, :uuid)
+
+      resolve(&WebStoreResolver.sale_page_query/2)
+    end
+
+    field :invoice_page_query, :invoice do
+      arg(:invoice_id, :uuid)
+
+      resolve(&WebStoreResolver.invoice_page_query/2)
+    end
+
+    field :receipt_page_query, :receipt do
+      arg(:receipt_id, :uuid)
+
+      resolve(&WebStoreResolver.receipt_page_query/2)
     end
 
     field :get_product, :product do
@@ -49,6 +66,16 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
       arg(:query, :string)
 
       resolve(&WebStoreResolver.categories_page_query/2)
+    end
+
+    @desc """
+    Get Bonanza
+    """
+    field :get_bonanza, :bonanza do
+      arg(:bonanza_id, non_null(:uuid))
+
+      middleware(Authorize)
+      resolve(&WebStoreResolver.get_bonanza/2)
     end
   end
 

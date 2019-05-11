@@ -1,11 +1,15 @@
 defmodule SalesReg.WebhookHandler do
+  @moduledoc """
+  Flutterwave WebHook Handler
+  """
   use SalesRegWeb, :context
 
   def insert_receipt(%{"charged_amount" => amount} = data) do
     if receipt_exists?(data) do
       nil
     else
-      get_sale_order(data)
+      data
+      |> get_sale_order()
       |> Order.insert_receipt(data["id"], to_string(amount), :card)
     end
   end
@@ -15,7 +19,7 @@ defmodule SalesReg.WebhookHandler do
       data["txRef"]
       |> String.replace("_", " ")
       |> String.split()
-    
+
     Order.get_sale(order_id)
   end
 

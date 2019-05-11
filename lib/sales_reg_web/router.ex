@@ -15,6 +15,10 @@ defmodule SalesRegWeb.Router do
     plug(:accepts, ["json"])
   end
 
+  if Mix.env() == :dev do
+    forward("/sent_emails", Bamboo.SentEmailViewerPlug)
+  end
+
   pipeline :hook do
     plug(SalesRegWeb.Plug.ValidateFlutterRequest)
   end
@@ -23,10 +27,6 @@ defmodule SalesRegWeb.Router do
     pipe_through([:api, :hook])
 
     post("/webhooks/payment", HookController, :hook)
-  end
-
-  scope "/", SalesRegWeb do
-    pipe_through(:browser)
   end
 
   scope "/auth", SalesRegWeb do
@@ -49,9 +49,22 @@ defmodule SalesRegWeb.Router do
     forward("/", Absinthe.Plug, schema: SalesRegWeb.GraphQL.Schemas)
   end
 
-  if Mix.env() == :dev or Mix.env() == :test do
-    pipe_through([:api, :graphql])
-    forward("/graphiql", Absinthe.Plug.GraphiQL, schema: SalesRegWeb.GraphQL.Schemas)
+  scope "/graphiql" do
+    if Mix.env() do
+      pipe_through([:api, :graphql])
+      forward("/", Absinthe.Plug.GraphiQL, schema: SalesRegWeb.GraphQL.Schemas)
+    end
+  end
+
+  scope "/", SalesRegWeb do
+    pipe_through(:browser)
+    # get("/:business_slug/c/:category_slug", ForwardController, :forward_category)
+    get("/:business_slug/bz/:bonanza_id", ForwardController, :forward_bonanza)
+    get("/:business_slug/in/:invoice_id", ForwardController, :forward_invoice)
+    get("/:business_slug/s/:sale_id", ForwardController, :forward_sale)
+    get("/:business_slug/r/:receipt_id", ForwardController, :forward_receipt)
+    get("/:business_slug/p/:product_slug", ForwardController, :forward_product)
+    get("/:business_slug", ForwardController, :forward_business)
   end
 
   # graphiql endpoint

@@ -1,11 +1,12 @@
 defmodule SalesReg.Context do
   @moduledoc false
+  alias Absinthe.Relay.Connection
   alias SalesReg.Repo
 
   defmacro __using__(modules) do
     quote bind_quoted: [modules: modules] do
-      alias SalesReg.Repo
       alias Ecto.Query
+      alias SalesReg.Repo
 
       for module <- modules do
         schema =
@@ -28,11 +29,11 @@ defmodule SalesReg.Context do
           res
         end
 
-        def unquote(String.to_atom("list_company_#{schema}s"))(company_id) do
+        def unquote(String.to_atom("list_company_#{schema}s"))(clauses) do
           res =
             unquote(module)
-            |> Query.where(company_id: ^company_id)
-            |> Query.order_by([:updated_at])
+            |> Query.where(^clauses)
+            |> Query.order_by(desc: :updated_at)
             |> Repo.all()
 
           {:ok, res}
@@ -41,8 +42,8 @@ defmodule SalesReg.Context do
         def unquote(String.to_atom("paginated_list_company_#{schema}s"))(clauses, args) do
           unquote(module)
           |> Query.where(^clauses)
-          |> Query.order_by(:updated_at)
-          |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
+          |> Query.order_by(desc: :updated_at)
+          |> Connection.from_query(&Repo.all/1, args)
         end
 
         def unquote(String.to_atom("search_company_#{schema}s"))(clauses, query, field, args) do
@@ -59,7 +60,8 @@ defmodule SalesReg.Context do
               ^query
             )
           )
-          |> Absinthe.Relay.Connection.from_query(&Repo.all/1, args)
+          |> order_by(desc: :updated_at)
+          |> Connection.from_query(&Repo.all/1, args)
         end
 
         def unquote(String.to_atom("add_#{schema}"))(%{} = params) do

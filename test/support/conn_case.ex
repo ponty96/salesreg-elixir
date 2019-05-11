@@ -21,15 +21,13 @@ defmodule SalesRegWeb.ConnCase do
       use Phoenix.ConnTest
       import SalesRegWeb.Router.Helpers
 
-      alias SalesReg.{
-        Business,
-        Accounts,
-        Seed,
-        Store
-      }
+      alias Ecto.Adapters.SQL.Sandbox
+      alias SalesReg.Accounts
+      alias SalesReg.Business
+      alias SalesReg.Seed
+      alias SalesReg.Store
 
       alias SalesRegWeb.GraphqlTestHelpers, as: Helpers
-      alias SalesReg.Seed
 
       # The default endpoint for testing
       @endpoint SalesRegWeb.Endpoint
@@ -37,10 +35,10 @@ defmodule SalesRegWeb.ConnCase do
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(SalesReg.Repo)
+    :ok = Sandbox.checkout(SalesReg.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(SalesReg.Repo, {:shared, self()})
+      Sandbox.mode(SalesReg.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
@@ -64,12 +62,19 @@ defmodule SalesRegWeb.ConnCase do
     phone: %{
       number: "+2348131900893"
     },
-    slug: "nickname of the company",
-    cover_photo: "img3455"
+    slug: "sanbox",
+    cover_photo: "img3455",
+    head_office: %{
+      street1: "J11 Obaile housing estate",
+      city: "Akure",
+      state: "Ondo",
+      country: "NGN"
+    }
   }
 
   # this is called for all tests
   setup %{conn: conn} do
+    {:ok, _template} = SalesReg.Seed.add_template()
     {:ok, user} = SalesReg.Accounts.create_user(@user_params)
     login_params = %{email: user.email, password: user.password}
     conn = SalesRegWeb.GraphqlTestHelpers.authenticate(conn, login_params)

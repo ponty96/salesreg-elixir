@@ -1,13 +1,20 @@
 defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
+  @moduledoc """
+  Order Resolver
+  """
   use SalesRegWeb, :context
+  alias SalesReg.Mailer.MerchantsToCustomers, as: M2C
 
   def upsert_sale(%{sale: params, sale_id: id}, _res) do
-    Order.get_sale(id)
-    |> Order.update_sale(params)
+    Order.update_sale_details(id, params)
   end
 
   def upsert_sale(%{sale: params}, _res) do
     Order.create_sale(params)
+  end
+
+  def delete_sale(%{sale_id: id}, _res) do
+    Order.delete_sale(id)
   end
 
   def list_company_sales(%{company_id: company_id} = args, _res) do
@@ -25,7 +32,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   end
 
   def update_invoice_due_date(%{invoice: params, invoice_id: id}, _res) do
-    Order.get_invoice(id)
+    id
+    |> Order.get_invoice()
     |> Order.update_invoice(params)
   end
 
@@ -44,11 +52,8 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
 
     case create_receipt do
       {:ok, receipt} ->
-        Order.supervise_pdf_upload(receipt)
         sale = Order.preload_receipt(receipt).sale
-
-        receipt.company_id
-        |> Email.send_email("yc_payment_received", sale)
+        M2C.send_payment_received_mail(sale, receipt)
 
         {:ok, receipt}
 
@@ -62,13 +67,41 @@ defmodule SalesRegWeb.GraphQL.Resolvers.OrderResolver do
   end
 
   def delete_receipt(%{receipt_id: receipt_id}, _res) do
-    Order.get_receipt(receipt_id)
+    receipt_id
+    |> Order.get_receipt()
     |> Order.delete_receipt()
   end
 
   def list_company_activities(params, _res) do
     params.company_id
     |> Order.list_company_activities(params.contact_id, pagination_args(params))
+  end
+
+  def create_delivery_fee(%{delivery_fee: params}, _res) do
+    Order.add_delivery_fee(params)
+  end
+
+  def list_company_delivery_fees(%{company_id: company_id}, _res) do
+    [company_id: company_id]
+    |> Order.list_company_delivery_fees()
+  end
+
+  def delete_delivery_fee(%{delivery_fee_id: delivery_fee_id}, _res) do
+    delivery_fee_id
+    |> Order.get_delivery_fee()
+    |> Order.delete_delivery_fee()
+  end
+
+  def nation_wide_delivery_fee_exists?(%{company_id: company_id}, _res) do
+    {:ok, %{exist: Order.nation_wide_delivery_fee_exists?(company_id)}}
+  end
+
+  def get_invoice_by_id(%{invoice_id: id}, _res) do
+    {:ok, Order.get_invoice(id)}
+  end
+
+  def get_sale_by_id(%{sale_id: id}, _res) do
+    {:ok, Order.get_sale(id)}
   end
 
   defp pagination_args(args) do

@@ -3,8 +3,9 @@ defmodule SalesRegWeb.GraphQL.Schemas.UserSchema do
     GraphQL Schemas for User
   """
   use Absinthe.Schema.Notation
-  alias SalesRegWeb.GraphQL.Resolvers.UserResolver
   alias SalesRegWeb.GraphQL.MiddleWares.Authorize
+  alias SalesRegWeb.GraphQL.MiddleWares.Policy
+  alias SalesRegWeb.GraphQL.Resolvers.UserResolver
 
   @desc """
   query a user
@@ -14,6 +15,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.UserSchema do
       arg(:id, non_null(:uuid))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&UserResolver.get_user/2)
     end
   end
@@ -26,6 +28,7 @@ defmodule SalesRegWeb.GraphQL.Schemas.UserSchema do
       arg(:user, non_null(:update_user_input))
 
       middleware(Authorize)
+      middleware(Policy)
       resolve(&UserResolver.update_user/2)
     end
   end

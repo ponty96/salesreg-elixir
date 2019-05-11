@@ -89,7 +89,13 @@ defmodule SalesReg.Mixfile do
       {:cors_plug, "~> 2.0"},
       {:sentry, "~> 6.4"},
       {:httpoison, "~> 1.4"},
-      {:poison, "~> 3.1"}
+      {:poison, "~> 3.1"},
+      {:ecto_autoslug_field, "~> 1.0"},
+
+      # code
+      {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
+      {:dialyzex, "~> 1.2.0", only: :dev},
+      {:pre_commit, "~> 0.3.4", only: :dev}
     ]
   end
 

@@ -3,10 +3,8 @@ defmodule SalesRegWeb.GraphQL.Schemas do
   use Absinthe.Schema
   use Absinthe.Relay.Schema, :classic
 
-  alias SalesRegWeb.GraphQL.MiddleWares.{
-    ChangesetErrors,
-    MutationResponse
-  }
+  alias SalesRegWeb.GraphQL.MiddleWares.ChangesetErrors
+  alias SalesRegWeb.GraphQL.MiddleWares.MutationResponse
 
   alias Absinthe.Middleware.Dataloader, as: AbsintheDataloader
   alias Absinthe.Plugin, as: AbsinthePluginDefault
@@ -19,6 +17,9 @@ defmodule SalesRegWeb.GraphQL.Schemas do
   import_types(__MODULE__.OrderSchema)
   import_types(__MODULE__.ThemeSchema)
   import_types(__MODULE__.WebStoreSchema)
+  import_types(__MODULE__.SpecialOfferSchema)
+  import_types(__MODULE__.NotificationSchema)
+  import_types(__MODULE__.AnalyticsSchema)
 
   query do
     import_fields(:single_user)
@@ -29,6 +30,9 @@ defmodule SalesRegWeb.GraphQL.Schemas do
     import_fields(:bank_queries)
     import_fields(:theme_queries)
     import_fields(:web_store_queries)
+    import_fields(:special_offer_queries)
+    import_fields(:notification_queries)
+    import_fields(:dashboard_infos)
   end
 
   mutation do
@@ -41,6 +45,8 @@ defmodule SalesRegWeb.GraphQL.Schemas do
     import_fields(:expense_mutations)
     import_fields(:bank_mutations)
     import_fields(:web_store_mutations)
+    import_fields(:special_offer_mutations)
+    import_fields(:notification_mutations)
   end
 
   def middleware(middleware, field, object) do
@@ -72,6 +78,8 @@ defmodule SalesRegWeb.GraphQL.Schemas do
     |> Dataloader.add_source(SalesReg.Order, SalesReg.Order.data())
     |> Dataloader.add_source(SalesReg.Store, SalesReg.Store.data())
     |> Dataloader.add_source(SalesReg.Theme, SalesReg.Theme.data())
+    |> Dataloader.add_source(SalesReg.SpecialOffer, SalesReg.SpecialOffer.data())
+    |> Dataloader.add_source(SalesReg.Notifications, SalesReg.Notifications.data())
   end
 
   def context(ctx) do

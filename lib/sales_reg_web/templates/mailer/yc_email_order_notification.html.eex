@@ -45,8 +45,11 @@
 																			<p>This is to inform you that an order with the above referenced number has been purchased from your store.</p>
 																			<p><strong>Order ID:</strong> <span><%= sale.ref_id %></span></p>
 																			<p><strong>Customer:</strong> <span><%= sale.contact.contact_name %></span></p>
-																			<p><strong>Channel:</strong> <span>Webstore</span></p>
-																			<p><strong>Amount:</strong> <span style="color: green">N<%= SalesReg.Order.calc_order_amount(sale) %></span></p>
+																			<%# <p><strong>Channel:</strong> <span>Webstore</span></p> %>
+																			<%= if sale.discount do %>
+																			<p><strong>Discount:</strong> <span style="color: green">N<%= SalesReg.Order.float_to_binary(Decimal.to_float(sale.discount)) %></span></p>
+																			<% end %>
+																			<p><strong>Amount:</strong> <span style="color: green">N<%= SalesReg.Order.float_to_binary(SalesReg.Order.calc_sale_price_considering_discount(sale)) %></span></p>
 																			<p><strong>Status:</strong> <span>Pending</span></p>
 																			<p><strong>Date:</strong> <span><%= Date.to_string(sale.inserted_at) %></span></p>
 																			<p><strong>Time:</strong> <span><%= Time.to_string(NaiveDateTime.to_time(sale.inserted_at)) %></span></p>
