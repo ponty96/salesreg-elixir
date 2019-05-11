@@ -104,12 +104,13 @@ defmodule SalesReg.Seed do
     |> Business.create_bank()
   end
 
-  def create_receipt(invoice_id, user_id, company_id) do
+  def create_receipt(invoice_id, user_id, company_id, sale_id) do
     current_date = Date.utc_today() |> Date.to_string()
 
     invoice_id
     |> gen_receipt_details(user_id, company_id)
     |> Map.put_new(:time_paid, current_date)
+    |> Map.put_new(:sale_id, sale_id)
     |> Order.add_receipt()
   end
 
