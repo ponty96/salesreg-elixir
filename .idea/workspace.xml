@@ -170,6 +170,22 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder0" value="0" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder1" value="1" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder2" value="2" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatOrder3" value="3" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth0" value="347" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth1" value="347" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth2" value="347" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_flatWidth3" value="346" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder0" value="0" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder1" value="1" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder2" value="2" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeOrder3" value="3" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth0" value="347" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth1" value="347" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth2" value="347" />
+    <property name="FileHistory.git4idea.history.GitHistoryProvider_treeWidth3" value="346" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="add_unversioned_files" value="$PROJECT_DIR$/assets/node_modules/bootstrap/scss/_variables.scss&#10;/Users/shezvar1/Documents/LidStack/Personal/Product/yipcart/yp_webstore/yp_webstore_file/salesreg-elixir/assets/node_modules/bootstrap/scss/bootstrap.scss" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
