@@ -4,7 +4,6 @@
     <list default="true" id="885da9b0-4589-4192-b60d-63c65a866b2d" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/css/yp-global.scss" beforeDir="false" afterPath="$PROJECT_DIR$/assets/css/yp-global.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/js/pages/YipAdminLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/assets/js/pages/YipAdminLayout.tsx" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -30,7 +29,7 @@
           <file leaf-file-name="app.tsx" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/assets/js/app.tsx">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="360">
+                <state relative-caret-position="225">
                   <caret line="24" selection-start-line="24" selection-end-line="24" />
                   <folding>
                     <element signature="e#0#22#0" expanded="true" />
@@ -42,8 +41,8 @@
           <file leaf-file-name="YipAdminLayout.tsx" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/assets/js/pages/YipAdminLayout.tsx">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="390">
-                  <caret line="176" column="58" lean-forward="true" selection-start-line="176" selection-start-column="58" selection-end-line="176" selection-end-column="58" />
+                <state relative-caret-position="630">
+                  <caret line="192" column="58" selection-start-line="192" selection-start-column="58" selection-end-line="192" selection-end-column="58" />
                   <folding>
                     <element signature="e#183#4070#0" />
                     <element signature="e#4088#8636#0" />
@@ -56,8 +55,8 @@
           <file leaf-file-name="LoginPage.tsx" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/assets/js/pages/LoginPage.tsx">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="229">
-                  <caret line="25" column="63" lean-forward="true" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="63" />
+                <state relative-caret-position="315">
+                  <caret line="25" column="63" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="63" />
                   <folding>
                     <element signature="e#0#31#0" expanded="true" />
                   </folding>
@@ -72,8 +71,8 @@
           <file leaf-file-name="yp-global.scss" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/assets/css/yp-global.scss">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="739">
-                  <caret line="96" column="18" lean-forward="true" selection-start-line="96" selection-start-column="18" selection-end-line="96" selection-end-column="18" />
+                <state relative-caret-position="79">
+                  <caret line="52" selection-start-line="52" selection-end-line="52" />
                 </state>
               </provider>
             </entry>
@@ -108,8 +107,8 @@
         <option value="$PROJECT_DIR$/assets/node_modules/bootstrap/scss/bootstrap.scss" />
         <option value="$PROJECT_DIR$/assets/css/bootstrap/_custom.scss" />
         <option value="$PROJECT_DIR$/assets/js/pages/yipAdminLayout.tsx" />
-        <option value="$PROJECT_DIR$/assets/css/yp-global.scss" />
         <option value="$PROJECT_DIR$/assets/js/pages/YipAdminLayout.tsx" />
+        <option value="$PROJECT_DIR$/assets/css/yp-global.scss" />
       </list>
     </option>
   </component>
@@ -133,6 +132,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -161,27 +161,12 @@
               <item name="salesreg-elixir" type="b2602c69:ProjectViewProjectNode" />
               <item name="salesreg-elixir" type="462c0819:PsiDirectoryNode" />
               <item name="assets" type="462c0819:PsiDirectoryNode" />
-              <item name="js" type="462c0819:PsiDirectoryNode" />
-              <item name="pages" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="salesreg-elixir" type="b2602c69:ProjectViewProjectNode" />
-              <item name="salesreg-elixir" type="462c0819:PsiDirectoryNode" />
-              <item name="assets" type="462c0819:PsiDirectoryNode" />
               <item name="static" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="salesreg-elixir" type="b2602c69:ProjectViewProjectNode" />
-              <item name="salesreg-elixir" type="462c0819:PsiDirectoryNode" />
-              <item name="assets" type="462c0819:PsiDirectoryNode" />
-              <item name="static" type="462c0819:PsiDirectoryNode" />
-              <item name="images" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -219,34 +204,34 @@
       <option name="presentableId" value="Default" />
       <updated>1554502860104</updated>
       <workItem from="1554502863406" duration="12519000" />
-      <workItem from="1554716854677" duration="5217000" />
+      <workItem from="1554716854677" duration="7232000" />
+      <workItem from="1558995606186" duration="643000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17736000" />
+    <option name="totallyTimeSpent" value="20394000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TypeScript" order="7" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24947146" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24947146" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" visible="true" weight="0.32969698" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="7" visible="true" weight="0.32969698" />
       <window_info anchor="bottom" id="RNConsole" order="7" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32969698" />
     </layout>
@@ -263,6 +248,52 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/assets/js/app.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="24" selection-start-line="24" selection-end-line="24" />
+          <folding>
+            <element signature="e#0#22#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/js/pages/LoginPage.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="25" column="63" lean-forward="true" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="63" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/js/pages/YipAdminLayout.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="192" column="58" lean-forward="true" selection-start-line="192" selection-start-column="58" selection-end-line="192" selection-end-column="58" />
+          <folding>
+            <element signature="e#183#4070#0" />
+            <element signature="e#4088#8636#0" />
+            <element signature="e#8888#9956#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/css/yp-global.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1035">
+          <caret line="69" column="8" selection-start-line="69" selection-start-column="8" selection-end-line="69" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/css/bootstrap/_custom.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="14" selection-start-line="12" selection-start-column="8" selection-end-line="12" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/assets/js/app.tsx">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
@@ -323,7 +354,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/assets/js/app.tsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
+        <state relative-caret-position="225">
           <caret line="24" selection-start-line="24" selection-end-line="24" />
           <folding>
             <element signature="e#0#22#0" expanded="true" />
@@ -333,22 +364,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/assets/js/pages/LoginPage.tsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="25" column="63" lean-forward="true" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="63" />
+        <state relative-caret-position="315">
+          <caret line="25" column="63" selection-start-line="25" selection-start-column="33" selection-end-line="25" selection-end-column="63" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/js/pages/YipAdminLayout.tsx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="176" column="58" lean-forward="true" selection-start-line="176" selection-start-column="58" selection-end-line="176" selection-end-column="58" />
-          <folding>
-            <element signature="e#183#4070#0" />
-            <element signature="e#4088#8636#0" />
-            <element signature="e#8888#9956#0" />
           </folding>
         </state>
       </provider>
@@ -362,8 +381,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/assets/css/yp-global.scss">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="739">
-          <caret line="96" column="18" lean-forward="true" selection-start-line="96" selection-start-column="18" selection-end-line="96" selection-end-column="18" />
+        <state relative-caret-position="79">
+          <caret line="52" selection-start-line="52" selection-end-line="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/js/pages/YipAdminLayout.tsx">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="192" column="58" selection-start-line="192" selection-start-column="58" selection-end-line="192" selection-end-column="58" />
+          <folding>
+            <element signature="e#183#4070#0" />
+            <element signature="e#4088#8636#0" />
+            <element signature="e#8888#9956#0" />
+          </folding>
         </state>
       </provider>
     </entry>
