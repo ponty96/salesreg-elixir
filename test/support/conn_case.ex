@@ -57,6 +57,23 @@ defmodule SalesRegWeb.ConnCase do
     profile_picture: "picture.jpg"
   }
 
+  @company_params %{
+    title: "this is the title",
+    contact_email: "someemail@gmail.com",
+    currency: "Euro",
+    phone: %{
+      number: "+2348131900893"
+    },
+    slug: "sanbox",
+    cover_photo: "img3455",
+    head_office: %{
+      street1: "J11 Obaile housing estate",
+      city: "Akure",
+      state: "Ondo",
+      country: "NGN"
+    }
+  }
+
   # this is called for all tests
   setup %{conn: conn} do
     {:ok, _template} = SalesReg.Seed.add_template()
@@ -64,6 +81,10 @@ defmodule SalesRegWeb.ConnCase do
     login_params = %{email: user.email, password: user.password}
     conn = SalesRegWeb.GraphqlTestHelpers.authenticate(conn, login_params)
 
-    %{user: user, conn: conn}
+    {:ok, company} =
+      user.id
+      |> SalesReg.Business.create_company(@company_params)
+
+    %{user: user, conn: conn, company: company}
   end
 end

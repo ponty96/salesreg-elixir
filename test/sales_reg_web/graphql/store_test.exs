@@ -8,9 +8,9 @@ defmodule SalesRegWeb.GraphqlStoreTest do
 
   setup %{company: company, user: user} do
     categories =
-      Enum.map(1..3, fn _index ->
-        {:ok, category} = Seed.add_category(company.id, user.id)
-        category.id
+      Enum.map(1..3, fn index ->
+        {:ok, category} = Seed.add_category(company.id, user.id, "title #{index}")
+        category
       end)
 
     %{categories: categories}
@@ -127,7 +127,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
 
   def valid_option_values(company_id) do
     options =
-      company_id
+      [company_id: company_id]
       |> Store.list_company_options()
       |> elem(1)
       |> Enum.take(3)
@@ -211,105 +211,6 @@ defmodule SalesRegWeb.GraphqlStoreTest do
       {:ok, company_products} = Store.list_company_products(company.id)
       assert length(company_products) == 1
     end
-
-    # test for user successfully making a product a variant of an existing product(with variant)
-    @tag :add_variant_of_existing_product_with_variant
-    test "add variant of existing product with variant", %{
-      company: company,
-      user: user,
-      conn: conn
-    } do
-      # create product with variant first
-      variables = %{params: product_mutation_variables_with_variant(company, user)}
-
-      res =
-        conn
-        |> post("/graphiql", Helpers.query_skeleton(@create_product_query, variables))
-
-      response = json_response(res, 200)["data"]["createProduct"]
-
-      assert response["success"] == true
-      assert response["data"]
-      data = response["data"]
-      assert @valid_product_params.name == data["name"]
-      refute data["optionValues"] == []
-      assert data["productGroup"]
-      refute data["productGroup"]["options"] == []
-
-      add_variant_variables = %{
-        params:
-          product_mutation_variables_with_variant(company, user)
-          |> Map.put(:product_group_id, data["productGroup"]["id"])
-      }
-
-      add_variant_res =
-        conn
-        |> post("/graphiql", Helpers.query_skeleton(@create_product_query, add_variant_variables))
-
-      add_variant_response = json_response(add_variant_res, 200)["data"]["createProduct"]
-
-      assert add_variant_response["success"] == true
-      assert add_variant_response["data"]
-
-      add_variant_data = add_variant_response["data"]
-
-      assert add_variant_data["productGroup"]["id"] == data["productGroup"]["id"]
-      assert add_variant_data["productGroup"]["options"] == data["productGroup"]["options"]
-      refute add_variant_data["id"] == data["id"]
-
-      {:ok, company_products} = Store.list_company_products(company.id)
-      assert length(company_products) == 2
-    end
-  end
-
-  # test for user successfully making an existing product a variant
-  @tag :make_an_existing_product_a_variant
-  test "make an existing product a variant", %{company: company, user: user, conn: conn} do
-    variables = %{params: product_mutation_variables_without_variant(company, user)}
-
-    res =
-      conn
-      |> post("/graphiql", Helpers.query_skeleton(@create_product_query, variables))
-
-    response = json_response(res, 200)["data"]["createProduct"]
-
-    assert response["success"] == true
-    assert response["data"]
-    data = response["data"]
-    assert @valid_product_params.name == data["name"]
-    assert data["optionValues"] == []
-    assert data["productGroup"]
-    assert data["productGroup"]["options"] == []
-
-    add_variant_variables = %{
-      params:
-        product_mutation_variables_with_variant(company, user)
-        |> Map.put(:product_group_id, data["productGroup"]["id"])
-        |> Map.update(:product, %{}, fn product ->
-          Map.put(product, :id, response["data"]["id"])
-        end)
-    }
-
-    add_variant_res =
-      conn
-      |> post("/graphiql", Helpers.query_skeleton(@create_product_query, add_variant_variables))
-
-    add_variant_response = json_response(add_variant_res, 200)["data"]["createProduct"]
-
-    assert add_variant_response["success"] == true
-    assert add_variant_response["data"]
-
-    add_variant_data = add_variant_response["data"]
-
-    assert add_variant_data["productGroup"]["id"] == data["productGroup"]["id"]
-    refute add_variant_data["productGroup"]["options"] == data["productGroup"]["options"]
-    assert add_variant_data["id"] == data["id"]
-    refute add_variant_data["optionValues"] == []
-    assert add_variant_data["productGroup"]
-    refute add_variant_data["productGroup"]["options"] == []
-
-    {:ok, company_products} = Store.list_company_products(company.id)
-    assert length(company_products) == 1
   end
 
   # test for user editing a products details
@@ -472,7 +373,7 @@ defmodule SalesRegWeb.GraphqlStoreTest do
       res =
         conn
         |> post("/graphiql", Helpers.query_skeleton(query_doc, %{category: variables}))
-
+      
       response = json_response(res, 200)["data"]["upsertCategory"]
 
       assert response["data"]["description"] == variables["description"]
@@ -528,48 +429,38 @@ defmodule SalesRegWeb.GraphqlStoreTest do
 
     @tag :query_all_company_categories
     test "query all company categories", %{
-      conn: conn
+      conn: conn,
+      categories: categories,
+      company: company
     } do
-      {:ok, user} = Accounts.create_user(@user_params)
-      {:ok, company} = Seed.create_company(user.id)
-
-      add_many_categories =
-        Enum.map(1..3, fn _index ->
-          {:ok, category} =
-            company.id
-            |> Seed.add_category(user.id)
-
-          category
-          |> Helpers.transform_struct([
-            :id,
-            :title,
-            :description
-          ])
-        end)
-        |> Enum.sort()
-
       query_doc = """
-        query listCompanyCategories($companyId: ID!){
-          listCompanyCategories(companyId: $companyId){
-            id,
-            title,
-            description
+        query listCompanyCategories($companyId: Uuid!, $query: String!, $first: Int){
+          listCompanyCategories(companyId: $companyId, query: $query, first: $first){
+            edges{
+              node{
+                id,
+                title,
+                description,
+                company{
+                  id
+                }
+              }
+            }
           }
         }
       """
 
-      variables = %{companyId: company.id}
+      variables = %{companyId: company.id, first: 3, query: ""}
 
       res =
         conn
         |> post("/graphiql", Helpers.query_skeleton(query_doc, variables))
-
+      
       response =
-        json_response(res, 200)["data"]["listCompanyCategories"]
-        |> Helpers.underscore_map_keys()
-        |> Enum.sort()
-
-      assert response == add_many_categories
+        json_response(res, 200)["data"]["listCompanyCategories"]["edges"]
+        
+      assert length(response) == length(categories)
+      assert Enum.all?(response, &(&1["node"]["company"]["id"] == company.id))
     end
   end
 end
