@@ -110,38 +110,39 @@ defmodule SalesRegWeb.GraphqlStoreTest do
       assert length(company_products) == 1
     end
 
-  # test for user editing a products details
-  @tag :edit_product_details
-  test "edit a product details", %{company: company, user: user, conn: conn} do
-    variables = %{params: product_mutation_variables_without_variant(company, user)}
+    # test for user editing a products details
+    @tag :edit_product_details
+    test "edit a product details", %{company: company, user: user, conn: conn} do
+      variables = %{params: product_mutation_variables_without_variant(company, user)}
 
-    res =
-      conn
-      |> post("/graphiql", Helpers.query_skeleton(@create_product_query, variables))
+      res =
+        conn
+        |> post("/graphiql", Helpers.query_skeleton(@create_product_query, variables))
 
-    response = json_response(res, 200)["data"]["createProduct"]
+      response = json_response(res, 200)["data"]["createProduct"]
 
-    assert response["success"] == true
-    product = response["data"]
-    assert product["minimum_sku"] == "10"
+      assert response["success"] == true
+      product = response["data"]
+      assert product["minimum_sku"] == "10"
 
-    edit_product_params =
-      company
-      |> valid_product_params(user)
-      |> Map.update(:minimum_sku, "30", fn val -> "30" end)
+      edit_product_params =
+        company
+        |> valid_product_params(user)
+        |> Map.update(:minimum_sku, "30", fn val -> "30" end)
 
-    edit_product_variables = %{id: product["id"], params: edit_product_params}
+      edit_product_variables = %{id: product["id"], params: edit_product_params}
 
-    edit_product_res =
-      conn
-      |> post("/graphiql", Helpers.query_skeleton(@update_product_query, edit_product_variables))
+      edit_product_res =
+        conn
+        |> post("/graphiql", Helpers.query_skeleton(@update_product_query, edit_product_variables))
 
-    edit_product_res = json_response(edit_product_res, 200)["data"]["updateProduct"]
+      edit_product_res = json_response(edit_product_res, 200)["data"]["updateProduct"]
 
-    assert edit_product_res["success"] == true
-    assert product["id"] == edit_product_res["data"]["id"]
-    refute product["minimum_sku"] == edit_product_res["data"]["minimum_sku"]
-    assert edit_product_res["data"]["minimum_sku"] == "30"
+      assert edit_product_res["success"] == true
+      assert product["id"] == edit_product_res["data"]["id"]
+      refute product["minimum_sku"] == edit_product_res["data"]["minimum_sku"]
+      assert edit_product_res["data"]["minimum_sku"] == "30"
+    end
   end
 
   def category_params(user_id, company_id) do
