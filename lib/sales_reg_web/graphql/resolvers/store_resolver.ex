@@ -13,10 +13,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.update_product_details(id, params)
   end
 
-  def update_product_group_options(params, _res) do
-    Store.update_product_group_options(params)
-  end
-
   def get_product(%{id: id}, _res) do
     {:ok, Store.get_product(id)}
   end
@@ -32,17 +28,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.add_category(params)
   end
 
-  # option
-  def upsert_option(%{option: params, option_id: id}, _res) do
-    id
-    |> Store.get_option()
-    |> Store.update_option(params)
-  end
-
-  def upsert_option(%{option: params}, _res) do
-    Store.add_option(params)
-  end
-
   def delete_product(%{product_id: product_id}, _res) do
     product = Store.get_product(product_id)
     Store.delete_product(product)
@@ -53,11 +38,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
     Store.delete_category(category)
   end
 
-  def delete_option(%{option_id: option_id}, _res) do
-    option = Store.get_option(option_id)
-    Store.delete_option(option)
-  end
-
   def search_company_products(%{company_id: id, query: query} = args, _res) do
     Store.load_products(id, query, pagination_args(args))
   end
@@ -65,19 +45,6 @@ defmodule SalesRegWeb.GraphQL.Resolvers.StoreResolver do
   def search_company_categories(%{company_id: id, query: query} = args, _res) do
     [company_id: id]
     |> Store.search_company_categorys(query, :title, pagination_args(args))
-  end
-
-  def search_company_options(%{company_id: id, query: query} = args, _res) do
-    [company_id: id]
-    |> Store.search_company_options(query, :name, pagination_args(args))
-  end
-
-  def search_product_groups_by_title(%{company_id: company_id, query: query}, _res) do
-    {:ok, SalesReg.Context.search_schema_by_field(ProductGroup, {query, company_id}, :title)}
-  end
-
-  def search_options_by_name(%{company_id: company_id, query: query}, _res) do
-    {:ok, SalesReg.Context.search_schema_by_field(Option, {query, company_id}, :name)}
   end
 
   def search_categories_by_title(%{company_id: company_id, query: query}, _res) do

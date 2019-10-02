@@ -17,11 +17,6 @@ defmodule SalesRegWeb.GraphQL.Schemas.WebStoreSchema do
       resolve(&WebStoreResolver.home_page_query/2)
     end
 
-    field :product_page_query, :product_group do
-      arg(:slug, :string)
-      resolve(&WebStoreResolver.product_page_query/2)
-    end
-
     field :category_page_query, :category_page do
       arg(:slug, non_null(:string))
       arg(:product_page, :string)

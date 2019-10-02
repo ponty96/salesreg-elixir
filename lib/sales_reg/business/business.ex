@@ -47,7 +47,6 @@ defmodule SalesReg.Business do
          },
          _response <- create_business_subdomain(company.slug),
          {:ok, _branch} <- add_branch(branch_params),
-         [{:ok, _option} | _t] <- Store.insert_default_options(company.id),
          template <- Theme.get_template_by_slug(@default_template_slug),
          company_template_params <- %{
            template_id: template.id,

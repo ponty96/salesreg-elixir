@@ -156,7 +156,7 @@ defmodule SalesReg.Order do
 
   def update_sale_details(id, params) do
     sale = preload_order(get_sale(id))
-    
+
     if sale.status == "pending" and sale.invoice.receipts == [] do
       id
       |> Order.get_sale()
@@ -490,7 +490,7 @@ defmodule SalesReg.Order do
     |> Multi.delete_all(:delete_location, Ecto.assoc(sale, :location))
     |> Multi.delete(:delete_sale, sale)
     |> Repo.transaction()
-    |> delete_sale_transaction_resp    
+    |> delete_sale_transaction_resp
   end
 
   defp repo_transaction_resp(repo_transaction) do

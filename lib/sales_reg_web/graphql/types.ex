@@ -256,38 +256,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
   connection(node_type: :tag)
 
   @desc """
-    Product Group object type
-  """
-  object :product_group do
-    field(:id, :uuid)
-    field(:title, :string)
-    field(:updated_at, :naive_datetime)
-
-    field(:products, list_of(:product), resolve: dataloader(SalesReg.Store, :products))
-    field(:options, list_of(:option), resolve: dataloader(SalesReg.Store, :options))
-  end
-
-  @desc """
-    Option object type
-  """
-  object :option do
-    field(:id, :uuid)
-    field(:name, :string)
-    field(:is_visual, :string)
-    field(:updated_at, :naive_datetime)
-
-    field(:option_values, list_of(:option_value),
-      resolve: dataloader(SalesReg.Store, :option_values)
-    )
-
-    field(:product_groups, list_of(:product_group),
-      resolve: dataloader(SalesReg.Store, :product_groups)
-    )
-  end
-
-  connection(node_type: :option)
-
-  @desc """
     Product object type
   """
   object :product do
@@ -297,13 +265,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field :name, :string do
       resolve(fn _parent, %{source: product} ->
         name = Store.get_product_name(product)
-        {:ok, name}
-      end)
-    end
-
-    field :name_based_on_visual_variant, :string do
-      resolve(fn _parent, %{source: product} ->
-        name = Store.product_name_based_on_visual_options(product)
         {:ok, name}
       end)
     end
@@ -329,12 +290,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
     field(:categories, list_of(:category), resolve: dataloader(SalesReg.Store, :categories))
     field(:tags, list_of(:tag), resolve: dataloader(SalesReg.Store, :tags))
-
-    field(:option_values, list_of(:option_value),
-      resolve: dataloader(SalesReg.Store, :option_values)
-    )
-
-    field(:product_group, :product_group, resolve: dataloader(SalesReg.Store, :product_group))
 
     field(:reviews, list_of(:review), resolve: dataloader(SalesReg.Order, :reviews))
     field(:stars, list_of(:star), resolve: dataloader(SalesReg.Order, :stars))
@@ -389,17 +344,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
     field(:company, :company, resolve: dataloader(SalesReg.Business, :company))
     field(:products, list_of(:product), resolve: dataloader(SalesReg.Store, :products))
-  end
-
-  @desc """
-    Option Value Object Type
-  """
-  object :option_value do
-    field(:id, :uuid)
-    field(:name, :string)
-
-    field(:option, :option, resolve: dataloader(SalesReg.Store, :option))
-    field(:product, :product, resolve: dataloader(SalesReg.Store, :product))
   end
 
   @desc """
@@ -744,8 +688,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       :star,
       :receipt,
       :invoice,
-      :product_group,
-      :option,
       :template,
       :company_template,
       :activity,
@@ -777,8 +719,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
       %Star{}, _ -> :star
       %Receipt{}, _ -> :receipt
       %Invoice{}, _ -> :invoice
-      %ProductGroup{}, _ -> :product_group
-      %Option{}, _ -> :option
       %Template{}, _ -> :template
       %CompanyTemplate{}, _ -> :company_template
       %Activity{}, _ -> :activity
@@ -958,14 +898,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:type, :string)
   end
 
-  input_object :product_group_input do
-    field(:product_group_id, :uuid)
-    field(:product_group_title, :string)
-    field(:company_id, non_null(:uuid))
-
-    field(:product, non_null(:product_input))
-  end
-
   input_object :product_input do
     field(:id, :uuid)
     field(:description, :string)
@@ -976,6 +908,7 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
     field(:price, non_null(:string))
     field(:images, list_of(:string))
     field(:company_id, non_null(:uuid))
+    field(:title, non_null(:uuid))
     field(:user_id, non_null(:uuid))
     field(:categories, list_of(:uuid), default_value: [])
     field(:tags, list_of(:string), default_value: [])
@@ -985,20 +918,6 @@ defmodule SalesRegWeb.GraphQL.DataTypes do
 
     field(:is_featured, :boolean)
     field(:is_top_rated_by_merchant, :boolean)
-
-    field(:option_values, list_of(:option_value_input), default_value: [])
-  end
-
-  input_object :option_value_input do
-    field(:name, :string)
-    field(:option_id, non_null(:uuid))
-    field(:company_id, non_null(:uuid))
-  end
-
-  input_object :option_input do
-    field(:name, non_null(:string))
-    field(:is_visual, :string)
-    field(:company_id, non_null(:uuid))
   end
 
   input_object :contact_input do

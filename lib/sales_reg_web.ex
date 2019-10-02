@@ -136,10 +136,7 @@ defmodule SalesRegWeb do
 
       alias SalesReg.Store
       alias SalesReg.Store.Category
-      alias SalesReg.Store.Option
-      alias SalesReg.Store.OptionValue
       alias SalesReg.Store.Product
-      alias SalesReg.Store.ProductGroup
       alias SalesReg.Store.Tag
 
       alias SalesReg.TaskSupervisor

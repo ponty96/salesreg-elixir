@@ -322,28 +322,21 @@ defmodule SalesReg.Seed do
     do: add_product_without_variant(params, company_id, user_id, [])
 
   def add_product_without_variant(params, company_id, user_id, categories) do
-    {:ok, prod_grp} = insert_prod_grp(company_id)
-
     params
     |> product_params(company_id, user_id, prod_grp.id, categories)
     |> Map.put(:title, prod_grp.title)
-    |> Map.put(:option_values, [])
     |> Map.put(:tags, [])
     |> Store.add_product()
   end
 
   def add_product_with_variant(company, user) do
-    option_values = valid_option_values(company.id)
-
     product =
       company
       |> valid_product_params(user)
-      |> Map.put(:option_values, option_values)
       |> Map.put(:tags, [])
       |> Map.put(:categories, [])
 
     params = %{
-      product_group_title: CommerceEn.product_name(),
       product: product,
       company_id: company.id
     }
@@ -355,35 +348,6 @@ defmodule SalesReg.Seed do
     @valid_product_params
     |> Map.put(:company_id, company.id)
     |> Map.put(:user_id, user.id)
-  end
-
-  defp valid_option_values(company_id) do
-    options =
-      company_id
-      |> Store.list_company_options()
-      |> elem(1)
-      |> Enum.take(3)
-      |> Enum.map(fn option ->
-        %{
-          option_id: option.id,
-          name: CommerceEn.color(),
-          company_id: company_id
-        }
-      end)
-
-    options
-  end
-
-  defp insert_prod_grp(company_id) do
-    params = %{
-      "title" => "Mobile Devices and Assessories",
-      "option_ids" => [],
-      "company_id" => company_id
-    }
-
-    %ProductGroup{}
-    |> ProductGroup.changeset(params)
-    |> Repo.insert()
   end
 
   defp product_params(
@@ -401,7 +365,6 @@ defmodule SalesReg.Seed do
       minimum_sku: min_sku,
       featured_image: feat_img,
       name: name,
-      product_group_id: prod_grp_id,
       categories: categories,
       images: Enum.map(1..8, fn _index -> Avatar.image_url() end)
     }

@@ -38,22 +38,6 @@ defmodule SalesRegWeb.ForwardController do
     redirect(conn, external: url)
   end
 
-  defp get_product_query_params(product_slug) do
-    %{option_values: option_values} =
-      product_slug
-      |> Store.get_product_by_slug()
-      |> Repo.preload([:option_values, option_values: [:option]])
-
-    option_values
-    |> Enum.with_index()
-    |> Enum.map(fn {option_value, index} ->
-      "#{option_value.option.name}=#{option_value.name}#{
-        if index == Enum.count(option_values) - 1, do: "", else: "&"
-      }"
-    end)
-    |> Enum.join("")
-  end
-
   defp base_url(conn, slug) do
     base_domain = System.get_env("BASE_DOMAIN")
     scheme = Atom.to_string(conn.scheme)
